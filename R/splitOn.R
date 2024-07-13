@@ -2,17 +2,17 @@
 #'
 #' @inheritParams agglomerate-methods
 #'
-#' @param f A single character value for selecting the grouping variable
+#' @param f \code{Character}. A single value for selecting the grouping variable
 #'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 
 #'   with the same length as one of the dimensions. If \code{f} matches with both
 #'   dimensions, \code{by} must be specified. 
 #'   Split by cols is not encouraged, since this is not compatible with 
-#'   storing the results in \code{altExps}.
+#'   storing the results in \code{altExps}. (Default: \code{NULL})
 #' 
 #' @param update_rowTree Deprecated. Use \code{update.tree } instead.
 #'   
-#' @param altexp a \code{character} vector specifying the alternative experiments
-#'   to be unsplit. (By default: \code{altexp = names(altExps(x))})
+#' @param altexp \code{Character vector}. Specify the alternative experiments
+#'   to be unsplit. (Default: \code{names(altExps(x))})
 #' 
 #' @param altExpNames Deprecated. Use \code{altexp} instead.
 #'   

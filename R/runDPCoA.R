@@ -14,28 +14,29 @@
 #' @param y a \code{dist} or a symmetric \code{matrix} compatible with
 #'   \code{ade4:dpcoa}
 #'
-#' @param ncomponents Numeric scalar indicating the number of DPCoA dimensions
-#'   to obtain.
+#' @param ncomponents \code{Numeric scalar}. Indicates the number of DPCoA dimensions
+#'   to obtain. (Default: \code{2})
 #'
-#' @param ntop Numeric scalar specifying the number of features with the highest
+#' @param ntop \code{Numeric scalar}. Specifies the number of features with the highest
 #'   variances to use for dimensionality reduction. Alternatively \code{NULL},
-#'   if all features should be used. (default: \code{ntop = NULL})
+#'   if all features should be used. (Default: \code{NULL})
 #'
-#' @param subset.row Vector specifying the subset of features to use for
+#' @param subset.row \code{Character Vector}. Specifies the subset of features to use for
 #'   dimensionality reduction. This can be a character vector of row names, an
-#'   integer vector of row indices or a logical vector.
+#'   integer vector of row indices or a logical vector. (Default: \code{NULL})
 #' 
 #' @param subset_row Deprecated. Use \code{subset.row} instead.
 #'
-#' @param scale Logical scalar, should the expression values be standardized?
+#' @param scale \code{Logical scalar}. Sshould the expression values be standardized?
+#' (Default: \code{FALSE})
 #'   
-#' @param tree.name a single \code{character} value for specifying which
+#' @param tree.name \code{Character}. A single value for specifying which
 #'   rowTree will be used in calculation. 
-#'   (By default: \code{tree.name = "phylo"})
+#'   (Default: \code{"phylo"})
 #' 
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
 #' 
-#' @param altexp String or integer scalar specifying an alternative experiment
+#' @param altexp \code{String or integer scalar}. Specifies an alternative experiment
 #'   containing the input data.
 #'
 #' @param ... Currently not used.

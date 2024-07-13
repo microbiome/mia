@@ -9,20 +9,20 @@
 #'
 #' @inheritParams getPrevalence
 #' 
-#' @param ranks a character vector defining taxonomic ranks. Must all be values
+#' @param ranks \code{Character vector}. Defines taxonomic ranks. Must all be values
 #'   of \code{taxonomyRanks()} function.
 #'
-#' @param keep.dimred \code{TRUE} or \code{FALSE}: Should the
+#' @param keep.dimred \code{Logical}. Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this
 #'   breaks the link between the data used to calculate the reduced dims.
-#'   (default: \code{keep.dimred = FALSE})
+#'   (Default: \code{FALSE})
 #' 
 #' @param keep_reducedDims Deprecated. Use \code{keep.dimred} instead.
 #'   
-#' @param as.list \code{TRUE} or \code{FALSE}: Should the list of 
+#' @param as.list \code{Logical}. Should the list of 
 #'   \code{SummarizedExperiment} objects be returned by the function 
 #'   \code{agglomerateByRanks} as a SimpleList or stored in altExps?
-#'   (default: \code{as.list = FALSE})
+#'   (Default: \code{FALSE})
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects and other functions.

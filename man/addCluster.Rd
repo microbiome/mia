@@ -38,15 +38,15 @@ object.}
 
 \item{BLUSPARAM}{A \linkS4class{BlusterParam} object specifying the algorithm to use.}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. A single value for specifying which
+assay to use for calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay_name}{\code{Character scalar} A sinle value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{by}{A character value for selecting if association are calculated
+\item{by}{\code{Character scalar}. A single value for selecting if association are calculated
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}
 
@@ -54,10 +54,10 @@ Must be \code{'rows'} or \code{'cols'}.}
 
 \item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
 
-\item{name}{the name to store the result in
+\item{name}{\code{Character}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
-\item{clust.col}{A single character value indicating the name of the
+\item{clust.col}{\code{Character}. A single value indicating the name of the
 \code{rowData} (or \code{colData}) where the data will be stored.}
 
 \item{...}{Additional parameters to use altExps for example}

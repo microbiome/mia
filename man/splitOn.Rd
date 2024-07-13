@@ -48,12 +48,12 @@ details.
 list by their group names.}
 }}
 
-\item{f}{A single character value for selecting the grouping variable
+\item{f}{\code{Character}. A single value for selecting the grouping variable
 from \code{rowData} or \code{colData} or a \code{factor} or \code{vector}
 with the same length as one of the dimensions. If \code{f} matches with both
 dimensions, \code{by} must be specified.
 Split by cols is not encouraged, since this is not compatible with
-storing the results in \code{altExps}.}
+storing the results in \code{altExps}. (Default: \code{NULL})}
 
 \item{update.tree}{\code{TRUE} or \code{FALSE}: should
 \code{rowTree()} also be agglomerated? (Default:
@@ -61,15 +61,15 @@ storing the results in \code{altExps}.}
 
 \item{update_rowTree}{Deprecated. Use \code{update.tree } instead.}
 
-\item{altexp}{a \code{character} vector specifying the alternative experiments
-to be unsplit. (By default: \code{altexp = names(altExps(x))})}
+\item{altexp}{\code{Character vector}. Specify the alternative experiments
+to be unsplit. (Default: \code{names(altExps(x))})}
 
 \item{altExpNames}{Deprecated. Use \code{altexp} instead.}
 
-\item{keep.dimred}{\code{TRUE} or \code{FALSE}: Should the
+\item{keep.dimred}{\code{Logical}. Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(default: \code{keep.dimred = FALSE})}
+(Default: \code{FALSE})}
 
 \item{keep_reducedDims}{Deprecated. Use \code{keep.dimred} instead.}
 }

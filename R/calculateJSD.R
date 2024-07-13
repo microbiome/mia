@@ -6,9 +6,9 @@
 #'  
 #' @inheritParams calculateDMN
 #'
-#' @param chunkSize an integer scalar, defining the size of data send
+#' @param chunkSize \code{Integer scalar}. Defines the size of data send
 #'   to the individual worker. Only has an effect, if \code{BPPARAM} defines
-#'   more than one worker. (default: \code{chunkSize = nrow(x)})
+#'   more than one worker. (Default: \code{nrow(x)})
 #'
 #' @param ... optional arguments not used.
 #'

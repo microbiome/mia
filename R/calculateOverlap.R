@@ -6,7 +6,7 @@
 #' 
 #' @inheritParams calculateDMN
 #'   
-#' @param detection A single numeric value for selecting detection threshold for 
+#' @param detection \code{Numeric}. A single value for selecting detection threshold for 
 #'   absence/presence of features. Feature that has abundance under threshold in
 #'   either of samples, will be discarded when evaluating overlap between samples. 
 #'   

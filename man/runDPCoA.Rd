@@ -49,45 +49,47 @@ object.}
 
 \item{...}{Currently not used.}
 
-\item{ncomponents}{Numeric scalar indicating the number of DPCoA dimensions
-to obtain.}
+\item{ncomponents}{\code{Numeric scalar}. Indicates the number of DPCoA dimensions
+to obtain. (Default: \code{2})}
 
-\item{ntop}{Numeric scalar specifying the number of features with the highest
+\item{ntop}{\code{Numeric scalar}. Specifies the number of features with the highest
 variances to use for dimensionality reduction. Alternatively \code{NULL},
-if all features should be used. (default: \code{ntop = NULL})}
+if all features should be used. (Default: \code{NULL})}
 
-\item{subset.row}{Vector specifying the subset of features to use for
+\item{subset.row}{\code{Character Vector}. Specifies the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
-integer vector of row indices or a logical vector.}
+integer vector of row indices or a logical vector. (Default: \code{NULL})}
 
 \item{subset_row}{Deprecated. Use \code{subset.row} instead.}
 
-\item{scale}{Logical scalar, should the expression values be standardized?}
+\item{scale}{\code{Logical scalar}. Sshould the expression values be standardized?
+(Default: \code{FALSE})}
 
-\item{transposed}{Logical scalar, is x transposed with samples in rows?}
+\item{transposed}{\code{Logical scalar}. Is x transposed with samples in rows?
+(Default: \code{FALSE})}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. A single value for specifying which
+assay to use for calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay_name}{\code{Character scalar} A sinle value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{exprs_values}{a single \code{character} value for specifying which
+\item{exprs_values}{\code{Character scalar}. A single value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead.)}
 
-\item{tree.name}{a single \code{character} value for specifying which
+\item{tree.name}{\code{Character}. A single value for specifying which
 rowTree will be used in calculation.
-(By default: \code{tree.name = "phylo"})}
+(Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
-\item{altexp}{String or integer scalar specifying an alternative experiment
+\item{altexp}{\code{String or integer scalar}. Specifies an alternative experiment
 containing the input data.}
 
-\item{name}{the name to store the result in
+\item{name}{\code{Character}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 }
 \value{

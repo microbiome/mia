@@ -122,31 +122,32 @@ and \code{subsetByRare} additional parameters passed to
 \code{getPrevalent}
 }}
 
-\item{detection}{Detection threshold for absence/presence. If \code{as_relative = FALSE},
+\item{detection}{\code{Numeric}. Detection threshold for absence/presence.
+If \code{as_relative = FALSE},
 it sets the counts threshold for a taxon to be considered present.
 If \code{as_relative = TRUE}, it sets the relative abundance threshold
-for a taxon to be considered present. (default: \code{detection = 0})}
+for a taxon to be considered present. (Default: \code{0})}
 
-\item{include.lowest}{logical scalar: Should the lower boundary of the
-detection and prevalence cutoffs be included? (default: \code{FALSE})}
+\item{include.lowest}{\code{Logical scalar}. Should the lower boundary of the
+detection and prevalence cutoffs be included? (Default: \code{FALSE})}
 
 \item{include_lowest}{Deprecated. Use \code{include.lowest} instead.}
 
-\item{sort}{logical scalar: Should the result be sorted by prevalence?
-(default: \code{FALSE})}
+\item{sort}{\code{Logical scalar}. Should the result be sorted by prevalence?
+(Default: \code{FALSE})}
 
-\item{na.rm}{logical scalar: Should NA values be omitted when calculating
-prevalence? (default: \code{na.rm = TRUE})}
+\item{na.rm}{\code{Logical scalar}. Should NA values be omitted when calculating
+prevalence? (Default: \code{TRUE})}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. A single value for specifying which
+assay to use for calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay_name}{\code{Character scalar} A sinle value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{rank}{a single character defining a taxonomic rank. Must be a value of
+\item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
 
 \item{prevalence}{Prevalence threshold (in 0 to 1). The

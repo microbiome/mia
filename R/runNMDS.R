@@ -8,16 +8,17 @@
 #' @details
 #'   For \code{addNMDS} a \linkS4class{SingleCellExperiment}
 #'
-#' @param keep.dist Logical scalar indicating whether the \code{dist} object
+#' @param keep.dist \code{Logical scalar}. Indicates whether the \code{dist} object
 #'   calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
-#'   the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}.
+#'   the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}. (Default: 
+#'   \code{FALSE})
 #' 
 #' @param keep_dist Deprecated. Use \code{keep.dist} instead.
 #'
-#' @param FUN a \code{function} or \code{character} value with a function
+#' @param FUN \code{Function} or \code{Character}. A value with a function
 #'   name returning a \code{\link[stats:dist]{dist}} object
 #'
-#' @param nmds.fun a \code{character} value to choose the scaling
+#' @param nmds.fun \code{Character}. A value to choose the scaling
 #'   implementation, either \dQuote{isoMDS} for
 #'   \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 #'   \code{\link[vegan:monoMDS]{vegan::monoMDS}}
@@ -27,10 +28,10 @@
 #' @param ... additional arguments to pass to \code{FUN} and
 #'   \code{nmds.fun}.
 #'
-#' @param dimred String or integer scalar specifying the existing dimensionality
+#' @param dimred \code{String or integer scalar}. Specifies the existing dimensionality
 #'   reduction results to use.
 #'
-#' @param ndimred Integer scalar or vector specifying the dimensions to use if
+#' @param ndimred \code{Integer scalar or vector}. Specifies the dimensions to use if
 #'   dimred is specified.
 #' 
 #' @param n_dimred Deprecated. Use \code{ndimred} instead.

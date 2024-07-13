@@ -28,17 +28,17 @@
 #'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis 
 #'   into a CA analysis and dbRDA into PCoA/MDS.
 #' 
-#' @param test.signif a logical scalar, should the PERMANOVA and analysis of
+#' @param test.signif \code{Logical scalar}. Should the PERMANOVA and analysis of
 #'   multivariate homogeneity of group dispersions be performed.
-#'   (By default: \code{test.signif = TRUE})
+#'   (Default: \code{TRUE})
 #'   
-#' @param altexp String or integer scalar specifying an alternative experiment
+#' @param altexp \code{Character or integer scalar}. Specifies an alternative experiment
 #'   containing the input data.
 #' 
-#' @param scores A string specifying scores to be returned. Must be
+#' @param scores \code{Character scalar}. Specifies scores to be returned. Must be
 #' 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
 #' v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-#' 'u' ((weighted) orthonormal site scores). (By default: \code{scores='wa'})
+#' 'u' ((weighted) orthonormal site scores). (Default: \code{'wa'})
 #'
 #' @param ... additional arguments passed to vegan::cca or vegan::dbrda and
 #' other internal functions.

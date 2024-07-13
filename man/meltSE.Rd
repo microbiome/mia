@@ -41,21 +41,21 @@ meltSE(
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. A single value for specifying which
+assay to use for calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay_name}{\code{Character scalar} A sinle value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{add.row}{\code{NULL}, \code{TRUE} or a \code{character} vector to
+\item{add.row}{\code{Logical scalar} or a \code{Character vector}. To
 select information from the \code{rowData} to add to the molten assay data.
 If \code{add.row = NULL} no data will be added, if
 \code{add.row = TRUE} all data will be added and if
 \code{add.row} is a \code{character} vector, it will be used to subset
-to given column names in \code{rowData}. (default:
-\code{add.row = NULL})}
+to given column names in \code{rowData}. (Default:
+\code{NULL})}
 
 \item{add_row_data}{Deprecated. Use \code{add.row} instead.}
 
@@ -69,13 +69,13 @@ to given column names in \code{colData}. (default:
 
 \item{add_col_data}{Deprecated. Use \code{add.col} instead.}
 
-\item{row.name}{a \code{character} scalar to use as the output's name
-for the feature identifier. (default: \code{row.name = "FeatureID"})}
+\item{row.name}{\code{Character scalar}. To use as the output's name
+for the feature identifier. (Default: \code{"FeatureID"})}
 
 \item{feature_name}{Deprecated. Use \code{row.name} instead.}
 
-\item{col.name}{a \code{character} scalar to use as the output's name
-for the sample identifier. (default: \code{col.name = "SampleID"})}
+\item{col.name}{\code{Character scalar}. To use as the output's name
+for the sample identifier. (Default: \code{"SampleID"})}
 
 \item{sample_name}{Deprecated. Use \code{col.name} instead.}
 

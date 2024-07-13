@@ -5,23 +5,24 @@
 #'
 #' @inheritParams calculateDMN
 #'   
-#' @param method A single character value for selecting the transformation
+#' @param method \code{Character}. A single value for selecting the transformation
 #'   method.
 #' 
-#' @param MARGIN A single character value for specifying whether the
+#' @param MARGIN \code{Character}. A single value for specifying whether the
 #'   transformation is applied sample (column) or feature (row) wise.
-#'   (By default: \code{MARGIN = "samples"})
+#'   (Default: \code{"samples"})
 #' 
-#' @param pseudocount TRUE, FALSE, or a numeric value. When TRUE,
+#' @param pseudocount \code{Boolean} or \code{numeric}. When TRUE,
 #'   automatically adds the minimum positive value of \code{assay.type}.
 #'   When FALSE, does not add any pseudocount (pseudocount = 0).
 #'   Alternatively, a user-specified numeric value can be added as pseudocount.
+#'   (Default: \code{FALSE}).
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
-#'   \item \code{reference}: A single value which will be used to fill 
-#'   reference sample's column in returned assay when calculating alr. 
-#'   (default: \code{reference = NA})
+#'   \item \code{reference}: \code{Character}. A single value which will be used 
+#'   to fill reference sample's column in returned assay when calculating alr. 
+#'   (Default: \code{NA})
 #'   \item \code{ref_vals} Deprecated. Use \code{reference} instead.
 #' }
 #' @details

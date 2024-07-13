@@ -23,23 +23,23 @@
 #' 
 #' @param add_col_data Deprecated. Use \code{add.col} instead.
 #'
-#' @param add.row \code{NULL}, \code{TRUE} or a \code{character} vector to
+#' @param add.row \code{Logical scalar} or a \code{Character vector}. To
 #'   select information from the \code{rowData} to add to the molten assay data.
 #'   If \code{add.row = NULL} no data will be added, if
 #'   \code{add.row = TRUE} all data will be added and if
 #'   \code{add.row} is a \code{character} vector, it will be used to subset
-#'   to given column names in \code{rowData}. (default:
-#'   \code{add.row = NULL})
+#'   to given column names in \code{rowData}. (Default:
+#'   \code{NULL})
 #' 
 #' @param add_row_data Deprecated. Use \code{add.row} instead.
 #'
-#' @param row.name a \code{character} scalar to use as the output's name
-#'   for the feature identifier. (default: \code{row.name = "FeatureID"})
+#' @param row.name \code{Character scalar}. To use as the output's name
+#'   for the feature identifier. (Default: \code{"FeatureID"})
 #' 
 #' @param feature_name Deprecated. Use \code{row.name} instead.
 #'
-#' @param col.name a \code{character} scalar to use as the output's name
-#'   for the sample identifier. (default: \code{col.name = "SampleID"})
+#' @param col.name \code{Character scalar}. To use as the output's name
+#'   for the sample identifier. (Default: \code{"SampleID"})
 #' 
 #' @param sample_name Deprecated. Use \code{col.name} instead.
 #'

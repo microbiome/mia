@@ -19,13 +19,12 @@
 #'  
 #' @inheritParams getPrevalence
 #'
-#' @param empty.fields a \code{character} value defining, which values should be
+#' @param empty.fields \code{Character}. A value defining, which values should be
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 #'   removed if \code{na.rm = TRUE} before agglomeration.
 #'
-#' @param update.tree \code{TRUE} or \code{FALSE}: should
-#'   \code{rowTree()} also be agglomerated? (Default:
-#'   \code{update.tree = FALSE})
+#' @param update.tree \code{Logical scalar}. Should
+#'   \code{rowTree()} also be agglomerated? (Default: \code{FALSE})
 #'
 #' @param agglomerateTree Deprecated. Use \code{update.tree} instead.
 #' 

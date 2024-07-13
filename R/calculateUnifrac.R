@@ -27,13 +27,13 @@
 #' 
 #' @param nodeLab Deprecated. Use \code{node.label} instead.
 #'
-#' @param tree.name a single \code{character} value for specifying which
+#' @param tree.name \code{Character}. A single value for specifying which
 #'   tree will be used in calculation. 
-#'   (By default: \code{tree.name = "phylo"})
+#'   (Default: \code{"phylo"})
 #' 
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'   
-#' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-Unifrac
+#' @param weighted \code{Logical scalar}. Should use weighted-Unifrac
 #'   calculation? Weighted-Unifrac takes into account the relative abundance of
 #'   species/taxa shared between samples, whereas unweighted-Unifrac only
 #'   considers presence/absence. Default is \code{FALSE}, meaning the

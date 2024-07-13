@@ -21,19 +21,19 @@
 #'
 #' @inheritParams calculateDMN
 #'   
-#' @param sample A single integer value equal to the number of counts being 
+#' @param sample \code{Integer}. A single value equal to the number of counts being 
 #'   simulated i.e. rarefying depth. This can equal to lowest number of total
 #'   counts found in a sample or a user specified number.
 #' 
 #' @param min_size Deprecated. Use \code{sample} instead. 
 #'   
-#' @param replace Logical Default is \code{TRUE}. The default is with 
+#' @param replace \code{Logical scalar}. The default is with 
 #'   replacement (\code{replace=TRUE}). 
 #'   See \code{\link[phyloseq:rarefy_even_depth]{phyloseq::rarefy_even_depth}}
-#'   for details on implications of this parameter.   
+#'   for details on implications of this parameter. (Default: \code{TRUE})   
 #' 
-#' @param verbose Logical Default is \code{TRUE}. When \code{TRUE} an additional 
-#'   message about the random number used is printed.
+#' @param verbose \code{Logical scalar}. Choose whether to show messages. 
+#' (Default: \code{TRUE})
 #' 
 #' @param ... additional arguments not used
 #' 

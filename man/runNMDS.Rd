@@ -63,63 +63,66 @@ object.}
 \item{...}{additional arguments to pass to \code{FUN} and
 \code{nmds.fun}.}
 
-\item{FUN}{a \code{function} or \code{character} value with a function
+\item{FUN}{\code{Function} or \code{Character}. A value with a function
 name returning a \code{\link[stats:dist]{dist}} object}
 
-\item{nmds.fun}{a \code{character} value to choose the scaling
+\item{nmds.fun}{\code{Character}. A value to choose the scaling
 implementation, either \dQuote{isoMDS} for
 \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 \code{\link[vegan:monoMDS]{vegan::monoMDS}}}
 
 \item{nmdsFUN}{Deprecated. Use \code{nmds.fun} instead.}
 
-\item{ncomponents}{Numeric scalar indicating the number of DPCoA dimensions
-to obtain.}
+\item{ncomponents}{\code{Numeric scalar}. Indicates the number of DPCoA dimensions
+to obtain. (Default: \code{2})}
 
-\item{ntop}{Numeric scalar specifying the number of features with the highest
+\item{ntop}{\code{Numeric scalar}. Specifies the number of features with the highest
 variances to use for dimensionality reduction. Alternatively \code{NULL},
-if all features should be used. (default: \code{ntop = NULL})}
+if all features should be used. (Default: \code{NULL})}
 
-\item{subset.row}{Vector specifying the subset of features to use for
+\item{subset.row}{\code{Character Vector}. Specifies the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
-integer vector of row indices or a logical vector.}
+integer vector of row indices or a logical vector. (Default: \code{NULL})}
 
 \item{subset_row}{Deprecated. Use \code{subset.row} instead.}
 
-\item{scale}{Logical scalar, should the expression values be standardized?}
+\item{scale}{\code{Logical scalar}. Sshould the expression values be standardized?
+(Default: \code{FALSE})}
 
-\item{transposed}{Logical scalar, is x transposed with samples in rows?}
+\item{transposed}{\code{Logical scalar}. Is x transposed with samples in rows?
+(Default: \code{FALSE})}
 
-\item{keep.dist}{Logical scalar indicating whether the \code{dist} object
+\item{keep.dist}{\code{Logical scalar}. Indicates whether the \code{dist} object
 calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
-the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}.}
+the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}. (Default:
+\code{FALSE})}
 
 \item{keep_dist}{Deprecated. Use \code{keep.dist} instead.}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. A single value for specifying which
+assay to use for calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay_name}{\code{Character scalar} A sinle value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{exprs_values}{a single \code{character} value for specifying which
+\item{exprs_values}{\code{Character scalar}. A single value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead.)}
 
-\item{dimred}{String or integer scalar specifying the existing dimensionality
+\item{dimred}{\code{String or integer scalar}. Specifies the existing dimensionality
 reduction results to use.}
 
-\item{ndimred}{Integer scalar or vector specifying the dimensions to use if
+\item{ndimred}{\code{Integer scalar or vector}. Specifies the dimensions to use if
 dimred is specified.}
 
 \item{n_dimred}{Deprecated. Use \code{ndimred} instead.}
 
-\item{altexp}{String or integer scalar specifying an alternative experiment
+\item{altexp}{\code{String or integer scalar}. Specifies an alternative experiment
 containing the input data.}
 
-\item{name}{the name to store the result in
+\item{name}{\code{Character}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 }
 \value{

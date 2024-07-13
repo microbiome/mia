@@ -32,15 +32,15 @@ runOverlap(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. A single value for specifying which
+assay to use for calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay_name}{\code{Character scalar} A sinle value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{detection}{A single numeric value for selecting detection threshold for
+\item{detection}{\code{Numeric}. A single value for selecting detection threshold for
 absence/presence of features. Feature that has abundance under threshold in
 either of samples, will be discarded when evaluating overlap between samples.}
 

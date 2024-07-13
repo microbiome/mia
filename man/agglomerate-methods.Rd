@@ -136,13 +136,13 @@ object.}
 \code{SummarizedExperiment} objects and other functions.
 See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}
 
-\item{rank}{a single character defining a taxonomic rank. Must be a value of
+\item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
 
-\item{na.rm}{logical scalar: Should NA values be omitted when calculating
-prevalence? (default: \code{na.rm = TRUE})}
+\item{na.rm}{\code{Logical scalar}. Should NA values be omitted when calculating
+prevalence? (Default: \code{TRUE})}
 
-\item{empty.fields}{a \code{character} value defining, which values should be
+\item{empty.fields}{\code{Character}. A value defining, which values should be
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 removed if \code{na.rm = TRUE} before agglomeration.}
 
@@ -180,18 +180,18 @@ summary of non-prevalent taxa. (default: \code{other.label = "Other"})}
 
 \item{other_label}{Deprecated. use \code{other.label} instead.}
 
-\item{ranks}{a character vector defining taxonomic ranks. Must all be values
+\item{ranks}{\code{Character vector}. Defines taxonomic ranks. Must all be values
 of \code{taxonomyRanks()} function.}
 
-\item{as.list}{\code{TRUE} or \code{FALSE}: Should the list of
+\item{as.list}{\code{Logical}. Should the list of
 \code{SummarizedExperiment} objects be returned by the function
 \code{agglomerateByRanks} as a SimpleList or stored in altExps?
-(default: \code{as.list = FALSE})}
+(Default: \code{FALSE})}
 
-\item{keep.dimred}{\code{TRUE} or \code{FALSE}: Should the
+\item{keep.dimred}{\code{Logical}. Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(default: \code{keep.dimred = FALSE})}
+(Default: \code{FALSE})}
 
 \item{keep_reducedDims}{Deprecated. Use \code{keep.dimred} instead.}
 }

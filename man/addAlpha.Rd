@@ -38,17 +38,18 @@ addAlpha(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
 
-\item{assay.type}{the name of the assay used for calculation of the
-sample-wise estimates. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character vector}. The name of the assay used for
+calculation of the sample-wise estimates. (Default: \code{"counts"})}
 
-\item{index}{a \code{character} vector, specifying the alpha diversity
+\item{index}{\code{Character vector}. Specifies the alpha diversity
 indices to be calculated.}
 
-\item{name}{a name for the column(s) of the colData the results should be
+\item{name}{\code{Character}. A name for the column(s) of the colData the
+results should be
 stored in. By default this will use the original names of the calculated
 indices. (Default: \code{index})}
 
-\item{niter}{\code{NULL} or a single \code{integer} value for the number of
+\item{niter}{\code{Integer}. A single value for the number of
 rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
 (see Details section). (Default: \code{NULL})}
 

@@ -5,11 +5,11 @@
 #'
 #' @inheritParams getPrevalence
 #' 
-#' @param top Numeric value, how many top taxa to return. Default return top
-#'   five taxa.
+#' @param top \code{Numeric}. Determines how many top taxa to return. Default is
+#' to return top five taxa. (Default: \code{5})
 #'
-#' @param method Specify the method to determine top taxa. Either sum, mean,
-#'   median or prevalence. Default is 'mean'.
+#' @param method \code{Character}. Specify the method to determine top taxa. Either 
+#' sum, mean, median or prevalence. (Default: \code{"mean"})
 #'
 #' @param ... Additional arguments passed, e.g., to getPrevalence:
 #'    \itemize{

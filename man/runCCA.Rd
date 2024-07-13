@@ -106,31 +106,31 @@ All variables are used. Please subset, if you want to consider only some of them
 \code{variables} and \code{formula} can be missing, which turns the CCA analysis
 into a CA analysis and dbRDA into PCoA/MDS.}
 
-\item{test.signif}{a logical scalar, should the PERMANOVA and analysis of
+\item{test.signif}{\code{Logical scalar}. Should the PERMANOVA and analysis of
 multivariate homogeneity of group dispersions be performed.
-(By default: \code{test.signif = TRUE})}
+(Default: \code{TRUE})}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. A single value for specifying which
+assay to use for calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay_name}{\code{Character scalar} A sinle value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{exprs_values}{a single \code{character} value for specifying which
+\item{exprs_values}{\code{Character scalar}. A single value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead.)}
 
-\item{scores}{A string specifying scores to be returned. Must be
+\item{scores}{\code{Character scalar}. Specifies scores to be returned. Must be
 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
 v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-'u' ((weighted) orthonormal site scores). (By default: \code{scores='wa'})}
+'u' ((weighted) orthonormal site scores). (Default: \code{'wa'})}
 
-\item{altexp}{String or integer scalar specifying an alternative experiment
+\item{altexp}{\code{Character or integer scalar}. Specifies an alternative experiment
 containing the input data.}
 
-\item{name}{the name to store the result in
+\item{name}{\code{Character}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 }
 \value{

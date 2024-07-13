@@ -35,41 +35,41 @@ object.}
 
 \item{...}{optional arguments (not used).}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. A single value for specifying which
+assay to use for calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay_name}{\code{Character scalar} A sinle value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{join}{A single character value for selecting the joining method.
+\item{join}{\code{Character scalar}. A value for selecting the joining method.
 Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
-when more than two objects are being merged.  (By default: \code{join = "full"})}
+when more than two objects are being merged.  (Default: \code{"full"})}
 
-\item{missing.values}{NA, 0, or a single character values specifying the notation
-of missing values. (By default: \code{missing.values = NA})}
+\item{missing.values}{NA, 0, or \code{Character scalar}. Specifies the notation
+of missing values. (By default: \code{NA})}
 
 \item{missing_values}{Deprecated. Use \code{missing.values} instead.}
 
-\item{collapse.cols}{A boolean value for selecting whether to collapse identically
-named samples to one. (By default: \code{collapse.cols = FALSE})}
+\item{collapse.cols}{\code{Logical scalar}. Determines whether to collapse identically
+named samples to one. (Default: \code{FALSE})}
 
 \item{collapse_samples}{Deprecated. Use \code{collapse.cols} instead.}
 
-\item{collapse.rows}{A boolean value for selecting whether to collapse identically
+\item{collapse.rows}{\code{Logical scalar}. Selects whether to collapse identically
 named features to one. Since all taxonomy information is taken into account,
 this concerns rownames-level (usually strain level) comparison. Often
 OTU or ASV level is just an arbitrary number series from sequencing machine
 meaning that the OTU information is not comparable between studies. With this
 option, it is possible to specify whether these strains are combined if their
 taxonomy information along with OTU number matches.
-(By default: \code{collapse.rows = TRUE})}
+(Default: \code{TRUE})}
 
 \item{collapse_features}{Deprecated. Use \code{collapse.rows} instead.}
 
-\item{verbose}{A single boolean value to choose whether to show messages.
-(By default: \code{verbose = TRUE})}
+\item{verbose}{\code{Logical scalar}. Choose whether to show messages.
+(Default: \code{TRUE})}
 
 \item{y}{a \code{\link{SummarizedExperiment}} object when \code{x} is a
 \code{\link{SummarizedExperiment}} object. Disabled when \code{x} is a list.}

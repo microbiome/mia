@@ -43,31 +43,32 @@ to the same type of features (aka. microorganisms).}
 
 \item{...}{optional arguments not used.}
 
-\item{weighted}{\code{TRUE} or \code{FALSE}: Should use weighted-Unifrac
+\item{weighted}{\code{Logical scalar}. Should use weighted-Unifrac
 calculation? Weighted-Unifrac takes into account the relative abundance of
 species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is \code{FALSE}, meaning the
 unweighted-Unifrac distance is calculated for all pairs of samples.}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. A single value for specifying which
+assay to use for calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay_name}{\code{Character scalar} A sinle value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{exprs_values}{a single \code{character} value for specifying which
+\item{exprs_values}{\code{Character scalar}. A single value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead.)}
 
-\item{tree.name}{a single \code{character} value for specifying which
+\item{tree.name}{\code{Character}. A single value for specifying which
 tree will be used in calculation.
-(By default: \code{tree.name = "phylo"})}
+(Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
-\item{transposed}{Logical scalar, is x transposed with samples in rows?}
+\item{transposed}{\code{Logical scalar}. Is x transposed with samples in rows?
+(Default: \code{FALSE})}
 
 \item{node.label}{if \code{x} is a matrix,
 a \code{character} vector specifying links between rows/columns and tips of \code{tree}.

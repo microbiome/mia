@@ -34,30 +34,30 @@ rarefyAssay(
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. A single value for specifying which
+assay to use for calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay_name}{\code{Character scalar} A sinle value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{sample}{A single integer value equal to the number of counts being
+\item{sample}{\code{Integer}. A single value equal to the number of counts being
 simulated i.e. rarefying depth. This can equal to lowest number of total
 counts found in a sample or a user specified number.}
 
 \item{min_size}{Deprecated. Use \code{sample} instead.}
 
-\item{replace}{Logical Default is \code{TRUE}. The default is with
+\item{replace}{\code{Logical scalar}. The default is with
 replacement (\code{replace=TRUE}).
 See \code{\link[phyloseq:rarefy_even_depth]{phyloseq::rarefy_even_depth}}
-for details on implications of this parameter.}
+for details on implications of this parameter. (Default: \code{TRUE})}
 
-\item{name}{the name to store the result in
+\item{name}{\code{Character}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
-\item{verbose}{Logical Default is \code{TRUE}. When \code{TRUE} an additional
-message about the random number used is printed.}
+\item{verbose}{\code{Logical scalar}. Choose whether to show messages.
+(Default: \code{TRUE})}
 
 \item{...}{additional arguments not used}
 }

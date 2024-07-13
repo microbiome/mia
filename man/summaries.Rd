@@ -46,23 +46,23 @@ summarizeDominance(x, group = NULL, name = "dominant_taxa", ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{top}{Numeric value, how many top taxa to return. Default return top
-five taxa.}
+\item{top}{\code{Numeric}. Determines how many top taxa to return. Default is
+to return top five taxa. (Default: \code{5})}
 
-\item{method}{Specify the method to determine top taxa. Either sum, mean,
-median or prevalence. Default is 'mean'.}
+\item{method}{\code{Character}. Specify the method to determine top taxa. Either
+sum, mean, median or prevalence. (Default: \code{"mean"})}
 
 \item{assay.type}{a \code{character} value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 By default it expects count data.}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay_name}{\code{Character scalar} A sinle value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{na.rm}{logical scalar: Should NA values be omitted when calculating
-prevalence? (default: \code{na.rm = TRUE})}
+\item{na.rm}{\code{Logical scalar}. Should NA values be omitted when calculating
+prevalence? (Default: \code{TRUE})}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
 \code{rank} is specified for \code{summarizeDominance}.}

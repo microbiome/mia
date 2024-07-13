@@ -31,26 +31,25 @@
 #'
 #' @inheritParams agglomerate-methods
 #'
-#' @param with.rank \code{TRUE} or \code{FALSE}: Should the level be add as a
-#'   suffix? For example: "Phylum:Crenarchaeota" (default:
-#'   \code{with.rank = FALSE})
+#' @param with.rank \code{logical}. Should the level be add as a
+#'   suffix? For example: "Phylum:Crenarchaeota". (Default: \code{FALSE})
 #' 
 #' @param with_rank Deprecated. Use \code{with.rank} instead.
 #'
-#' @param make.unique \code{TRUE} or \code{FALSE}: Should the labels be made
-#'   unique, if there are any duplicates? (default: \code{make.unique = TRUE})
+#' @param make.unique \code{Logical}. Should the labels be made
+#'   unique, if there are any duplicates? (Default: \code{TRUE})
 #' 
 #' @param make_unique Deprecated. Use \code{make.unique} instead.
 #'
-#' @param resolve.loops \code{TRUE} or \code{FALSE}: Should \code{resolveLoops}
+#' @param resolve.loops \code{Logical}. Should \code{resolveLoops}
 #'   be applied to the taxonomic data? Please note that has only an effect,
-#'   if the data is unique. (default: \code{resolve.loops = TRUE})
+#'   if the data is unique. (Default: \code{TRUE})
 #' 
 #' @param resolve_loops Deprecated. Use \code{resolve.loops} instead.
 #'
-#' @param taxa a \code{character} vector, which is used for subsetting the 
+#' @param taxa \code{Character vector}. Used for subsetting the 
 #'   taxonomic information. If no information is found,\code{NULL} is returned
-#'   for the individual element. (default: \code{NULL})
+#'   for the individual element. (Default: \code{NULL})
 #'
 #' @param from 
 #' \itemize{
@@ -60,18 +59,18 @@
 #'     \code{\link[DECIPHER:IdTaxa]{IdTaxa}}
 #' }
 #'
-#' @param to a scalar \code{character} value, which must be a valid 
-#'   taxonomic rank. (default: \code{NULL})
+#' @param to \code{Character Scalar}. Must be a valid 
+#'   taxonomic rank. (Default: \code{NULL})
 #'   
-#' @param use.grepl \code{TRUE} or \code{FALSE}: should pattern matching via
+#' @param use.grepl \code{Logical}. Should pattern matching via
 #'   \code{grepl} be used? Otherwise literal matching is used.
-#'   (default: \code{FALSE})
+#'   (Default: \code{FALSE})
 #' 
 #' @param use_grepl Deprecated. Use \code{use.grepl} instead.
 #'
 #' @param ... optional arguments not used currently.
 #' 
-#' @param ranks Avector of ranks to be set
+#' @param ranks \code{Character vector}. A vector of ranks to be set.
 #' @details
 #' Taxonomic information from the \code{IdTaxa} function of \code{DECIPHER}
 #' package are returned as a special class. With \code{as(taxa,"DataFrame")}

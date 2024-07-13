@@ -45,24 +45,25 @@ addDominant(x, name = "dominant_taxa", other.name = "Other", n = NULL, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. A single value for specifying which
+assay to use for calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay_name}{\code{Character scalar} A sinle value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{rank}{a single character defining a taxonomic rank. Must be a value of
+\item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
 
-\item{other.name}{A name for features that are not included in n the most frequent
-dominant features in the data. Default is "Other".}
+\item{other.name}{\code{Character scalar}. A name for features that are not
+included in n the most frequent dominant features in the data. (Default: {"Other"})}
 
-\item{n}{The number of features that are the most frequent dominant features.
-Default is NULL, which defaults that each sample is assigned a dominant taxon.}
+\item{n}{\code{Numeric}. The number of features that are the most frequent
+dominant features. Default is NULL, which defaults that each sample is assigned
+a dominant taxon. (Default: {NULL})}
 
-\item{complete}{A boolean value to manage multiple dominant taxa for a sample.
+\item{complete}{\code{Logical scalar}. A value to manage multiple dominant taxa for a sample.
 Default for getDominant is TRUE to include all equally dominant taxa
 for each sample. complete = FALSE samples one taxa for the samples that have
 multiple.
@@ -73,8 +74,8 @@ list that includes all dominant taxa for each sample into colData.}
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
 \code{rank} is specified.}
 
-\item{name}{A name for the column of the \code{colData} where the dominant
-taxa will be stored in when using \code{addDominant}.}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where the dominant taxa will be stored in when using \code{addDominant}.}
 }
 \value{
 \code{getDominant} returns a named character vector \code{x}
