@@ -46,7 +46,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate the Jensen-Shannon Divergence</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/pkg_load_msg/R/calculateJSD.R" class="external-link"><code>R/calculateJSD.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/calculateJSD.R" class="external-link"><code>R/calculateJSD.R</code></a></small>
     <div class="hidden name"><code>calculateJSD.Rd</code></div>
     </div>
 
@@ -78,8 +78,9 @@ object.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a numeric matrix or a
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>.</p></dd>
+<dd><p>a numeric matrix with samples as rows or a
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
+object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -105,13 +106,13 @@ assay to use for calculation.
 
 
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
-<dd><p>Logical scalar, is x transposed with cells in rows?</p></dd>
+<dd><p>Logical scalar, is x transposed with samples in rows?</p></dd>
 
 
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>A
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallelParam</a></code>
-object specifying whether the JSD calculation should be parallelized.</p></dd>
+object specifying whether the UniFrac calculation should be parallelized.</p></dd>
 
 
 <dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>

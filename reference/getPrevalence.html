@@ -45,7 +45,7 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculation prevalence information for features across samples</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/pkg_load_msg/R/getPrevalence.R" class="external-link"><code>R/getPrevalence.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/getPrevalence.R" class="external-link"><code>R/getPrevalence.R</code></a></small>
     <div class="hidden name"><code>getPrevalence.Rd</code></div>
     </div>
 
@@ -153,9 +153,9 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a
+<dd><p>a numeric matrix with samples as rows or a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-object</p></dd>
+object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -199,9 +199,8 @@ prevalence? (default: <code>na.rm = TRUE</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>A single character value for selecting the
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
-to use for prevalence calculation.</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>

@@ -45,7 +45,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Canonical Correspondence Analysis and Redundancy Analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/pkg_load_msg/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
     <div class="hidden name"><code>runCCA.Rd</code></div>
     </div>
 
@@ -115,12 +115,9 @@ in a <code>SummarizedExperiment</code>.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>For <code>calculate*</code> a
+<dd><p>a numeric matrix with samples as rows or a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-or a numeric matrix with columns as samples</p>
-<p>For <code>run*</code> a
-<code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></code>
-or a derived object.</p></dd>
+object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -197,8 +194,8 @@ containing the input data.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>String specifying the name to be used to store the result in the
-reducedDims of the output.</p></dd>
+<dd><p>the name to store the result in
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">metadata</a></code></p></dd>
 
 </dl></div>
     <div id="value">
@@ -211,7 +208,10 @@ significance analysis results.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>*CCA functions utilize <code>vegan:cca</code> and *RDA functions <code>vegan:dbRDA</code>.
+    <p>For <code>run*</code> a
+<code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></code>
+or a derived object.</p>
+<p>*CCA functions utilize <code>vegan:cca</code> and *RDA functions <code>vegan:dbRDA</code>.
 By default dbRDA is done with euclidean distances which equals to RDA.</p>
 <p>Significance tests are done with <code>vegan:anova.cca</code> (PERMANOVA). Group
 dispersion, i.e., homogeneity within groups is analyzed with

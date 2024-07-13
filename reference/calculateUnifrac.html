@@ -46,7 +46,7 @@ object. The function utilizes rbiom:unifrac()."><!-- mathjax --><script src="htt
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate weighted or unweighted (Fast) Unifrac distance</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/pkg_load_msg/R/calculateUnifrac.R" class="external-link"><code>R/calculateUnifrac.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/calculateUnifrac.R" class="external-link"><code>R/calculateUnifrac.R</code></a></small>
     <div class="hidden name"><code>calculateUnifrac.Rd</code></div>
     </div>
 
@@ -89,13 +89,9 @@ object. The function utilizes <code><a href="https://rdrr.io/pkg/rbiom/man/unifr
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a numeric matrix or a
-<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>
-object containing a tree.</p>
-<p>Please  note that <code>runUnifrac</code> expects a matrix with samples per row
-and not per column. This is implemented to be compatible with other
-distance calculations such as <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></code> as much as
-possible.</p></dd>
+<dd><p>a numeric matrix with samples as rows or a
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
+object.</p></dd>
 
 
 <dt id="arg-tree">tree<a class="anchor" aria-label="anchor" href="#arg-tree"></a></dt>
@@ -146,9 +142,7 @@ tree will be used in calculation.
 
 
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
-<dd><p>Logical scalar, is x transposed with cells in rows, i.e.,
-is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
-(By default: <code>transposed = FALSE</code>)</p></dd>
+<dd><p>Logical scalar, is x transposed with samples in rows?</p></dd>
 
 
 <dt id="arg-node-label">node.label<a class="anchor" aria-label="anchor" href="#arg-node-label"></a></dt>
@@ -170,6 +164,10 @@ node labs must be present in <code>tree</code>.</p></dd>
     <h2>Details</h2>
     <p>Please note that if <code>calculateUnifrac</code> is used as a <code>FUN</code> for
 <code>runMDS</code>, the argument <code>ntop</code> has to be set to <code>nrow(x)</code>.</p>
+<p>Please  note that <code>runUnifrac</code> expects a matrix with samples per row
+and not per column. This is implemented to be compatible with other
+distance calculations such as <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></code> as much as
+possible.</p>
     </div>
     <div id="references">
     <h2>References</h2>

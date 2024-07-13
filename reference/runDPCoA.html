@@ -46,7 +46,7 @@ reducedDims and are available for all the expected functions."><!-- mathjax --><
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculation of Double Principal Correspondance analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/pkg_load_msg/R/runDPCoA.R" class="external-link"><code>R/runDPCoA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/runDPCoA.R" class="external-link"><code>R/runDPCoA.R</code></a></small>
     <div class="hidden name"><code>runDPCoA.Rd</code></div>
     </div>
 
@@ -95,12 +95,9 @@ reducedDims and are available for all the expected functions."><!-- mathjax --><
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>For <code>getDPCoA</code>, a numeric matrix of expression values
-where rows are features and columns are cells.
-Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.</p>
-<p>For <code>addDPCoA</code> a <a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a> containing the
-expression values as well as a <code>rowTree</code> to calculate <code>y</code> using
-<code><a href="https://rdrr.io/pkg/ape/man/cophenetic.phylo.html" class="external-link">cophenetic.phylo</a></code>.</p></dd>
+<dd><p>a numeric matrix with samples as rows or a
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
+object.</p></dd>
 
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
@@ -138,7 +135,7 @@ integer vector of row indices or a logical vector.</p></dd>
 
 
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
-<dd><p>Logical scalar, is x transposed with cells in rows?</p></dd>
+<dd><p>Logical scalar, is x transposed with samples in rows?</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
@@ -175,8 +172,8 @@ containing the input data.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>String specifying the name to be used to store the result in the
-reducedDims of the output.</p></dd>
+<dd><p>the name to store the result in
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">metadata</a></code></p></dd>
 
 </dl></div>
     <div id="value">
@@ -188,7 +185,10 @@ columns</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>In addition to the reduced dimension on the features, the reduced dimension
+    <p>For <code>addDPCoA</code> a <a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a> containing the
+expression values as well as a <code>rowTree</code> to calculate <code>y</code> using
+<code><a href="https://rdrr.io/pkg/ape/man/cophenetic.phylo.html" class="external-link">cophenetic.phylo</a></code>.</p>
+<p>In addition to the reduced dimension on the features, the reduced dimension
 for samples are returned as well as <code>sample_red</code> attribute.
 <code>eig</code>, <code>feature_weights</code> and <code>sample_weights</code> are
 returned as attributes as well.</p>

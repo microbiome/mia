@@ -51,7 +51,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Agglomerate or merge data using taxonomic information</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/pkg_load_msg/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/pkg_load_msg/R/getPrevalence.R" class="external-link"><code>R/getPrevalence.R</code></a>, <a href="https://github.com/microbiome/mia/blob/pkg_load_msg/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/harm/R/getPrevalence.R" class="external-link"><code>R/getPrevalence.R</code></a>, <a href="https://github.com/microbiome/mia/blob/harm/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
     <div class="hidden name"><code>agglomerate-methods.Rd</code></div>
     </div>
 
@@ -189,9 +189,9 @@ experiments and flattens them again into a single
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a
+<dd><p>a numeric matrix with samples as rows or a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-object</p></dd>
+object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -206,10 +206,8 @@ See <code>agglomerateByRank</code> for more details.</p></dd>
 
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should taxa with an empty rank be
-removed? Use it with caution, since results with NA on the selected rank
-will be dropped. This setting can be tweaked by defining
-<code>empty.fields</code> to your needs. (default: <code>na.rm = TRUE</code>)</p></dd>
+<dd><p>logical scalar: Should NA values be omitted when calculating
+prevalence? (default: <code>na.rm = TRUE</code>)</p></dd>
 
 
 <dt id="arg-empty-fields">empty.fields<a class="anchor" aria-label="anchor" href="#arg-empty-fields"></a></dt>
