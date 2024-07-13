@@ -106,7 +106,7 @@ to the same type of features (aka. microorganisms).</p></dd>
 
 
 <dt id="arg-weighted">weighted<a class="anchor" aria-label="anchor" href="#arg-weighted"></a></dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should use weighted-Unifrac
+<dd><p><code>Logical scalar</code>. Should use weighted-Unifrac
 calculation? Weighted-Unifrac takes into account the relative abundance of
 species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is <code>FALSE</code>, meaning the
@@ -114,27 +114,27 @@ unweighted-Unifrac distance is calculated for all pairs of samples.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.</p></dd>
+<dd><p><code>Character scalar</code>. A single value for specifying which
+assay to use for calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
+<dd><p><code>Character scalar</code> A sinle value for specifying which
 assay to use for calculation.
 (Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
 <dt id="arg-exprs-values">exprs_values<a class="anchor" aria-label="anchor" href="#arg-exprs-values"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
+<dd><p><code>Character scalar</code>. A single value for specifying which
 assay to use for calculation.
 (Please use <code>assay.type</code> instead.)</p></dd>
 
 
 <dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
+<dd><p><code>Character</code>. A single value for specifying which
 tree will be used in calculation.
-(By default: <code>tree.name = "phylo"</code>)</p></dd>
+(Default: <code>"phylo"</code>)</p></dd>
 
 
 <dt id="arg-tree-name">tree_name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
@@ -142,7 +142,8 @@ tree will be used in calculation.
 
 
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
-<dd><p>Logical scalar, is x transposed with samples in rows?</p></dd>
+<dd><p><code>Logical scalar</code>. Is x transposed with samples in rows?
+(Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-node-label">node.label<a class="anchor" aria-label="anchor" href="#arg-node-label"></a></dt>

@@ -96,19 +96,19 @@ object.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.</p></dd>
+<dd><p><code>Character scalar</code>. A single value for specifying which
+assay to use for calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
+<dd><p><code>Character scalar</code> A sinle value for specifying which
 assay to use for calculation.
 (Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
 <dt id="arg-sample">sample<a class="anchor" aria-label="anchor" href="#arg-sample"></a></dt>
-<dd><p>A single integer value equal to the number of counts being
+<dd><p><code>Integer</code>. A single value equal to the number of counts being
 simulated i.e. rarefying depth. This can equal to lowest number of total
 counts found in a sample or a user specified number.</p></dd>
 
@@ -118,20 +118,20 @@ counts found in a sample or a user specified number.</p></dd>
 
 
 <dt id="arg-replace">replace<a class="anchor" aria-label="anchor" href="#arg-replace"></a></dt>
-<dd><p>Logical Default is <code>TRUE</code>. The default is with
+<dd><p><code>Logical scalar</code>. The default is with
 replacement (<code>replace=TRUE</code>).
 See <code><a href="https://rdrr.io/pkg/phyloseq/man/rarefy_even_depth.html" class="external-link">phyloseq::rarefy_even_depth</a></code>
-for details on implications of this parameter.</p></dd>
+for details on implications of this parameter. (Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>the name to store the result in
+<dd><p><code>Character</code>. The name to store the result in
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">metadata</a></code></p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p>Logical Default is <code>TRUE</code>. When <code>TRUE</code> an additional
-message about the random number used is printed.</p></dd>
+<dd><p><code>Logical scalar</code>. Choose whether to show messages.
+(Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

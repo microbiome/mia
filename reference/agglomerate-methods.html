@@ -201,17 +201,17 @@ See <code>agglomerateByRank</code> for more details.</p></dd>
 
 
 <dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
-<dd><p>a single character defining a taxonomic rank. Must be a value of
+<dd><p><code>Character scalar</code>. Defines a taxonomic rank. Must be a value of
 <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
 
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
-<dd><p>logical scalar: Should NA values be omitted when calculating
-prevalence? (default: <code>na.rm = TRUE</code>)</p></dd>
+<dd><p><code>Logical scalar</code>. Should NA values be omitted when calculating
+prevalence? (Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-empty-fields">empty.fields<a class="anchor" aria-label="anchor" href="#arg-empty-fields"></a></dt>
-<dd><p>a <code>character</code> value defining, which values should be
+<dd><p><code>Character</code>. A value defining, which values should be
 regarded as empty. (Default: <code>c(NA, "", " ", "\t")</code>). They will be
 removed if <code>na.rm = TRUE</code> before agglomeration.</p></dd>
 
@@ -273,22 +273,22 @@ summary of non-prevalent taxa. (default: <code>other.label = "Other"</code>)</p>
 
 
 <dt id="arg-ranks">ranks<a class="anchor" aria-label="anchor" href="#arg-ranks"></a></dt>
-<dd><p>a character vector defining taxonomic ranks. Must all be values
+<dd><p><code>Character vector</code>. Defines taxonomic ranks. Must all be values
 of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
 
 
 <dt id="arg-as-list">as.list<a class="anchor" aria-label="anchor" href="#arg-as-list"></a></dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the list of
+<dd><p><code>Logical</code>. Should the list of
 <code>SummarizedExperiment</code> objects be returned by the function
 <code>agglomerateByRanks</code> as a SimpleList or stored in altExps?
-(default: <code>as.list = FALSE</code>)</p></dd>
+(Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-keep-dimred">keep.dimred<a class="anchor" aria-label="anchor" href="#arg-keep-dimred"></a></dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the
+<dd><p><code>Logical</code>. Should the
 <code>reducedDims(x)</code> be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(default: <code>keep.dimred = FALSE</code>)</p></dd>
+(Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-keep-reduceddims">keep_reducedDims<a class="anchor" aria-label="anchor" href="#arg-keep-reduceddims"></a></dt>

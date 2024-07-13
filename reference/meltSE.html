@@ -100,25 +100,25 @@ object.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.</p></dd>
+<dd><p><code>Character scalar</code>. A single value for specifying which
+assay to use for calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
+<dd><p><code>Character scalar</code> A sinle value for specifying which
 assay to use for calculation.
 (Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
 <dt id="arg-add-row">add.row<a class="anchor" aria-label="anchor" href="#arg-add-row"></a></dt>
-<dd><p><code>NULL</code>, <code>TRUE</code> or a <code>character</code> vector to
+<dd><p><code>Logical scalar</code> or a <code>Character vector</code>. To
 select information from the <code>rowData</code> to add to the molten assay data.
 If <code>add.row = NULL</code> no data will be added, if
 <code>add.row = TRUE</code> all data will be added and if
 <code>add.row</code> is a <code>character</code> vector, it will be used to subset
-to given column names in <code>rowData</code>. (default:
-<code>add.row = NULL</code>)</p></dd>
+to given column names in <code>rowData</code>. (Default:
+<code>NULL</code>)</p></dd>
 
 
 <dt id="arg-add-row-data">add_row_data<a class="anchor" aria-label="anchor" href="#arg-add-row-data"></a></dt>
@@ -140,8 +140,8 @@ to given column names in <code>colData</code>. (default:
 
 
 <dt id="arg-row-name">row.name<a class="anchor" aria-label="anchor" href="#arg-row-name"></a></dt>
-<dd><p>a <code>character</code> scalar to use as the output's name
-for the feature identifier. (default: <code>row.name = "FeatureID"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. To use as the output's name
+for the feature identifier. (Default: <code>"FeatureID"</code>)</p></dd>
 
 
 <dt id="arg-feature-name">feature_name<a class="anchor" aria-label="anchor" href="#arg-feature-name"></a></dt>
@@ -149,8 +149,8 @@ for the feature identifier. (default: <code>row.name = "FeatureID"</code>)</p></
 
 
 <dt id="arg-col-name">col.name<a class="anchor" aria-label="anchor" href="#arg-col-name"></a></dt>
-<dd><p>a <code>character</code> scalar to use as the output's name
-for the sample identifier. (default: <code>col.name = "SampleID"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. To use as the output's name
+for the sample identifier. (Default: <code>"SampleID"</code>)</p></dd>
 
 
 <dt id="arg-sample-name">sample_name<a class="anchor" aria-label="anchor" href="#arg-sample-name"></a></dt>

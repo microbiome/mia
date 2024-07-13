@@ -158,43 +158,43 @@ into a CA analysis and dbRDA into PCoA/MDS.</p></dd>
 
 
 <dt id="arg-test-signif">test.signif<a class="anchor" aria-label="anchor" href="#arg-test-signif"></a></dt>
-<dd><p>a logical scalar, should the PERMANOVA and analysis of
+<dd><p><code>Logical scalar</code>. Should the PERMANOVA and analysis of
 multivariate homogeneity of group dispersions be performed.
-(By default: <code>test.signif = TRUE</code>)</p></dd>
+(Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.</p></dd>
+<dd><p><code>Character scalar</code>. A single value for specifying which
+assay to use for calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
+<dd><p><code>Character scalar</code> A sinle value for specifying which
 assay to use for calculation.
 (Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
 <dt id="arg-exprs-values">exprs_values<a class="anchor" aria-label="anchor" href="#arg-exprs-values"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
+<dd><p><code>Character scalar</code>. A single value for specifying which
 assay to use for calculation.
 (Please use <code>assay.type</code> instead.)</p></dd>
 
 
 <dt id="arg-scores">scores<a class="anchor" aria-label="anchor" href="#arg-scores"></a></dt>
-<dd><p>A string specifying scores to be returned. Must be
+<dd><p><code>Character scalar</code>. Specifies scores to be returned. Must be
 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
 v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-'u' ((weighted) orthonormal site scores). (By default: <code>scores='wa'</code>)</p></dd>
+'u' ((weighted) orthonormal site scores). (Default: <code>'wa'</code>)</p></dd>
 
 
 <dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
-<dd><p>String or integer scalar specifying an alternative experiment
+<dd><p><code>Character or integer scalar</code>. Specifies an alternative experiment
 containing the input data.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>the name to store the result in
+<dd><p><code>Character</code>. The name to store the result in
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">metadata</a></code></p></dd>
 
 </dl></div>

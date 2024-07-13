@@ -96,23 +96,24 @@ then stores results in <code>colData</code>.</p>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>the name of the assay used for calculation of the
-sample-wise estimates. (Default: <code>"counts"</code>)</p></dd>
+<dd><p><code>Character vector</code>. The name of the assay used for
+calculation of the sample-wise estimates. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-index">index<a class="anchor" aria-label="anchor" href="#arg-index"></a></dt>
-<dd><p>a <code>character</code> vector, specifying the alpha diversity
+<dd><p><code>Character vector</code>. Specifies the alpha diversity
 indices to be calculated.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>a name for the column(s) of the colData the results should be
+<dd><p><code>Character</code>. A name for the column(s) of the colData the
+results should be
 stored in. By default this will use the original names of the calculated
 indices. (Default: <code>index</code>)</p></dd>
 
 
 <dt id="arg-niter">niter<a class="anchor" aria-label="anchor" href="#arg-niter"></a></dt>
-<dd><p><code>NULL</code> or a single <code>integer</code> value for the number of
+<dd><p><code>Integer</code>. A single value for the number of
 rarefaction rounds. Rarefaction is not applied when <code>niter=NULL</code>
 (see Details section). (Default: <code>NULL</code>)</p></dd>
 

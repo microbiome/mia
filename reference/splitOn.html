@@ -103,12 +103,12 @@ list by their group names.</p></li>
 
 
 <dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
-<dd><p>A single character value for selecting the grouping variable
+<dd><p><code>Character</code>. A single value for selecting the grouping variable
 from <code>rowData</code> or <code>colData</code> or a <code>factor</code> or <code>vector</code>
 with the same length as one of the dimensions. If <code>f</code> matches with both
 dimensions, <code>by</code> must be specified.
 Split by cols is not encouraged, since this is not compatible with
-storing the results in <code>altExps</code>.</p></dd>
+storing the results in <code>altExps</code>. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-update-tree">update.tree<a class="anchor" aria-label="anchor" href="#arg-update-tree"></a></dt>
@@ -122,8 +122,8 @@ storing the results in <code>altExps</code>.</p></dd>
 
 
 <dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
-<dd><p>a <code>character</code> vector specifying the alternative experiments
-to be unsplit. (By default: <code>altexp = names(altExps(x))</code>)</p></dd>
+<dd><p><code>Character vector</code>. Specify the alternative experiments
+to be unsplit. (Default: <code>names(altExps(x))</code>)</p></dd>
 
 
 <dt id="arg-altexpnames">altExpNames<a class="anchor" aria-label="anchor" href="#arg-altexpnames"></a></dt>
@@ -131,10 +131,10 @@ to be unsplit. (By default: <code>altexp = names(altExps(x))</code>)</p></dd>
 
 
 <dt id="arg-keep-dimred">keep.dimred<a class="anchor" aria-label="anchor" href="#arg-keep-dimred"></a></dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the
+<dd><p><code>Logical</code>. Should the
 <code>reducedDims(x)</code> be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(default: <code>keep.dimred = FALSE</code>)</p></dd>
+(Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-keep-reduceddims">keep_reducedDims<a class="anchor" aria-label="anchor" href="#arg-keep-reduceddims"></a></dt>
