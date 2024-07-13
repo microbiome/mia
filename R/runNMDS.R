@@ -35,9 +35,6 @@
 #' 
 #' @param n_dimred Deprecated. Use \code{ndimred} instead.
 #'
-#' @param altexp String or integer scalar specifying an alternative experiment
-#'   containing the input data.
-#'
 #' @return For \code{getNMDS}, a matrix is returned containing the MDS
 #'   coordinates for each sample (row) and dimension (column).
 #'

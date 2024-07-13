@@ -84,6 +84,9 @@ rowTree will be used in calculation.
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
+\item{altexp}{String or integer scalar specifying an alternative experiment
+containing the input data.}
+
 \item{name}{the name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 }

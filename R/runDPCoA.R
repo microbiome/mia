@@ -34,6 +34,9 @@
 #'   (By default: \code{tree.name = "phylo"})
 #' 
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
+#' 
+#' @param altexp String or integer scalar specifying an alternative experiment
+#'   containing the input data.
 #'
 #' @param ... Currently not used.
 #'
