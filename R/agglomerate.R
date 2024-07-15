@@ -37,44 +37,44 @@
 #'   to \code{getPrevalence} and \code{getPrevalentTaxa} and used in
 #'   \code{agglomeratebyPrevalence}
 #'   \itemize{
-#'        \item \code{empty.ranks.rm}: A single boolean value for selecting
+#'        \item \code{empty.ranks.rm}: \code{Logical scalar}. Determines
 #'        whether to remove those columns of rowData that include only NAs after
-#'        agglomeration. (By default: \code{empty.ranks.rm = FALSE})
-#'        \item \code{make.unique}: A single boolean value for selecting
-#'        whether to make rownames unique. (By default: \code{make.unique = TRUE})
+#'        agglomeration. (Default: \code{FALSE})
+#'        \item \code{make.unique}:  \code{Logical scalar}. Determines
+#'        whether to make rownames unique. (Default: \code{TRUE})
 #'        \item \code{detection}: The threshold value for determining presence
 #'        or absence. A value in \code{x} must exceed this threshold to be
 #'        considered present.
-#'        \item \code{assay.type}: A single character value specifying assay to
+#'        \item \code{assay.type}:  \code{Character scalar}. Specifies the assay used to
 #'        calculate prevalence. (Default: \code{"counts"})
 #'        \item \code{prevalence}: Prevalence threshold (in 0 to 1). The
 #'        required prevalence is strictly greater by default. To include the
 #'        limit, set \code{include.lowest} to \code{TRUE}.
-#'        \item \code{update.refseq} \code{TRUE} or \code{FALSE}: Should a
+#'        \item \code{update.refseq}: \code{Logical scalar}. Should a
 #'        consensus sequence be calculated? If set to \code{FALSE}, the result
 #'        from \code{archetype} is returned; If set to \code{TRUE} the result
 #'        from
 #'        \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
-#'        is returned. (Default: \code{update.refseq = FALSE})
+#'        is returned. (Default: \code{FALSE})
 #'        \item \code{archetype} Of each level of \code{f}, which element should
 #'        be regarded as the archetype and metadata in the columns or rows kept,
 #'        while merging? This can be single integer value or an integer vector
 #'        of the same length as \code{levels(f)}. (Default:
-#'        \code{archetype = 1L}, which means the first element encountered per
+#'        \code{1L}, which means the first element encountered per
 #'        factor level will be kept)
 #'    }
 #'
-#' @param altexp String or integer scalar specifying an alternative experiment
-#'   containing the input data.
+#' @param altexp  \code{Character scalar} or  \code{integer scalar}. 
+#'   Specifies an alternative experiment containing the input data.
 #'
-#' @param altexp.rm \code{TRUE} or \code{FALSE}: Should alternative
-#'   experiments be removed prior to agglomeration? This prevents to many
-#'   nested alternative experiments by default (default:
-#'   \code{altexp.rm = TRUE})
+#' @param altexp.rm  \code{Logical scalar}. Should alternative
+#'   experiments be removed prior to agglomeration? This prevents too many
+#'   nested alternative experiments by default. (Default:
+#'   \code{TRUE})
 #' 
 #' @param strip_altexp Deprecated. Use \code{altexp.rm} instead.
 #'
-#' @param by A character value for selecting if data is merged
+#' @param by  \code{Character scalar}. Determines if data is merged
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}.
 #'
@@ -83,8 +83,8 @@
 #'   merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
 #'   returned unchanged.
 #'
-#' @param update.tree \code{TRUE} or \code{FALSE}: Should
-#'   \code{rowTree()} also be merged? (Default: \code{update.tree = FALSE})
+#' @param update.tree  \code{Logical scalar}. Should
+#'   \code{rowTree()} also be merged? (Default: \code{FALSE})
 #' 
 #' @param mergeTree Deprecated. Use \code{update.tree} instead.
 #'

@@ -55,30 +55,29 @@ rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
 
 \item{...}{optional arguments:
 \itemize{
-\item \code{sample}: A \code{numeric} value specifying the rarefaction
+\item \code{sample}: \code{Numeric scalar}. Specifies the rarefaction
 depth i.e. the number of counts drawn from each sample.
 (Default: \code{min(colSums2(assay(x, assay.type)))})
 
-\item \code{tree.name}: (Faith's index) A single \code{character}
-value for specifying which rowTree will be used.
-(Default: \code{"phylo"})
+\item \code{tree.name}: \code{Character scalar}.Specifies which rowTree
+will be used. ( Faith's index). (Default: \code{"phylo"})
 
-\item \code{node.label}: (Faith's index) \code{NULL} or a
-\code{character} vector specifying the links between rows and node labels
-of phylogeny tree specified by \code{tree.name}. If a certain row is not
-linked with the tree, missing instance should be noted as NA. When
-\code{NULL}, all the rownames should be found from the tree.
-(Default: \code{NULL})
+\item \code{node.label}: \code{Character vector} or \code{NULL} Specifies the
+links between rows and node labels of phylogeny tree specified
+by \code{tree.name}. If a certain row is not linked with the tree, missing
+instance should be noted as NA. When \code{NULL}, all the rownames should
+be found from the tree. (Faith's index). (Default: \code{NULL})
 
-\item \code{only.tips}: (Faith's index) A \code{boolean} value
-specifying whether to remove internal nodes when Faith's index is
+\item \code{only.tips}: \code{Logical scalar}. Specifies
+whether to remove internal nodes when Faith's index is
 calculated. When \code{only.tips=TRUE}, those rows that are not tips of
-tree are removed. (Default: \code{FALSE})
+tree are removed. (Faith's index). (Default: \code{FALSE})
 
-\item \code{threshold}: (coverage and all evenness indices) A numeric value
-in the unit interval determining the threshold for coverage and evenness
+\item \code{threshold}: \code{Numeric scalar}. From \code{0 to 1}, determines
+the threshold for coverage and evenness
 indices. When evenness indices are calculated values under or equal to
-this threshold are denoted as zeroes. For coverage index, see details.
+this threshold are denoted as zeroes. (coverage and all evenness indices).
+For coverage index, see details.
 (Default: \code{0.5} for coverage, \code{0} for evenness indices)
 
 \item \code{quantile}: (log modulo skewness index) Arithmetic abundance
@@ -99,8 +98,8 @@ Aggregate the values for top members selected by \code{ntaxa} or not. If
 relative abundance is returned for the single taxa with the indicated rank
 (default: \code{aggregate = TRUE}).
 
-\item \code{detection}: (observed index) A \code{numeric} value for
-selecting detection threshold for the abundances. (Default: \code{0})
+\item \code{detection}: \code{Numeric scalar} Selects
+detection threshold for the abundances. (observed index). (Default: \code{0})
 }}
 }
 \value{

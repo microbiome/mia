@@ -16,17 +16,16 @@ path of the sample metadata file. The file must be in \code{tsv} format
 
 \item{...}{additional arguments:
 \itemize{
-\item \code{assay.type}: A single character value for naming
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{assay}}
-(default: \code{assay.type = "counts"})
-\item \code{prefix.rm}: \code{TRUE} or \code{FALSE}: Should
-taxonomic prefixes be removed? (default:
-\code{prefix.rm = FALSE})
-\item \code{remove.suffix}: \code{TRUE} or \code{FALSE}: Should
+\item \code{assay.type}:  \code{Character scalar}. Specifes the name of the assy
+used in calculation.
+(Default: \code{"counts"})
+\item \code{prefix.rm}:  \code{Logical scalar}. Should
+taxonomic prefixes be removed? (Default: \code{FALSE})
+\item \code{remove.suffix}: \code{Logical scalar}. Should
 suffixes of sample names be removed? HUMAnN pipeline adds suffixes
 to sample names. Suffixes are formed from file names. By selecting
 \code{remove.suffix = TRUE}, you can remove pattern from end of sample
-names that is shared by all. (default: \code{remove.suffix = FALSE})
+names that is shared by all. (Default: \code{FALSE})
 }}
 }
 \value{

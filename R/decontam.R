@@ -33,11 +33,11 @@
 #'   \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}.
 #'   Currently these are \code{method} and \code{batch.combine}.
 #'
-#' @param threshold numeric scalar. See
+#' @param threshold  \code{Numeric scalar}.. See
 #'   \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 #'   \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}
 #'
-#' @param normalize,detailed logical scalar. See
+#' @param normalize \code{Logical scalar}. See
 #'   \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 #'   \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}
 #'

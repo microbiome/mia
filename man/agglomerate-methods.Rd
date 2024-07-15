@@ -146,7 +146,7 @@ prevalence? (Default: \code{TRUE})}
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 removed if \code{na.rm = TRUE} before agglomeration.}
 
-\item{by}{A character value for selecting if data is merged
+\item{by}{\code{Character scalar}. Determines if data is merged
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}
 
@@ -160,13 +160,13 @@ returned unchanged.}
 
 \item{mergeTree}{Deprecated. Use \code{update.tree} instead.}
 
-\item{altexp}{String or integer scalar specifying an alternative experiment
-containing the input data.}
+\item{altexp}{\code{Character scalar} or  \code{integer scalar}.
+Specifies an alternative experiment containing the input data.}
 
-\item{altexp.rm}{\code{TRUE} or \code{FALSE}: Should alternative
-experiments be removed prior to agglomeration? This prevents to many
-nested alternative experiments by default (default:
-\code{altexp.rm = TRUE})}
+\item{altexp.rm}{\code{Logical scalar}. Should alternative
+experiments be removed prior to agglomeration? This prevents too many
+nested alternative experiments by default. (Default:
+\code{TRUE})}
 
 \item{strip_altexp}{Deprecated. Use \code{altexp.rm} instead.}
 

@@ -20,7 +20,7 @@
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
-#'   \item \code{reference}: \code{Character}. A single value which will be used 
+#'   \item \code{reference}: \code{Character scalar}. use to
 #'   to fill reference sample's column in returned assay when calculating alr. 
 #'   (Default: \code{NA})
 #'   \item \code{ref_vals} Deprecated. Use \code{reference} instead.

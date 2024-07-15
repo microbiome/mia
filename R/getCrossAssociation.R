@@ -111,11 +111,11 @@
 #'
 #' @param ... Additional arguments:
 #'    \itemize{
-#'        \item \code{symmetric}:  A single boolean value for specifying if 
+#'        \item \code{symmetric}:   \code{Logical scalar}. Specifies if 
 #'        measure is symmetric or not. When \code{symmetric = TRUE}, associations
 #'        are calculated only for unique variable-pairs, and they are assigned to 
 #'        corresponding variable-pair. This decreases the number of calculations in 2-fold 
-#'        meaning faster execution. (By default: \code{symmetric = FALSE}) 
+#'        meaning faster execution. (By default: \code{FALSE}) 
 #'        \item \code{association.fun}:  A function that is used to calculate (dis-)similarity
 #'        between features. Function must take matrix as an input and give numeric
 #'        values as an output. Adjust \code{method} and other parameters correspondingly.

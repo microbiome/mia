@@ -67,11 +67,11 @@ non-control samples. (Default: \code{NULL})}
 column with values interpretable as a factor from the \code{colData} to use
 as batch information. (Default: \code{NULL})}
 
-\item{threshold}{numeric scalar. See
+\item{threshold}{\code{Numeric scalar}.. See
 \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
 
-\item{normalize, detailed}{logical scalar. See
+\item{normalize}{\code{Logical scalar}. See
 \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
 

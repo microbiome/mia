@@ -46,7 +46,7 @@ assay used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{add.row}{\code{Logical scalar} or a \code{Character vector}. To
+\item{add.row}{\code{Logical scalar} or \code{Character vector}. To
 select information from the \code{rowData} to add to the molten assay data.
 If \code{add.row = NULL} no data will be added, if
 \code{add.row = TRUE} all data will be added and if
@@ -56,13 +56,12 @@ to given column names in \code{rowData}. (Default:
 
 \item{add_row_data}{Deprecated. Use \code{add.row} instead.}
 
-\item{add.col}{\code{NULL}, \code{TRUE} or a \code{character} vector to
+\item{add.col}{\code{Logical scalar}. \code{NULL},or \code{character vector}. Used to
 select information from the \code{colData} to add to the molten assay data.
 If \code{add.col = NULL} no data will be added, if
 \code{add.col = TRUE} all data will be added and if
 \code{add.col} is a \code{character} vector, it will be used to subset
-to given column names in \code{colData}. (default:
-\code{add.col = NULL})}
+to given column names in \code{colData}. (Default: \code{NULL})}
 
 \item{add_col_data}{Deprecated. Use \code{add.col} instead.}
 
@@ -78,10 +77,10 @@ for the sample identifier. (Default: \code{"SampleID"})}
 
 \item{...}{optional arguments:
 \itemize{
-\item check_names: A boolean value passed to data.frame function's check.name
+\item check_names: \code{Logical scalar}. Passed to data.frame function's check.name
 argument. Determines if sample names are checked that they are syntactically
 valid variable names and are not duplicated. If they are not, sample names
-are modified. (default: \code{check_names = TRUE})
+are modified. (Default: \code{TRUE})
 }}
 }
 \value{

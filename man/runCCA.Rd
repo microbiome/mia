@@ -75,17 +75,17 @@ other internal functions.
 \itemize{
 \item{\code{method} a dissimilarity measure to be applied in dbRDA and
 possible following homogeneity test. (By default: \code{method="euclidean"})}
-\item{\code{scale} a logical scalar, should the expression values be
+\item{\code{scale}: \code{Logical scalar}. Should the expression values be
 standardized? \code{scale} is disabled when using \code{*RDA} functions.
-Please scale before performing RDA. (By default: \code{scale=TRUE})}
-\item{\code{full} a logical scalar, should all the results from the
+Please scale before performing RDA. (Default: \code{TRUE})}
+\item{\code{full} \code{Logical scalar}. should all the results from the
 significance calculations be returned. When \code{full=FALSE}, only
-summary tables are returned. (By default: \code{full=FALSE})}
-\item{\code{homogeneity.test} a single \code{character} value for specifying
+summary tables are returned. (Default: \code{FALSE})}
+\item{\code{homogeneity.test}: \code{Character scalar}. Specifies
 the significance test used to analyse \code{vegan::betadisper} results.
 Options include 'permanova' (\code{vegan::permutest}), 'anova'
 (\code{stats::anova}) and 'tukeyhsd' (\code{stats::TukeyHSD}).
-(By default: \code{homogeneity.test="permanova"})}
+(Default: \code{"permanova"})}
 }}
 
 \item{formula}{If \code{x} is a

@@ -24,24 +24,21 @@ path of the phylogenetic tree.
 
 \item{...}{additional arguments:
 \itemize{
-\item \code{assay.type}: A single character value for naming
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-(default: \code{assay.type = "counts"})
-\item \code{assay_name}: A single \code{character} value for specifying which
-assay to use for calculation. (Please use \code{assay.type} instead.
-At some point \code{assay_name} will be disabled.)
-\item \code{prefix.rm}: \code{TRUE} or \code{FALSE}: Should
-taxonomic prefixes be removed? (default:
-\code{prefix.rm = FALSE})
-\item \code{remove.suffix}: \code{TRUE} or \code{FALSE}: Should
+\item \code{assay.type}: \code{Character scalar}. Specifies the name of the assay
+used in calculation
+(Default: \code{"counts"})
+\item \code{assay_name}: Deprecated. Use \code{assay.type} instead.
+\item \code{prefix.rm}: \code{Logical scalar}. Should
+taxonomic prefixes be removed? (Default: \code{FALSE})
+\item \code{remove.suffix}: \code{Logical scalar}. Should
 suffixes of sample names be removed? Metaphlan pipeline adds suffixes
 to sample names. Suffixes are formed from file names. By selecting
 \code{remove.suffix = TRUE}, you can remove pattern from end of sample
-names that is shared by all. (default: \code{remove.suffix = FALSE})
-\item \code{set.ranks}: \code{TRUE} or \code{FALSE}: Should the columns
+names that is shared by all. (Default: \code{FALSE})
+\item \code{set.ranks}: \code{Logical scalar}. Should the columns
 in the rowData that are treated as taxonomy ranks be updated according to
 the ranks found in the imported data?
-(default: \code{set.ranks = FALSE})
+(Default: \code{FALSE})
 }}
 }
 \value{
