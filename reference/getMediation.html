@@ -109,33 +109,33 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
 
 
 <dt id="arg-outcome">outcome<a class="anchor" aria-label="anchor" href="#arg-outcome"></a></dt>
-<dd><p><code>Character scalar</code>.A single value indicating the colData variable used
+<dd><p><code>Character scalar</code>. Indicates the colData variable used
 as outcome in the model.</p></dd>
 
 
 <dt id="arg-treatment">treatment<a class="anchor" aria-label="anchor" href="#arg-treatment"></a></dt>
-<dd><p><code>Character scalar</code>. A single value indicating the colData variable
+<dd><p><code>Character scalar</code>. Indicates the colData variable
 used as treatment in the model.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p><code>Character scalar</code>. A single value to name the metadata element and avoid
+<dd><p><code>Character scalar</code>. Indicates the metadata element and avoid
 overwriting other metadata slots. It is supported only by
 <code>addMediation</code>. (Default: <code>"mediation"</code>)</p></dd>
 
 
 <dt id="arg-mediator">mediator<a class="anchor" aria-label="anchor" href="#arg-mediator"></a></dt>
-<dd><p><code>Character scalar</code>. A single value indicating the colData variable used
+<dd><p><code>Character scalar</code>. Indicates the colData variable used
 as mediator in the model. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. A single value indicating the assay used for
+<dd><p><code>Character scalar</code>. Specifies the assay used for
 feature-wise mediation analysis. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-dimred">dimred<a class="anchor" aria-label="anchor" href="#arg-dimred"></a></dt>
-<dd><p><code>Character scalar</code>. A single value indicating the reduced dimension
+<dd><p><code>Character scalar</code>. Indicates the reduced dimension
 result in <code>reducedDims(object)</code> for component-wise mediation analysis.
 (Default: <code>NULL</code>)</p></dd>
 
@@ -146,13 +146,13 @@ result in <code>reducedDims(object)</code> for component-wise mediation analysis
 
 
 <dt id="arg-covariates">covariates<a class="anchor" aria-label="anchor" href="#arg-covariates"></a></dt>
-<dd><p><code>Character scalar</code>. A single character value or list indicating the colData
+<dd><p><code>Character scalar</code> or <code>character vector</code>. Indicates the colData
 variables used as covariates in the model.
 (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-p-adj-method">p.adj.method<a class="anchor" aria-label="anchor" href="#arg-p-adj-method"></a></dt>
-<dd><p><code>Character scalar</code>. A single value for selecting adjustment method
+<dd><p><code>Character scalar</code>. Selects adjustment method
 of p-values. Passed to <code>p.adjust</code> function.
 (Default: <code>"holm"</code>)</p></dd>
 
