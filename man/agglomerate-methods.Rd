@@ -160,7 +160,7 @@ returned unchanged.}
 
 \item{mergeTree}{Deprecated. Use \code{update.tree} instead.}
 
-\item{altexp}{\code{Character scalar} or  \code{integer scalar}.
+\item{altexp}{\code{Character scalar} or \code{integer scalar}.
 Specifies an alternative experiment containing the input data.}
 
 \item{altexp.rm}{\code{Logical scalar}. Should alternative
@@ -182,7 +182,7 @@ summary of non-prevalent taxa. (default: \code{"Other"})}
 \item{ranks}{\code{Character vector}. Defines taxonomic ranks. Must all be values
 of \code{taxonomyRanks()} function.}
 
-\item{as.list}{\code{Logical}. Should the list of
+\item{as.list}{\code{Logical scalar}. Should the list of
 \code{SummarizedExperiment} objects be returned by the function
 \code{agglomerateByRanks} as a SimpleList or stored in altExps?
 (Default: \code{FALSE})}

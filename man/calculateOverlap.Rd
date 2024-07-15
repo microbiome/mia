@@ -58,7 +58,7 @@ in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExpe
 object.
 }
 \details{
-These function calculates overlap between all the sample-pairs. Overlap
+This function calculates overlap between all the sample-pairs. Overlap
 reflects similarity between sample-pairs.
 
 When overlap is calculated using relative abundances, the higher the value the

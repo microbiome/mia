@@ -40,12 +40,12 @@
 #'        \item \code{empty.ranks.rm}: \code{Logical scalar}. Determines
 #'        whether to remove those columns of rowData that include only NAs after
 #'        agglomeration. (Default: \code{FALSE})
-#'        \item \code{make.unique}:  \code{Logical scalar}. Determines
+#'        \item \code{make.unique}: \code{Logical scalar}. Determines
 #'        whether to make rownames unique. (Default: \code{TRUE})
 #'        \item \code{detection}: The threshold value for determining presence
 #'        or absence. A value in \code{x} must exceed this threshold to be
 #'        considered present.
-#'        \item \code{assay.type}:  \code{Character scalar}. Specifies the assay used to
+#'        \item \code{assay.type}: \code{Character scalar}. Specifies the assay used to
 #'        calculate prevalence. (Default: \code{"counts"})
 #'        \item \code{prevalence}: Prevalence threshold (in 0 to 1). The
 #'        required prevalence is strictly greater by default. To include the
@@ -64,17 +64,17 @@
 #'        factor level will be kept)
 #'    }
 #'
-#' @param altexp  \code{Character scalar} or  \code{integer scalar}. 
+#' @param altexp \code{Character scalar} or \code{integer scalar}. 
 #'   Specifies an alternative experiment containing the input data.
 #'
-#' @param altexp.rm  \code{Logical scalar}. Should alternative
+#' @param altexp.rm \code{Logical scalar}. Should alternative
 #'   experiments be removed prior to agglomeration? This prevents too many
 #'   nested alternative experiments by default. (Default:
 #'   \code{TRUE})
 #' 
 #' @param strip_altexp Deprecated. Use \code{altexp.rm} instead.
 #'
-#' @param by  \code{Character scalar}. Determines if data is merged
+#' @param by \code{Character scalar}. Determines if data is merged
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}.
 #'
@@ -83,7 +83,7 @@
 #'   merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
 #'   returned unchanged.
 #'
-#' @param update.tree  \code{Logical scalar}. Should
+#' @param update.tree \code{Logical scalar}. Should
 #'   \code{rowTree()} also be merged? (Default: \code{FALSE})
 #' 
 #' @param mergeTree Deprecated. Use \code{update.tree} instead.

@@ -46,10 +46,10 @@ summarizeDominance(x, group = NULL, name = "dominant_taxa", ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{top}{\code{Numeric}. Determines how many top taxa to return. Default is
+\item{top}{\code{Numeric scalar}. Determines how many top taxa to return. Default is
 to return top five taxa. (Default: \code{5})}
 
-\item{method}{\code{Character}. Specify the method to determine top taxa. Either
+\item{method}{\code{Character scalar}. Specify the method to determine top taxa. Either
 sum, mean, median or prevalence. (Default: \code{"mean"})}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of the

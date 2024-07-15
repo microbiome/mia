@@ -21,8 +21,8 @@
 #'   See \code{\link[=agglomerate-methods]{agglomerateByVariable}} for more 
 #'   details.
 #'   \itemize{
-#'     \item{\code{use.names}: \code{Logical scalar}. Specifies whether to name elements of
-#'     list by their group names.}
+#'     \item \code{use.names}: \code{Logical scalar}. Specifies whether to name elements of
+#'     list by their group names. (Default: \code{TRUE})
 #'   }
 #'
 #'

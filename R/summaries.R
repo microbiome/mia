@@ -5,22 +5,22 @@
 #'
 #' @inheritParams getPrevalence
 #' 
-#' @param top \code{Numeric}. Determines how many top taxa to return. Default is
+#' @param top \code{Numeric scalar}. Determines how many top taxa to return. Default is
 #' to return top five taxa. (Default: \code{5})
 #'
-#' @param method \code{Character}. Specify the method to determine top taxa. Either 
+#' @param method \code{Character scalar}. Specify the method to determine top taxa. Either 
 #' sum, mean, median or prevalence. (Default: \code{"mean"})
 #'
 #' @param ... Additional arguments passed, e.g., to getPrevalence:
 #'    \itemize{
-#'        \item{\code{sort}}{A single boolean value for selecting 
+#'        \item \code{sort}: \code{Logical scalar}. Specify
 #'        whether to sort taxa in alphabetical order or not. Enabled in functions
 #'        \code{getUnique}, and \code{getTop}.
-#'        (By default: \code{sort = FALSE})}
-#'        \item{\code{na.rm}}{A single boolean value for selecting 
+#'        (Default: \code{FALSE})
+#'        \item \code{na.rm}: \code{Logical scalar}. Specify
 #'        whether to remove missing values or not. Enabled in functions
 #'        \code{getUnique}, and \code{getTop}.
-#'        (By default: \code{na.rm = FALSE})}
+#'        (Default: \code{FALSE})
 #'    }
 #'    
 #' @details

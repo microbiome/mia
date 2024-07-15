@@ -55,7 +55,8 @@ Must be \code{'rows'} or \code{'cols'}.}
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
 \item{clust.col}{\code{Character scalar}. Indicates the name of the
-\code{rowData} (or \code{colData}) where the data will be stored.}
+\code{rowData} (or \code{colData}) where the data will be stored.
+(Default: \code{"clusters"})}
 
 \item{...}{Additional parameters to use altExps for example}
 }

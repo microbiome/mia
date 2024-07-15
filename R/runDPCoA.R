@@ -36,8 +36,8 @@
 #' 
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
 #' 
-#' @param altexp \code{String or integer scalar}. Specifies an alternative experiment
-#'   containing the input data.
+#' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an 
+#'   alternative experiment containing the input data. (Default: \code{NULL})
 #'
 #' @param ... Currently not used.
 #'

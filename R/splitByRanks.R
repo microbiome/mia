@@ -19,7 +19,7 @@
 #' 
 #' @param keep_reducedDims Deprecated. Use \code{keep.dimred} instead.
 #'   
-#' @param as.list \code{Logical}. Should the list of 
+#' @param as.list \code{Logical scalar}. Should the list of 
 #'   \code{SummarizedExperiment} objects be returned by the function 
 #'   \code{agglomerateByRanks} as a SimpleList or stored in altExps?
 #'   (Default: \code{FALSE})

@@ -17,7 +17,7 @@
 #'   runOverlap returns \code{x} that includes overlap matrix in its 
 #'   reducedDim. 
 #' 
-#' @details These function calculates overlap between all the sample-pairs. Overlap
+#' @details This function calculates overlap between all the sample-pairs. Overlap
 #'   reflects similarity between sample-pairs. 
 #'   
 #'   When overlap is calculated using relative abundances, the higher the value the 

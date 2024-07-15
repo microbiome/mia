@@ -38,8 +38,8 @@ addAlpha(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
 
-\item{assay.type}{\code{Character vector}. The name of the assay used for
-calculation of the sample-wise estimates. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character vector}. Specifies the name of assay
+used in calculation. (Default: \code{"counts"})}
 
 \item{index}{\code{Character vector}. Specifies the alpha diversity
 indices to be calculated.}
