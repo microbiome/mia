@@ -4,7 +4,7 @@
 \alias{importHUMAnN}
 \title{Import HUMAnN results to \code{TreeSummarizedExperiment}}
 \arguments{
-\item{file}{\code{Character scalar}. a single value defining the file
+\item{file}{\code{Character scalar}. Defines the file
 path of the HUMAnN file. The file must be in merged HUMAnN format.}
 
 \item{col.data}{a DataFrame-like object that includes sample names in

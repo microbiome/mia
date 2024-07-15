@@ -49,7 +49,7 @@ results should be
 stored in. By default this will use the original names of the calculated
 indices. (Default: \code{index})}
 
-\item{niter}{\code{Integer scalar}. A single value for the number of
+\item{niter}{\code{Integer scalar}. Specifies the number of
 rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
 (see Details section). (Default: \code{NULL})}
 

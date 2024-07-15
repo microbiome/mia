@@ -4,7 +4,7 @@
 \alias{importMetaPhlAn}
 \title{Import Metaphlan results to \code{TreeSummarizedExperiment}}
 \arguments{
-\item{file}{\code{Character scalar}. A single value defining the file
+\item{file}{\code{Character scalar}. Defines the file
 path of the Metaphlan file. The file must be in merged Metaphlan format.}
 
 \item{col.data}{a DataFrame-like object that includes sample names in
@@ -16,7 +16,7 @@ path of the sample metadata file. The file must be in \code{tsv} format
 
 \item{sample_meta}{Deprecated. Use \code{col.data} instead.}
 
-\item{tree.file}{\code{Character scalar}. A single value defining the file
+\item{tree.file}{\code{Character scalar}. Defines the file
 path of the phylogenetic tree.
 (Default: \code{NULL}).}
 

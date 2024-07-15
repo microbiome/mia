@@ -30,8 +30,8 @@
 #' @param scale \code{Logical scalar}. Sshould the expression values be standardized?
 #' (Default: \code{FALSE})
 #'   
-#' @param tree.name \code{Character scalar}. A single value for specifying which
-#'   rowTree will be used in calculation. 
+#' @param tree.name \code{Character scalar}. Specifies the name of the 
+#'   rowTree to be used in calculation. 
 #'   (Default: \code{"phylo"})
 #' 
 #' @param tree_name Deprecated. Use \code{tree.name} instead.

@@ -14,7 +14,7 @@ importMothur(
 )
 }
 \arguments{
-\item{assay.file}{\code{Character scalar}. A single value defining the file
+\item{assay.file}{\code{Character scalar}. Defines the file
 path of the feature table to be imported. The File has to be in
 \code{shared file} format as defined in Mothur documentation.}
 
@@ -22,14 +22,14 @@ path of the feature table to be imported. The File has to be in
 
 \item{taxonomyFile}{Deprecated. Use \code{row.file} instead.}
 
-\item{row.file}{\code{Character scalar}. A single value defining the file path of
+\item{row.file}{\code{Character scalar}. Defines the file path of
 the taxonomy table to be imported. The File has to be in \code{taxonomy
   file} or \code{constaxonomy file} format  as defined in Mothur
 documentation. (Default: \code{NULL}).}
 
 \item{designFile}{Deprecated. Use \code{col.file} instead.}
 
-\item{col.file}{\code{Character scalar}. A single value defining the file path of
+\item{col.file}{\code{Character scalar}. Defines file path of
 the sample metadata to be imported. The File has to be in \code{desing
   file} format as defined in Mothur documentation. (Default: \code{NULL}).}
 }

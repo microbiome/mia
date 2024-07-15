@@ -1,6 +1,6 @@
 #' Import Metaphlan results to \code{TreeSummarizedExperiment}
 #
-#' @param file \code{Character scalar}. A single value defining the file
+#' @param file \code{Character scalar}. Defines the file
 #'   path of the Metaphlan file. The file must be in merged Metaphlan format.
 #'
 #' @param col.data a DataFrame-like object that includes sample names in
@@ -12,7 +12,7 @@
 #'   
 #' @param sample_meta Deprecated. Use \code{col.data} instead.
 #' 
-#' @param tree.file \code{Character scalar}. A single value defining the file
+#' @param tree.file \code{Character scalar}. Defines the file
 #'   path of the phylogenetic tree.
 #'   (Default: \code{NULL}).
 #' 

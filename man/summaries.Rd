@@ -52,9 +52,8 @@ to return top five taxa. (Default: \code{5})}
 \item{method}{\code{Character}. Specify the method to determine top taxa. Either
 sum, mean, median or prevalence. (Default: \code{"mean"})}
 
-\item{assay.type}{\code{Character scalar}. A single value to select an
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
-(Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -64,8 +63,8 @@ prevalence? (Default: \code{TRUE})}
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
 \code{rank} is specified for \code{summarizeDominance}.}
 
-\item{rank}{A single character defining a taxonomic rank. Must be a value of
-the output of \code{taxonomyRanks()}.}
+\item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a value of
+the output of \code{taxonomyRanks()}. (Default: \code{NULl})}
 
 \item{group}{With group, it is possible to group the observations in an
 overview. Must be one of the column names of \code{colData}.}

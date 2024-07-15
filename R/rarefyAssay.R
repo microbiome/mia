@@ -21,7 +21,7 @@
 #'
 #' @inheritParams calculateDMN
 #'   
-#' @param sample \code{Integer scalar}. A single value equal to the number of counts being 
+#' @param sample \code{Integer scalar}. Indicates the number of counts being 
 #'   simulated i.e. rarefying depth. This can equal to lowest number of total
 #'   counts found in a sample or a user specified number.
 #' 

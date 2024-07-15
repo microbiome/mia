@@ -24,18 +24,18 @@ importQIIME2(
 importQZA(file, temp.dir = temp, temp = tempdir(), ...)
 }
 \arguments{
-\item{assay.file}{\code{Character scalar}. A single value defining the file
+\item{assay.file}{\code{Character scalar}. Defines the file
 path of the feature table to be imported.}
 
 \item{featureTableFile}{Deprecated. use \code{assay.file} instead.}
 
-\item{row.file}{\code{Character scalar}. A single value defining the file
+\item{row.file}{\code{Character scalar}. Defines the file
 path of the taxonomy table to be imported. (default:
 \code{NULL}).}
 
 \item{taxonomyTableFile}{Deprecated. use \code{row.file} instead.}
 
-\item{col.file}{\code{Character scalar}. A single  value defining the file path
+\item{col.file}{\code{Character scalar}. Defines the file path
 of the sample metadata to be imported. The file has to be in tsv format.
 (Default: \code{NULL}).}
 
@@ -49,12 +49,12 @@ sequences will not be set.}
 
 \item{featureNamesAsRefSeq}{Deprecated. Use \code{as.refseq} instead.}
 
-\item{refseq.file}{\code{Character scalar}. A single value defining the file path of
+\item{refseq.file}{\code{Character scalar}. Defines the file path of
 the reference sequences for each feature. (Default: \code{NULL}).}
 
 \item{refSeqFile}{Deprecated. Use \code{refseq.file} instead.}
 
-\item{tree.file}{\code{Character scalar}. A single value defining the file path of
+\item{tree.file}{\code{Character scalar}. Defines the file path of
 the phylogenetic tree. (Default: \code{NULL}).}
 
 \item{phyTreeFile}{Deprecated. Use \code{tree.file} isntead.}

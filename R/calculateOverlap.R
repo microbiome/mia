@@ -107,8 +107,8 @@ setGeneric("runOverlap", signature = c("x"),
 
 #' @rdname calculateOverlap
 #' 
-#' @param name A single character value specifying the name of overlap matrix that
-#' is stored in reducedDim(x).
+#' @param name \code{Character scalar}. Specifies the name of overlap matrix that
+#' is stored in reducedDim(x). (Default: \code{"overlap"})
 #'   
 #' @export
 #' @importFrom SingleCellExperiment reducedDim<-

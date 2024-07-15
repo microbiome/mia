@@ -3,20 +3,20 @@
 #' This method creates a \code{TreeSummarizedExperiment} object from \code{Mothur}
 #' files provided as input. 
 #'
-#' @param assay.file \code{Character scalar}. A single value defining the file
+#' @param assay.file \code{Character scalar}. Defines the file
 #'   path of the feature table to be imported. The File has to be in 
 #'   \code{shared file} format as defined in Mothur documentation.
 #' 
 #' @param sharedFile Deprecated. Use \code{assay.file} instead.
 #'
-#' @param row.file \code{Character scalar}. A single value defining the file path of
+#' @param row.file \code{Character scalar}. Defines the file path of
 #'   the taxonomy table to be imported. The File has to be in \code{taxonomy
 #'   file} or \code{constaxonomy file} format  as defined in Mothur
 #'   documentation. (Default: \code{NULL}).
 #' 
 #' @param taxonomyFile Deprecated. Use \code{row.file} instead.
 #'
-#' @param col.file \code{Character scalar}. A single value defining the file path of
+#' @param col.file \code{Character scalar}. Defines file path of
 #'   the sample metadata to be imported. The File has to be in \code{desing
 #'   file} format as defined in Mothur documentation. (Default: \code{NULL}).
 #' 

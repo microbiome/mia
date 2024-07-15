@@ -75,8 +75,8 @@ assay used in calculation. (Default: \code{"counts"})}
 
 \item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{tree.name}{\code{Character scalar}. A single value for specifying which
-rowTree will be used in calculation.
+\item{tree.name}{\code{Character scalar}. Specifies the name of the
+rowTree to be used in calculation.
 (Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}

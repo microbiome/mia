@@ -48,16 +48,15 @@ details.
 list by their group names.}
 }}
 
-\item{f}{\code{Character}. A single value for selecting the grouping variable
+\item{f}{\code{Character}. Specifies the grouping variable
 from \code{rowData} or \code{colData} or a \code{factor} or \code{vector}
 with the same length as one of the dimensions. If \code{f} matches with both
 dimensions, \code{by} must be specified.
 Split by cols is not encouraged, since this is not compatible with
 storing the results in \code{altExps}. (Default: \code{NULL})}
 
-\item{update.tree}{\code{TRUE} or \code{FALSE}: should
-\code{rowTree()} also be agglomerated? (Default:
-\code{update.tree = FALSE})}
+\item{update.tree}{\code{Logical scalar}. Should
+\code{rowTree()} also be agglomerated? (Default: \code{FALSE})}
 
 \item{update_rowTree}{Deprecated. Use \code{update.tree } instead.}
 

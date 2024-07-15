@@ -6,30 +6,30 @@
 #'                                                                              
 #' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 #' 
-#' @param outcome \code{Character scalar}.A single value indicating the colData variable used
+#' @param outcome \code{Character scalar}. Indicates the colData variable used
 #'   as outcome in the model.
 #' 
-#' @param treatment \code{Character scalar}. A single value indicating the colData variable
+#' @param treatment \code{Character scalar}. Indicates the colData variable
 #'   used as treatment in the model.
 #'
-#' @param mediator \code{Character scalar}. A single value indicating the colData variable used
+#' @param mediator \code{Character scalar}. Indicates the colData variable used
 #'   as mediator in the model. (Default: \code{NULL})
 #'
-#' @param assay.type \code{Character scalar}. A single value indicating the assay used for
+#' @param assay.type \code{Character scalar}. Specifies the assay used for
 #'   feature-wise mediation analysis. (Default: \code{NULL})
 #' 
-#' @param dimred \code{Character scalar}. A single value indicating the reduced dimension
+#' @param dimred \code{Character scalar}. Indicates the reduced dimension
 #'   result in \code{reducedDims(object)} for component-wise mediation analysis.
 #'   (Default: \code{NULL})
 #'
 #' @param family \code{Character scalar}. A specification for the outcome model link function.
 #'   (Default: \code{gaussian("identity")})
 #' 
-#' @param covariates \code{Character scalar}. A single character value or list indicating the colData
+#' @param covariates \code{Character scalar} or \code{character vector}. Indicates the colData
 #'   variables used as covariates in the model.
 #'   (Default: \code{NULL})
 #' 
-#' @param p.adj.method \code{Character scalar}. A single value for selecting adjustment method
+#' @param p.adj.method \code{Character scalar}. Selects adjustment method
 #'   of p-values. Passed to `p.adjust` function.
 #'   (Default: \code{"holm"})
 #' 
@@ -39,7 +39,7 @@
 #' @param verbose \code{Logical scalar}. Should execution messages be printed.
 #'   (Default: \code{TRUE})
 #'   
-#' @param name \code{Character scalar}. A single value to name the metadata element and avoid
+#' @param name \code{Character scalar}. Indicates the metadata element and avoid
 #'   overwriting other metadata slots. It is supported only by
 #'   \code{addMediation}. (Default: \code{"mediation"})
 #' 

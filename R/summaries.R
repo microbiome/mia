@@ -145,8 +145,8 @@ setMethod("getTop", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname summaries
 #'
-#' @param rank A single character defining a taxonomic rank. Must be a value of
-#' the output of \code{taxonomyRanks()}.
+#' @param rank \code{Character scalar}. Defines a taxonomic rank. Must be a value of
+#' the output of \code{taxonomyRanks()}. (Default: \code{NULl})
 #'
 #' @return
 #' The \code{getUnique} returns a vector of unique taxa present at a
@@ -299,9 +299,8 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
 #' @param object A
 #'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
-#' @param assay.type \code{Character scalar}. A single value to select an
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
-#'   (Default: \code{"counts"})
+#' @param assay.type \code{Character scalar}. Specifies the name of the
+#'   assay used in calculation. (Default: \code{"counts"})
 #'
 #' @details
 #' The \code{summary} will return a summary of counts for all samples and

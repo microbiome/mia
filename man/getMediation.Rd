@@ -48,34 +48,34 @@ getMediation(x, ...)
 \item{...}{additional parameters that can be passed to
 \code{\link[mediation:mediate]{mediate}}.}
 
-\item{outcome}{\code{Character scalar}.A single value indicating the colData variable used
+\item{outcome}{\code{Character scalar}. Indicates the colData variable used
 as outcome in the model.}
 
-\item{treatment}{\code{Character scalar}. A single value indicating the colData variable
+\item{treatment}{\code{Character scalar}. Indicates the colData variable
 used as treatment in the model.}
 
-\item{name}{\code{Character scalar}. A single value to name the metadata element and avoid
+\item{name}{\code{Character scalar}. Indicates the metadata element and avoid
 overwriting other metadata slots. It is supported only by
 \code{addMediation}. (Default: \code{"mediation"})}
 
-\item{mediator}{\code{Character scalar}. A single value indicating the colData variable used
+\item{mediator}{\code{Character scalar}. Indicates the colData variable used
 as mediator in the model. (Default: \code{NULL})}
 
-\item{assay.type}{\code{Character scalar}. A single value indicating the assay used for
+\item{assay.type}{\code{Character scalar}. Specifies the assay used for
 feature-wise mediation analysis. (Default: \code{NULL})}
 
-\item{dimred}{\code{Character scalar}. A single value indicating the reduced dimension
+\item{dimred}{\code{Character scalar}. Indicates the reduced dimension
 result in \code{reducedDims(object)} for component-wise mediation analysis.
 (Default: \code{NULL})}
 
 \item{family}{\code{Character scalar}. A specification for the outcome model link function.
 (Default: \code{gaussian("identity")})}
 
-\item{covariates}{\code{Character scalar}. A single character value or list indicating the colData
+\item{covariates}{\code{Character scalar} or \code{character vector}. Indicates the colData
 variables used as covariates in the model.
 (Default: \code{NULL})}
 
-\item{p.adj.method}{\code{Character scalar}. A single value for selecting adjustment method
+\item{p.adj.method}{\code{Character scalar}. Selects adjustment method
 of p-values. Passed to \code{p.adjust} function.
 (Default: \code{"holm"})}
 

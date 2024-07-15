@@ -39,7 +39,7 @@ assay used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{sample}{\code{Integer scalar}. A single value equal to the number of counts being
+\item{sample}{\code{Integer scalar}. Indicates the number of counts being
 simulated i.e. rarefying depth. This can equal to lowest number of total
 counts found in a sample or a user specified number.}
 

@@ -503,12 +503,11 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname agglomerate-methods
 #'   
-#' @param update.tree \code{TRUE} or \code{FALSE}: should
-#'   \code{rowTree()} also be agglomerated? (Default:
-#'   \code{update.tree = FALSE})
+#' @param update.tree \code{Logical scalar}. Should
+#'   \code{rowTree()} also be agglomerated? (Default: \code{FALSE})
 #' 
-#' @param other.label A single \code{character} valued used as the label for the
-#'   summary of non-prevalent taxa. (default: \code{other.label = "Other"})
+#' @param other.label \code{Character scalar}. Used as the label for the
+#'   summary of non-prevalent taxa. (default: \code{"Other"})
 #' 
 #' @param other_label Deprecated. use \code{other.label} instead.
 #'

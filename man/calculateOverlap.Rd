@@ -44,8 +44,8 @@ either of samples, will be discarded when evaluating overlap between samples.
 
 \item{...}{Optional arguments not used.}
 
-\item{name}{A single character value specifying the name of overlap matrix that
-is stored in reducedDim(x).}
+\item{name}{\code{Character scalar}. Specifies the name of overlap matrix that
+is stored in reducedDim(x). (Default: \code{"overlap"})}
 }
 \value{
 calculateOverlap returns sample-by-sample distance matrix.

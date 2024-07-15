@@ -16,7 +16,7 @@
 #'   stored in. By default this will use the original names of the calculated
 #'   indices. (Default: \code{index})
 #' 
-#' @param niter \code{Integer scalar}. A single value for the number of
+#' @param niter \code{Integer scalar}. Specifies the number of
 #'   rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
 #'   (see Details section). (Default: \code{NULL})
 #'   

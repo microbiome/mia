@@ -5,10 +5,10 @@
 #'
 #' @inheritParams calculateDMN
 #'   
-#' @param method \code{Character scalar}. A single value for selecting the transformation
+#' @param method \code{Character scalar}. Specifies the transformation
 #'   method.
 #' 
-#' @param MARGIN \code{Character scalar}. A single value for specifying whether the
+#' @param MARGIN \code{Character scalar}. Determines whether the
 #'   transformation is applied sample (column) or feature (row) wise.
 #'   (Default: \code{"samples"})
 #' 

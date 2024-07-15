@@ -155,9 +155,8 @@ Must be \code{'rows'} or \code{'cols'}.}
 merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
 returned unchanged.}
 
-\item{update.tree}{\code{TRUE} or \code{FALSE}: should
-\code{rowTree()} also be agglomerated? (Default:
-\code{update.tree = FALSE})}
+\item{update.tree}{\code{Logical scalar}. Should
+\code{rowTree()} also be agglomerated? (Default: \code{FALSE})}
 
 \item{mergeTree}{Deprecated. Use \code{update.tree} instead.}
 
@@ -175,8 +174,8 @@ nested alternative experiments by default (default:
 
 \item{agglomerateTree}{Deprecated. Use \code{update.tree} instead.}
 
-\item{other.label}{A single \code{character} valued used as the label for the
-summary of non-prevalent taxa. (default: \code{other.label = "Other"})}
+\item{other.label}{\code{Character scalar}. Used as the label for the
+summary of non-prevalent taxa. (default: \code{"Other"})}
 
 \item{other_label}{Deprecated. use \code{other.label} instead.}
 

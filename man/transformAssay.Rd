@@ -41,10 +41,10 @@ assay used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{method}{\code{Character scalar}. A single value for selecting the transformation
+\item{method}{\code{Character scalar}. Specifies the transformation
 method.}
 
-\item{MARGIN}{\code{Character scalar}. A single value for specifying whether the
+\item{MARGIN}{\code{Character scalar}. Determines whether the
 transformation is applied sample (column) or feature (row) wise.
 (Default: \code{"samples"})}
 
