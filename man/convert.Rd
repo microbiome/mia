@@ -43,41 +43,36 @@ convertToPhyloseq(x, ...)
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object}
 
-\item{prefix.rm}{\code{TRUE} or \code{FALSE}: Should
+\item{prefix.rm}{\code{Logical scalar}. Should
 taxonomic prefixes be removed? The prefixes is removed only from detected
 taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
-(default \code{prefix.rm = FALSE})}
+(Default: \code{FALSE})}
 
 \item{removeTaxaPrefixes}{Deprecated. Use \code{prefix.rm} instead.}
 
-\item{rank.from.prefix}{\code{TRUE} or \code{FALSE}: If file does not have
+\item{rank.from.prefix}{\code{Logical scalar}. If file does not have
 taxonomic ranks on feature table, should they be scraped from prefixes?
-(default \code{rank.from.prefix = FALSE})}
+(Default: \code{FALSE})}
 
 \item{rankFromPrefix}{Deprecated.Use \code{rank.from.prefix} instead.}
 
-\item{artifact.rm}{\code{TRUE} or \code{FALSE}: If file have
+\item{artifact.rm}{\code{Logical scalar}. If file have
 some taxonomic character naming artifacts, should they be removed.
-(default \code{artifact.rm = FALSE})}
+(default (Default: \code{FALSE})}
 
 \item{remove.artifacts}{Deprecated. Use \code{artifact.rm} instead.}
 
 \item{...}{Additional arguments. For \code{convertFromDADA2}, see
 \code{mergePairs} function for more details.}
 
-\item{assay.type}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-included in the phyloseq object that is created.
-(By default: \code{assay.type = "counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
+used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{tree.name}{a single \code{character} value for specifying which
-tree will be included in the phyloseq object that is created,
-(By default: \code{tree.name = "phylo"})}
+\item{tree.name}{\code{Character scalar}. Specifies the name of the
+tree to be included in the phyloseq object that is created,
+(Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 }

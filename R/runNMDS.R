@@ -15,10 +15,10 @@
 #' 
 #' @param keep_dist Deprecated. Use \code{keep.dist} instead.
 #'
-#' @param FUN \code{Function} or \code{Character}. A value with a function
+#' @param FUN \code{Function} or \code{Character scalar}. A value with a function
 #'   name returning a \code{\link[stats:dist]{dist}} object
 #'
-#' @param nmds.fun \code{Character}. A value to choose the scaling
+#' @param nmds.fun \code{Character scalar}. A value to choose the scaling
 #'   implementation, either \dQuote{isoMDS} for
 #'   \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 #'   \code{\link[vegan:monoMDS]{vegan::monoMDS}}
@@ -28,10 +28,10 @@
 #' @param ... additional arguments to pass to \code{FUN} and
 #'   \code{nmds.fun}.
 #'
-#' @param dimred \code{String or integer scalar}. Specifies the existing dimensionality
+#' @param dimred \code{Character scalar} or \code{integer scalar}. Specifies the existing dimensionality
 #'   reduction results to use.
 #'
-#' @param ndimred \code{Integer scalar or vector}. Specifies the dimensions to use if
+#' @param ndimred \code{Integer scalar} or \code{integer vector}. Specifies the dimensions to use if
 #'   dimred is specified.
 #' 
 #' @param n_dimred Deprecated. Use \code{ndimred} instead.

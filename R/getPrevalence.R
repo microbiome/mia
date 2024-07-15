@@ -5,7 +5,7 @@
 #'
 #' @inheritParams calculateDMN
 #'
-#' @param detection \code{Numeric}. Detection threshold for absence/presence. 
+#' @param detection \code{Numeric scalar}. Detection threshold for absence/presence. 
 #'    If \code{as_relative = FALSE},
 #'    it sets the counts threshold for a taxon to be considered present.
 #'    If \code{as_relative = TRUE}, it sets the relative abundance threshold

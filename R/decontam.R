@@ -8,29 +8,25 @@
 #' @param seqtab,x
 #'   a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to use.
+#' @param assay.type A\code{Character scalar}. Specifies the name of assay 
+#'   used in calculation. (Default: \code{"counts"})
 #'
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'
-#' @param name A name for the column of the colData in which the contaminant
-#'   information should be stored.
+#' @param name \code{Character scalar}. A name for the column of the colData in which the contaminant
+#'   information should be stored. (Default: \code{"isContaminant"})
 #'
-#' @param concentration \code{NULL} or a single \code{character} value. Defining
+#' @param concentration \code{Character scalar} or \code{NULL}. Defining
 #'   a column with numeric values from the \code{colData} to use as
-#'   concentration information. (default: \code{concentration = NULL})
+#'   concentration information. (Default: \code{NULL})
 #'
-#' @param control \code{NULL} or a single \code{character} value. Defining a
+#' @param control \code{Character scalar} or \code{NULL}. Defining a
 #'   column with logical values from the \code{colData} to define control and
-#'   non-control samples. (default: \code{control = NULL})
+#'   non-control samples. (Default: \code{NULL})
 #'
-#' @param batch \code{NULL} or a single \code{character} value. Defining a
+#' @param batch \code{Character scalar} or \code{NULL}. Defining a
 #'   column with values interpretable as a factor from the \code{colData} to use
-#'   as batch information. (default: \code{batch = NULL})
+#'   as batch information. (Default: \code{NULL})
 #'
 #' @param ... arguments passed onto
 #'   \code{\link[decontam:isContaminant]{decontam:isContaminant}} or

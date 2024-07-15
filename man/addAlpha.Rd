@@ -44,12 +44,12 @@ calculation of the sample-wise estimates. (Default: \code{"counts"})}
 \item{index}{\code{Character vector}. Specifies the alpha diversity
 indices to be calculated.}
 
-\item{name}{\code{Character}. A name for the column(s) of the colData the
+\item{name}{\code{Character scalar}. A name for the column(s) of the colData the
 results should be
 stored in. By default this will use the original names of the calculated
 indices. (Default: \code{index})}
 
-\item{niter}{\code{Integer}. A single value for the number of
+\item{niter}{\code{Integer scalar}. A single value for the number of
 rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
 (see Details section). (Default: \code{NULL})}
 

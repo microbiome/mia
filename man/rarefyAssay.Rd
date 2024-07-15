@@ -34,15 +34,12 @@ rarefyAssay(
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{assay.type}{\code{Character scalar}. A single value for specifying which
-assay to use for calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{\code{Character scalar} A sinle value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{sample}{\code{Integer}. A single value equal to the number of counts being
+\item{sample}{\code{Integer scalar}. A single value equal to the number of counts being
 simulated i.e. rarefying depth. This can equal to lowest number of total
 counts found in a sample or a user specified number.}
 
@@ -53,7 +50,7 @@ replacement (\code{replace=TRUE}).
 See \code{\link[phyloseq:rarefy_even_depth]{phyloseq::rarefy_even_depth}}
 for details on implications of this parameter. (Default: \code{TRUE})}
 
-\item{name}{\code{Character}. The name to store the result in
+\item{name}{\code{Character scalar}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
 \item{verbose}{\code{Logical scalar}. Choose whether to show messages.

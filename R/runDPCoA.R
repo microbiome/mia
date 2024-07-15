@@ -30,7 +30,7 @@
 #' @param scale \code{Logical scalar}. Sshould the expression values be standardized?
 #' (Default: \code{FALSE})
 #'   
-#' @param tree.name \code{Character}. A single value for specifying which
+#' @param tree.name \code{Character scalar}. A single value for specifying which
 #'   rowTree will be used in calculation. 
 #'   (Default: \code{"phylo"})
 #' 

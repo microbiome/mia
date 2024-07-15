@@ -76,7 +76,7 @@ object.}
 \item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
 
-\item{empty.fields}{\code{Character}. A value defining, which values should be
+\item{empty.fields}{\code{Character vector}. Defines which values should be
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 removed if \code{na.rm = TRUE} before agglomeration.}
 
@@ -84,17 +84,17 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 
 \item{ranks}{\code{Character vector}. A vector of ranks to be set.}
 
-\item{with.rank}{\code{logical}. Should the level be add as a
+\item{with.rank}{\code{logical scalar}. Should the level be add as a
 suffix? For example: "Phylum:Crenarchaeota". (Default: \code{FALSE})}
 
 \item{with_rank}{Deprecated. Use \code{with.rank} instead.}
 
-\item{make.unique}{\code{Logical}. Should the labels be made
+\item{make.unique}{\code{Logical scalar}. Should the labels be made
 unique, if there are any duplicates? (Default: \code{TRUE})}
 
 \item{make_unique}{Deprecated. Use \code{make.unique} instead.}
 
-\item{resolve.loops}{\code{Logical}. Should \code{resolveLoops}
+\item{resolve.loops}{\code{Logical scalar}. Should \code{resolveLoops}
 be applied to the taxonomic data? Please note that has only an effect,
 if the data is unique. (Default: \code{TRUE})}
 
@@ -106,7 +106,7 @@ for the individual element. (Default: \code{NULL})}
 
 \item{from}{\itemize{
 \item For \code{mapTaxonomy}: a scalar \code{character} value, which
-must be a valid taxonomic rank. (default: \code{NULL})
+must be a valid taxonomic rank. (Default: \code{NULL})
 \item otherwise a \code{Taxa} object as returned by
 \code{\link[DECIPHER:IdTaxa]{IdTaxa}}
 }}

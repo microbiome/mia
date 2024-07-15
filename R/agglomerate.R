@@ -19,7 +19,7 @@
 #'  
 #' @inheritParams getPrevalence
 #'
-#' @param empty.fields \code{Character}. A value defining, which values should be
+#' @param empty.fields \code{Character vector}. Defines which values should be
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 #'   removed if \code{na.rm = TRUE} before agglomeration.
 #'

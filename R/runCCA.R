@@ -18,7 +18,7 @@
 #'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis 
 #'   into a CA analysis and dbRDA into PCoA/MDS.
 #'
-#' @param variables When \code{x} is a \code{SummarizedExperiment},
+#' @param variables \code{Character scalar}. When \code{x} is a \code{SummarizedExperiment},
 #'   \code{variables} can be used to specify variables from \code{colData}. 
 #'   
 #'   When \code{x} is a matrix, \code{variables} is a \code{data.frame} or 
@@ -32,7 +32,7 @@
 #'   multivariate homogeneity of group dispersions be performed.
 #'   (Default: \code{TRUE})
 #'   
-#' @param altexp \code{Character or integer scalar}. Specifies an alternative experiment
+#' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an alternative experiment
 #'   containing the input data.
 #' 
 #' @param scores \code{Character scalar}. Specifies scores to be returned. Must be

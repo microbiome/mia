@@ -27,9 +27,8 @@
 #' 
 #' @param nodeLab Deprecated. Use \code{node.label} instead.
 #'
-#' @param tree.name \code{Character}. A single value for specifying which
-#'   tree will be used in calculation. 
-#'   (Default: \code{"phylo"})
+#' @param tree.name \code{Character scalar}. Specifies the name of the
+#'   tree used in calculation. (Default: \code{"phylo"})
 #' 
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'   
@@ -38,6 +37,7 @@
 #'   species/taxa shared between samples, whereas unweighted-Unifrac only
 #'   considers presence/absence. Default is \code{FALSE}, meaning the
 #'   unweighted-Unifrac distance is calculated for all pairs of samples.
+#'   (Default: \code{FALSE})
 #'   
 #' @param ... optional arguments not used.
 #'

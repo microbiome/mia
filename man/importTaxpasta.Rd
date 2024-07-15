@@ -8,7 +8,7 @@
 importTaxpasta(file)
 }
 \arguments{
-\item{file}{A single \code{character} value specifying the file path to a
+\item{file}{\code{Character scalar}. A single value specifying the file path to a
 BIOM file.}
 }
 \value{

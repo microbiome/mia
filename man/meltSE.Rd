@@ -41,13 +41,10 @@ meltSE(
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{assay.type}{\code{Character scalar}. A single value for specifying which
-assay to use for calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{\code{Character scalar} A sinle value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{add.row}{\code{Logical scalar} or a \code{Character vector}. To
 select information from the \code{rowData} to add to the molten assay data.

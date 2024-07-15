@@ -175,7 +175,8 @@ setMethod("getUnique", signature = c(x = "SummarizedExperiment"),
 #' @param group With group, it is possible to group the observations in an
 #'   overview. Must be one of the column names of \code{colData}.
 #'   
-#' @param name The column name for the features. The default is 'dominant_taxa'.
+#' @param name \code{Character scalar}. The column name for the features.
+#'   (Default: \code{"dominant_taxa"})
 #'
 #' @param ... Additional arguments passed on to \code{agglomerateByRank()} when
 #'   \code{rank} is specified for \code{summarizeDominance}.
@@ -298,9 +299,9 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
 #' @param object A
 #'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
-#' @param assay.type a \code{character} value to select an
+#' @param assay.type \code{Character scalar}. A single value to select an
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
-#'   By default it expects count data.
+#'   (Default: \code{"counts"})
 #'
 #' @details
 #' The \code{summary} will return a summary of counts for all samples and

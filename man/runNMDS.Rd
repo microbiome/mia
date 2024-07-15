@@ -63,10 +63,10 @@ object.}
 \item{...}{additional arguments to pass to \code{FUN} and
 \code{nmds.fun}.}
 
-\item{FUN}{\code{Function} or \code{Character}. A value with a function
+\item{FUN}{\code{Function} or \code{Character scalar}. A value with a function
 name returning a \code{\link[stats:dist]{dist}} object}
 
-\item{nmds.fun}{\code{Character}. A value to choose the scaling
+\item{nmds.fun}{\code{Character scalar}. A value to choose the scaling
 implementation, either \dQuote{isoMDS} for
 \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 \code{\link[vegan:monoMDS]{vegan::monoMDS}}}
@@ -99,22 +99,17 @@ the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}. (Default:
 
 \item{keep_dist}{Deprecated. Use \code{keep.dist} instead.}
 
-\item{assay.type}{\code{Character scalar}. A single value for specifying which
-assay to use for calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{\code{Character scalar} A sinle value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{exprs_values}{\code{Character scalar}. A single value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead.)}
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{dimred}{\code{String or integer scalar}. Specifies the existing dimensionality
+\item{dimred}{\code{Character scalar} or \code{integer scalar}. Specifies the existing dimensionality
 reduction results to use.}
 
-\item{ndimred}{\code{Integer scalar or vector}. Specifies the dimensions to use if
+\item{ndimred}{\code{Integer scalar} or \code{integer vector}. Specifies the dimensions to use if
 dimred is specified.}
 
 \item{n_dimred}{Deprecated. Use \code{ndimred} instead.}
@@ -122,7 +117,7 @@ dimred is specified.}
 \item{altexp}{\code{String or integer scalar}. Specifies an alternative experiment
 containing the input data.}
 
-\item{name}{\code{Character}. The name to store the result in
+\item{name}{\code{Character scalar}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 }
 \value{

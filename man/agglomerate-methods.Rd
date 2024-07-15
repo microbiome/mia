@@ -142,7 +142,7 @@ See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}
 \item{na.rm}{\code{Logical scalar}. Should NA values be omitted when calculating
 prevalence? (Default: \code{TRUE})}
 
-\item{empty.fields}{\code{Character}. A value defining, which values should be
+\item{empty.fields}{\code{Character vector}. Defines which values should be
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 removed if \code{na.rm = TRUE} before agglomeration.}
 
@@ -188,7 +188,7 @@ of \code{taxonomyRanks()} function.}
 \code{agglomerateByRanks} as a SimpleList or stored in altExps?
 (Default: \code{FALSE})}
 
-\item{keep.dimred}{\code{Logical}. Should the
+\item{keep.dimred}{\code{Logical scalar}. Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
 (Default: \code{FALSE})}

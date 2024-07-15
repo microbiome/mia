@@ -96,7 +96,7 @@ a formula can be supplied. Based on the right-hand side of the given formula
 \code{variables} and \code{formula} can be missing, which turns the CCA analysis
 into a CA analysis and dbRDA into PCoA/MDS.}
 
-\item{variables}{When \code{x} is a \code{SummarizedExperiment},
+\item{variables}{\code{Character scalar}. When \code{x} is a \code{SummarizedExperiment},
 \code{variables} can be used to specify variables from \code{colData}.
 
 When \code{x} is a matrix, \code{variables} is a \code{data.frame} or
@@ -110,27 +110,22 @@ into a CA analysis and dbRDA into PCoA/MDS.}
 multivariate homogeneity of group dispersions be performed.
 (Default: \code{TRUE})}
 
-\item{assay.type}{\code{Character scalar}. A single value for specifying which
-assay to use for calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{\code{Character scalar} A sinle value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{exprs_values}{\code{Character scalar}. A single value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead.)}
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
 \item{scores}{\code{Character scalar}. Specifies scores to be returned. Must be
 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
 v with weights Xbar, but the multiplying effect of eigenvalues removed) or
 'u' ((weighted) orthonormal site scores). (Default: \code{'wa'})}
 
-\item{altexp}{\code{Character or integer scalar}. Specifies an alternative experiment
+\item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an alternative experiment
 containing the input data.}
 
-\item{name}{\code{Character}. The name to store the result in
+\item{name}{\code{Character scalar}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 }
 \value{

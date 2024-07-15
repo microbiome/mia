@@ -22,7 +22,7 @@ object.}
 
 \item{...}{optional arguments not used currently.}
 
-\item{value}{a matrix to store as the \sQuote{relabundance} assay}
+\item{value}{\code{Character vector}. A matrix to store as the \sQuote{relabundance} assay}
 }
 \value{
 For \code{relabundance}, the matrix stored with the name \dQuote{relabundance}.

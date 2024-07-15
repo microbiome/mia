@@ -12,7 +12,7 @@
 #' @param ranks \code{Character vector}. Defines taxonomic ranks. Must all be values
 #'   of \code{taxonomyRanks()} function.
 #'
-#' @param keep.dimred \code{Logical}. Should the
+#' @param keep.dimred \code{Logical scalar}. Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this
 #'   breaks the link between the data used to calculate the reduced dims.
 #'   (Default: \code{FALSE})

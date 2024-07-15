@@ -66,7 +66,7 @@ to be unsplit. (Default: \code{names(altExps(x))})}
 
 \item{altExpNames}{Deprecated. Use \code{altexp} instead.}
 
-\item{keep.dimred}{\code{Logical}. Should the
+\item{keep.dimred}{\code{Logical scalar}. Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
 (Default: \code{FALSE})}

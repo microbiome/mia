@@ -122,7 +122,7 @@ and \code{subsetByRare} additional parameters passed to
 \code{getPrevalent}
 }}
 
-\item{detection}{\code{Numeric}. Detection threshold for absence/presence.
+\item{detection}{\code{Numeric scalar}. Detection threshold for absence/presence.
 If \code{as_relative = FALSE},
 it sets the counts threshold for a taxon to be considered present.
 If \code{as_relative = TRUE}, it sets the relative abundance threshold
@@ -139,13 +139,10 @@ detection and prevalence cutoffs be included? (Default: \code{FALSE})}
 \item{na.rm}{\code{Logical scalar}. Should NA values be omitted when calculating
 prevalence? (Default: \code{TRUE})}
 
-\item{assay.type}{\code{Character scalar}. A single value for specifying which
-assay to use for calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{\code{Character scalar} A sinle value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}

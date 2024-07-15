@@ -7,7 +7,7 @@
 #'
 #' @inheritParams calculateDMN
 #' 
-#' @param value a matrix to store as the \sQuote{relabundance} assay
+#' @param value \code{Character vector}. A matrix to store as the \sQuote{relabundance} assay
 #' @param ... optional arguments not used currently.
 #'
 #' @return

@@ -36,25 +36,22 @@ transformAssay(
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{assay.type}{\code{Character scalar}. A single value for specifying which
-assay to use for calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{\code{Character scalar} A sinle value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{method}{\code{Character}. A single value for selecting the transformation
+\item{method}{\code{Character scalar}. A single value for selecting the transformation
 method.}
 
-\item{MARGIN}{\code{Character}. A single value for specifying whether the
+\item{MARGIN}{\code{Character scalar}. A single value for specifying whether the
 transformation is applied sample (column) or feature (row) wise.
 (Default: \code{"samples"})}
 
-\item{name}{\code{Character}. The name to store the result in
+\item{name}{\code{Character scalar}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
-\item{pseudocount}{\code{Boolean} or \code{numeric}. When TRUE,
+\item{pseudocount}{\code{Logical scalar} or \code{numeric scalar}. When TRUE,
 automatically adds the minimum positive value of \code{assay.type}.
 When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.

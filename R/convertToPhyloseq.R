@@ -4,19 +4,14 @@
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object
 #'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   included in the phyloseq object that is created. 
-#'   (By default: \code{assay.type = "counts"})
+#' @param assay.type \code{Character scalar}. Specifies the name of assay 
+#'   used in calculation. (Default: \code{"counts"})
 #'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'   
-#' @param tree.name a single \code{character} value for specifying which
-#'   tree will be included in the phyloseq object that is created, 
-#'   (By default: \code{tree.name = "phylo"})
+#' @param tree.name \code{Character scalar}. Specifies the name of the
+#'   tree to be included in the phyloseq object that is created, 
+#'   (Default: \code{"phylo"})
 #'   
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'

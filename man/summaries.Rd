@@ -52,14 +52,11 @@ to return top five taxa. (Default: \code{5})}
 \item{method}{\code{Character}. Specify the method to determine top taxa. Either
 sum, mean, median or prevalence. (Default: \code{"mean"})}
 
-\item{assay.type}{a \code{character} value to select an
+\item{assay.type}{\code{Character scalar}. A single value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
-By default it expects count data.}
+(Default: \code{"counts"})}
 
-\item{assay_name}{\code{Character scalar} A sinle value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{na.rm}{\code{Logical scalar}. Should NA values be omitted when calculating
 prevalence? (Default: \code{TRUE})}
@@ -73,7 +70,8 @@ the output of \code{taxonomyRanks()}.}
 \item{group}{With group, it is possible to group the observations in an
 overview. Must be one of the column names of \code{colData}.}
 
-\item{name}{The column name for the features. The default is 'dominant_taxa'.}
+\item{name}{\code{Character scalar}. The column name for the features.
+(Default: \code{"dominant_taxa"})}
 
 \item{object}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}

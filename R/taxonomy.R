@@ -31,17 +31,17 @@
 #'
 #' @inheritParams agglomerate-methods
 #'
-#' @param with.rank \code{logical}. Should the level be add as a
+#' @param with.rank \code{logical scalar}. Should the level be add as a
 #'   suffix? For example: "Phylum:Crenarchaeota". (Default: \code{FALSE})
 #' 
 #' @param with_rank Deprecated. Use \code{with.rank} instead.
 #'
-#' @param make.unique \code{Logical}. Should the labels be made
+#' @param make.unique \code{Logical scalar}. Should the labels be made
 #'   unique, if there are any duplicates? (Default: \code{TRUE})
 #' 
 #' @param make_unique Deprecated. Use \code{make.unique} instead.
 #'
-#' @param resolve.loops \code{Logical}. Should \code{resolveLoops}
+#' @param resolve.loops \code{Logical scalar}. Should \code{resolveLoops}
 #'   be applied to the taxonomic data? Please note that has only an effect,
 #'   if the data is unique. (Default: \code{TRUE})
 #' 
@@ -54,7 +54,7 @@
 #' @param from 
 #' \itemize{
 #'   \item For \code{mapTaxonomy}: a scalar \code{character} value, which 
-#'     must be a valid taxonomic rank. (default: \code{NULL})
+#'     must be a valid taxonomic rank. (Default: \code{NULL})
 #'   \item otherwise a \code{Taxa} object as returned by 
 #'     \code{\link[DECIPHER:IdTaxa]{IdTaxa}}
 #' }

@@ -24,24 +24,24 @@ importQIIME2(
 importQZA(file, temp.dir = temp, temp = tempdir(), ...)
 }
 \arguments{
-\item{assay.file}{a single \code{character} value defining the file
+\item{assay.file}{\code{Character scalar}. A single value defining the file
 path of the feature table to be imported.}
 
 \item{featureTableFile}{Deprecated. use \code{assay.file} instead.}
 
-\item{row.file}{a single \code{character} value defining the file
+\item{row.file}{\code{Character scalar}. A single value defining the file
 path of the taxonomy table to be imported. (default:
-\code{row.file = NULL}).}
+\code{NULL}).}
 
 \item{taxonomyTableFile}{Deprecated. use \code{row.file} instead.}
 
-\item{col.file}{a single \code{character} value defining the file path
+\item{col.file}{\code{Character scalar}. A single  value defining the file path
 of the sample metadata to be imported. The file has to be in tsv format.
-(default: \code{col.file = NULL}).}
+(Default: \code{NULL}).}
 
 \item{sampleMetaFile}{Deprecated. Use \code{col.file} instead.}
 
-\item{as.refseq}{\code{TRUE} or \code{FALSE}: Should the feature
+\item{as.refseq}{\code{Logical scalar}. Should the feature
 names of the feature table be regarded as reference sequences? This setting
 will be disregarded, if \code{refseq.file} is not \code{NULL}. If the
 feature names do not contain valid DNA characters only, the reference
@@ -49,14 +49,13 @@ sequences will not be set.}
 
 \item{featureNamesAsRefSeq}{Deprecated. Use \code{as.refseq} instead.}
 
-\item{refseq.file}{a single \code{character} value defining the file path of
-the reference sequences for each feature. (default: \code{refseq.file =
-  NULL}).}
+\item{refseq.file}{\code{Character scalar}. A single value defining the file path of
+the reference sequences for each feature. (Default: \code{NULL}).}
 
 \item{refSeqFile}{Deprecated. Use \code{refseq.file} instead.}
 
-\item{tree.file}{a single \code{character} value defining the file path of
-the phylogenetic tree. (default: \code{tree.file = NULL}).}
+\item{tree.file}{\code{Character scalar}. A single value defining the file path of
+the phylogenetic tree. (Default: \code{NULL}).}
 
 \item{phyTreeFile}{Deprecated. Use \code{tree.file} isntead.}
 

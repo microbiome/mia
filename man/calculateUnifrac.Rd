@@ -47,23 +47,18 @@ to the same type of features (aka. microorganisms).}
 calculation? Weighted-Unifrac takes into account the relative abundance of
 species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is \code{FALSE}, meaning the
-unweighted-Unifrac distance is calculated for all pairs of samples.}
+unweighted-Unifrac distance is calculated for all pairs of samples.
+(Default: \code{FALSE})}
 
-\item{assay.type}{\code{Character scalar}. A single value for specifying which
-assay to use for calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{\code{Character scalar} A sinle value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{exprs_values}{\code{Character scalar}. A single value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead.)}
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{tree.name}{\code{Character}. A single value for specifying which
-tree will be used in calculation.
-(Default: \code{"phylo"})}
+\item{tree.name}{\code{Character scalar}. Specifies the name of the
+tree used in calculation. (Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 

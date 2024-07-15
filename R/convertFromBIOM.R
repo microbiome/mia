@@ -7,22 +7,22 @@
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' objects to phyloseq objects.
 #' 
-#' @param prefix.rm \code{TRUE} or \code{FALSE}: Should
+#' @param prefix.rm \code{Logical scalar}. Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
 #' taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
-#' (default \code{prefix.rm = FALSE})
+#' (Default: \code{FALSE})
 #' 
 #' @param removeTaxaPrefixes Deprecated. Use \code{prefix.rm} instead.
 #' 
-#' @param rank.from.prefix \code{TRUE} or \code{FALSE}: If file does not have
+#' @param rank.from.prefix \code{Logical scalar}. If file does not have
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
-#' (default \code{rank.from.prefix = FALSE})
+#' (Default: \code{FALSE})
 #' 
 #' @param rankFromPrefix Deprecated.Use \code{rank.from.prefix} instead.
 #' 
-#' @param artifact.rm \code{TRUE} or \code{FALSE}: If file have
+#' @param artifact.rm \code{Logical scalar}. If file have
 #' some taxonomic character naming artifacts, should they be removed.
-#' (default \code{artifact.rm = FALSE})
+#' (default (Default: \code{FALSE})
 #' 
 #' @param remove.artifacts Deprecated. Use \code{artifact.rm} instead.
 #' 

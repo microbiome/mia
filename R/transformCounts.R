@@ -5,14 +5,14 @@
 #'
 #' @inheritParams calculateDMN
 #'   
-#' @param method \code{Character}. A single value for selecting the transformation
+#' @param method \code{Character scalar}. A single value for selecting the transformation
 #'   method.
 #' 
-#' @param MARGIN \code{Character}. A single value for specifying whether the
+#' @param MARGIN \code{Character scalar}. A single value for specifying whether the
 #'   transformation is applied sample (column) or feature (row) wise.
 #'   (Default: \code{"samples"})
 #' 
-#' @param pseudocount \code{Boolean} or \code{numeric}. When TRUE,
+#' @param pseudocount \code{Logical scalar} or \code{numeric scalar}. When TRUE,
 #'   automatically adds the minimum positive value of \code{assay.type}.
 #'   When FALSE, does not add any pseudocount (pseudocount = 0).
 #'   Alternatively, a user-specified numeric value can be added as pseudocount.

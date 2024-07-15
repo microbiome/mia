@@ -11,12 +11,12 @@
 #' @param index \code{Character vector}. Specifies the alpha diversity 
 #'   indices to be calculated.
 #'   
-#' @param name \code{Character}. A name for the column(s) of the colData the 
+#' @param name \code{Character scalar}. A name for the column(s) of the colData the 
 #'   results should be
 #'   stored in. By default this will use the original names of the calculated
 #'   indices. (Default: \code{index})
 #' 
-#' @param niter \code{Integer}. A single value for the number of
+#' @param niter \code{Integer scalar}. A single value for the number of
 #'   rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
 #'   (see Details section). (Default: \code{NULL})
 #'   

@@ -65,110 +65,109 @@ values as an output. Adjust \code{method} and other parameters correspondingly.
 Supported functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.
 }}
 
-\item{experiment1}{A single character or numeric value for selecting the experiment 1
+\item{experiment1}{\code{Character scalar} or \code{numeric scalar}. Selects the experiment 1
 from \code{experiments(x)} of \code{MultiassayExperiment} object.
-(By default: \code{experiment1 = 1})}
+(Default: \code{1})}
 
-\item{experiment2}{A single character or numeric value for selecting the experiment 2
+\item{experiment2}{\code{Character scalar} or \code{numeric scalar}. Selects the experiment 2
 from\code{experiments(x)} of \code{MultiAssayExperiment} object or
 \code{altExp(x)} of \code{TreeSummarizedExperiment} object. Alternatively,
 \code{experiment2} can also be \code{TreeSE} object when \code{x} is \code{TreeSE} object.
-(By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and
-\code{experiment2 = x} when \code{x} is \code{TreeSE})}
+(Default: \code{2} when \code{x} is \code{MAE} and
+\code{x} when \code{x} is \code{TreeSE})}
 
-\item{assay.type1}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of
-experiment 1 to be transformed. (By default: \code{assay.type1 = "counts"})}
+\item{assay.type1}{\code{Character scalar}. Specifies the name of the assay in experiment 1
+to be transformed.. (Default: \code{"counts"})}
 
 \item{assay_name1}{Deprecated. Use \code{assay.type1} instead.}
 
-\item{assay.type2}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of
-experiment 2 to be transformed. (By default: \code{assay.type2 = "counts"})}
+\item{assay.type2}{\code{Character scalar}. Specifies the name of the assay in experiment 2
+to be transformed.. (Default: \code{"counts"})}
 
 \item{assay_name2}{Deprecated. Use \code{assay.type2} instead.}
 
-\item{altexp1}{A single numeric or character value specifying alternative experiment
+\item{altexp1}{\code{Character scalar} or \code{numeric scalar}. Specifies alternative experiment
 from the altExp of experiment 1. If NULL, then the experiment is itself
 and altExp option is disabled.
-(By default: \code{altexp1 = NULL})}
+(Default: \code{NULL})}
 
-\item{altexp2}{A single numeric or character value specifying alternative experiment
+\item{altexp2}{\code{Character scalar} or \code{numeric scalar}. Specifies alternative experiment
 from the altExp of experiment 2. If NULL, then the experiment is itself
 and altExp option is disabled.
-(By default: \code{altexp2 = NULL})}
+(Default: \code{NULL})}
 
-\item{col.var1}{A character value specifying column(s) from colData
+\item{col.var1}{\code{Character scalar}. Specifies column(s) from colData
 of experiment 1. If col.var1 is used, assay.type1 is disabled.
-(By default: \code{col.var1 = NULL})}
+(Default: \code{NULL})}
 
 \item{colData_variable1}{Deprecated. Use \code{col.var1} instead.}
 
-\item{col.var2}{A character value specifying column(s) from colData
+\item{col.var2}{\code{Character scalar}. Specifies column(s) from colData
 of experiment 2. If col.var2 is used, assay.type2 is disabled.
-(By default: \code{col.var2 = NULL})}
+(Default: \code{NULL})}
 
 \item{colData_variable2}{Deprecated. Use \code{col.var2} instead.}
 
-\item{by}{A character value for selecting if association are calculated
+\item{by}{A\code{Character scalar}. Determines if association are calculated
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}
 
 \item{MARGIN}{Deperecated. Use \code{by} instead.}
 
-\item{method}{A single character value for selecting association method
+\item{method}{\code{Character scalar}. Defines the association method
 ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
-(By default: \code{method = "kendall"})}
+(Default: \code{"kendall"})}
 
-\item{mode}{A single character value for selecting output format
-Available formats are  'table' and 'matrix'.  (By default: \code{mode = "table"})}
+\item{mode}{\code{Character scalar}. Specifies the  output format
+Available formats are  'table' and 'matrix'.  (Default: \code{"table"})}
 
-\item{p.adj.method}{A single character value for selecting adjustment method of
+\item{p.adj.method}{\code{Character scalar}. Specifies adjustment method of
 p-values. Passed to \code{p.adjust} function.
-(By default: \code{p.adj.method = "fdr"})}
+(Default: \code{"fdr"})}
 
 \item{p_adj_method}{Deprecated. Use \code{p.adj.method} isntead.}
 
-\item{p.adj.threshold}{A single numeric value (from 0 to 1) for selecting
+\item{p.adj.threshold}{\code{Numeric scalar}. From \code{0 to 1}, specifies
 adjusted p-value threshold for filtering.
-(By default: \code{p.adj.threshold = NULL})}
+(Default: \code{NULL})}
 
 \item{p_adj_threshold}{Deprecated. Use \code{p.dj.threshold} instead.}
 
-\item{cor.threshold}{A single numeric absolute value (from 0 to 1) for selecting
+\item{cor.threshold}{\code{Numeric scalar}. From \code{0 to 1}, specifies
 correlation threshold for filtering.
-(By default: \code{cor.threshold = NULL})}
+(Default: \code{NULL})}
 
 \item{cor_threshold}{Deprecated. Use \code{cor.threshold} instead.}
 
-\item{sort}{A single boolean value for selecting whether to sort features or not
+\item{sort}{\code{Logical scalar}. Specifies whether to sort features or not
 in result matrices. Used method is hierarchical clustering.
-(By default: \code{sort = FALSE})}
+(Default: \code{FALSE})}
 
-\item{filter.self.cor}{A single boolean value for selecting whether to
+\item{filter.self.cor}{\code{Logical scalar}. Specifies whether to
 filter out correlations between identical items. Applies only when correlation
 between experiment itself is tested, i.e., when assays are identical.
-(By default: \code{filter.self.cor = FALSE})}
+(Default: \code{FALSE})}
 
 \item{filter_self_correlations}{Deprecated. Use \code{filter.self.cor} instead.}
 
-\item{verbose}{A single boolean value for selecting whether to get messages
-about progress of calculation.}
+\item{verbose}{\code{Logical scalar}. Specifies whether to get messages
+about progress of calculation. (Default: \code{FALse})}
 
-\item{test.signif}{A single boolean value for selecting whether to test
+\item{test.signif}{\code{Logical scalar}. Specifies whether to test
 statistical significance of associations.
-(By default: \code{test.signif = FALSE})}
+(Default: \code{FALSE})}
 
 \item{test_significance}{Deprecated. Use \code{test.signif} instead.}
 
-\item{show.warnings}{A single boolean value for selecting whether to show warnings
-that might occur when correlations and p-values are calculated.}
+\item{show.warnings}{\code{Logical scalar}. specifies whether to show warnings
+that might occur when correlations and p-values are calculated.
+(Default: \code{FALSE})}
 
 \item{show_warnings}{Deprecated. use \code{show.warnings} instead.}
 
-\item{paired}{A single boolean value for specifying if samples are paired or not.
+\item{paired}{\code{Logical scalar}. Specifies if samples are paired or not.
 \code{colnames} must match between twp experiments. \code{paired} is disabled
-when \code{by = 1}. (By default: \code{paired = FALSE})}
+when \code{by = 1}. (Default: \code{FALSE})}
 }
 \value{
 This function returns associations in table or matrix format. In table format,

@@ -68,19 +68,14 @@ integer vector of row indices or a logical vector. (Default: \code{NULL})}
 \item{transposed}{\code{Logical scalar}. Is x transposed with samples in rows?
 (Default: \code{FALSE})}
 
-\item{assay.type}{\code{Character scalar}. A single value for specifying which
-assay to use for calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{\code{Character scalar} A sinle value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{exprs_values}{\code{Character scalar}. A single value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead.)}
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{tree.name}{\code{Character}. A single value for specifying which
+\item{tree.name}{\code{Character scalar}. A single value for specifying which
 rowTree will be used in calculation.
 (Default: \code{"phylo"})}
 
@@ -89,7 +84,7 @@ rowTree will be used in calculation.
 \item{altexp}{\code{String or integer scalar}. Specifies an alternative experiment
 containing the input data.}
 
-\item{name}{\code{Character}. The name to store the result in
+\item{name}{\code{Character scalar}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 }
 \value{

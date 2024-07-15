@@ -6,42 +6,42 @@
 #'                                                                              
 #' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 #' 
-#' @param outcome A single character value indicating the colData variable used
+#' @param outcome \code{Character scalar}.A single value indicating the colData variable used
 #'   as outcome in the model.
 #' 
-#' @param treatment A single character value indicating the colData variable
+#' @param treatment \code{Character scalar}. A single value indicating the colData variable
 #'   used as treatment in the model.
 #'
-#' @param mediator A single character value indicating the colData variable used
-#'   as mediator in the model. (default: \code{mediator = NULL})
+#' @param mediator \code{Character scalar}. A single value indicating the colData variable used
+#'   as mediator in the model. (Default: \code{NULL})
 #'
-#' @param assay.type A single character value indicating the assay used for
-#'   feature-wise mediation analysis. (default: \code{assay.type = NULL})
+#' @param assay.type \code{Character scalar}. A single value indicating the assay used for
+#'   feature-wise mediation analysis. (Default: \code{NULL})
 #' 
-#' @param dimred A single character value indicating the reduced dimension
+#' @param dimred \code{Character scalar}. A single value indicating the reduced dimension
 #'   result in \code{reducedDims(object)} for component-wise mediation analysis.
-#'   (default: \code{dimred = NULL})
+#'   (Default: \code{NULL})
 #'
-#' @param family A specification for the outcome model link function.
-#'   (default: \code{family = gaussian("identity")})
+#' @param family \code{Character scalar}. A specification for the outcome model link function.
+#'   (Default: \code{gaussian("identity")})
 #' 
-#' @param covariates Single character value or list indicating the colData
+#' @param covariates \code{Character scalar}. A single character value or list indicating the colData
 #'   variables used as covariates in the model.
-#'   (default: \code{covariates = NULL})
+#'   (Default: \code{NULL})
 #' 
-#' @param p.adj.method A single character value for selecting adjustment method
+#' @param p.adj.method \code{Character scalar}. A single value for selecting adjustment method
 #'   of p-values. Passed to `p.adjust` function.
-#'   (default: \code{p.adj.method = "holm"})
+#'   (Default: \code{"holm"})
 #' 
-#' @param add.metadata TRUE or FALSE, should the model metadata be returned.
-#'   (default: \code{add.metadata = FALSE})
+#' @param add.metadata \code{Logical scalar}. Should the model metadata be returned.
+#'   (Default: \code{FALSE})
 #' 
-#' @param verbose TRUE or FALSE, should execution messages be printed.
-#'   (default: \code{verbose = TRUE})
+#' @param verbose \code{Logical scalar}. Should execution messages be printed.
+#'   (Default: \code{TRUE})
 #'   
-#' @param name A single character value to name the metadata element and avoid
+#' @param name \code{Character scalar}. A single value to name the metadata element and avoid
 #'   overwriting other metadata slots. It is supported only by
-#'   \code{addMediation}. (default: \code{name = "mediation"})
+#'   \code{addMediation}. (Default: \code{"mediation"})
 #' 
 #' @param ... additional parameters that can be passed to
 #'   \code{\link[mediation:mediate]{mediate}}.
