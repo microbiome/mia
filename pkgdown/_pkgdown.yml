@@ -4,7 +4,6 @@ reference:
 - subtitle: Agglomeration
 - contents:
   - agglomerateByRank
-  - mergeRows
   - splitOn
   - mergeSEs
 - subtitle: Transformation
@@ -37,7 +36,6 @@ reference:
 - subtitle: Other diversity measurements
 - contents:
   - runDPCoA
-  - estimateRichness
 - title: Other functions
 - subtitle: Dataset description
 - contents:
@@ -50,10 +48,8 @@ reference:
 - subtitle: Dominance
 - contents:
   - getDominant
-  - estimateDominance
 - subtitle: Evenness indeces
 - contents:
-  - estimateEvenness
 - subtitle: Clustering
 - contents:
   - calculateDMN
