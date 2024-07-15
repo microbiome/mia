@@ -155,7 +155,7 @@ object.</p></dd>
 
 
 <dt id="arg-k">k<a class="anchor" aria-label="anchor" href="#arg-k"></a></dt>
-<dd><p><code>Numeric</code>. The number of Dirichlet components to fit. See
+<dd><p><code>Numeric scalar</code>. The number of Dirichlet components to fit. See
 <code><a href="https://rdrr.io/pkg/DirichletMultinomial/man/dmn.html" class="external-link">dmn</a></code>. (Default: <code>1</code>)</p></dd>
 
 
@@ -166,26 +166,21 @@ object specifying whether the UniFrac calculation should be parallelized.</p></d
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p><code>Numeric</code>. Random number seed. See
+<dd><p><code>Numeric scalar</code>. Random number seed. See
 <code><a href="https://rdrr.io/pkg/DirichletMultinomial/man/dmn.html" class="external-link">dmn</a></code></p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. A single value for specifying which
-assay to use for calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. Specifies the name of the
+assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p><code>Character scalar</code> A sinle value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-exprs-values">exprs_values<a class="anchor" aria-label="anchor" href="#arg-exprs-values"></a></dt>
-<dd><p><code>Character scalar</code>. A single value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
@@ -194,18 +189,18 @@ assay to use for calculation.
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p><code>Character</code>. The name to store the result in
+<dd><p><code>Character scalar</code>. The name to store the result in
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">metadata</a></code></p></dd>
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
-<dd><p><code>Character</code>. The type of measure used for the goodness of fit. One of
+<dd><p><code>Character scalar</code>. The type of measure used for the goodness of fit. One of
 ‘laplace’, ‘AIC’ or ‘BIC’.</p></dd>
 
 
 <dt id="arg-variable">variable<a class="anchor" aria-label="anchor" href="#arg-variable"></a></dt>
-<dd><p>a variable from <code>colData</code> to use as a grouping variable.
-Must be a character of factor.</p></dd>
+<dd><p><code>Character scalar</code>. A variable from <code>colData</code> to use as a
+grouping variable. Must be a character of factor.</p></dd>
 
 </dl></div>
     <div id="value">

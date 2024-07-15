@@ -91,21 +91,19 @@ object.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. A single value for specifying which
-assay to use for calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. Specifies the name of the
+assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p><code>Character scalar</code> A sinle value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-detection">detection<a class="anchor" aria-label="anchor" href="#arg-detection"></a></dt>
-<dd><p><code>Numeric</code>. A single value for selecting detection threshold for
+<dd><p><code>Numeric scalar</code>. Defines detection threshold for
 absence/presence of features. Feature that has abundance under threshold in
-either of samples, will be discarded when evaluating overlap between samples.</p></dd>
+either of samples, will be discarded when evaluating overlap between samples.
+(Default: <code>0</code>)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

@@ -211,7 +211,7 @@ prevalence? (Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-empty-fields">empty.fields<a class="anchor" aria-label="anchor" href="#arg-empty-fields"></a></dt>
-<dd><p><code>Character</code>. A value defining, which values should be
+<dd><p><code>Character vector</code>. Defines which values should be
 regarded as empty. (Default: <code>c(NA, "", " ", "\t")</code>). They will be
 removed if <code>na.rm = TRUE</code> before agglomeration.</p></dd>
 
@@ -285,7 +285,7 @@ of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p
 
 
 <dt id="arg-keep-dimred">keep.dimred<a class="anchor" aria-label="anchor" href="#arg-keep-dimred"></a></dt>
-<dd><p><code>Logical</code>. Should the
+<dd><p><code>Logical scalar</code>. Should the
 <code>reducedDims(x)</code> be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
 (Default: <code>FALSE</code>)</p></dd>

@@ -111,16 +111,13 @@ sum, mean, median or prevalence. (Default: <code>"mean"</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>a <code>character</code> value to select an
+<dd><p><code>Character scalar</code>. A single value to select an
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></code>
-By default it expects count data.</p></dd>
+(Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p><code>Character scalar</code> A sinle value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
@@ -144,7 +141,8 @@ overview. Must be one of the column names of <code>colData</code>.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>The column name for the features. The default is 'dominant_taxa'.</p></dd>
+<dd><p><code>Character scalar</code>. The column name for the features.
+(Default: <code>"dominant_taxa"</code>)</p></dd>
 
 
 <dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>

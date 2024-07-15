@@ -107,39 +107,35 @@ objects.</p>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>A single character value for selecting the
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
-to use.</p></dd>
+<dd><p>A<code>Character scalar</code>. Specifies the name of assay
+used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>A name for the column of the colData in which the contaminant
-information should be stored.</p></dd>
+<dd><p><code>Character scalar</code>. A name for the column of the colData in which the contaminant
+information should be stored. (Default: <code>"isContaminant"</code>)</p></dd>
 
 
 <dt id="arg-concentration">concentration<a class="anchor" aria-label="anchor" href="#arg-concentration"></a></dt>
-<dd><p><code>NULL</code> or a single <code>character</code> value. Defining
+<dd><p><code>Character scalar</code> or <code>NULL</code>. Defining
 a column with numeric values from the <code>colData</code> to use as
-concentration information. (default: <code>concentration = NULL</code>)</p></dd>
+concentration information. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-control">control<a class="anchor" aria-label="anchor" href="#arg-control"></a></dt>
-<dd><p><code>NULL</code> or a single <code>character</code> value. Defining a
+<dd><p><code>Character scalar</code> or <code>NULL</code>. Defining a
 column with logical values from the <code>colData</code> to define control and
-non-control samples. (default: <code>control = NULL</code>)</p></dd>
+non-control samples. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-batch">batch<a class="anchor" aria-label="anchor" href="#arg-batch"></a></dt>
-<dd><p><code>NULL</code> or a single <code>character</code> value. Defining a
+<dd><p><code>Character scalar</code> or <code>NULL</code>. Defining a
 column with values interpretable as a factor from the <code>colData</code> to use
-as batch information. (default: <code>batch = NULL</code>)</p></dd>
+as batch information. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>

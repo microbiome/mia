@@ -94,35 +94,32 @@ object.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. A single value for specifying which
-assay to use for calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. Specifies the name of the
+assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p><code>Character scalar</code> A sinle value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p><code>Character</code>. A single value for selecting the transformation
+<dd><p><code>Character scalar</code>. A single value for selecting the transformation
 method.</p></dd>
 
 
 <dt id="arg-margin">MARGIN<a class="anchor" aria-label="anchor" href="#arg-margin"></a></dt>
-<dd><p><code>Character</code>. A single value for specifying whether the
+<dd><p><code>Character scalar</code>. A single value for specifying whether the
 transformation is applied sample (column) or feature (row) wise.
 (Default: <code>"samples"</code>)</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p><code>Character</code>. The name to store the result in
+<dd><p><code>Character scalar</code>. The name to store the result in
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">metadata</a></code></p></dd>
 
 
 <dt id="arg-pseudocount">pseudocount<a class="anchor" aria-label="anchor" href="#arg-pseudocount"></a></dt>
-<dd><p><code>Boolean</code> or <code>numeric</code>. When TRUE,
+<dd><p><code>Logical scalar</code> or <code>numeric scalar</code>. When TRUE,
 automatically adds the minimum positive value of <code>assay.type</code>.
 When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.
