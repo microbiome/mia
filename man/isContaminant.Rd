@@ -75,6 +75,11 @@ as batch information. (Default: \code{NULL})}
 \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
 
+\item{detailed}{\code{Logical scalar}. If TRUE, the return value is a
+data.frame containing diagnostic information on the contaminant decision.
+If FALSE, the return value is a logical vector containing the binary
+contaminant classifications. (Default: \code{TRUE})}
+
 \item{...}{\itemize{
 \item for \code{isContaminant}/ \code{isNotContaminant}: arguments
 passed on to \code{\link[decontam:isContaminant]{decontam:isContaminant}}

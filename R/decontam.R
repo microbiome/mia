@@ -27,6 +27,11 @@
 #' @param batch \code{Character scalar} or \code{NULL}. Defining a
 #'   column with values interpretable as a factor from the \code{colData} to use
 #'   as batch information. (Default: \code{NULL})
+#' 
+#' @param detailed \code{Logical scalar}. If TRUE, the return value is a 
+#'   data.frame containing diagnostic information on the contaminant decision. 
+#'   If FALSE, the return value is a logical vector containing the binary 
+#'   contaminant classifications. (Default: \code{TRUE})
 #'
 #' @param ... arguments passed onto
 #'   \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
