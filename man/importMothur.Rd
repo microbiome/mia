@@ -71,9 +71,9 @@ tse
 \url{https://mothur.org/wiki/design_file/}
 }
 \seealso{
-\code{\link[=convert]{convertFromPhyloseq}}
-\code{\link[=convert]{convertFromBIOM}}
-\code{\link[=convert]{convertFromDADA2}}
+\code{\link[=convertFromPhyloseq]{convertFromPhyloseq}}
+\code{\link[=convertFromBIOM]{convertFromBIOM}}
+\code{\link[=convertFromDADA2]{convertFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
 }
 \author{

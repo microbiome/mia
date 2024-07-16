@@ -501,8 +501,12 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 
 ############################# agglomerateByPrevalence ##########################
 
-#' @rdname agglomerate-methods
-#'   
+#' Agglomerate data based on population prevalence
+#' 
+#' @rdname agglomerateByPrevalence
+#'  
+#' @inheritParams agglomerateByRank
+#' 
 #' @param update.tree \code{Logical scalar}. Should
 #'   \code{rowTree()} also be agglomerated? (Default: \code{FALSE})
 #' 
@@ -549,7 +553,7 @@ setGeneric("agglomerateByPrevalence", signature = "x",
            function(x, ...)
                standardGeneric("agglomerateByPrevalence"))
 
-#' @rdname agglomerate-methods
+#' @rdname agglomerateByPrevalence
 #' @export
 setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, other.label = other_label, other_label = "Other", ...){
@@ -581,7 +585,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname agglomerate-methods
+#' @rdname agglomerateByPrevalence
 #' @export
 setMethod("agglomerateByPrevalence", 
           signature = c(x = "TreeSummarizedExperiment"),

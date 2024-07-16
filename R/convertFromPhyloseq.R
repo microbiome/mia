@@ -1,5 +1,7 @@
 #' Create a \code{TreeSummarizedExperiment} object from a phyloseq object
 #' 
+#' @inheritParams convertFromBIOM
+#' 
 #' @details 
 #' \code{convertFromPhyloseq} converts \code{phyloseq}
 #' objects into 

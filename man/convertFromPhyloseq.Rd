@@ -6,6 +6,9 @@
 \usage{
 convertFromPhyloseq(x)
 }
+\arguments{
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
+}
 \value{
 \code{convertFromPhyloseq} returns an object of class
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}

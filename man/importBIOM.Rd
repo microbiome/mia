@@ -46,9 +46,9 @@ tse <- importBIOM(biom_file, artifact.rm = TRUE)
 }
 \seealso{
 \code{\link[=importMetaPhlAn]{importMetaPhlAn}}
-\code{\link[=convert]{convertFromPhyloseq}}
-\code{\link[=convert]{convertFromBIOM}}
-\code{\link[=convert]{convertFromDADA2}}
+\code{\link[=convertFromPhyloseq]{convertFromPhyloseq}}
+\code{\link[=convertFromBIOM]{convertFromBIOM}}
+\code{\link[=convertFromDADA2]{convertFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
 \code{\link[=importMothur]{importMothur}}
 \code{\link[=importHUMAnN]{importHUMAnN}}

@@ -4,6 +4,7 @@ reference:
 - subtitle: Agglomeration
 - contents:
   - agglomerateByRank
+  - agglomerateByPrevalence
   - splitOn
   - mergeSEs
 - subtitle: Transformation

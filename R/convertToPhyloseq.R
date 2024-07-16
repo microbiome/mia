@@ -1,5 +1,7 @@
 #' Create a phyloseq object from a \code{TreeSummarizedExperiment} object
-#'
+#'  
+#' @inheritParams convertFromBIOM
+#' 
 #' @param x a 
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object
@@ -55,7 +57,7 @@ setGeneric("convertToPhyloseq", signature = c("x"),
                standardGeneric("convertToPhyloseq"))
 
 
-#' @rdname convert
+#' @rdname convertToPhyloseq
 #' @export
 setMethod("convertToPhyloseq",
           signature = c(x = "SummarizedExperiment"),
@@ -116,7 +118,7 @@ setMethod("convertToPhyloseq",
     }
 )
 
-#' @rdname convert
+#' @rdname convertToPhyloseq
 #' @export
 setMethod("convertToPhyloseq",
           signature = c(x = "TreeSummarizedExperiment"),

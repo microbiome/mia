@@ -2,14 +2,22 @@
 % Please edit documentation in R/convertToPhyloseq.R
 \name{convertToPhyloseq}
 \alias{convertToPhyloseq}
+\alias{convertToPhyloseq,SummarizedExperiment-method}
+\alias{convertToPhyloseq,TreeSummarizedExperiment-method}
 \title{Create a phyloseq object from a \code{TreeSummarizedExperiment} object}
 \usage{
 convertToPhyloseq(x, ...)
+
+\S4method{convertToPhyloseq}{SummarizedExperiment}(x, assay.type = "counts", assay_name = NULL, ...)
+
+\S4method{convertToPhyloseq}{TreeSummarizedExperiment}(x, tree.name = tree_name, tree_name = "phylo", ...)
 }
 \arguments{
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object}
+
+\item{...}{Additional arguments. Not used currently.}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}

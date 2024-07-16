@@ -3,6 +3,7 @@
 \name{convertFromBIOM}
 \alias{convertFromBIOM}
 \alias{convertToBIOM}
+\alias{convertToBIOM,SummarizedExperiment-method}
 \title{Convert a \code{TreeSummarizedExperiment} object to/from \sQuote{BIOM} results}
 \usage{
 convertFromBIOM(
@@ -17,6 +18,8 @@ convertFromBIOM(
 )
 
 convertToBIOM(x, assay.type = "counts", ...)
+
+\S4method{convertToBIOM}{SummarizedExperiment}(x, assay.type = "counts", ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}

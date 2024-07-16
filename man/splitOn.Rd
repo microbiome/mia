@@ -56,7 +56,7 @@ Split by cols is not encouraged, since this is not compatible with
 storing the results in \code{altExps}. (Default: \code{NULL})}
 
 \item{update.tree}{\code{Logical scalar}. Should
-\code{rowTree()} also be agglomerated? (Default: \code{FALSE})}
+\code{rowTree()} also be merged? (Default: \code{FALSE})}
 
 \item{update_rowTree}{Deprecated. Use \code{update.tree } instead.}
 
