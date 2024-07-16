@@ -1,4 +1,4 @@
-#' Create a phyloseq object from a TreeSummarizedExperiment object
+#' Create a phyloseq object from a \code{TreeSummarizedExperiment} object
 #'
 #' @param x a 
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -25,7 +25,7 @@
 #' \code{convertToPhyloseq} returns an object of class 
 #' \code{\link[phyloseq:phyloseq-class]{phyloseq}}
 #'
-#' @rdname convert
+#' @rdname convertToPhyloseq
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

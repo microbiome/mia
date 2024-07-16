@@ -1,4 +1,4 @@
-#' Coerce \sQuote{DADA2} results to \code{TreeSummarizedExperiment}
+#' Create a \code{TreeSummarizedExperiment} object from \sQuote{DADA2} results
 #'
 #' @param ... Additional arguments. For \code{convertFromDADA2}, see 
 #' \code{mergePairs} function for more details.
@@ -20,7 +20,7 @@
 #' @importFrom S4Vectors SimpleList
 #' @importFrom Biostrings DNAStringSet
 #'
-#' @rdname convert
+#' @rdname convertFromDADA2
 #'
 #' @export
 #'

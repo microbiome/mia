@@ -1,4 +1,4 @@
-#' Converters
+#' Convert a \code{TreeSummarizedExperiment} object to/from \sQuote{BIOM} results
 #'
 #' For convenience, a few functions are available to convert BIOM, DADA2 and 
 #' phyloseq objects to 
@@ -27,19 +27,19 @@
 #' @param remove.artifacts Deprecated. Use \code{artifact.rm} instead.
 #' 
 #' @details 
-#' \code{convertFromBIOM} coerces a BIOM object to a 
+#' \code{convertFromBIOM} coerces a \code{\link[biomformat:biom-class]{biom}} object to a 
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object.
 #' 
-#' \code{convertFromBIOM} coerces a
+#' \code{convertToBIOM} coerces a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object to a \code{\link[biomformat:biom-class]{biom}} object.
 #'   
 #' @return
 #' \code{convertFromBIOM} returns an object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'
-#' @name convert
+#'   
+#' @name convertFromBIOM
 #' 
 #' @seealso
 #' \code{\link[=importQIIME2]{importQIIME2}}
@@ -62,7 +62,7 @@
 #' 
 NULL
 
-#' Loading a BIOM file
+#' Import BIOM results to \code{TreeSummarizedExperiment}
 #' 
 #' @param file BIOM file location
 #' 
@@ -115,8 +115,8 @@ importBIOM <- function(file, ...) {
     convertFromBIOM(biom, ...)
 }
 
-#' @rdname convert
-#'
+#' @rdname convertFromBIOM
+#' 
 #' @param x object of type \code{\link[biomformat:biom-class]{biom}}
 #'
 #' @export
@@ -243,8 +243,8 @@ convertFromBIOM <- function(
     return(tse)
 }
 
-#' @rdname convert
-#'
+#' @rdname convertFromBIOM
+#' 
 #' @param x \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' 
 #' @param assay.type \code{Character scaler}. The name of assay.

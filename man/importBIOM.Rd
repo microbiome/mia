@@ -2,7 +2,7 @@
 % Please edit documentation in R/convertFromBIOM.R
 \name{importBIOM}
 \alias{importBIOM}
-\title{Loading a BIOM file}
+\title{Import BIOM results to \code{TreeSummarizedExperiment}}
 \usage{
 importBIOM(file, ...)
 }
@@ -16,7 +16,7 @@ importBIOM(file, ...)
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 }
 \description{
-Loading a BIOM file
+Import BIOM results to \code{TreeSummarizedExperiment}
 }
 \details{
 \code{importBIOM} loads a BIOM file and creates a
