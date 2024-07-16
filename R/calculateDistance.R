@@ -58,7 +58,8 @@ setGeneric(
 setMethod(
     "getDissimilarity", signature = c(x = "TreeSummarizedExperiment"),
     function(
-        x, method, assay.type = "counts", tree.name = "phylo", transposed = FALSE, ...){
+        x, method, assay_name = "counts", assay.type = assay_name,
+          tree.name = "phylo", transposed = FALSE, ...){
     mat <- assay(x, assay.type)
     if(!transposed){
         mat <- t(mat)
@@ -74,7 +75,8 @@ setMethod(
 setMethod(
     "getDissimilarity", signature = c(x = "SummarizedExperiment"),
     function(
-        x, method, assay.type = "counts", transposed = FALSE, ...){
+        x, method, assay_name = "counts", assay.type = assay_name, 
+          transposed = FALSE, ...){
     mat <- assay(x, assay.type)
     if(!transposed){
         mat <- t(mat)
@@ -112,7 +114,8 @@ setGeneric(
 setMethod(
   "addDissimilarity", signature = c(x = "SummarizedExperiment"),
   function(
-    x, method, assay.type = "counts", transposed = FALSE, name = method, ...){
+    x, method, assay_name = "counts", assay.type = assay_anme, 
+      transposed = FALSE, ...){
     res <- getDissimilarity(x, method = method, assay.type = assay.type, 
                             transposed = transposed, ...)
     if ( !identical(rownames(as.matrix(res)), colnames(assay(x, assay.type))) ){
@@ -122,7 +125,7 @@ setMethod(
       return(res)
     }
     else{
-      .add_values_to_reducedDims(x, res, name = name)
+      .add_values_to_reducedDims(x, res, name = method)
     }
       
   }
@@ -148,7 +151,7 @@ setMethod(
         } else if( method %in% c("jsd")  ){
             diss.fun <- getJSD
             message("'diss.fun' defaults to getJSD.")
-        } else if( require("vegan") ){
+        } else if( requireNamespace("vegan") ){
             diss.fun <- vegan::vegdist
             message("'diss.fun' defaults to vegan::vegdist.")
         } else{

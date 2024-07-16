@@ -166,12 +166,6 @@ setMethod("getUnifrac",
         signature = c(x = "SummarizedExperiment", tree = "phylo"),
     function(
         x, tree, assay.type = "counts", transposed = FALSE, ...){
-    if(is(x,"SummarizedExperiment")){
-        stop("When providing a 'tree', please provide a matrix-like as 'x'",
-            " and not a 'SummarizedExperiment' object. Please consider ",
-            "combining both into a 'TreeSummarizedExperiment' object.",
-            call. = FALSE) 
-    }
     # Chcek transposed
     if( !.is_a_bool(transposed) ){
         stop("'transposed' must be TRUE or FALSE.", call. = FALSE)

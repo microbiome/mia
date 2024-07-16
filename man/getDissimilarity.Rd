@@ -14,13 +14,21 @@ getDissimilarity(x, method, ...)
 \S4method{getDissimilarity}{TreeSummarizedExperiment}(
   x,
   method,
-  assay.type = "counts",
+  assay_name = "counts",
+  assay.type = assay_name,
   tree.name = "phylo",
   transposed = FALSE,
   ...
 )
 
-\S4method{getDissimilarity}{SummarizedExperiment}(x, method, assay.type = "counts", transposed = FALSE, ...)
+\S4method{getDissimilarity}{SummarizedExperiment}(
+  x,
+  method,
+  assay_name = "counts",
+  assay.type = assay_name,
+  transposed = FALSE,
+  ...
+)
 
 \S4method{getDissimilarity}{ANY}(x, method, ...)
 
@@ -29,9 +37,9 @@ addDissimilarity(x, method, ...)
 \S4method{addDissimilarity}{SummarizedExperiment}(
   x,
   method,
-  assay.type = "counts",
+  assay_name = "counts",
+  assay.type = assay_anme,
   transposed = FALSE,
-  name = method,
   ...
 )
 }
@@ -43,6 +51,10 @@ object.}
 
 \item{...}{other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}}
 
+\item{assay_name}{Character scalar. Specifies which assay to use for
+calculation. (Please use \code{assay.type} instead. At
+some point \code{assay_name} will be disabled.)}
+
 \item{assay.type}{Character scalar. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
 
@@ -51,10 +63,6 @@ calculation. (Default: \code{"phylo"})}
 
 \item{transposed}{Logical scalar. Specifies if x is transposed with cells in
 rows. (Default: \code{FALSE})}
-
-\item{assay_name}{Character scalar. Specifies which assay to use for
-calculation. (Please use \code{assay.type} instead. At
-some point \code{assay_name} will be disabled.)}
 }
 \value{
 \code{getDissimilarity} returns a distance matrix.
