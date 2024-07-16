@@ -62,6 +62,7 @@ threshold) are agglomerated in an additional row taking the name indicated by
 }
 \examples{
 ## Data can be aggregated based on prevalent taxonomic results
+data(GlobalPatterns)
 tse <- GlobalPatterns
 tse <- transformAssay(tse, method = "relabundance")
 tse <- agglomerateByPrevalence(

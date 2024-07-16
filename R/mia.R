@@ -61,7 +61,7 @@ NULL
 #' tse
 NULL
 
-#' GlobalPatterns
+#' Global patterns of 16S rRNA diversity at a depth of millions of sequences per sample.
 #'
 #' GlobalPatterns compared the microbial communities from 25 environmental samples
 #' and three known "mock communities" at a an average depth of 3.1 million reads
@@ -101,7 +101,7 @@ NULL
 #' PNAS, 108, 4516-4522. \url{https://doi.org/10.1073/pnas.1000080107}
 NULL
 
-#' enterotype
+#' Human gut microbiome dataset from 22 subjects based on shotgun DNA sequencing
 #'
 #' The enterotype data of the human gut microbiome includes taxonomic profiling
 #' for 280 fecal samples from 22 subjects based on shotgun DNA sequencing. The
@@ -146,7 +146,7 @@ NULL
 #' @source \url{http://www.bork.embl.de/Docu/Arumugam_et_al_2011/downloads.html}
 NULL
 
-#' esophagus
+#' Human esophageal community from 3 individuals
 #' 
 #' This small dataset from a human esophageal community includes 3 samples from
 #' 3 human adults based on biopsies analysed with 16S rDNA PCR. The 16S rRNA
@@ -175,7 +175,7 @@ NULL
 #' @source \url{http://www.mothur.org/wiki/Esophageal_community_analysis}
 NULL
 
-#' dmn_se
+#' Twins' microbiome data from 278 individuals
 #'
 #' dmn_se is a dataset on twins' microbiome where samples are stratified by
 #' their community composition through Dirichlet Multinomial Mixtures (DMM). It
@@ -207,7 +207,7 @@ NULL
 #' \url{https://doi.org/10.1038/nature07540}
 NULL
 
-#' peerj13075
+#' Skin microbial profiles 58 genetically unrelated individuals
 #' 
 #' peerj13075 includes skin microbial profiles of 58 volunteers with multiple
 #' factors. 16S r-RNA sequencing of V3-V4 regions was done to generate millions
@@ -244,7 +244,7 @@ NULL
 #' \url{https://www.doi.org/10.7717/peerj.13075/supp-2}
 NULL
 
-#' HintikkaXOData
+#' Multiomics dataset from 40 rat samples
 #' 
 #' HintikkaXO is a multiomics dataset from a rat experiment studying effect of
 #' fat and prebiotics in diet. It contains high-throughput profiling data from
@@ -284,7 +284,7 @@ NULL
 #' 
 NULL
 
-#' Tengeler2020
+#'  Gut microbiota profiles of 27 individuals with ADHD and healthy controls
 #' 
 #' Tengeler2020 includes gut microbiota profiles of 27 persons with ADHD. A
 #' standard bioinformatic and statistical analysis done to demonstrate that
@@ -323,7 +323,7 @@ NULL
 #' 
 NULL
 
-#' Tito2024QMP
+#' Fecal microbiota samples from 589 patients across different colorectal cancer stages
 #'
 #' The study combined Quantitative Microbiome Profiling (QMP) with 
 #' extensive patient phenotyping from a group of 589 colorectal cancer (CRC) 
