@@ -6,7 +6,8 @@ output:
     BiocStyle::html_document:
         fig_height: 7
         fig_width: 10
-        toc: yes
+        toc: true
+        toc_float: true
         toc_depth: 2
         number_sections: true
 vignette: >
