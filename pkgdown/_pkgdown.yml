@@ -48,8 +48,6 @@ reference:
 - subtitle: Dominance
 - contents:
   - getDominant
-- subtitle: Evenness indeces
-- contents:
 - subtitle: Clustering
 - contents:
   - calculateDMN
