@@ -20,7 +20,7 @@ subsampled assay."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aja
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.30</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@ subsampled assay."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aja
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Subsample Counts</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/rarefyAssay.R" class="external-link"><code>R/rarefyAssay.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/rarefyAssay.R" class="external-link"><code>R/rarefyAssay.R</code></a></small>
     <div class="hidden name"><code>rarefyAssay.Rd</code></div>
     </div>
 
@@ -90,25 +90,22 @@ subsampled assay.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A <code>SummarizedExperiment</code> object.</p></dd>
+<dd><p>a numeric matrix with samples as rows or a
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
+object.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>A single character value for selecting the
-<code>SummarizedExperiment</code> <code>assay</code> used for random subsampling.
-Only counts are useful and other transformed data as input will give
-meaningless output.</p></dd>
+<dd><p><code>Character scalar</code>. Specifies the name of the
+assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-sample">sample<a class="anchor" aria-label="anchor" href="#arg-sample"></a></dt>
-<dd><p>A single integer value equal to the number of counts being
+<dd><p><code>Integer scalar</code>. Indicates the number of counts being
 simulated i.e. rarefying depth. This can equal to lowest number of total
 counts found in a sample or a user specified number.</p></dd>
 
@@ -118,20 +115,20 @@ counts found in a sample or a user specified number.</p></dd>
 
 
 <dt id="arg-replace">replace<a class="anchor" aria-label="anchor" href="#arg-replace"></a></dt>
-<dd><p>Logical Default is <code>TRUE</code>. The default is with
+<dd><p><code>Logical scalar</code>. The default is with
 replacement (<code>replace=TRUE</code>).
 See <code><a href="https://rdrr.io/pkg/phyloseq/man/rarefy_even_depth.html" class="external-link">phyloseq::rarefy_even_depth</a></code>
-for details on implications of this parameter.</p></dd>
+for details on implications of this parameter. (Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>A single character value specifying the name of transformed
-abundance table that will be added to the new <code>SummarizedExperiment</code>.</p></dd>
+<dd><p><code>Character scalar</code>. The name to store the result in
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">metadata</a></code></p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p>Logical Default is <code>TRUE</code>. When <code>TRUE</code> an additional
-message about the random number used is printed.</p></dd>
+<dd><p><code>Logical scalar</code>. Choose whether to show messages.
+(Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

@@ -19,7 +19,7 @@ long data.frame which can be used for tidyverse-tools."><!-- mathjax --><script 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.30</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ long data.frame which can be used for tidyverse-tools."><!-- mathjax --><script 
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Converting a <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code> object into a long data.frame</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/meltAssay.R" class="external-link"><code>R/meltAssay.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/meltAssay.R" class="external-link"><code>R/meltAssay.R</code></a></small>
     <div class="hidden name"><code>meltSE.Rd</code></div>
     </div>
 
@@ -94,30 +94,28 @@ long data.frame which can be used for <code>tidyverse</code>-tools.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A numeric matrix or a
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code></p></dd>
+<dd><p>a numeric matrix with samples as rows or a
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
+object.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>a <code>character</code> value to select an
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></code></p></dd>
+<dd><p><code>Character scalar</code>. Specifies the name of the
+assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-add-row">add.row<a class="anchor" aria-label="anchor" href="#arg-add-row"></a></dt>
-<dd><p><code>NULL</code>, <code>TRUE</code> or a <code>character</code> vector to
+<dd><p><code>Logical scalar</code> or <code>Character vector</code>. To
 select information from the <code>rowData</code> to add to the molten assay data.
 If <code>add.row = NULL</code> no data will be added, if
 <code>add.row = TRUE</code> all data will be added and if
 <code>add.row</code> is a <code>character</code> vector, it will be used to subset
-to given column names in <code>rowData</code>. (default:
-<code>add.row = NULL</code>)</p></dd>
+to given column names in <code>rowData</code>. (Default:
+<code>NULL</code>)</p></dd>
 
 
 <dt id="arg-add-row-data">add_row_data<a class="anchor" aria-label="anchor" href="#arg-add-row-data"></a></dt>
@@ -125,13 +123,12 @@ to given column names in <code>rowData</code>. (default:
 
 
 <dt id="arg-add-col">add.col<a class="anchor" aria-label="anchor" href="#arg-add-col"></a></dt>
-<dd><p><code>NULL</code>, <code>TRUE</code> or a <code>character</code> vector to
+<dd><p><code>Logical scalar</code>. <code>NULL</code>,or <code>character vector</code>. Used to
 select information from the <code>colData</code> to add to the molten assay data.
 If <code>add.col = NULL</code> no data will be added, if
 <code>add.col = TRUE</code> all data will be added and if
 <code>add.col</code> is a <code>character</code> vector, it will be used to subset
-to given column names in <code>colData</code>. (default:
-<code>add.col = NULL</code>)</p></dd>
+to given column names in <code>colData</code>. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-add-col-data">add_col_data<a class="anchor" aria-label="anchor" href="#arg-add-col-data"></a></dt>
@@ -139,8 +136,8 @@ to given column names in <code>colData</code>. (default:
 
 
 <dt id="arg-row-name">row.name<a class="anchor" aria-label="anchor" href="#arg-row-name"></a></dt>
-<dd><p>a <code>character</code> scalar to use as the output's name
-for the feature identifier. (default: <code>row.name = "FeatureID"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. To use as the output's name
+for the feature identifier. (Default: <code>"FeatureID"</code>)</p></dd>
 
 
 <dt id="arg-feature-name">feature_name<a class="anchor" aria-label="anchor" href="#arg-feature-name"></a></dt>
@@ -148,8 +145,8 @@ for the feature identifier. (default: <code>row.name = "FeatureID"</code>)</p></
 
 
 <dt id="arg-col-name">col.name<a class="anchor" aria-label="anchor" href="#arg-col-name"></a></dt>
-<dd><p>a <code>character</code> scalar to use as the output's name
-for the sample identifier. (default: <code>col.name = "SampleID"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. To use as the output's name
+for the sample identifier. (Default: <code>"SampleID"</code>)</p></dd>
 
 
 <dt id="arg-sample-name">sample_name<a class="anchor" aria-label="anchor" href="#arg-sample-name"></a></dt>
@@ -157,10 +154,10 @@ for the sample identifier. (default: <code>col.name = "SampleID"</code>)</p></dd
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>optional arguments:</p><ul><li><p>check_names: A boolean value passed to data.frame function's check.name
+<dd><p>optional arguments:</p><ul><li><p>check_names: <code>Logical scalar</code>. Passed to data.frame function's check.name
 argument. Determines if sample names are checked that they are syntactically
 valid variable names and are not duplicated. If they are not, sample names
-are modified. (default: <code>check_names = TRUE</code>)</p></li>
+are modified. (Default: <code>TRUE</code>)</p></li>
 </ul></dd>
 
 </dl></div>

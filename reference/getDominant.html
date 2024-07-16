@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.30</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get dominant taxa</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/getDominant.R" class="external-link"><code>R/getDominant.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/getDominant.R" class="external-link"><code>R/getDominant.R</code></a></small>
     <div class="hidden name"><code>getDominant.Rd</code></div>
     </div>
 
@@ -98,41 +98,38 @@ object.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A
+<dd><p>a numeric matrix with samples as rows or a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>A single character value for selecting the
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
-to use for identifying dominant taxa.</p></dd>
+<dd><p><code>Character scalar</code>. Specifies the name of the
+assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
-<dd><p>A single character defining a taxonomic rank. Must be a value of
-the output of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code>.</p></dd>
+<dd><p><code>Character scalar</code>. Defines a taxonomic rank. Must be a value of
+<code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
 
 
 <dt id="arg-other-name">other.name<a class="anchor" aria-label="anchor" href="#arg-other-name"></a></dt>
-<dd><p>A name for features that are not included in n the most frequent
-dominant features in the data. Default is "Other".</p></dd>
+<dd><p><code>Character scalar</code>. A name for features that are not
+included in n the most frequent dominant features in the data. (Default: <code>"Other"</code>)</p></dd>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p>The number of features that are the most frequent dominant features.
-Default is NULL, which defaults that each sample is assigned a dominant taxon.</p></dd>
+<dd><p><code>Numeric scalar</code>. The number of features that are the most frequent
+dominant features. Default is NULL, which defaults that each sample is assigned
+a dominant taxon. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-complete">complete<a class="anchor" aria-label="anchor" href="#arg-complete"></a></dt>
-<dd><p>A boolean value to manage multiple dominant taxa for a sample.
+<dd><p><code>Logical scalar</code>. A value to manage multiple dominant taxa for a sample.
 Default for getDominant is TRUE to include all equally dominant taxa
 for each sample. complete = FALSE samples one taxa for the samples that have
 multiple.
@@ -147,8 +144,8 @@ list that includes all dominant taxa for each sample into colData.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>A name for the column of the <code>colData</code> where the dominant
-taxa will be stored in when using <code>addDominant</code>.</p></dd>
+<dd><p><code>Character scalar</code>. A name for the column of the
+<code>colData</code> where the dominant taxa will be stored in when using <code>addDominant</code>.</p></dd>
 
 </dl></div>
     <div id="value">
