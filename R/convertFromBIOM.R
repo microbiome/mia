@@ -30,6 +30,10 @@
 #' \code{convertFromBIOM} coerces a BIOM object to a 
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object.
+#' 
+#' \code{convertFromBIOM} coerces a
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' object to a \code{\link[biomformat:biom-class]{biom}} object.
 #'   
 #' @return
 #' \code{convertFromBIOM} returns an object of class
@@ -43,15 +47,19 @@
 #'
 #' @examples
 #' 
-#' ### Convert BIOM results to a TreeSE
+#' # Convert BIOM results to a TreeSE
 #' # Load biom file
 #' library(biomformat)
 #' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
 #'                          package = "biomformat")
 #' 
-#' # Make TreeSE from biom object
+#' # Make TreeSE from BIOM object
 #' biom_object <- biomformat::read_biom(biom_file)
 #' tse <- convertFromBIOM(biom_object)
+#' 
+#' # Convert TreeSE object to BIOM
+#' biom <- convertToBIOM(tse)
+#' 
 NULL
 
 #' Loading a BIOM file
@@ -109,7 +117,7 @@ importBIOM <- function(file, ...) {
 
 #' @rdname convert
 #'
-#' @param x object of type \code{\link[biomformat:read_biom]{biom}}
+#' @param x object of type \code{\link[biomformat:biom-class]{biom}}
 #'
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
@@ -235,6 +243,37 @@ convertFromBIOM <- function(
     return(tse)
 }
 
+#' @rdname convert
+#'
+#' @param x \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' 
+#' @param assay.type \code{Character scaler}. The name of assay.
+#' (Default: \code{"counts"})
+#' 
+#' @param ... Additional arguments. Not used currently.
+#' 
+#'
+#' @export
+setGeneric(
+    "convertToBIOM", signature = c("x"),
+    function(
+        x, assay.type = "counts", ...)
+    standardGeneric("convertToBIOM"))
+
+#' @rdname convert
+#' @export
+setMethod(
+    "convertToBIOM", signature = c(x = "SummarizedExperiment"),
+        function(x, assay.type = "counts", ...){
+    ############################## Input check #############################
+    .require_package("biomformat")
+    .check_assay_present(assay.type, x)
+    ############################ Input check end ###########################
+    x <- .convert_se_to_biom(x, assay.type)
+    return(x)
+    }
+)
+
 ################################ HELP FUNCTIONS ################################
 # This function removes prefixes from taxonomy names
 .remove_prefixes_from_taxa <- function(
@@ -333,4 +372,32 @@ convertFromBIOM <- function(
     # Add rownames because they are dropped while removing artifacts
     rownames(x) <- row_names
     return(x)
+}
+
+# This function get's SE object as input and returns BIOM object.
+.convert_se_to_biom <- function(x, assay.type){
+    # Get assay, rowData and colData
+    assay <- assay(x, assay.type)
+    rd <- rowData(x)
+    cd <- colData(x)
+    # Convert rowData and colData to data.frame since biomformat cannot handle
+    # DF.
+    rd <- as.data.frame(rd)
+    cd <- as.data.frame(cd)
+    # Check if assay contains integers or floats. biom constructor
+    # requires that information since the default value is "int".
+    mat_type <- ifelse(all(assay %% 1 == 0), "int", "float")
+    
+    # Create argument list
+    args <- list(data = assay, matrix_element_type = mat_type)
+    # Add rowData and colData only if they contain information
+    if( ncol(rd) != 0 ){
+        args[["observation_metadata"]] <- rd
+    }
+    if( ncol(cd) != 0 ){
+        args[["sample_metadata"]] <- cd
+    }
+    # Create biom
+    biom <- do.call(biomformat::make_biom, args)
+    return(biom)
 }
