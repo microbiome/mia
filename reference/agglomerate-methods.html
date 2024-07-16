@@ -217,7 +217,7 @@ removed if <code>na.rm = TRUE</code> before agglomeration.</p></dd>
 
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
-<dd><p>A character value for selecting if data is merged
+<dd><p><code>Character scalar</code>. Determines if data is merged
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be <code>'rows'</code> or <code>'cols'</code>.</p></dd>
 
@@ -239,15 +239,15 @@ returned unchanged.</p></dd>
 
 
 <dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
-<dd><p>String or integer scalar specifying an alternative experiment
-containing the input data.</p></dd>
+<dd><p><code>Character scalar</code> or <code>integer scalar</code>.
+Specifies an alternative experiment containing the input data.</p></dd>
 
 
 <dt id="arg-altexp-rm">altexp.rm<a class="anchor" aria-label="anchor" href="#arg-altexp-rm"></a></dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should alternative
-experiments be removed prior to agglomeration? This prevents to many
-nested alternative experiments by default (default:
-<code>altexp.rm = TRUE</code>)</p></dd>
+<dd><p><code>Logical scalar</code>. Should alternative
+experiments be removed prior to agglomeration? This prevents too many
+nested alternative experiments by default. (Default:
+<code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-strip-altexp">strip_altexp<a class="anchor" aria-label="anchor" href="#arg-strip-altexp"></a></dt>
@@ -277,7 +277,7 @@ of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p
 
 
 <dt id="arg-as-list">as.list<a class="anchor" aria-label="anchor" href="#arg-as-list"></a></dt>
-<dd><p><code>Logical</code>. Should the list of
+<dd><p><code>Logical scalar</code>. Should the list of
 <code>SummarizedExperiment</code> objects be returned by the function
 <code>agglomerateByRanks</code> as a SimpleList or stored in altExps?
 (Default: <code>FALSE</code>)</p></dd>

@@ -124,17 +124,17 @@ object.</p></dd>
 <dd><p>additional arguments passed to vegan::cca or vegan::dbrda and
 other internal functions.</p><ul><li><p><code>method</code> a dissimilarity measure to be applied in dbRDA and
 possible following homogeneity test. (By default: <code>method="euclidean"</code>)</p></li>
-<li><p><code>scale</code> a logical scalar, should the expression values be
+<li><p><code>scale</code>: <code>Logical scalar</code>. Should the expression values be
 standardized? <code>scale</code> is disabled when using <code>*RDA</code> functions.
-Please scale before performing RDA. (By default: <code>scale=TRUE</code>)</p></li>
-<li><p><code>full</code> a logical scalar, should all the results from the
+Please scale before performing RDA. (Default: <code>TRUE</code>)</p></li>
+<li><p><code>full</code> <code>Logical scalar</code>. should all the results from the
 significance calculations be returned. When <code>full=FALSE</code>, only
-summary tables are returned. (By default: <code>full=FALSE</code>)</p></li>
-<li><p><code>homogeneity.test</code> a single <code>character</code> value for specifying
+summary tables are returned. (Default: <code>FALSE</code>)</p></li>
+<li><p><code>homogeneity.test</code>: <code>Character scalar</code>. Specifies
 the significance test used to analyse <code><a href="https://rdrr.io/pkg/vegan/man/betadisper.html" class="external-link">vegan::betadisper</a></code> results.
 Options include 'permanova' (<code><a href="https://rdrr.io/pkg/vegan/man/anova.cca.html" class="external-link">vegan::permutest</a></code>), 'anova'
 (<code><a href="https://rdrr.io/r/stats/anova.html" class="external-link">stats::anova</a></code>) and 'tukeyhsd' (<code><a href="https://rdrr.io/r/stats/TukeyHSD.html" class="external-link">stats::TukeyHSD</a></code>).
-(By default: <code>homogeneity.test="permanova"</code>)</p></li>
+(Default: <code>"permanova"</code>)</p></li>
 </ul></dd>
 
 

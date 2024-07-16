@@ -88,24 +88,21 @@ path of the phylogenetic tree.
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional arguments:</p><ul><li><p><code>assay.type</code>: A single character value for naming
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
-(default: <code>assay.type = "counts"</code>)</p></li>
-<li><p><code>assay_name</code>: A single <code>character</code> value for specifying which
-assay to use for calculation. (Please use <code>assay.type</code> instead.
-At some point <code>assay_name</code> will be disabled.)</p></li>
-<li><p><code>prefix.rm</code>: <code>TRUE</code> or <code>FALSE</code>: Should
-taxonomic prefixes be removed? (default:
-<code>prefix.rm = FALSE</code>)</p></li>
-<li><p><code>remove.suffix</code>: <code>TRUE</code> or <code>FALSE</code>: Should
+<dd><p>additional arguments:</p><ul><li><p><code>assay.type</code>: <code>Character scalar</code>. Specifies the name of the assay
+used in calculation
+(Default: <code>"counts"</code>)</p></li>
+<li><p><code>assay_name</code>: Deprecated. Use <code>assay.type</code> instead.</p></li>
+<li><p><code>prefix.rm</code>: <code>Logical scalar</code>. Should
+taxonomic prefixes be removed? (Default: <code>FALSE</code>)</p></li>
+<li><p><code>remove.suffix</code>: <code>Logical scalar</code>. Should
 suffixes of sample names be removed? Metaphlan pipeline adds suffixes
 to sample names. Suffixes are formed from file names. By selecting
 <code>remove.suffix = TRUE</code>, you can remove pattern from end of sample
-names that is shared by all. (default: <code>remove.suffix = FALSE</code>)</p></li>
-<li><p><code>set.ranks</code>: <code>TRUE</code> or <code>FALSE</code>: Should the columns
+names that is shared by all. (Default: <code>FALSE</code>)</p></li>
+<li><p><code>set.ranks</code>: <code>Logical scalar</code>. Should the columns
 in the rowData that are treated as taxonomy ranks be updated according to
 the ranks found in the imported data?
-(default: <code>set.ranks = FALSE</code>)</p></li>
+(Default: <code>FALSE</code>)</p></li>
 </ul></dd>
 
 </dl></div>

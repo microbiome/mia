@@ -139,15 +139,22 @@ as batch information. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
-<dd><p>numeric scalar. See
+<dd><p><code>Numeric scalar</code>.. See
 <code><a href="https://rdrr.io/pkg/decontam/man/isContaminant.html" class="external-link">decontam:isContaminant</a></code> or
 <code><a href="https://rdrr.io/pkg/decontam/man/isNotContaminant.html" class="external-link">decontam:isNotContaminant</a></code></p></dd>
 
 
-<dt id="arg-normalize-detailed">normalize, detailed<a class="anchor" aria-label="anchor" href="#arg-normalize-detailed"></a></dt>
-<dd><p>logical scalar. See
+<dt id="arg-normalize">normalize<a class="anchor" aria-label="anchor" href="#arg-normalize"></a></dt>
+<dd><p><code>Logical scalar</code>. See
 <code><a href="https://rdrr.io/pkg/decontam/man/isContaminant.html" class="external-link">decontam:isContaminant</a></code> or
 <code><a href="https://rdrr.io/pkg/decontam/man/isNotContaminant.html" class="external-link">decontam:isNotContaminant</a></code></p></dd>
+
+
+<dt id="arg-detailed">detailed<a class="anchor" aria-label="anchor" href="#arg-detailed"></a></dt>
+<dd><p><code>Logical scalar</code>. If TRUE, the return value is a
+data.frame containing diagnostic information on the contaminant decision.
+If FALSE, the return value is a logical vector containing the binary
+contaminant classifications. (Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
