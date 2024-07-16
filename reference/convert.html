@@ -22,7 +22,7 @@ objects to phyloseq objects."><!-- mathjax --><script src="https://cdnjs.cloudfl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.31</span>
       </span>
     </div>
 
@@ -49,7 +49,7 @@ objects to phyloseq objects."><!-- mathjax --><script src="https://cdnjs.cloudfl
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Converters</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/convertFromBIOM.R" class="external-link"><code>R/convertFromBIOM.R</code></a>, <a href="https://github.com/microbiome/mia/blob/harm/R/convertFromDADA2.R" class="external-link"><code>R/convertFromDADA2.R</code></a>, <a href="https://github.com/microbiome/mia/blob/harm/R/convertFromPhyloseq.R" class="external-link"><code>R/convertFromPhyloseq.R</code></a>, and 1 more</small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/convertFromBIOM.R" class="external-link"><code>R/convertFromBIOM.R</code></a>, <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/convertFromDADA2.R" class="external-link"><code>R/convertFromDADA2.R</code></a>, <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/convertFromPhyloseq.R" class="external-link"><code>R/convertFromPhyloseq.R</code></a>, and 1 more</small>
     <div class="hidden name"><code>convert.Rd</code></div>
     </div>
 
@@ -103,10 +103,10 @@ object</p></dd>
 
 
 <dt id="arg-prefix-rm">prefix.rm<a class="anchor" aria-label="anchor" href="#arg-prefix-rm"></a></dt>
-<dd><p><code>Logical scalar</code>. Should
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should
 taxonomic prefixes be removed? The prefixes is removed only from detected
 taxa columns meaning that <code>rank.from.prefix</code> should be enabled in the most cases.
-(Default: <code>FALSE</code>)</p></dd>
+(default <code>prefix.rm = FALSE</code>)</p></dd>
 
 
 <dt id="arg-removetaxaprefixes">removeTaxaPrefixes<a class="anchor" aria-label="anchor" href="#arg-removetaxaprefixes"></a></dt>
@@ -114,9 +114,9 @@ taxa columns meaning that <code>rank.from.prefix</code> should be enabled in the
 
 
 <dt id="arg-rank-from-prefix">rank.from.prefix<a class="anchor" aria-label="anchor" href="#arg-rank-from-prefix"></a></dt>
-<dd><p><code>Logical scalar</code>. If file does not have
+<dd><p><code>TRUE</code> or <code>FALSE</code>: If file does not have
 taxonomic ranks on feature table, should they be scraped from prefixes?
-(Default: <code>FALSE</code>)</p></dd>
+(default <code>rank.from.prefix = FALSE</code>)</p></dd>
 
 
 <dt id="arg-rankfromprefix">rankFromPrefix<a class="anchor" aria-label="anchor" href="#arg-rankfromprefix"></a></dt>
@@ -124,9 +124,9 @@ taxonomic ranks on feature table, should they be scraped from prefixes?
 
 
 <dt id="arg-artifact-rm">artifact.rm<a class="anchor" aria-label="anchor" href="#arg-artifact-rm"></a></dt>
-<dd><p><code>Logical scalar</code>. If file have
+<dd><p><code>TRUE</code> or <code>FALSE</code>: If file have
 some taxonomic character naming artifacts, should they be removed.
-(default (Default: <code>FALSE</code>)</p></dd>
+(default <code>artifact.rm = FALSE</code>)</p></dd>
 
 
 <dt id="arg-remove-artifacts">remove.artifacts<a class="anchor" aria-label="anchor" href="#arg-remove-artifacts"></a></dt>
@@ -139,18 +139,23 @@ some taxonomic character naming artifacts, should they be removed.
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of assay
-used in calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p>A single character value for selecting the
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> to be
+included in the phyloseq object that is created.
+(By default: <code>assay.type = "counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
+will be disabled.)</p></dd>
 
 
 <dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-tree to be included in the phyloseq object that is created,
-(Default: <code>"phylo"</code>)</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+tree will be included in the phyloseq object that is created,
+(By default: <code>tree.name = "phylo"</code>)</p></dd>
 
 
 <dt id="arg-tree-name">tree_name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>

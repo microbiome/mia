@@ -19,7 +19,7 @@ object. The function utilizes rbiom:unifrac()."><!-- mathjax --><script src="htt
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.31</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ object. The function utilizes rbiom:unifrac()."><!-- mathjax --><script src="htt
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate weighted or unweighted (Fast) Unifrac distance</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/calculateUnifrac.R" class="external-link"><code>R/calculateUnifrac.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/calculateUnifrac.R" class="external-link"><code>R/calculateUnifrac.R</code></a></small>
     <div class="hidden name"><code>calculateUnifrac.Rd</code></div>
     </div>
 
@@ -89,9 +89,13 @@ object. The function utilizes <code><a href="https://rdrr.io/pkg/rbiom/man/unifr
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a numeric matrix with samples as rows or a
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-object.</p></dd>
+<dd><p>a numeric matrix or a
+<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>
+object containing a tree.</p>
+<p>Please  note that <code>runUnifrac</code> expects a matrix with samples per row
+and not per column. This is implemented to be compatible with other
+distance calculations such as <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></code> as much as
+possible.</p></dd>
 
 
 <dt id="arg-tree">tree<a class="anchor" aria-label="anchor" href="#arg-tree"></a></dt>
@@ -106,30 +110,35 @@ to the same type of features (aka. microorganisms).</p></dd>
 
 
 <dt id="arg-weighted">weighted<a class="anchor" aria-label="anchor" href="#arg-weighted"></a></dt>
-<dd><p><code>Logical scalar</code>. Should use weighted-Unifrac
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should use weighted-Unifrac
 calculation? Weighted-Unifrac takes into account the relative abundance of
 species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is <code>FALSE</code>, meaning the
-unweighted-Unifrac distance is calculated for all pairs of samples.
-(Default: <code>FALSE</code>)</p></dd>
+unweighted-Unifrac distance is calculated for all pairs of samples.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
+will be disabled.)</p></dd>
 
 
 <dt id="arg-exprs-values">exprs_values<a class="anchor" aria-label="anchor" href="#arg-exprs-values"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay.type</code> instead.)</p></dd>
 
 
 <dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-tree used in calculation. (Default: <code>"phylo"</code>)</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+tree will be used in calculation.
+(By default: <code>tree.name = "phylo"</code>)</p></dd>
 
 
 <dt id="arg-tree-name">tree_name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
@@ -137,8 +146,9 @@ tree used in calculation. (Default: <code>"phylo"</code>)</p></dd>
 
 
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
-<dd><p><code>Logical scalar</code>. Is x transposed with samples in rows?
-(Default: <code>FALSE</code>)</p></dd>
+<dd><p>Logical scalar, is x transposed with cells in rows, i.e.,
+is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
+(By default: <code>transposed = FALSE</code>)</p></dd>
 
 
 <dt id="arg-node-label">node.label<a class="anchor" aria-label="anchor" href="#arg-node-label"></a></dt>
@@ -160,10 +170,6 @@ node labs must be present in <code>tree</code>.</p></dd>
     <h2>Details</h2>
     <p>Please note that if <code>calculateUnifrac</code> is used as a <code>FUN</code> for
 <code>runMDS</code>, the argument <code>ntop</code> has to be set to <code>nrow(x)</code>.</p>
-<p>Please  note that <code>runUnifrac</code> expects a matrix with samples per row
-and not per column. This is implemented to be compatible with other
-distance calculations such as <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></code> as much as
-possible.</p>
     </div>
     <div id="references">
     <h2>References</h2>

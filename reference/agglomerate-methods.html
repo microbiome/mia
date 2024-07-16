@@ -24,7 +24,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.31</span>
       </span>
     </div>
 
@@ -51,7 +51,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Agglomerate or merge data using taxonomic information</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/harm/R/getPrevalence.R" class="external-link"><code>R/getPrevalence.R</code></a>, <a href="https://github.com/microbiome/mia/blob/harm/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/getPrevalence.R" class="external-link"><code>R/getPrevalence.R</code></a>, <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
     <div class="hidden name"><code>agglomerate-methods.Rd</code></div>
     </div>
 
@@ -189,9 +189,9 @@ experiments and flattens them again into a single
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a numeric matrix with samples as rows or a
+<dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-object.</p></dd>
+object</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -201,23 +201,25 @@ See <code>agglomerateByRank</code> for more details.</p></dd>
 
 
 <dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
-<dd><p><code>Character scalar</code>. Defines a taxonomic rank. Must be a value of
+<dd><p>a single character defining a taxonomic rank. Must be a value of
 <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
 
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
-<dd><p><code>Logical scalar</code>. Should NA values be omitted when calculating
-prevalence? (Default: <code>TRUE</code>)</p></dd>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should taxa with an empty rank be
+removed? Use it with caution, since results with NA on the selected rank
+will be dropped. This setting can be tweaked by defining
+<code>empty.fields</code> to your needs. (default: <code>na.rm = TRUE</code>)</p></dd>
 
 
 <dt id="arg-empty-fields">empty.fields<a class="anchor" aria-label="anchor" href="#arg-empty-fields"></a></dt>
-<dd><p><code>Character vector</code>. Defines which values should be
+<dd><p>a <code>character</code> value defining, which values should be
 regarded as empty. (Default: <code>c(NA, "", " ", "\t")</code>). They will be
 removed if <code>na.rm = TRUE</code> before agglomeration.</p></dd>
 
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
-<dd><p><code>Character scalar</code>. Determines if data is merged
+<dd><p>A character value for selecting if data is merged
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be <code>'rows'</code> or <code>'cols'</code>.</p></dd>
 
@@ -230,8 +232,9 @@ returned unchanged.</p></dd>
 
 
 <dt id="arg-update-tree">update.tree<a class="anchor" aria-label="anchor" href="#arg-update-tree"></a></dt>
-<dd><p><code>Logical scalar</code>. Should
-<code>rowTree()</code> also be agglomerated? (Default: <code>FALSE</code>)</p></dd>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: should
+<code>rowTree()</code> also be agglomerated? (Default:
+<code>update.tree = FALSE</code>)</p></dd>
 
 
 <dt id="arg-mergetree">mergeTree<a class="anchor" aria-label="anchor" href="#arg-mergetree"></a></dt>
@@ -239,15 +242,15 @@ returned unchanged.</p></dd>
 
 
 <dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
-<dd><p><code>Character scalar</code> or <code>integer scalar</code>.
-Specifies an alternative experiment containing the input data.</p></dd>
+<dd><p>String or integer scalar specifying an alternative experiment
+containing the input data.</p></dd>
 
 
 <dt id="arg-altexp-rm">altexp.rm<a class="anchor" aria-label="anchor" href="#arg-altexp-rm"></a></dt>
-<dd><p><code>Logical scalar</code>. Should alternative
-experiments be removed prior to agglomeration? This prevents too many
-nested alternative experiments by default. (Default:
-<code>TRUE</code>)</p></dd>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should alternative
+experiments be removed prior to agglomeration? This prevents to many
+nested alternative experiments by default (default:
+<code>altexp.rm = TRUE</code>)</p></dd>
 
 
 <dt id="arg-strip-altexp">strip_altexp<a class="anchor" aria-label="anchor" href="#arg-strip-altexp"></a></dt>
@@ -263,8 +266,8 @@ nested alternative experiments by default. (Default:
 
 
 <dt id="arg-other-label">other.label<a class="anchor" aria-label="anchor" href="#arg-other-label"></a></dt>
-<dd><p><code>Character scalar</code>. Used as the label for the
-summary of non-prevalent taxa. (default: <code>"Other"</code>)</p></dd>
+<dd><p>A single <code>character</code> valued used as the label for the
+summary of non-prevalent taxa. (default: <code>other.label = "Other"</code>)</p></dd>
 
 
 <dt id="arg-other-label">other_label<a class="anchor" aria-label="anchor" href="#arg-other-label"></a></dt>
@@ -272,22 +275,22 @@ summary of non-prevalent taxa. (default: <code>"Other"</code>)</p></dd>
 
 
 <dt id="arg-ranks">ranks<a class="anchor" aria-label="anchor" href="#arg-ranks"></a></dt>
-<dd><p><code>Character vector</code>. Defines taxonomic ranks. Must all be values
+<dd><p>a character vector defining taxonomic ranks. Must all be values
 of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
 
 
 <dt id="arg-as-list">as.list<a class="anchor" aria-label="anchor" href="#arg-as-list"></a></dt>
-<dd><p><code>Logical scalar</code>. Should the list of
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the list of
 <code>SummarizedExperiment</code> objects be returned by the function
 <code>agglomerateByRanks</code> as a SimpleList or stored in altExps?
-(Default: <code>FALSE</code>)</p></dd>
+(default: <code>as.list = FALSE</code>)</p></dd>
 
 
 <dt id="arg-keep-dimred">keep.dimred<a class="anchor" aria-label="anchor" href="#arg-keep-dimred"></a></dt>
-<dd><p><code>Logical scalar</code>. Should the
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the
 <code>reducedDims(x)</code> be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(Default: <code>FALSE</code>)</p></dd>
+(default: <code>keep.dimred = FALSE</code>)</p></dd>
 
 
 <dt id="arg-keep-reduceddims">keep_reducedDims<a class="anchor" aria-label="anchor" href="#arg-keep-reduceddims"></a></dt>

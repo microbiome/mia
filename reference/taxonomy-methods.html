@@ -19,7 +19,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.31</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Functions for accessing taxonomic data stored in <code>rowData</code>.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/taxonomy.R" class="external-link"><code>R/taxonomy.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/taxonomy.R" class="external-link"><code>R/taxonomy.R</code></a></small>
     <div class="hidden name"><code>taxonomy-methods.Rd</code></div>
     </div>
 
@@ -119,20 +119,20 @@ represent taxonomic data alongside the features of a
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a numeric matrix with samples as rows or a
+<dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-object.</p></dd>
+object</p></dd>
 
 
 <dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
-<dd><p><code>Character scalar</code>. Defines a taxonomic rank. Must be a value of
-<code>taxonomyRanks()</code> function.</p></dd>
+<dd><p>a single character defining a taxonomic rank. Must be a value of
+<code>taxonomyRanks()</code> function</p></dd>
 
 
 <dt id="arg-empty-fields">empty.fields<a class="anchor" aria-label="anchor" href="#arg-empty-fields"></a></dt>
-<dd><p><code>Character vector</code>. Defines which values should be
+<dd><p>a <code>character</code> value defining, which values should be
 regarded as empty. (Default: <code>c(NA, "", " ", "\t")</code>). They will be
-removed if <code>na.rm = TRUE</code> before agglomeration.</p></dd>
+removed if <code>na.rm = TRUE</code> before agglomeration</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -140,12 +140,13 @@ removed if <code>na.rm = TRUE</code> before agglomeration.</p></dd>
 
 
 <dt id="arg-ranks">ranks<a class="anchor" aria-label="anchor" href="#arg-ranks"></a></dt>
-<dd><p><code>Character vector</code>. A vector of ranks to be set.</p></dd>
+<dd><p>Avector of ranks to be set</p></dd>
 
 
 <dt id="arg-with-rank">with.rank<a class="anchor" aria-label="anchor" href="#arg-with-rank"></a></dt>
-<dd><p><code>logical scalar</code>. Should the level be add as a
-suffix? For example: "Phylum:Crenarchaeota". (Default: <code>FALSE</code>)</p></dd>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the level be add as a
+suffix? For example: "Phylum:Crenarchaeota" (default:
+<code>with.rank = FALSE</code>)</p></dd>
 
 
 <dt id="arg-with-rank">with_rank<a class="anchor" aria-label="anchor" href="#arg-with-rank"></a></dt>
@@ -153,8 +154,8 @@ suffix? For example: "Phylum:Crenarchaeota". (Default: <code>FALSE</code>)</p></
 
 
 <dt id="arg-make-unique">make.unique<a class="anchor" aria-label="anchor" href="#arg-make-unique"></a></dt>
-<dd><p><code>Logical scalar</code>. Should the labels be made
-unique, if there are any duplicates? (Default: <code>TRUE</code>)</p></dd>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the labels be made
+unique, if there are any duplicates? (default: <code>make.unique = TRUE</code>)</p></dd>
 
 
 <dt id="arg-make-unique">make_unique<a class="anchor" aria-label="anchor" href="#arg-make-unique"></a></dt>
@@ -162,9 +163,9 @@ unique, if there are any duplicates? (Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-resolve-loops">resolve.loops<a class="anchor" aria-label="anchor" href="#arg-resolve-loops"></a></dt>
-<dd><p><code>Logical scalar</code>. Should <code>resolveLoops</code>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should <code>resolveLoops</code>
 be applied to the taxonomic data? Please note that has only an effect,
-if the data is unique. (Default: <code>TRUE</code>)</p></dd>
+if the data is unique. (default: <code>resolve.loops = TRUE</code>)</p></dd>
 
 
 <dt id="arg-resolve-loops">resolve_loops<a class="anchor" aria-label="anchor" href="#arg-resolve-loops"></a></dt>
@@ -172,28 +173,28 @@ if the data is unique. (Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-taxa">taxa<a class="anchor" aria-label="anchor" href="#arg-taxa"></a></dt>
-<dd><p><code>Character vector</code>. Used for subsetting the
+<dd><p>a <code>character</code> vector, which is used for subsetting the
 taxonomic information. If no information is found,<code>NULL</code> is returned
-for the individual element. (Default: <code>NULL</code>)</p></dd>
+for the individual element. (default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-from">from<a class="anchor" aria-label="anchor" href="#arg-from"></a></dt>
 <dd><ul><li><p>For <code>mapTaxonomy</code>: a scalar <code>character</code> value, which
-must be a valid taxonomic rank. (Default: <code>NULL</code>)</p></li>
+must be a valid taxonomic rank. (default: <code>NULL</code>)</p></li>
 <li><p>otherwise a <code>Taxa</code> object as returned by
 <code><a href="https://rdrr.io/pkg/DECIPHER/man/IdTaxa.html" class="external-link">IdTaxa</a></code></p></li>
 </ul></dd>
 
 
 <dt id="arg-to">to<a class="anchor" aria-label="anchor" href="#arg-to"></a></dt>
-<dd><p><code>Character Scalar</code>. Must be a valid
-taxonomic rank. (Default: <code>NULL</code>)</p></dd>
+<dd><p>a scalar <code>character</code> value, which must be a valid
+taxonomic rank. (default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-use-grepl">use.grepl<a class="anchor" aria-label="anchor" href="#arg-use-grepl"></a></dt>
-<dd><p><code>Logical</code>. Should pattern matching via
+<dd><p><code>TRUE</code> or <code>FALSE</code>: should pattern matching via
 <code>grepl</code> be used? Otherwise literal matching is used.
-(Default: <code>FALSE</code>)</p></dd>
+(default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-use-grepl">use_grepl<a class="anchor" aria-label="anchor" href="#arg-use-grepl"></a></dt>
