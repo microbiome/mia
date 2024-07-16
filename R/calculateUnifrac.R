@@ -4,17 +4,12 @@
 #' in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object. The function utilizes \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
 #'
-#' Please note that if \code{calculateUnifrac} is used as a \code{FUN} for
+#' Please note that if \code{getUnifrac} is used as a \code{FUN} for
 #' \code{runMDS}, the argument \code{ntop} has to be set to \code{nrow(x)}.
 #'
 #' @param x a numeric matrix or a
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object containing a tree.
-#'
-#'   Please  note that \code{runUnifrac} expects a matrix with samples per row
-#'   and not per column. This is implemented to be compatible with other
-#'   distance calculations such as \code{\link[stats:dist]{dist}} as much as
-#'   possible.
 #'
 #' @param tree if \code{x} is a matrix, a
 #'   \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
@@ -76,34 +71,34 @@
 #' Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
 #' microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
 #'
-#' @name calculateUnifrac
+#' @name getUnifrac
 #'
 #' @export
 #'
 #' @examples
 #' data(esophagus)
 #' library(scater)
-#' calculateUnifrac(esophagus, weighted = FALSE)
-#' calculateUnifrac(esophagus, weighted = TRUE)
-#' # for using calculateUnifrac in conjunction with runMDS the tree argument
+#' getUnifrac(esophagus, weighted = FALSE)
+#' getUnifrac(esophagus, weighted = TRUE)
+#' # for using getUnifrac in conjunction with runMDS the tree argument
 #' # has to be given separately. In addition, subsetting using ntop must
 #' # be disabled
-#' esophagus <- runMDS(esophagus, FUN = calculateUnifrac, name = "Unifrac",
+#' esophagus <- runMDS(esophagus, FUN = getUnifrac, name = "Unifrac",
 #'                     tree = rowTree(esophagus),
 #'                     assay.type = "counts",
 #'                     ntop = nrow(esophagus))
 #' reducedDim(esophagus)
 NULL
 
-#' @rdname calculateUnifrac
+#' @rdname getUnifrac
 #' @export
-setGeneric("calculateUnifrac", signature = c("x", "tree"),
+setGeneric("getUnifrac", signature = c("x", "tree"),
             function(x, tree, ... )
-                standardGeneric("calculateUnifrac"))
+                standardGeneric("getUnifrac"))
 
-#' @rdname calculateUnifrac
+#' @rdname getUnifrac
 #' @export
-setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
+setMethod("getUnifrac", signature = c(x = "ANY", tree = "phylo"),
     function(x, tree, weighted = FALSE, ...){
         if(is(x,"SummarizedExperiment")){
             stop("When providing a 'tree', please provide a matrix-like as 'x'",
@@ -111,16 +106,16 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
                 "combining both into a 'TreeSummarizedExperiment' object.",
                 call. = FALSE) 
         }
-        runUnifrac(x, tree = tree, weighted = weighted, ...)
+        .get_unifrac(x, tree = tree, weighted = weighted, ...)
     }
 )
 
-#' @rdname calculateUnifrac
+#' @rdname getUnifrac
 #'
 #' @importFrom SummarizedExperiment assay
 #'
 #' @export
-setMethod("calculateUnifrac",
+setMethod("getUnifrac",
         signature = c(x = "TreeSummarizedExperiment", tree = "missing"),
     function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
             tree.name = tree_name, tree_name = "phylo", transposed = FALSE, ...){
@@ -160,14 +155,14 @@ setMethod("calculateUnifrac",
         links <- links_FUN(x)
         links <- links[ , "nodeLab" ]
         # Calculate unifrac
-        res <- calculateUnifrac(x, tree = tree, node.label = links, ...)
+        res <- getUnifrac(x, tree = tree, node.label = links, ...)
         return(res)
     }
 )
 
-#' @rdname calculateUnifrac
+#' @rdname getUnifrac
 #' @export
-setMethod("calculateUnifrac",
+setMethod("getUnifrac",
         signature = c(x = "SummarizedExperiment", tree = "phylo"),
     function(
         x, tree, assay.type = "counts", transposed = FALSE, ...){
@@ -190,18 +185,18 @@ setMethod("calculateUnifrac",
         mat <- t(mat)
     }
     # Calculate unifrac
-    res <- calculateUnifrac(mat, ...)
+    res <- getUnifrac(mat, ...)
     return(res)   
     }
 )
 
 ################################################################################
-#' @rdname calculateUnifrac
+#' @rdname getUnifrac
 #'
 #' @importFrom ape drop.tip
 #' @importFrom rbiom unifrac
 #' @export
-runUnifrac <- function(
+.get_unifrac <- function(
         x, tree, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
     # Check x
     if( !is.matrix(as.matrix(x)) ){

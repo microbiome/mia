@@ -36,8 +36,8 @@
 #'   samples have completely different relative abundances. 
 #'
 #' @seealso
-#'   \code{\link[mia:calculateJSD]{calculateJSD}}
-#'   \code{\link[mia:calculateUnifrac]{calculateUnifrac}}
+#'   \code{\link[mia:getJSD]{getJSD}}
+#'   \code{\link[mia:getUnifrac]{getUnifrac}}
 #' 
 #' 
 #' @name getOverlap

@@ -29,7 +29,7 @@ reference:
   - addAlpha
 - subtitle: Beta Diversity
 - contents:
-  - calculateUnifrac
+  - getUnifrac
   - getJSD
   - runNMDS
   - runCCA

@@ -143,11 +143,11 @@ setMethod(
             message("'diss.fun' defaults to getOverlap.")
         } else if( method %in% c("unifrac")  ){
             args[["tree"]] <- tree
-            diss.fun <- calculateUnifrac
-            message("'diss.fun' defaults to calculateUnifrac.")
+            diss.fun <- getUnifrac
+            message("'diss.fun' defaults to getUnifrac.")
         } else if( method %in% c("jsd")  ){
-            diss.fun <- runJSD
-            message("'diss.fun' defaults to runJSD.")
+            diss.fun <- getJSD
+            message("'diss.fun' defaults to getJSD.")
         } else if( require("vegan") ){
             diss.fun <- vegan::vegdist
             message("'diss.fun' defaults to vegan::vegdist.")

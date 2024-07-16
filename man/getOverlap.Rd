@@ -91,8 +91,8 @@ head(reducedDims(tse)$overlap_between_samples)
 
 }
 \seealso{
-\code{\link[mia:calculateJSD]{calculateJSD}}
-\code{\link[mia:calculateUnifrac]{calculateUnifrac}}
+\code{\link[mia:getJSD]{getJSD}}
+\code{\link[mia:getUnifrac]{getUnifrac}}
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
