@@ -7,14 +7,14 @@
 #' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'  object.
 #'   
-#' @param k Integer scalar. A number of latent vectors/topics. 
+#' @param k \code{Integer scalar}. A number of latent vectors/topics. 
 #'  (Default: \code{2})
 #' 
-#' @param name Character scalar. The name to be used to store the result in the
-#'  reducedDims of the output. (Default: \code{"LDA"})
+#' @param name \code{Character scalar}. The name to be used to store the result 
+#'  in the reducedDims of the output. (Default: \code{"LDA"})
 #'  
-#' @param assay.type Character scalar. Specifies which assay to use for LDA 
-#'  ordination. (Default: \code{"counts"})
+#' @param assay.type \code{Character scalar}. Specifies which assay to use for 
+#'  LDA ordination. (Default: \code{"counts"})
 #' 
 #' @param ... optional arguments passed to \code{\link[topicmodels:LDA]{LDA}}
 #' 
@@ -69,10 +69,7 @@ setMethod("getLDA", "SummarizedExperiment",
         if( !.is_an_integer(k) ){
             stop("'k' must be an integer.", call. = FALSE)
         }
-        if( !.is_a_string(assay.type) ){
-            stop("'assay.type' must be a non-empty single character value.",
-              call. = FALSE)
-        }
+        .check_assay_present(assay.type, x) 
         df <- as.data.frame(t(assay(x, assay.type)))
         # Estimate LDA model using VEM algorithm
         lda_model <- topicmodels::LDA(df, k, ...)
@@ -97,10 +94,7 @@ setMethod("addLDA", "SummarizedExperiment",
         if( !.is_an_integer(k) ){
             stop("'k' must be an integer.", call. = FALSE)
         }
-        if( !.is_a_string(assay.type) ){
-            stop("'assay.type' must be a non-empty single character value.",
-                call. = FALSE)
-        }
+        .check_assay_present(assay.type, x) 
         if( !.is_a_string(name) ){
             stop("'name' must be a non-empty single character value.",
                 call. = FALSE)

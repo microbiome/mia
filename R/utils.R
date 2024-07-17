@@ -357,7 +357,7 @@
         stop("'values' must be a matrix.", call. = FALSE)
     }
     # Check names
-    if( !is.character(name) && length(name) > 1L ){
+    if( !.is_a_string(name) ){
         stop("'name' must be a character value.", call. = FALSE)
     }
     #

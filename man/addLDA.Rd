@@ -21,14 +21,14 @@ object.}
 
 \item{...}{optional arguments passed to \code{\link[topicmodels:LDA]{LDA}}}
 
-\item{k}{Integer scalar. A number of latent vectors/topics.
+\item{k}{\code{Integer scalar}. A number of latent vectors/topics.
 (Default: \code{2})}
 
-\item{assay.type}{Character scalar. Specifies which assay to use for LDA
-ordination. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+LDA ordination. (Default: \code{"counts"})}
 
-\item{name}{Character scalar. The name to be used to store the result in the
-reducedDims of the output. (Default: \code{"LDA"})}
+\item{name}{\code{Character scalar}. The name to be used to store the result
+in the reducedDims of the output. (Default: \code{"LDA"})}
 }
 \value{
 For \code{getLDA}, the ordination matrix with feature loadings matrix
