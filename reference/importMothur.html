@@ -18,7 +18,7 @@ files provided as input."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.31</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ files provided as input."><!-- mathjax --><script src="https://cdnjs.cloudflare.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Import Mothur results as a <code>TreeSummarizedExperiment</code></h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/importMothur.R" class="external-link"><code>R/importMothur.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/importMothur.R" class="external-link"><code>R/importMothur.R</code></a></small>
     <div class="hidden name"><code>importMothur.Rd</code></div>
     </div>
 
@@ -70,7 +70,7 @@ files provided as input.</p>
 
 
 <dl><dt id="arg-assay-file">assay.file<a class="anchor" aria-label="anchor" href="#arg-assay-file"></a></dt>
-<dd><p><code>Character scalar</code>. Defines the file
+<dd><p>a single <code>character</code> value defining the file
 path of the feature table to be imported. The File has to be in
 <code>shared file</code> format as defined in Mothur documentation.</p></dd>
 
@@ -84,10 +84,10 @@ path of the feature table to be imported. The File has to be in
 
 
 <dt id="arg-row-file">row.file<a class="anchor" aria-label="anchor" href="#arg-row-file"></a></dt>
-<dd><p><code>Character scalar</code>. Defines the file path of
+<dd><p>a single <code>character</code> value defining the file path of
 the taxonomy table to be imported. The File has to be in <code>taxonomy
   file</code> or <code>constaxonomy file</code> format  as defined in Mothur
-documentation. (Default: <code>NULL</code>).</p></dd>
+documentation. (default: <code>row.file = NULL</code>).</p></dd>
 
 
 <dt id="arg-designfile">designFile<a class="anchor" aria-label="anchor" href="#arg-designfile"></a></dt>
@@ -95,9 +95,10 @@ documentation. (Default: <code>NULL</code>).</p></dd>
 
 
 <dt id="arg-col-file">col.file<a class="anchor" aria-label="anchor" href="#arg-col-file"></a></dt>
-<dd><p><code>Character scalar</code>. Defines file path of
+<dd><p>a single <code>character</code> value defining the file path of
 the sample metadata to be imported. The File has to be in <code>desing
-  file</code> format as defined in Mothur documentation. (Default: <code>NULL</code>).</p></dd>
+  file</code> format as defined in Mothur documentation. (default: <code>col.file
+  = NULL</code>).</p></dd>
 
 </dl></div>
     <div id="value">
@@ -123,9 +124,9 @@ object</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="convertFromPhyloseq.html">convertFromPhyloseq</a></code>
-<code><a href="convertFromBIOM.html">convertFromBIOM</a></code>
-<code><a href="convertFromDADA2.html">convertFromDADA2</a></code>
+    <div class="dont-index"><p><code><a href="convert.html">convertFromPhyloseq</a></code>
+<code><a href="convert.html">convertFromBIOM</a></code>
+<code><a href="convert.html">convertFromDADA2</a></code>
 <code><a href="importQIIME2.html">importQIIME2</a></code></p></div>
     </div>
     <div id="author">
