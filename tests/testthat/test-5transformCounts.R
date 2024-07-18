@@ -215,7 +215,7 @@ test_that("transformAssay", {
         tse <- transformAssay(tse, method = "relabundance", pseudocount = TRUE, name = "pseudo_true")
         tse <- transformAssay(
             tse, method = "relabundance", name = "pseudo_min",
-            pseudocount = (min(assay(tse, "counts")[assay(tse, "counts") > 0])) / 2,
+            pseudocount = (min(assay(tse, "counts")[assay(tse, "counts") > 0])),
         )
         tse <- transformAssay(tse, method = "relabundance", pseudocount = FALSE, name = "pseudo_false")
         tse <- transformAssay(tse, method = "relabundance", pseudocount = 0, name = "pseudo_zero")
