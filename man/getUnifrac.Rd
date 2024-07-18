@@ -5,7 +5,6 @@
 \alias{getUnifrac,ANY,phylo-method}
 \alias{getUnifrac,TreeSummarizedExperiment,missing-method}
 \alias{getUnifrac,SummarizedExperiment,phylo-method}
-\alias{.get_unifrac}
 \title{Calculate weighted or unweighted (Fast) Unifrac distance}
 \usage{
 getUnifrac(x, tree, ...)
@@ -24,15 +23,6 @@ getUnifrac(x, tree, ...)
 )
 
 \S4method{getUnifrac}{SummarizedExperiment,phylo}(x, tree, assay.type = "counts", transposed = FALSE, ...)
-
-.get_unifrac(
-  x,
-  tree,
-  weighted = FALSE,
-  node.label = nodeLab,
-  nodeLab = NULL,
-  ...
-)
 }
 \arguments{
 \item{x}{a numeric matrix or a

@@ -82,8 +82,8 @@ setMethod("getOverlap", signature = c(x = "SummarizedExperiment"),
         }
         detection <- as.numeric(detection)
         ########################### INPUT CHECK END ############################
-        # Get assay
-        res <- getOverlap()
+        mat <- assay(x, assay.type)
+        res <- getOverlap(mat, detection, ...)
         return(res)
     }
 )

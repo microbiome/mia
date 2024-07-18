@@ -149,6 +149,12 @@ setMethod("getUnifrac",
                 x <- x[present_in_tree, ]
             }
         }
+        # Get assay and transpose it if specified. Features must be in columns
+        # and samples in rows.
+        mat <- assay(x, assay.type)
+        if( !transposed ){
+            mat <- t(mat)
+        }
         # Get tree
         tree <- tree_FUN(x, tree.name)
         # Get links and take only nodeLabs
@@ -179,17 +185,14 @@ setMethod("getUnifrac",
         mat <- t(mat)
     }
     # Calculate unifrac
-    res <- getUnifrac(mat, ...)
+    res <- getUnifrac(mat, tree, ...)
     return(res)   
     }
 )
 
 ################################################################################
-#' @rdname getUnifrac
-#'
 #' @importFrom ape drop.tip
 #' @importFrom rbiom unifrac
-#' @export
 .get_unifrac <- function(
         x, tree, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
     # Check x
