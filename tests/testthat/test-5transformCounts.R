@@ -222,7 +222,16 @@ test_that("transformAssay", {
         expect_equal(assay(tse, "pseudo_true"), assay(tse, "pseudo_min"), check.attributes = FALSE)
         expect_equal(assay(tse, "pseudo_false"), assay(tse, "pseudo_zero"), check.attributes = FALSE)
         expect_false(all(assay(tse, "pseudo_true") == assay(tse, "pseudo_false")))
-
+        
+        # For non-integer values, the default pseudocount should be half of the
+        # minimum value
+        tse <- transformAssay(
+            tse, assay.type = "relabundance", method = "clr",
+            pseudocount = TRUE)
+        test <- attr(assay(tse, "clr"), "parameters")[["pseudocount"]]
+        ref <- assay(tse, "relabundance")
+        ref <- min(ref[ref > 0])/2
+        expect_equal(test, ref)
         ############################# NAMES ####################################
         # Tests that samples have correct names
         expect_equal(colnames(assays(transformAssay(tse, assay.type = "relabundance",
