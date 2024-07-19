@@ -191,14 +191,7 @@
 #'
 NULL
 
-setGeneric(".estimate_richness", signature = c("x"), function(
-    x, assay.type = assay_name, assay_name = "counts",
-    index = c("ace", "chao1", "hill", "observed"), name = index,
-    detection = 0, BPPARAM = SerialParam(), ...)
-        standardGeneric(".estimate_richness"))
-
-setMethod(
-    ".estimate_richness", signature = c(x = "SummarizedExperiment"), function(
+.estimate_richness <- function(
         x, assay.type = assay_name, assay_name = "counts",
         index = c("ace", "chao1", "hill", "observed"), name = index,
         detection = 0, BPPARAM = SerialParam(), ...){
@@ -222,8 +215,7 @@ setMethod(
     # Add richness indices to colData
     x <- .add_values_to_colData(x, richness, name)
     return(x)
-    }
-)
+}
 
 .calc_observed <- function(mat, detection, ...){
     # vegan::estimateR(t(mat))["S.obs",]
