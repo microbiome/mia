@@ -377,11 +377,14 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
             stop("The assay contains missing or negative values. ",
                  "'pseudocount' must be specified manually.", call. = FALSE)
         }
-        # If pseudocount TRUE, set it to half of non-zero minimum value, else set 
-        # it to zero.
+        # If pseudocount TRUE, set it to
+        # a) counts: non-zero minimum value
+        # b) non-integers: half of non-zero minimum value
+        # else set it to zero.
         # Get min value
-        value <- min(mat[mat>0]) 
-        pseudocount <- ifelse(pseudocount, value / 2, 0)
+        value <- min(mat[mat>0])
+        value <- ifelse(all(mat %% 1 == 0), value, value / 2)
+        pseudocount <- ifelse(pseudocount, value, 0)
         # Report pseudocount if positive value
         if ( pseudocount > 0 ){
             message("A pseudocount of ", pseudocount, " was applied.")
