@@ -51,7 +51,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Agglomerate or merge data using taxonomic information</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/getPrevalence.R" class="external-link"><code>R/getPrevalence.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/harm/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
     <div class="hidden name"><code>agglomerate-methods.Rd</code></div>
     </div>
 
@@ -111,27 +111,6 @@ experiments and flattens them again into a single
 <span>  agglomerateTree <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  other.label <span class="op">=</span> <span class="va">other_label</span>,</span>
-<span>  other_label <span class="op">=</span> <span class="st">"Other"</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
-<span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  other.label <span class="op">=</span> <span class="va">other_label</span>,</span>
-<span>  other_label <span class="op">=</span> <span class="st">"Other"</span>,</span>
-<span>  update.tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu">agglomerateByRanks</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
@@ -189,9 +168,9 @@ experiments and flattens them again into a single
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a
+<dd><p>a numeric matrix with samples as rows or a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-object</p></dd>
+object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -201,25 +180,23 @@ See <code>agglomerateByRank</code> for more details.</p></dd>
 
 
 <dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
-<dd><p>a single character defining a taxonomic rank. Must be a value of
+<dd><p><code>Character scalar</code>. Defines a taxonomic rank. Must be a value of
 <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
 
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should taxa with an empty rank be
-removed? Use it with caution, since results with NA on the selected rank
-will be dropped. This setting can be tweaked by defining
-<code>empty.fields</code> to your needs. (default: <code>na.rm = TRUE</code>)</p></dd>
+<dd><p><code>Logical scalar</code>. Should NA values be omitted when calculating
+prevalence? (Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-empty-fields">empty.fields<a class="anchor" aria-label="anchor" href="#arg-empty-fields"></a></dt>
-<dd><p>a <code>character</code> value defining, which values should be
+<dd><p><code>Character vector</code>. Defines which values should be
 regarded as empty. (Default: <code>c(NA, "", " ", "\t")</code>). They will be
 removed if <code>na.rm = TRUE</code> before agglomeration.</p></dd>
 
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
-<dd><p>A character value for selecting if data is merged
+<dd><p><code>Character scalar</code>. Determines if data is merged
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be <code>'rows'</code> or <code>'cols'</code>.</p></dd>
 
@@ -232,9 +209,8 @@ returned unchanged.</p></dd>
 
 
 <dt id="arg-update-tree">update.tree<a class="anchor" aria-label="anchor" href="#arg-update-tree"></a></dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: should
-<code>rowTree()</code> also be agglomerated? (Default:
-<code>update.tree = FALSE</code>)</p></dd>
+<dd><p><code>Logical scalar</code>. Should
+<code>rowTree()</code> also be merged? (Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-mergetree">mergeTree<a class="anchor" aria-label="anchor" href="#arg-mergetree"></a></dt>
@@ -242,15 +218,15 @@ returned unchanged.</p></dd>
 
 
 <dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
-<dd><p>String or integer scalar specifying an alternative experiment
-containing the input data.</p></dd>
+<dd><p><code>Character scalar</code> or <code>integer scalar</code>.
+Specifies an alternative experiment containing the input data.</p></dd>
 
 
 <dt id="arg-altexp-rm">altexp.rm<a class="anchor" aria-label="anchor" href="#arg-altexp-rm"></a></dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should alternative
-experiments be removed prior to agglomeration? This prevents to many
-nested alternative experiments by default (default:
-<code>altexp.rm = TRUE</code>)</p></dd>
+<dd><p><code>Logical scalar</code>. Should alternative
+experiments be removed prior to agglomeration? This prevents too many
+nested alternative experiments by default. (Default:
+<code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-strip-altexp">strip_altexp<a class="anchor" aria-label="anchor" href="#arg-strip-altexp"></a></dt>
@@ -265,32 +241,23 @@ nested alternative experiments by default (default:
 <dd><p>Deprecated. Use <code>update.tree</code> instead.</p></dd>
 
 
-<dt id="arg-other-label">other.label<a class="anchor" aria-label="anchor" href="#arg-other-label"></a></dt>
-<dd><p>A single <code>character</code> valued used as the label for the
-summary of non-prevalent taxa. (default: <code>other.label = "Other"</code>)</p></dd>
-
-
-<dt id="arg-other-label">other_label<a class="anchor" aria-label="anchor" href="#arg-other-label"></a></dt>
-<dd><p>Deprecated. use <code>other.label</code> instead.</p></dd>
-
-
 <dt id="arg-ranks">ranks<a class="anchor" aria-label="anchor" href="#arg-ranks"></a></dt>
-<dd><p>a character vector defining taxonomic ranks. Must all be values
+<dd><p><code>Character vector</code>. Defines taxonomic ranks. Must all be values
 of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
 
 
 <dt id="arg-as-list">as.list<a class="anchor" aria-label="anchor" href="#arg-as-list"></a></dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the list of
+<dd><p><code>Logical scalar</code>. Should the list of
 <code>SummarizedExperiment</code> objects be returned by the function
 <code>agglomerateByRanks</code> as a SimpleList or stored in altExps?
-(default: <code>as.list = FALSE</code>)</p></dd>
+(Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-keep-dimred">keep.dimred<a class="anchor" aria-label="anchor" href="#arg-keep-dimred"></a></dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the
+<dd><p><code>Logical scalar</code>. Should the
 <code>reducedDims(x)</code> be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(default: <code>keep.dimred = FALSE</code>)</p></dd>
+(Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-keep-reduceddims">keep_reducedDims<a class="anchor" aria-label="anchor" href="#arg-keep-reduceddims"></a></dt>
@@ -305,8 +272,6 @@ optionally-pruned object of the same class as <code>x</code>.
 with the specified entries merged into one entry in all relevant components.
 <code>agglomerateByRank</code> returns a taxonomically-agglomerated,
 optionally-pruned object of the same class as <code>x</code>.</p>
-<p><code>agglomerateByPrevalence</code> returns a taxonomically-agglomerated object
-of the same class as x and based on prevalent taxonomic results.</p>
 <p>For <code>agglomerateByRanks</code>:
 If <code>as.list = TRUE</code> : <code>SummarizedExperiment</code> objects in a
 <code>SimpleList</code>
@@ -342,12 +307,6 @@ However, additional support for <code>TreeSummarizedExperiment</code> was added 
 science field agnostic names were used. In addition the <code>archetype</code>
 argument lets the user select how to preserve row or column data.</p>
 <p>For merge data of assays the function from <code>scuttle</code> are used.</p>
-<p><code>agglomerateByPrevalence</code> sums up the values of assays at the taxonomic
-level specified by <code>rank</code> (by default the highest taxonomic level
-available) and selects the summed results that exceed the given population
-prevalence at the given detection level. The other summed values (below the
-threshold) are agglomerated in an additional row taking the name indicated by
-<code>other.label</code> (by default "Other").</p>
 <p><code>agglomerateByRanks</code> will use by default all available taxonomic ranks, but
 this can be controlled by setting <code>ranks</code> manually. <code>NA</code> values
 are removed by default, since they would not make sense, if the result
@@ -562,48 +521,6 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
-<span class="r-in"><span><span class="co">## Data can be aggregated based on prevalent taxonomic results</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByPrevalence</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
-<span class="r-in"><span>    rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
-<span class="r-in"><span>    detection <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,</span></span>
-<span class="r-in"><span>    prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">tse</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 6 26 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(2): agglomerated_by_rank agglomerated_by_rank</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> assays(2): counts relabundance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(6): Actinobacteria Bacteroidetes ... Proteobacteria Other</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (6 rows)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Here data is aggregated at the taxonomic level "Phylum". The five phyla</span></span></span>
-<span class="r-in"><span><span class="co"># that exceed the population prevalence threshold of 50/100 represent the</span></span></span>
-<span class="r-in"><span><span class="co"># five first rows of the assay in the aggregated data. The sixth and last row</span></span></span>
-<span class="r-in"><span><span class="co"># named by default "Other" takes the summed up values of all the other phyla</span></span></span>
-<span class="r-in"><span><span class="co"># that are below the prevalence threshold.</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">assay</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   CL3    CC1    SV1 M31Fcsw M11Fcsw</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  39601  90280 121703    2540     841</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   67395  96398  93436  804395 1424107</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Cyanobacteria    1955   3353  16676     423  212812</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Firmicutes       8584   4726   3524  700084  330423</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Proteobacteria 294228 361327 224004   18798   86614</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Other          452307 579321 238100   17211   21679</span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># print the available taxonomic ranks</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
