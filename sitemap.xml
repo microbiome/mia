@@ -14,15 +14,11 @@
 <url><loc>/reference/addCluster.html</loc></url>
 <url><loc>/reference/addDivergence.html</loc></url>
 <url><loc>/reference/agglomerate-methods.html</loc></url>
-<url><loc>/reference/agglomerateByPrevalence.html</loc></url>
 <url><loc>/reference/calculateDMN.html</loc></url>
 <url><loc>/reference/calculateJSD.html</loc></url>
 <url><loc>/reference/calculateOverlap.html</loc></url>
 <url><loc>/reference/calculateUnifrac.html</loc></url>
-<url><loc>/reference/convertFromBIOM.html</loc></url>
-<url><loc>/reference/convertFromDADA2.html</loc></url>
-<url><loc>/reference/convertFromPhyloseq.html</loc></url>
-<url><loc>/reference/convertToPhyloseq.html</loc></url>
+<url><loc>/reference/convert.html</loc></url>
 <url><loc>/reference/deprecate.html</loc></url>
 <url><loc>/reference/dmn_se.html</loc></url>
 <url><loc>/reference/enterotype.html</loc></url>

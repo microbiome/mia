@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.32</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Split <code>TreeSummarizedExperiment</code> column-wise or row-wise based on grouping variable</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/splitOn.R" class="external-link"><code>R/splitOn.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_alpha/R/splitOn.R" class="external-link"><code>R/splitOn.R</code></a></small>
     <div class="hidden name"><code>splitOn.Rd</code></div>
     </div>
 
@@ -88,32 +88,36 @@
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a numeric matrix with samples as rows or a
+<dd><p>A
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-object.</p></dd>
+object or a list of
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
+objects.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Arguments passed to <code>agglomerateByVariable</code> function for
 <code>SummarizedExperiment</code> objects and other functions.
 See <code><a href="agglomerate-methods.html">agglomerateByVariable</a></code> for more
-details.</p><ul><li><p><code>use.names</code>: <code>Logical scalar</code>. Specifies whether to name elements of
-list by their group names. (Default: <code>TRUE</code>)</p></li>
+details.</p><ul><li><p><code>use.names</code> A single boolean value to select whether to name elements of
+list by their group names.</p></li>
 </ul></dd>
 
 
 <dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
-<dd><p><code>Character</code>. Specifies the grouping variable
+<dd><p>A single character value for selecting the grouping variable
 from <code>rowData</code> or <code>colData</code> or a <code>factor</code> or <code>vector</code>
 with the same length as one of the dimensions. If <code>f</code> matches with both
 dimensions, <code>by</code> must be specified.
 Split by cols is not encouraged, since this is not compatible with
-storing the results in <code>altExps</code>. (Default: <code>NULL</code>)</p></dd>
+storing the results in <code>altExps</code>.</p></dd>
 
 
 <dt id="arg-update-tree">update.tree<a class="anchor" aria-label="anchor" href="#arg-update-tree"></a></dt>
-<dd><p><code>Logical scalar</code>. Should
-<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-accessor.html" class="external-link">rowTree()</a></code> also be merged? (Default: <code>FALSE</code>)</p></dd>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the rowTree be updated
+based on splitted data? Option is enabled when <code>x</code> is a
+<code>TreeSummarizedExperiment</code> object or a list of such objects.
+(By default: <code>update.tree = FALSE</code>)</p></dd>
 
 
 <dt id="arg-update-rowtree">update_rowTree<a class="anchor" aria-label="anchor" href="#arg-update-rowtree"></a></dt>
@@ -121,8 +125,8 @@ storing the results in <code>altExps</code>. (Default: <code>NULL</code>)</p></d
 
 
 <dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
-<dd><p><code>Character vector</code>. Specify the alternative experiments
-to be unsplit. (Default: <code>names(altExps(x))</code>)</p></dd>
+<dd><p>a <code>character</code> vector specifying the alternative experiments
+to be unsplit. (By default: <code>altexp = names(altExps(x))</code>)</p></dd>
 
 
 <dt id="arg-altexpnames">altExpNames<a class="anchor" aria-label="anchor" href="#arg-altexpnames"></a></dt>
@@ -130,10 +134,10 @@ to be unsplit. (Default: <code>names(altExps(x))</code>)</p></dd>
 
 
 <dt id="arg-keep-dimred">keep.dimred<a class="anchor" aria-label="anchor" href="#arg-keep-dimred"></a></dt>
-<dd><p><code>Logical scalar</code>. Should the
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the
 <code>reducedDims(x)</code> be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(Default: <code>FALSE</code>)</p></dd>
+(By default: <code>keep.dimred = FALSE</code>)</p></dd>
 
 
 <dt id="arg-keep-reduceddims">keep_reducedDims<a class="anchor" aria-label="anchor" href="#arg-keep-reduceddims"></a></dt>
