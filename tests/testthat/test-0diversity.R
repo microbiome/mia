@@ -140,10 +140,12 @@ test_that("diversity estimates", {
         245.1008, 127.2336, 167.7246, 155.5872, 142.3473, 197.6823, 197.2321,
         124.6510, 121.2056, 179.9377, 140.8096, 126.5695)
     tse <- GlobalPatterns
-    res <- .estimate_faith(tse)$faith
+    res <- .estimate_faith(tse, assay(tse), rowTree(tse))
     expect_equal(res, picante_res, tolerance=1e-5)
     # Check only tips paramater
-    expect_error(.estimate_faith(tse, only.tips = 1))
-    expect_error(.estimate_faith(tse, only.tips = "TRUE"))
-    expect_error(.estimate_faith(tse, only.tips = c(TRUE, FALSE)))
+    expect_error(.estimate_faith(tse, assay(tse), rowTree(tse), only.tips = 1))
+    expect_error(.estimate_faith(
+        tse, assay(tse), rowTree(tse), only.tips = "TRUE"))
+    expect_error(.estimate_faith(
+        tse, assay(tse), rowTree(tse), only.tips = c(TRUE, FALSE)))
     })
