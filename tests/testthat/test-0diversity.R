@@ -89,7 +89,7 @@ test_that("diversity estimates", {
     rownames(se) <- rownames(tse)
     
     # Calculates "faith" TSE
-    tse_only <- .estimate_faith(tse)
+    tse_only <- addAlpha(tse, index = "faith")
     
     # tse_only should be TSE object
     expect_true(class(tse_only)== "TreeSummarizedExperiment")
@@ -97,7 +97,7 @@ test_that("diversity estimates", {
     expect_equal(colnames(colData(tse_only)), c(colnames(colData(tse)), "faith"))
     
     # Calculates "faith" TSE + TREE
-    tse_tree <- .estimate_faith(tse, tree = rowTree(tse))
+    tse_tree <- addAlpha(tse, index = "faith", tree = rowTree(tse))
     
     # tse_tree should be TSE object
     expect_true(class(tse_tree)== "TreeSummarizedExperiment")
@@ -107,7 +107,7 @@ test_that("diversity estimates", {
     
     
     # Calculates "faith" SE + TREE
-    se_tree <- .estimate_faith(se, tree = rowTree(tse))
+    se_tree <- addAlpha(se, index = "faith", tree = rowTree(tse))
     
     # se_tree should be SE object
     expect_true(class(se_tree)== "SummarizedExperiment")
@@ -115,13 +115,13 @@ test_that("diversity estimates", {
     expect_equal(colnames(colData(se_tree)), c(colnames(colData(se)), "faith"))
     
     # Expect error
-    expect_error(.estimate_diversity(tse, index = "faith", tree.name = "test"))
-    expect_warning(.estimate_diversity(tse, index = c("shannon", "faith"), tree.name = "test"))
+    expect_error(addAlpha(tse, index = "faith", tree.name = "test"))
+    expect_error(addAlpha(tse, index = c("shannon", "faith"), tree.name = "test"))
     
     data(GlobalPatterns, package="mia")
     data(esophagus, package="mia")
     tse <- mergeSEs(GlobalPatterns, esophagus,  join = "full", assay.type = "counts")
-    expect_warning(.estimate_diversity(tse, index = c("shannon", "faith"), 
+    expect_error(.estimate_diversity(tse, index = c("shannon", "faith"), 
                                      tree.name = "phylo.1", assay.type="counts"))
     expect_error(.estimate_diversity(tse, index = c("faith"), 
                                    tree.name = "test"))
