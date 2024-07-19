@@ -20,7 +20,7 @@
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether the UniFrac calculation should be parallelized.
+#'   object specifying whether the calculation should be parallelized.
 #'
 #' @param transposed \code{Logical scalar}. Is x transposed with samples in rows?
 #' (Default: \code{FALSE})

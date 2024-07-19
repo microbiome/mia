@@ -39,7 +39,7 @@ assay used in calculation. (Default: \code{"counts"})}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether the UniFrac calculation should be parallelized.}
+object specifying whether the calculation should be parallelized.}
 
 \item{chunkSize}{\code{Integer scalar}. Defines the size of data send
 to the individual worker. Only has an effect, if \code{BPPARAM} defines

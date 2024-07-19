@@ -104,7 +104,7 @@ object.}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether the UniFrac calculation should be parallelized.}
+object specifying whether the calculation should be parallelized.}
 
 \item{seed}{\code{Numeric scalar}. Random number seed. See
 \code{\link[DirichletMultinomial:dmn]{dmn}}}
