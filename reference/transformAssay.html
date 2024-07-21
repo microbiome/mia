@@ -45,7 +45,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Transform assay</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/transformCounts.R" class="external-link"><code>R/transformCounts.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_pseudocount/R/transformCounts.R" class="external-link"><code>R/transformCounts.R</code></a></small>
     <div class="hidden name"><code>transformAssay.Rd</code></div>
     </div>
 
@@ -124,7 +124,7 @@ abundance table.</p></dd>
 
 <dt id="arg-pseudocount">pseudocount<a class="anchor" aria-label="anchor" href="#arg-pseudocount"></a></dt>
 <dd><p>TRUE, FALSE, or a numeric value. When TRUE,
-automatically adds the minimum positive value of <code>assay.type</code>.
+automatically adds half of the minimum positive value of <code>assay.type</code>.
 When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.</p></dd>
 
@@ -144,10 +144,9 @@ transformed abundance table named <code>name</code> added in the <code><a href="
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>These <code>transformCount</code> function provides a variety of options for transforming abundance data.
-The transformed data is calculated and stored in a new <code>assay</code>. The previously available
-wrappers transformSamples, transformFeatures
-ZTransform, and relAbundanceCounts have been deprecated.</p>
+    <p><code>transformAssay</code> function provides a variety of options for
+transforming abundance data. The transformed data is calculated and stored
+in a new <code>assay</code>.</p>
 <p>The <code>transformAssay</code> provides sample-wise (column-wise) or feature-wise
 (row-wise) transformation to the abundance table
 (assay) based on specified <code>MARGIN</code>.</p>
