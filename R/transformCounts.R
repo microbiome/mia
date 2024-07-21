@@ -27,7 +27,7 @@
 #'   abundance table.
 #' 
 #' @param pseudocount TRUE, FALSE, or a numeric value. When TRUE,
-#'   automatically adds the minimum positive value of \code{assay.type}.
+#'   automatically adds half of the minimum positive value of \code{assay.type}.
 #'   When FALSE, does not add any pseudocount (pseudocount = 0).
 #'   Alternatively, a user-specified numeric value can be added as pseudocount.
 #'
@@ -40,10 +40,9 @@
 #' }
 #' @details
 #'
-#' These \code{transformCount} function provides a variety of options for transforming abundance data.
-#' The transformed data is calculated and stored in a new \code{assay}. The previously available
-#' wrappers transformSamples, transformFeatures
-#' ZTransform, and relAbundanceCounts have been deprecated.
+#' \code{transformAssay} function provides a variety of options for
+#' transforming abundance data. The transformed data is calculated and stored
+#' in a new \code{assay}.
 #'
 #' The \code{transformAssay} provides sample-wise (column-wise) or feature-wise
 #' (row-wise) transformation to the abundance table
@@ -377,13 +376,11 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
             stop("The assay contains missing or negative values. ",
                  "'pseudocount' must be specified manually.", call. = FALSE)
         }
-        # If pseudocount TRUE, set it to
-        # a) counts: non-zero minimum value
-        # b) non-integers: half of non-zero minimum value
+        # If pseudocount TRUE, set it to  half of non-zero minimum value
         # else set it to zero.
         # Get min value
         value <- min(mat[mat>0])
-        value <- ifelse(all(mat %% 1 == 0), value, value / 2)
+        value <- value/2
         pseudocount <- ifelse(pseudocount, value, 0)
         # Report pseudocount if positive value
         if ( pseudocount > 0 ){
@@ -393,13 +390,16 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     # Give warning if pseudocount should not be added
     # Case 1: only positive values
     if( pseudocount != 0 && all(mat > 0, na.rm = TRUE) ){
-        warning("The assay contains only positive values. ",
-                "Applying a pseudocount may be unnecessary.", call. = FALSE)
+        warning(
+            "The assay contains only positive values. ",
+            "Applying a pseudocount may be unnecessary.", call. = FALSE)
     }
     # Case 2: some negative values
     if( pseudocount != 0 && any(mat < 0, na.rm = TRUE) ){
-        warning("The assay contains some negative values. ",
-                "Applying a pseudocount may produce meaningless data.", call. = FALSE)
+        warning(
+            "The assay contains some negative values. ",
+            "Applying a pseudocount may produce meaningless data.",
+            call. = FALSE)
     }
     # Add pseudocount
     mat <- mat + pseudocount
