@@ -121,32 +121,27 @@
 #'
 NULL
 
-setGeneric(".estimate_evenness",signature = c("x"), function(x, ...)
-    standardGeneric(".estimate_evenness"))
-
-setMethod(
-    ".estimate_evenness", signature = c(x = "SummarizedExperiment"),
-    function(
+.estimate_evenness <- function(
         x, assay.type = assay_name, assay_name = "counts",
         index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
         name = index, ..., BPPARAM = SerialParam()){
-        # input check
-        index <- match.arg(index, several.ok = TRUE)
-        if(!.is_non_empty_character(name) || length(name) != length(index)){
-            stop("'name' must be a non-empty character value and have the ",
-                "same length as 'index'.",
-                call. = FALSE)
-        }
-        .check_assay_present(assay.type, x)
-        #
-        vnss <- BiocParallel::bplapply(index,
-                                        .get_evenness_values,
-                                        mat = assay(x, assay.type),
-                                        BPPARAM = BPPARAM, ...)
-        x <- .add_values_to_colData(x, vnss, name)
-        return(x)
+    # input check
+    index <- match.arg(index, several.ok = TRUE)
+    if(!.is_non_empty_character(name) || length(name) != length(index)){
+        stop("'name' must be a non-empty character value and have the ",
+            "same length as 'index'.",
+            call. = FALSE)
     }
-)
+    .check_assay_present(assay.type, x)
+    #
+    vnss <- BiocParallel::bplapply(
+        index,
+        .get_evenness_values,
+        mat = assay(x, assay.type),
+        BPPARAM = BPPARAM, ...)
+    x <- .add_values_to_colData(x, vnss, name)
+    return(x)
+}
 
 .calc_bulla_evenness <- function(mat) {
     # Species richness (number of species)
