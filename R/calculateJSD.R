@@ -75,7 +75,7 @@ setGeneric("getJSD", signature = c("x"),
 #' @export
 setMethod("getJSD", signature = c(x = "ANY"),
     function(x, ...){
-        .getJSD(x, ...)
+        .get_jsd(x, ...)
     }
 )
 
@@ -116,15 +116,12 @@ setMethod("getJSD", signature = c(x = "SummarizedExperiment"),
     return(rowSums(d, na.rm = TRUE))
 }
 
-#' @rdname getJSD
-#'
 #' @importFrom utils combn
 #' @importFrom stats as.dist
 #' @importFrom BiocParallel SerialParam register bplapply bpisup bpstart bpstop
 #' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
-#'
-#' @export
-.getJSD <- function(x, BPPARAM = SerialParam(), chunkSize = nrow(x), ...){
+#' 
+.get_jsd <- function(x, BPPARAM = SerialParam(), chunkSize = nrow(x), ...){
     # input check
     if(is.null(rownames(x))){
         rownames(x) <- seq_len(nrow(x))

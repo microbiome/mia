@@ -4,7 +4,6 @@
 \alias{getJSD}
 \alias{getJSD,ANY-method}
 \alias{getJSD,SummarizedExperiment-method}
-\alias{.getJSD}
 \title{Calculate the Jensen-Shannon Divergence}
 \usage{
 \S4method{getJSD}{ANY}(x, ...)
@@ -17,8 +16,6 @@
   transposed = FALSE,
   ...
 )
-
-.getJSD(x, BPPARAM = SerialParam(), chunkSize = nrow(x), ...)
 }
 \arguments{
 \item{x}{a numeric matrix or a
