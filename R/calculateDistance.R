@@ -21,6 +21,11 @@
 #'   
 #' @param transposed Logical scalar. Specifies if x is transposed with cells in
 #'   rows. (Default: \code{FALSE})
+#'   
+#' @param detection A single numeric value for selecting detection threshold for 
+#'   absence/presence of features. Feature that has abundance under threshold in
+#'   either of samples, will be discarded when evaluating overlap between 
+#'   samples. 
 #'
 #' @param ... other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}
 #'
@@ -36,14 +41,10 @@
 #' @export
 #'
 #' @examples
-#' # generate some example data
-#' mat <- matrix(1:60, nrow = 6)
-#' df <- DataFrame(n = c(1:6))
-#' tse <- TreeSummarizedExperiment(assays = list(counts = mat),
-#'                                 rowData = df)
-#' \dontrun{
-#' getDissimilarity(tse)
-#' }
+#' data(GlobalPatterns)
+#' tse <- GlobalPatterns
+#' tse <- addDissimilarity(tse, method = "overlap", detection = 0.25)
+#' reducedDim(tse, "overlap")
 #' 
 NULL
 
@@ -114,7 +115,7 @@ setGeneric(
 setMethod(
   "addDissimilarity", signature = c(x = "SummarizedExperiment"),
   function(
-    x, method, assay_name = "counts", assay.type = assay_anme, 
+    x, method, assay_name = "counts", assay.type = assay_name, 
       transposed = FALSE, ...){
     res <- getDissimilarity(x, method = method, assay.type = assay.type, 
                             transposed = transposed, ...)
@@ -142,14 +143,14 @@ setMethod(
     # If the dissimilarity functon is not specified, get default choice
     if( is.null(diss.fun) ){
         if( method %in% c("overlap") ){
-            diss.fun <- getOverlap
+            diss.fun <- .get_overlap
             message("'diss.fun' defaults to getOverlap.")
         } else if( method %in% c("unifrac")  ){
             args[["tree"]] <- tree
             diss.fun <- getUnifrac
             message("'diss.fun' defaults to getUnifrac.")
         } else if( method %in% c("jsd")  ){
-            diss.fun <- getJSD
+            diss.fun <- .get_jsd
             message("'diss.fun' defaults to getJSD.")
         } else if( requireNamespace("vegan") ){
             diss.fun <- vegan::vegdist

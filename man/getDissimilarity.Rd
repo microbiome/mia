@@ -38,7 +38,7 @@ addDissimilarity(x, method, ...)
   x,
   method,
   assay_name = "counts",
-  assay.type = assay_anme,
+  assay.type = assay_name,
   transposed = FALSE,
   ...
 )
@@ -63,6 +63,11 @@ calculation. (Default: \code{"phylo"})}
 
 \item{transposed}{Logical scalar. Specifies if x is transposed with cells in
 rows. (Default: \code{FALSE})}
+
+\item{detection}{A single numeric value for selecting detection threshold for
+absence/presence of features. Feature that has abundance under threshold in
+either of samples, will be discarded when evaluating overlap between
+samples.}
 }
 \value{
 \code{getDissimilarity} returns a distance matrix.
@@ -77,13 +82,9 @@ These functions calculate dissimilarities on data stored in a
 object.
 }
 \examples{
-# generate some example data
-mat <- matrix(1:60, nrow = 6)
-df <- DataFrame(n = c(1:6))
-tse <- TreeSummarizedExperiment(assays = list(counts = mat),
-                                rowData = df)
-\dontrun{
-getDissimilarity(tse)
-}
+data(GlobalPatterns)
+tse <- GlobalPatterns
+tse <- addDissimilarity(tse, method = "overlap", detection = 0.25)
+reducedDim(tse, "overlap")
 
 }

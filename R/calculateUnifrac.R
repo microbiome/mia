@@ -1,128 +1,6 @@
-#' Calculate weighted or unweighted (Fast) Unifrac distance
-#'
-#' This function calculates the Unifrac distance for all sample-pairs
-#' in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#' object. The function utilizes \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
-#'
-#' Please note that if \code{getUnifrac} is used as a \code{FUN} for
-#' \code{runMDS}, the argument \code{ntop} has to be set to \code{nrow(x)}.
-#'
-#' @param x a numeric matrix or a
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   object containing a tree.
-#'
-#' @param tree if \code{x} is a matrix, a
-#'   \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
-#'   matrix. This means that the phylo object and the columns should relate
-#'   to the same type of features (aka. microorganisms).
-#'   
-#' @param node.label if \code{x} is a matrix, 
-#'   a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
-#'   The length must equal the number of rows/columns of \code{x}. Furthermore, all the 
-#'   node labs must be present in \code{tree}.
-#' 
-#' @param nodeLab Deprecated. Use \code{node.label} instead.
-#'
-#' @param assay.type a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   
-#' @param exprs_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead.)
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
-#' @param tree.name a single \code{character} value for specifying which
-#'   tree will be used in calculation. 
-#'   (By default: \code{tree.name = "phylo"})
-#' 
-#' @param tree_name Deprecated. Use \code{tree.name} instead.
-#'   
-#' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-Unifrac
-#'   calculation? Weighted-Unifrac takes into account the relative abundance of
-#'   species/taxa shared between samples, whereas unweighted-Unifrac only
-#'   considers presence/absence. Default is \code{FALSE}, meaning the
-#'   unweighted-Unifrac distance is calculated for all pairs of samples.
-#'
-#' @param transposed Logical scalar, is x transposed with cells in rows, i.e., 
-#'   is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
-#'   (By default: \code{transposed = FALSE})
-#'   
-#' @param ... optional arguments not used.
-#'
-#' @return a sample-by-sample distance matrix, suitable for NMDS, etc.
-#'
-#' @references
-#' \url{http://bmf.colorado.edu/unifrac/}
-#'
-#' See also additional descriptions of Unifrac in the following articles:
-#'
-#' Lozupone, Hamady and Knight, ``Unifrac - An Online Tool for Comparing
-#' Microbial Community Diversity in a Phylogenetic Context.'', BMC
-#' Bioinformatics 2006, 7:371
-#'
-#' Lozupone, Hamady, Kelley and Knight, ``Quantitative and qualitative (beta)
-#' diversity measures lead to different insights into factors that structure
-#' microbial communities.'' Appl Environ Microbiol. 2007
-#'
-#' Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
-#' microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
-#'
-#' @name getUnifrac
-#'
-#' @export
-#'
-#' @examples
-#' data(esophagus)
-#' library(scater)
-#' getUnifrac(esophagus, weighted = FALSE)
-#' getUnifrac(esophagus, weighted = TRUE)
-#' # for using getUnifrac in conjunction with runMDS the tree argument
-#' # has to be given separately. In addition, subsetting using ntop must
-#' # be disabled
-#' esophagus <- runMDS(esophagus, FUN = getUnifrac, name = "Unifrac",
-#'                     tree = rowTree(esophagus),
-#'                     assay.type = "counts",
-#'                     ntop = nrow(esophagus))
-#' reducedDim(esophagus)
-NULL
-
-#' @rdname getUnifrac
-#' @export
-setGeneric("getUnifrac", signature = c("x", "tree"),
-            function(x, tree, ... )
-                standardGeneric("getUnifrac"))
-
-#' @rdname getUnifrac
-#' @export
-setMethod("getUnifrac", signature = c(x = "ANY", tree = "phylo"),
-    function(x, tree, weighted = FALSE, ...){
-        if(is(x,"SummarizedExperiment")){
-            stop("When providing a 'tree', please provide a matrix-like as 'x'",
-                " and not a 'SummarizedExperiment' object. Please consider ",
-                "combining both into a 'TreeSummarizedExperiment' object.",
-                call. = FALSE) 
-        }
-        .get_unifrac(x, tree = tree, weighted = weighted, ...)
-    }
-)
-
-#' @rdname getUnifrac
-#'
-#' @importFrom SummarizedExperiment assay
-#'
-#' @export
-setMethod("getUnifrac",
-        signature = c(x = "TreeSummarizedExperiment", tree = "missing"),
-    function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
-            tree.name = tree_name, tree_name = "phylo", transposed = FALSE, ...){
-        # Chcek transposed
-        if( !.is_a_bool(transposed) ){
-            stop("'transposed' must be TRUE or FALSE.", call. = FALSE)
-        }
+.get_unifrac <- function(x, assay.type = assay_name, assay_name = exprs_values, 
+                          exprs_values = "counts", tree.name = tree_name, 
+                          tree_name = "phylo", ...){
         # Get functions and parameters based on direction
         tree_present_FUN <- if (transposed) .check_colTree_present
             else .check_rowTree_present
@@ -152,9 +30,6 @@ setMethod("getUnifrac",
         # Get assay and transpose it if specified. Features must be in columns
         # and samples in rows.
         mat <- assay(x, assay.type)
-        if( !transposed ){
-            mat <- t(mat)
-        }
         # Get tree
         tree <- tree_FUN(x, tree.name)
         # Get links and take only nodeLabs
@@ -163,37 +38,12 @@ setMethod("getUnifrac",
         # Calculate unifrac
         res <- getUnifrac(x, tree = tree, node.label = links, ...)
         return(res)
-    }
-)
-
-#' @rdname getUnifrac
-#' @export
-setMethod("getUnifrac",
-        signature = c(x = "SummarizedExperiment", tree = "phylo"),
-    function(
-        x, tree, assay.type = "counts", transposed = FALSE, ...){
-    # Chcek transposed
-    if( !.is_a_bool(transposed) ){
-        stop("'transposed' must be TRUE or FALSE.", call. = FALSE)
-    }
-    # Check assay.type
-    .check_assay_present(assay.type, x)
-    # Get assay and transpose it if specified. Features must be in columns
-    # and samples in rows.
-    mat <- assay(x, assay.type)
-    if( transposed ){
-        mat <- t(mat)
-    }
-    # Calculate unifrac
-    res <- getUnifrac(mat, tree, ...)
-    return(res)   
-    }
-)
+}
 
 ################################################################################
 #' @importFrom ape drop.tip
 #' @importFrom rbiom unifrac
-.get_unifrac <- function(
+.calculate_unifrac <- function(
         x, tree, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
     # Check x
     if( !is.matrix(as.matrix(x)) ){
