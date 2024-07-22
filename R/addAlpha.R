@@ -490,7 +490,7 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
         }
         # Check if index exists. For each index input, detect it and get
         # information (e.g. internal function) to calculate the index.
-        index <- .get_indices(index, name, x)
+        index <- .get_indices(index, name, x, ...)
         ############################ Input check end ###########################
         # Looping over the vector of indices to be estimated
         for( i in seq_len(nrow(index)) ){
@@ -515,7 +515,7 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
 ################################ HELP FUNCTIONS ################################
 
 # Search alpha diversity index that user wants to calculate.
-.get_indices <- function(index, name, x){
+.get_indices <- function(index, name, x, tree = NULL, ...){
     # Initialize list for supported indices
     supported <- list()
     # Supported diversity indices
@@ -574,8 +574,9 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
             call. = FALSE)
     }
     # Faith index is available only for TreeSE with rowTree
-    if( "faith" %in% detected[["index"]] &&
-            !(is(x, "TreeSummarizedExperiment") && !is.null(rowTree(x))) ){
+    tse_with_tree <- (is(x, "TreeSummarizedExperiment") &&
+        !is.null(rowTree(x))) || !is.null(tree)
+    if( "faith" %in% detected[["index"]] && !tse_with_tree ){
         # Drop faith index from indices being calculated
         detected <- detected[!detected[["index"]] %in% c("faith"), ]
         # If there are still other indices being calculated, give warning.
@@ -583,7 +584,7 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
         # calculate.
         FUN <- if( nrow(detected) == 0 ) stop else warning
         FUN("'faith' index can be calculated only for TreeSE with rowTree(x) ",
-            "populated.", call. = FALSE)
+            "populated or with 'tree' provided separately.", call. = FALSE)
     }
     # Check if there are indices left
     return(detected)
