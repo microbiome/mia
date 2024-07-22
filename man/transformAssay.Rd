@@ -52,7 +52,7 @@ transformation is applied sample (column) or feature (row) wise.
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
 \item{pseudocount}{\code{Logical scalar} or \code{numeric scalar}. When TRUE,
-automatically adds the minimum positive value of \code{assay.type}.
+automatically adds half of the minimum positive value of \code{assay.type}.
 When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.
 (Default: \code{FALSE}).}
@@ -74,10 +74,9 @@ Variety of transformations for abundance data, stored in \code{assay}.
 See details for options.
 }
 \details{
-These \code{transformCount} function provides a variety of options for transforming abundance data.
-The transformed data is calculated and stored in a new \code{assay}. The previously available
-wrappers transformSamples, transformFeatures
-ZTransform, and relAbundanceCounts have been deprecated.
+\code{transformAssay} function provides a variety of options for
+transforming abundance data. The transformed data is calculated and stored
+in a new \code{assay}.
 
 The \code{transformAssay} provides sample-wise (column-wise) or feature-wise
 (row-wise) transformation to the abundance table

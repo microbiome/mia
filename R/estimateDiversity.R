@@ -236,228 +236,104 @@
 #' }
 NULL
 
-setGeneric(
-    ".estimate_diversity", signature = c("x"),
-    function(x, ...) standardGeneric(".estimate_diversity"))
-
-setMethod(".estimate_diversity", signature = c(x="SummarizedExperiment"),
-    function(
+.estimate_diversity <- function(
         x, assay.type = assay_name, assay_name = "counts",
         index = c(
-            "coverage", "fisher", "gini_simpson", "inverse_simpson",
+            "coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
             "log_modulo_skewness", "shannon"),
         name = index, BPPARAM = SerialParam(), ...){
-        # Check index
-        supported_index <- c(
-            "coverage", "fisher", "gini_simpson", "inverse_simpson",
-            "log_modulo_skewness", "shannon")
-        index_string <- paste0(
-            "'", paste0(supported_index, collapse = "', '"), "'")
-        if ( !all(index %in% supported_index) || !(length(index) > 0)) {
-            stop("'", paste0(
-                "'index' must be from the following options: '", index_string),
-                "'", call. = FALSE)
-        }
-        # Check name
-        if(!.is_non_empty_character(name) || length(name) != length(index)){
-            stop("'name' must be a non-empty character value and have the ",
-                "same length as 'index'.",
-                call. = FALSE)
-        }
-        # Check assay and check that vegan package is available since it is
-        # required in some of the diversity calculations.
-        .check_assay_present(assay.type, x)
-        .require_package("vegan")
-        #
-        # Calculate specified diversity indices
-        dvrsts <- BiocParallel::bplapply(
-            index,
-            .get_diversity_values,
-            x = x,
-            mat = assay(x, assay.type),
-            BPPARAM = BPPARAM,
-            ...)
-        # Add them to colData
-        x <- .add_values_to_colData(x, dvrsts, name)
-        return(x)
+    # Check index
+    supported_index <- c(
+        "coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
+        "log_modulo_skewness", "shannon")
+    index_string <- paste0(
+        "'", paste0(supported_index, collapse = "', '"), "'")
+    if ( !all(index %in% supported_index) || !(length(index) > 0)) {
+        stop("'", paste0(
+            "'index' must be from the following options: '", index_string),
+            "'", call. = FALSE)
     }
-)
-
-setMethod(".estimate_diversity", signature = c(x="TreeSummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts",
-            index = c("coverage", "faith", "fisher", "gini_simpson", 
-                    "inverse_simpson", "log_modulo_skewness", "shannon"),
-            name = index, tree.name = tree_name, tree_name = "phylo", 
-            ..., BPPARAM = SerialParam()){
-        # input check
-        supported_index <- c("coverage", "fisher", "gini_simpson", "faith",
-                             "inverse_simpson", "log_modulo_skewness", "shannon")
-        index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
-        if ( !all(index %in% supported_index) || length(index) == 0) {
-            stop(paste("'index' must be from the following options: '", index_string), call. = FALSE)
-        }
-        
-        # Check tree.name
-        if( !.is_non_empty_string(tree.name) ){
-            stop("'tree.name' must be a character specifying a rowTree of 'x'.",
-                 call. = FALSE)
-        }
-        if(!.is_non_empty_character(name) || length(name) != length(index)){
-            stop("'name' must be a non-empty character value and have the ",
-                "same length as 'index'.",
-                call. = FALSE)
-        }
-        
-        # If 'faith' is one of the indices
-        if( "faith" %in% index ){
-            # Get the name of "faith" index
-            faith_name <- name[index %in% "faith"]
-            # Store original names
-            name_original <- name
-            # And delete it from name
-            name <- name[!index %in% "faith"]
-
-            # Delete "faith" from indices
-            index <- index[!index %in% "faith"]
-            
-            # Faith will be calculated
-            calc_faith <- TRUE
-        } else{
-            # Faith will not be calculated
-            calc_faith <- FALSE
-        }
-        
-        # If index list contained other than 'faith' index, the length of the
-        # list is over 0
-        if( length(index)>0){
-            # Calculates all indices but not 'faith'
-            x <- callNextMethod()
-        }
-        # If 'faith' was one of the indices, 'calc_faith' is TRUE
-        if( calc_faith ){
-            # Get tree to check whether faith can be calculated
-            tree <- rowTree(x, tree.name)
-            # Check if faith can be calculated. Give warning and do not run estimateFaith
-            # if there is no rowTree and other indices were also calculated. Otherwise, 
-            # run estimateFaith. (If there is no rowTree --> error)
-            if( (is.null(tree) || is.null(tree$edge.length)) &&
-                length(index) >= 1 ){
-                warning("Faith diversity has been excluded from the results ",
-                        "since it cannot be calculated without rowTree. ",
-                        "This requires a rowTree in the input argument x. ",
-                        "Make sure that 'rowTree(x)' is not empty, or ",
-                        "make sure to specify 'tree.name' in the input ",
-                        "arguments. Warning is also provided if the tree does ",
-                        "not have any branches. You can consider adding ",
-                        "rowTree to include this index.", 
-                        call. = FALSE)
-            } else {
-                x <- .estimate_faith(
-                    x, name = faith_name, tree_name = tree.name, ...)
-                # Ensure that indices are in correct order
-                colnames <- colnames(colData(x))
-                colnames <- c(
-                    colnames[ !colnames %in% name_original ], name_original)
-                colData(x) <- colData(x)[ , colnames]
-            }
-        }
-        return(x)
+    # Check name
+    if(!.is_non_empty_character(name) || length(name) != length(index)){
+        stop("'name' must be a non-empty character value and have the ",
+            "same length as 'index'.",
+            call. = FALSE)
     }
-)
-
-setGeneric(
-    ".estimate_faith", signature = c("x", "tree"),
-    function(
-        x, tree = "missing", assay.type = assay_name, assay_name = "counts",
-        name = "faith", ...) standardGeneric(".estimate_faith"))
-
-setMethod(
-    ".estimate_faith", signature = c(x="SummarizedExperiment", tree="phylo"),
-    function(x, tree, assay.type = "counts", assay_name = NULL,
-            name = "faith", node.label = node_lab, node_lab = NULL, ...){
-        # Input check
-        # Check 'tree'
-        # IF there is no rowTree gives an error
-        if( is.null(tree) || is.null(tree$edge.length) ){
-            stop("'tree' is NULL or it does not have any branches.",
-                "The Faith's alpha diversity index is not possible to 
-                calculate.", call. = FALSE)
-        }
-        # Check 'assay.type'
-        .check_assay_present(assay.type, x)
-        # Check that it is numeric
-        if( !is.numeric(assay(x, assay.type)) ){
-            stop("The abundance matrix specificied by 'assay.type' must be ",
-                "numeric.", call. = FALSE)
-        }
-        # Check 'name'
-        if(!.is_non_empty_character(name)){
-            stop("'name' must be a non-empty character value.",
-                call. = FALSE)
-        }
-        # Check that node.label is NULL or it specifies links between rownames and 
-        # node labs
-        if( !( is.null(node.label) || 
-               is.character(node.label) && length(node.label) == nrow(x) ) ){
-            stop("'node.label' must be NULL or a vector specifying links between ",
-                 "rownames and node labs of 'tree'.",
-                 call. = FALSE)
-        }
-        # Get the abundance matrix
-        mat <- assay(x, assay.type)
-        # Check that it is numeric
-        if( !is.numeric(mat) ){
-            stop("The abundance matrix specificied by 'assay.type' must be ",
-                "numeric.", call. = FALSE)
-        }
-        # Subset and rename rows of the assay to correspond node_labs
-        if( !is.null(node.label) ){
-            # Subset 
-            mat <- mat[ !is.na(node.label), ]
-            node.label <- node.label[ !is.na(node.label) ]
-            # Rename
-            rownames(mat) <- node.label
-        }
-        # Calculates Faith index
-        faith <- list(.calc_faith(mat, tree, ...))
-        # Adds calculated Faith index to colData
-        .add_values_to_colData(x, faith, name)
-    }
-)
-
-setMethod(
-    ".estimate_faith", signature = c(x="TreeSummarizedExperiment", tree="missing"),
-    function(x, assay.type = "counts", assay_name = NULL,
-            name = "faith", tree.name = tree_name, tree_name = "phylo", ...){
-        # Check tree.name
-        if( !.is_non_empty_character(tree.name) ){
-            stop("'tree.name' must be a character specifying a rowTree of 'x'.",
-                 call. = FALSE)
-        }
-        # Gets the tree
-        tree <- rowTree(x, tree.name)
-        if( is.null(tree) || is.null(tree$edge.length)){
-            stop("rowTree(x, tree.name) is NULL or the tree does not have any branches. ",
-            "The Faith's alpha diversity index cannot be calculated.",
-                call. = FALSE)
-        }
-        # Get node labs
-        node_lab <- rowLinks(x)[ , "nodeLab" ]
-        node_lab[ rowLinks(x)[, "whichTree"] != tree.name ] <- NA
-        # Give a warning, data will be subsetted
-        if( any(is.na(node_lab)) ){
-            warning("The rowTree named 'tree.name' does not include all the ",
-                    "rows which is why 'x' is subsetted when the Faith's alpha ",
-                    "diversity index is calculated.",
-                    call. = FALSE)
-        }
-        # Calculates the Faith index
-        .estimate_faith(x, tree, name = name, node.lab = node_lab, ...)
-    }
-)
-
+    # Check assay and check that vegan package is available since it is
+    # required in some of the diversity calculations.
+    .check_assay_present(assay.type, x)
+    .require_package("vegan")
+    #
+    # Calculate specified diversity indices
+    dvrsts <- BiocParallel::bplapply(
+        index,
+        .get_diversity_values,
+        x = x,
+        mat = assay(x, assay.type),
+        BPPARAM = BPPARAM,
+        ...)
+    # Add them to colData
+    x <- .add_values_to_colData(x, dvrsts, name)
+    return(x)
+}
 
 ################################################################################
+
+.estimate_faith <- function(
+        x, mat, tree = NULL, tree.name = "phylo", node.label = node_lab,
+        node_lab = NULL, ...){
+    # Input check
+    # If tree is NULL, then we must have TreeSE object that has rowTree
+    if( is.null(tree) &&
+        !(is(x, "TreeSummarizedExperiment") && !is.null(rowTree(x))) ){
+        stop("'tree' must be provided.", call. = FALSE)
+    }
+    # If tree is not specified, then we get rowTree
+    if( is.null(tree) ){
+        tree <- rowTree(x, tree.name)
+        # When we get rowTree, we know the linking between rows and nodes.
+        node.label <- rowLinks(x)[ , "nodeLab" ]
+        node.label[ rowLinks(x)[, "whichTree"] != tree.name ] <- NA
+    }
+    # Check that tree is correct
+    if( is.null(tree) || is.null(tree$edge.length) ){
+        stop(
+            "'tree' is NULL or it does not have any branches. ",
+            "The Faith's alpha diversity index is not possible to ", 
+            "calculate.", call. = FALSE)
+    }
+
+    # Check that node.label is NULL or it specifies links between rownames and 
+    # node labs
+    if( !( is.null(node.label) || 
+           is.character(node.label) && length(node.label) == nrow(x) ) ){
+        stop(
+            "'node.label' must be NULL or a vector specifying links between ",
+            "rownames and node labs of 'tree'.",
+            call. = FALSE)
+    }
+    
+    # Subset and rename rows of the assay to correspond node_labs
+    if( !is.null(node.label) && any(is.na(node.label)) ){
+        # Subset
+        if( !any(is.na(node.label)) ){
+            warning(
+                "The tree named does not include all the ",
+                "rows. 'x' is subsetted.", call. = FALSE)
+            mat <- mat[ !is.na(node.label), ]
+            node.label <- node.label[ !is.na(node.label) ]
+        }
+        # Rename
+        rownames(mat) <- node.label
+    }
+    # To calculate faith, the assay must have rownames
+    if( is.null(rownames(mat)) ){
+        stop("'x' must have rownames.", call. = FALSE)
+    }
+    # Calculates Faith index
+    res <- .calc_faith(mat, tree, ...)
+    return(res)
+}
 
 .calc_shannon <- function(mat, ...){
     vegan::diversity(t(mat), index="shannon")
@@ -632,17 +508,17 @@ setMethod(
 }
 
 #' @importFrom SummarizedExperiment assay assays
-.get_diversity_values <- function(index, x, mat, tree, ...){
+.get_diversity_values <- function(index, x, mat, ...){
     FUN <- switch(index,
         shannon = .calc_shannon,
         gini_simpson = .calc_gini_simpson,
         inverse_simpson = .calc_inverse_simpson,
         coverage = .calc_coverage,
         fisher = .calc_fisher,
-        faith = .calc_faith,
+        faith = .estimate_faith,
         log_modulo_skewness = .calc_log_modulo_skewness
         )
-    res <- FUN(x = x, mat = mat, tree = tree, ...)
+    res <- FUN(x = x, mat = mat, ...)
     res <- unname(res)
     return(res)
 }
