@@ -490,7 +490,7 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
         }
         # Check if index exists. For each index input, detect it and get
         # information (e.g. internal function) to calculate the index.
-        index <- .get_indices(index, name, x,assay.type)
+        index <- .get_indices(index, name, x, assay.type)
         ############################ Input check end ###########################
         # Looping over the vector of indices to be estimated
         for( i in seq_len(nrow(index)) ){
@@ -515,7 +515,7 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
 ################################ HELP FUNCTIONS ################################
 
 # Search alpha diversity index that user wants to calculate.
-.get_indices <- function(index, name, x,assay.type){
+.get_indices <- function(index, name, x, assay.type){
     # Initialize list for supported indices
     supported <- list()
     # Supported diversity indices
@@ -590,11 +590,11 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
             "populated.", call. = FALSE)
     }
     # Check for unsupported values (negative values)
-    if( any(assay(x, assay.type) < 0)){
+    if( any(assay(x, assay.type) < 0) ){
         ind <- detected[["non_neg"]]
         index_rm <- detected[!ind, "index"]
         detected <- detected[ind, ]
-        if (length(index_rm) > 0){
+        if( length(index_rm) > 0 ){
             FUN <- if (nrow(detected) == 0) stop else warning
             FUN("The following indices cannot be calculated due to unsupported 
                 values (negative values): ", paste(index_rm, collapse = ", "), 
