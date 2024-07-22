@@ -210,12 +210,14 @@ test_that("transformAssay", {
         expect_equal(assay(tse, "rel_pseudo1"), assay(tse, "rel_pseudo2"),
                      check.attributes = FALSE)
         
-        # Check that pseudocount = TRUE is the same as pseudocount = min
+        # Check that pseudocount = TRUE is the same as pseudocount = half of
+        # the minimum value
         # and pseudocount = FALSE is the same as pseudocount = 0
         tse <- transformAssay(tse, method = "relabundance", pseudocount = TRUE, name = "pseudo_true")
+        pseudocount <- (min(assay(tse, "counts")[assay(tse, "counts") > 0])) / 2
         tse <- transformAssay(
             tse, method = "relabundance", name = "pseudo_min",
-            pseudocount = (min(assay(tse, "counts")[assay(tse, "counts") > 0])),
+            pseudocount = pseudocount,
         )
         tse <- transformAssay(tse, method = "relabundance", pseudocount = FALSE, name = "pseudo_false")
         tse <- transformAssay(tse, method = "relabundance", pseudocount = 0, name = "pseudo_zero")
