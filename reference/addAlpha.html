@@ -45,7 +45,7 @@ then stores results in colData."><!-- mathjax --><script src="https://cdnjs.clou
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Estimate alpha diversity indices</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/addAlpha.R" class="external-link"><code>R/addAlpha.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/addAlpha.R" class="external-link"><code>R/addAlpha.R</code></a></small>
     <div class="hidden name"><code>addAlpha.Rd</code></div>
     </div>
 
@@ -96,48 +96,48 @@ then stores results in <code>colData</code>.</p>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>the name of the assay used for calculation of the
-sample-wise estimates. (Default: <code>"counts"</code>)</p></dd>
+<dd><p><code>Character vector</code>. Specifies the name of assay
+used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-index">index<a class="anchor" aria-label="anchor" href="#arg-index"></a></dt>
-<dd><p>a <code>character</code> vector, specifying the alpha diversity
+<dd><p><code>Character vector</code>. Specifies the alpha diversity
 indices to be calculated.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>a name for the column(s) of the colData the results should be
+<dd><p><code>Character scalar</code>. A name for the column(s) of the colData the
+results should be
 stored in. By default this will use the original names of the calculated
 indices. (Default: <code>index</code>)</p></dd>
 
 
 <dt id="arg-niter">niter<a class="anchor" aria-label="anchor" href="#arg-niter"></a></dt>
-<dd><p><code>NULL</code> or a single <code>integer</code> value for the number of
+<dd><p><code>Integer scalar</code>. Specifies the number of
 rarefaction rounds. Rarefaction is not applied when <code>niter=NULL</code>
 (see Details section). (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>optional arguments:</p><ul><li><p><code>sample</code>: A <code>numeric</code> value specifying the rarefaction
+<dd><p>optional arguments:</p><ul><li><p><code>sample</code>: <code>Numeric scalar</code>. Specifies the rarefaction
 depth i.e. the number of counts drawn from each sample.
 (Default: <code>min(colSums2(assay(x, assay.type)))</code>)</p></li>
-<li><p><code>tree.name</code>: (Faith's index) A single <code>character</code>
-value for specifying which rowTree will be used.
-(Default: <code>"phylo"</code>)</p></li>
-<li><p><code>node.label</code>: (Faith's index) <code>NULL</code> or a
-<code>character</code> vector specifying the links between rows and node labels
-of phylogeny tree specified by <code>tree.name</code>. If a certain row is not
-linked with the tree, missing instance should be noted as NA. When
-<code>NULL</code>, all the rownames should be found from the tree.
-(Default: <code>NULL</code>)</p></li>
-<li><p><code>only.tips</code>: (Faith's index) A <code>boolean</code> value
-specifying whether to remove internal nodes when Faith's index is
+<li><p><code>tree.name</code>: <code>Character scalar</code>.Specifies which rowTree
+will be used. ( Faith's index). (Default: <code>"phylo"</code>)</p></li>
+<li><p><code>node.label</code>: <code>Character vector</code> or <code>NULL</code> Specifies the
+links between rows and node labels of phylogeny tree specified
+by <code>tree.name</code>. If a certain row is not linked with the tree, missing
+instance should be noted as NA. When <code>NULL</code>, all the rownames should
+be found from the tree. (Faith's index). (Default: <code>NULL</code>)</p></li>
+<li><p><code>only.tips</code>: <code>Logical scalar</code>. Specifies
+whether to remove internal nodes when Faith's index is
 calculated. When <code>only.tips=TRUE</code>, those rows that are not tips of
-tree are removed. (Default: <code>FALSE</code>)</p></li>
-<li><p><code>threshold</code>: (coverage and all evenness indices) A numeric value
-in the unit interval determining the threshold for coverage and evenness
+tree are removed. (Faith's index). (Default: <code>FALSE</code>)</p></li>
+<li><p><code>threshold</code>: <code>Numeric scalar</code>. From <code>0 to 1</code>, determines
+the threshold for coverage and evenness
 indices. When evenness indices are calculated values under or equal to
-this threshold are denoted as zeroes. For coverage index, see details.
+this threshold are denoted as zeroes. (coverage and all evenness indices).
+For coverage index, see details.
 (Default: <code>0.5</code> for coverage, <code>0</code> for evenness indices)</p></li>
 <li><p><code>quantile</code>: (log modulo skewness index) Arithmetic abundance
 classes are evenly cut up to to this quantile of the data. The assumption
@@ -153,8 +153,8 @@ Aggregate the values for top members selected by <code>ntaxa</code> or not. If
 <code>TRUE</code>, then the sum of relative abundances is returned. Otherwise the
 relative abundance is returned for the single taxa with the indicated rank
 (default: <code>aggregate = TRUE</code>).</p></li>
-<li><p><code>detection</code>: (observed index) A <code>numeric</code> value for
-selecting detection threshold for the abundances. (Default: <code>0</code>)</p></li>
+<li><p><code>detection</code>: <code>Numeric scalar</code> Selects
+detection threshold for the abundances. (observed index). (Default: <code>0</code>)</p></li>
 </ul></dd>
 
 </dl></div>

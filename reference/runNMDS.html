@@ -45,7 +45,7 @@ data in a SingleCellExperiment object."><!-- mathjax --><script src="https://cdn
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Perform non-metric MDS on sample-level data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/runNMDS.R" class="external-link"><code>R/runNMDS.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/runNMDS.R" class="external-link"><code>R/runNMDS.R</code></a></small>
     <div class="hidden name"><code>runNMDS.Rd</code></div>
     </div>
 
@@ -109,10 +109,9 @@ data in a <code>SingleCellExperiment</code> object.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>For <code>getNMDS</code>, a numeric matrix of expression values
-where rows are features and columns are cells.
-Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.</p>
-<p>For <code>addNMDS</code> a <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></p></dd>
+<dd><p>a numeric matrix with samples as rows or a
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
+object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -121,12 +120,12 @@ Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.
 
 
 <dt id="arg-fun">FUN<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
-<dd><p>a <code>function</code> or <code>character</code> value with a function
+<dd><p><code>Function</code> or <code>Character scalar</code>. A value with a function
 name returning a <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></code> object</p></dd>
 
 
 <dt id="arg-nmds-fun">nmds.fun<a class="anchor" aria-label="anchor" href="#arg-nmds-fun"></a></dt>
-<dd><p>a <code>character</code> value to choose the scaling
+<dd><p><code>Character scalar</code>. A value to choose the scaling
 implementation, either “isoMDS” for
 <code><a href="https://rdrr.io/pkg/MASS/man/isoMDS.html" class="external-link">MASS::isoMDS</a></code> or “monoMDS” for
 <code><a href="https://rdrr.io/pkg/vegan/man/monoMDS.html" class="external-link">vegan::monoMDS</a></code></p></dd>
@@ -137,19 +136,20 @@ implementation, either “isoMDS” for
 
 
 <dt id="arg-ncomponents">ncomponents<a class="anchor" aria-label="anchor" href="#arg-ncomponents"></a></dt>
-<dd><p>Numeric scalar indicating the number of NMDS dimensions
-to obtain.</p></dd>
+<dd><p><code>Numeric scalar</code>. Indicates the number of DPCoA dimensions
+to obtain. (Default: <code>2</code>)</p></dd>
 
 
 <dt id="arg-ntop">ntop<a class="anchor" aria-label="anchor" href="#arg-ntop"></a></dt>
-<dd><p>Numeric scalar specifying the number of features with the highest
-variances to use for dimensionality reduction.</p></dd>
+<dd><p><code>Numeric scalar</code>. Specifies the number of features with the highest
+variances to use for dimensionality reduction. Alternatively <code>NULL</code>,
+if all features should be used. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-subset-row">subset.row<a class="anchor" aria-label="anchor" href="#arg-subset-row"></a></dt>
-<dd><p>Vector specifying the subset of features to use for
+<dd><p><code>Character Vector</code>. Specifies the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
-integer vector of row indices or a logical vector.</p></dd>
+integer vector of row indices or a logical vector. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-subset-row">subset_row<a class="anchor" aria-label="anchor" href="#arg-subset-row"></a></dt>
@@ -157,17 +157,20 @@ integer vector of row indices or a logical vector.</p></dd>
 
 
 <dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
-<dd><p>Logical scalar, should the expression values be standardized?</p></dd>
+<dd><p><code>Logical scalar</code>. Sshould the expression values be standardized?
+(Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
-<dd><p>Logical scalar, is x transposed with cells in rows?</p></dd>
+<dd><p><code>Logical scalar</code>. Is x transposed with samples in rows?
+(Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-keep-dist">keep.dist<a class="anchor" aria-label="anchor" href="#arg-keep-dist"></a></dt>
-<dd><p>Logical scalar indicating whether the <code>dist</code> object
+<dd><p><code>Logical scalar</code>. Indicates whether the <code>dist</code> object
 calculated by <code>FUN</code> should be stored as ‘dist’ attribute of
-the matrix returned/stored by <code>getNMDS</code>/ <code>addNMDS</code>.</p></dd>
+the matrix returned/stored by <code>getNMDS</code>/ <code>addNMDS</code>. (Default:
+<code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-keep-dist">keep_dist<a class="anchor" aria-label="anchor" href="#arg-keep-dist"></a></dt>
@@ -175,30 +178,25 @@ the matrix returned/stored by <code>getNMDS</code>/ <code>addNMDS</code>.</p></d
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.</p></dd>
+<dd><p><code>Character scalar</code>. Specifies the name of the
+assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-exprs-values">exprs_values<a class="anchor" aria-label="anchor" href="#arg-exprs-values"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-dimred">dimred<a class="anchor" aria-label="anchor" href="#arg-dimred"></a></dt>
-<dd><p>String or integer scalar specifying the existing dimensionality
+<dd><p><code>Character scalar</code> or <code>integer scalar</code>. Specifies the existing dimensionality
 reduction results to use.</p></dd>
 
 
 <dt id="arg-ndimred">ndimred<a class="anchor" aria-label="anchor" href="#arg-ndimred"></a></dt>
-<dd><p>Integer scalar or vector specifying the dimensions to use if
+<dd><p><code>Integer scalar</code> or <code>integer vector</code>. Specifies the dimensions to use if
 dimred is specified.</p></dd>
 
 
@@ -207,13 +205,13 @@ dimred is specified.</p></dd>
 
 
 <dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
-<dd><p>String or integer scalar specifying an alternative experiment
-containing the input data.</p></dd>
+<dd><p><code>Character scalar</code> or <code>integer scalar</code>. Specifies an
+alternative experiment containing the input data. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>String specifying the name to be used to store the result in the
-reducedDims of the output.</p></dd>
+<dd><p><code>Character scalar</code>. The name to store the result in
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">metadata</a></code></p></dd>
 
 </dl></div>
     <div id="value">
@@ -223,7 +221,8 @@ coordinates for each sample (row) and dimension (column).</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>Either <code><a href="https://rdrr.io/pkg/MASS/man/isoMDS.html" class="external-link">MASS::isoMDS</a></code> or
+    <p>For <code>addNMDS</code> a <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></p>
+<p>Either <code><a href="https://rdrr.io/pkg/MASS/man/isoMDS.html" class="external-link">MASS::isoMDS</a></code> or
 <code><a href="https://rdrr.io/pkg/vegan/man/monoMDS.html" class="external-link">vegan::monoMDS</a></code> are used internally to compute
 the NMDS components. If you supply a custom <code>FUN</code>, make sure that
 the arguments of <code>FUN</code> and <code>nmds.fun</code> do not collide.</p>

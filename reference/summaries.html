@@ -45,7 +45,7 @@ functions are available."><!-- mathjax --><script src="https://cdnjs.cloudflare.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Summarizing microbiome data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/summaries.R" class="external-link"><code>R/summaries.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/summaries.R" class="external-link"><code>R/summaries.R</code></a></small>
     <div class="hidden name"><code>summaries.Rd</code></div>
     </div>
 
@@ -95,36 +95,33 @@ functions are available.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code> object.</p></dd>
+<dd><p>a numeric matrix with samples as rows or a
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
+object.</p></dd>
 
 
 <dt id="arg-top">top<a class="anchor" aria-label="anchor" href="#arg-top"></a></dt>
-<dd><p>Numeric value, how many top taxa to return. Default return top
-five taxa.</p></dd>
+<dd><p><code>Numeric scalar</code>. Determines how many top taxa to return. Default is
+to return top five taxa. (Default: <code>5</code>)</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p>Specify the method to determine top taxa. Either sum, mean,
-median or prevalence. Default is 'mean'.</p></dd>
+<dd><p><code>Character scalar</code>. Specify the method to determine top taxa. Either
+sum, mean, median or prevalence. (Default: <code>"mean"</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>a <code>character</code> value to select an
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></code>
-By default it expects count data.</p></dd>
+<dd><p><code>Character scalar</code>. Specifies the name of the
+assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
-<dd><p>For <code>getTop</code> logical argument for calculation method
-specified to argument <code>method</code>. Default is TRUE.</p></dd>
+<dd><p><code>Logical scalar</code>. Should NA values be omitted when calculating
+prevalence? (Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -133,8 +130,8 @@ specified to argument <code>method</code>. Default is TRUE.</p></dd>
 
 
 <dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
-<dd><p>A single character defining a taxonomic rank. Must be a value of
-the output of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code>.</p></dd>
+<dd><p><code>Character scalar</code>. Defines a taxonomic rank. Must be a value of
+the output of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code>. (Default: <code>NULl</code>)</p></dd>
 
 
 <dt id="arg-group">group<a class="anchor" aria-label="anchor" href="#arg-group"></a></dt>
@@ -143,7 +140,8 @@ overview. Must be one of the column names of <code>colData</code>.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>The column name for the features. The default is 'dominant_taxa'.</p></dd>
+<dd><p><code>Character scalar</code>. The column name for the features.
+(Default: <code>"dominant_taxa"</code>)</p></dd>
 
 
 <dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
