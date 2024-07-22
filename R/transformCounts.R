@@ -56,6 +56,9 @@
 #' 'relabundance', 'rrank', 'standardize', 'total': please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
+#' \item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data by accounting for differences 
+#' in library sizes.
+#' 
 #' \item 'log10': log10 transformation can be used for reducing the skewness
 #' of the data.
 #' \deqn{log10 = \log_{10} x}{%
@@ -97,6 +100,10 @@
 #'                       
 #' head(assay(tse, "clr"))
 #' 
+#' # Perform CSS normalization.
+#' tse <- transformAssay(tse, method = "css")
+#' head(assay(tse, "css"))
+#' 
 #' # With MARGIN, you can specify the if transformation is done for samples or
 #' # for features. Here Z-transformation is done feature-wise.
 #' tse <- transformAssay(tse, method = "standardize", MARGIN = "features")
@@ -125,7 +132,7 @@ NULL
 setGeneric("transformAssay", signature = c("x"),
            function(x,
                     assay.type = "counts", assay_name = NULL,
-                    method = c("alr", "chi.square", "clr", "frequency",
+                    method = c("alr", "chi.square", "clr", "css", "frequency",
                                "hellinger", "log", "log10", "log2", "max",
                                "normalize", "pa", "range", "rank", "rclr",
                                "relabundance", "rrank", "standardize", "total",
@@ -141,7 +148,7 @@ setGeneric("transformAssay", signature = c("x"),
 setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     function(x,
              assay.type = "counts", assay_name = NULL,
-             method = c("alr", "chi.square", "clr", "frequency", "hellinger",
+             method = c("alr", "chi.square", "clr", "css", "frequency", "hellinger",
                         "log", "log10", "log2", "max", "normalize", "pa",
                         "range", "rank", "rclr", "relabundance", "rrank",
                         "standardize", "total", "z"),
@@ -195,10 +202,10 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         
         # Calls help function that does the transformation
         # Help function is different for mia and vegan transformations
-        if( method %in% c("log10", "log2") ){
+        if( method %in% c("log10", "log2", "css") ){
             transformed_table <- .apply_transformation(
                 assay, method, MARGIN, ...)
-        } else{
+        } else {
             transformed_table <- .apply_transformation_from_vegan(
                 assay, method, MARGIN, ...)
         }
@@ -228,6 +235,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     FUN <- switch(method,
                   log10 = .calc_log,
                    log2 = .calc_log,
+                  css = .calc_css,
     )
 
     # Get transformed table
@@ -315,6 +323,25 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     # Add parameter to attributes
     attr(mat, "parameters") <- list()
     return(mat)
+}
+
+####################################.apply_css###################################
+# This function applies cumulative sum scaling (CSS) to the abundance table.
+.calc_css <- function(mat, ...){
+  # If mat is a DelayedArray, convert it to a regular matrix for computation
+  if (inherits(mat, "DelayedArray")) {
+    mat <- as.matrix(mat)
+  }
+  
+  # Calculate the cumulative sum for each sample
+  cum_sum <- apply(mat, 2, cumsum)
+
+  # Find the scaling factor for each sample, typically the 75th percentile of the cumulative sum
+  scaling_factors <- apply(cum_sum, 2, function(x) quantile(x, 0.75))
+  
+  # Normalize the count data by dividing by the scaling factor
+  normalized_data <- sweep(mat, 2, scaling_factors, "/")
+  return(normalized_data)
 }
 
 #################################.calc_rel_abund################################

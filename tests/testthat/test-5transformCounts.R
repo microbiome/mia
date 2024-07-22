@@ -70,6 +70,20 @@ test_that("transformAssay", {
                          log2(x+5)
                      }), check.attributes = FALSE)
         
+        ############################ CSS ######################################
+        # Apply CSS normalization using transformAssay
+        tmp <- mia::transformAssay(tse, method = "css")
+        ass <- assays(tmp)$css
+        
+        # Calculates CSS normalization. Should be equal.
+        mat <- as.matrix(assay(tse, "counts"))
+        
+        # Manually compute CSS normalization
+        css_manual <- sweep(mat, 2, apply(apply(mat, 2, cumsum), 2, function(x) quantile(x, 0.75)), "/")
+        
+        # Test for equality
+        expect_equal(as.matrix(ass), css_manual, check.attributes = FALSE)
+        
         ########################## PA ##########################################
         # Calculates pa transformation. Should be equal.
         actual <- assay(mia::transformAssay(tse, method = "pa"),"pa")

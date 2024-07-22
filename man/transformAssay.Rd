@@ -9,7 +9,7 @@ transformAssay(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+  method = c("alr", "chi.square", "clr", "css", "frequency", "hellinger", "log", "log10",
     "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
     "standardize", "total", "z"),
   MARGIN = "samples",
@@ -22,7 +22,7 @@ transformAssay(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+  method = c("alr", "chi.square", "clr", "css", "frequency", "hellinger", "log", "log10",
     "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
     "standardize", "total", "z"),
   MARGIN = "samples",
@@ -93,6 +93,9 @@ The available transformation methods include:
 'relabundance', 'rrank', 'standardize', 'total': please refer to
 \code{\link[vegan:decostand]{decostand}} for details.
 
+\item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data by accounting for differences
+in library sizes.
+
 \item 'log10': log10 transformation can be used for reducing the skewness
 of the data.
 \deqn{log10 = \log_{10} x}{%
@@ -124,6 +127,10 @@ tse <- transformAssay(tse, assay.type = "relabundance", method = "clr",
                      )
                       
 head(assay(tse, "clr"))
+
+# Perform CSS normalization.
+tse <- transformAssay(tse, method = "css")
+head(assay(tse, "css"))
 
 # With MARGIN, you can specify the if transformation is done for samples or
 # for features. Here Z-transformation is done feature-wise.
