@@ -22,7 +22,7 @@ Import the QIIME2 artifacts to R."><!-- mathjax --><script src="https://cdnjs.cl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.33</span>
       </span>
     </div>
 
@@ -49,7 +49,7 @@ Import the QIIME2 artifacts to R."><!-- mathjax --><script src="https://cdnjs.cl
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Import QIIME2 results to <code>TreeSummarizedExperiment</code></h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/importQIIME2.R" class="external-link"><code>R/importQIIME2.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/importQIIME2.R" class="external-link"><code>R/importQIIME2.R</code></a></small>
     <div class="hidden name"><code>importQIIME2.Rd</code></div>
     </div>
 
@@ -87,7 +87,7 @@ encouraged to be provided.</p>
 
 
 <dl><dt id="arg-assay-file">assay.file<a class="anchor" aria-label="anchor" href="#arg-assay-file"></a></dt>
-<dd><p><code>Character scalar</code>. Defines the file
+<dd><p>a single <code>character</code> value defining the file
 path of the feature table to be imported.</p></dd>
 
 
@@ -96,9 +96,9 @@ path of the feature table to be imported.</p></dd>
 
 
 <dt id="arg-row-file">row.file<a class="anchor" aria-label="anchor" href="#arg-row-file"></a></dt>
-<dd><p><code>Character scalar</code>. Defines the file
+<dd><p>a single <code>character</code> value defining the file
 path of the taxonomy table to be imported. (default:
-<code>NULL</code>).</p></dd>
+<code>row.file = NULL</code>).</p></dd>
 
 
 <dt id="arg-taxonomytablefile">taxonomyTableFile<a class="anchor" aria-label="anchor" href="#arg-taxonomytablefile"></a></dt>
@@ -106,9 +106,9 @@ path of the taxonomy table to be imported. (default:
 
 
 <dt id="arg-col-file">col.file<a class="anchor" aria-label="anchor" href="#arg-col-file"></a></dt>
-<dd><p><code>Character scalar</code>. Defines the file path
+<dd><p>a single <code>character</code> value defining the file path
 of the sample metadata to be imported. The file has to be in tsv format.
-(Default: <code>NULL</code>).</p></dd>
+(default: <code>col.file = NULL</code>).</p></dd>
 
 
 <dt id="arg-samplemetafile">sampleMetaFile<a class="anchor" aria-label="anchor" href="#arg-samplemetafile"></a></dt>
@@ -116,7 +116,7 @@ of the sample metadata to be imported. The file has to be in tsv format.
 
 
 <dt id="arg-as-refseq">as.refseq<a class="anchor" aria-label="anchor" href="#arg-as-refseq"></a></dt>
-<dd><p><code>Logical scalar</code>. Should the feature
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the feature
 names of the feature table be regarded as reference sequences? This setting
 will be disregarded, if <code>refseq.file</code> is not <code>NULL</code>. If the
 feature names do not contain valid DNA characters only, the reference
@@ -128,8 +128,9 @@ sequences will not be set.</p></dd>
 
 
 <dt id="arg-refseq-file">refseq.file<a class="anchor" aria-label="anchor" href="#arg-refseq-file"></a></dt>
-<dd><p><code>Character scalar</code>. Defines the file path of
-the reference sequences for each feature. (Default: <code>NULL</code>).</p></dd>
+<dd><p>a single <code>character</code> value defining the file path of
+the reference sequences for each feature. (default: <code>refseq.file =
+  NULL</code>).</p></dd>
 
 
 <dt id="arg-refseqfile">refSeqFile<a class="anchor" aria-label="anchor" href="#arg-refseqfile"></a></dt>
@@ -137,8 +138,8 @@ the reference sequences for each feature. (Default: <code>NULL</code>).</p></dd>
 
 
 <dt id="arg-tree-file">tree.file<a class="anchor" aria-label="anchor" href="#arg-tree-file"></a></dt>
-<dd><p><code>Character scalar</code>. Defines the file path of
-the phylogenetic tree. (Default: <code>NULL</code>).</p></dd>
+<dd><p>a single <code>character</code> value defining the file path of
+the phylogenetic tree. (default: <code>tree.file = NULL</code>).</p></dd>
 
 
 <dt id="arg-phytreefile">phyTreeFile<a class="anchor" aria-label="anchor" href="#arg-phytreefile"></a></dt>
@@ -197,9 +198,9 @@ microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="convertFromPhyloseq.html">convertFromPhyloseq</a></code>
-<code><a href="convertFromBIOM.html">convertFromBIOM</a></code>
-<code><a href="convertFromDADA2.html">convertFromDADA2</a></code>
+    <div class="dont-index"><p><code><a href="convert.html">convertFromPhyloseq</a></code>
+<code><a href="convert.html">convertFromBIOM</a></code>
+<code><a href="convert.html">convertFromDADA2</a></code>
 <code><a href="importMothur.html">importMothur</a></code></p></div>
     </div>
     <div id="author">

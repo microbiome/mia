@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.33</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate correlations between features of two experiments.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/getCrossAssociation.R" class="external-link"><code>R/getCrossAssociation.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/getCrossAssociation.R" class="external-link"><code>R/getCrossAssociation.R</code></a></small>
     <div class="hidden name"><code>getCrossAssociation.Rd</code></div>
     </div>
 
@@ -108,11 +108,11 @@ object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments:</p><ul><li><p><code>symmetric</code>:   <code>Logical scalar</code>. Specifies if
+<dd><p>Additional arguments:</p><ul><li><p><code>symmetric</code>:  A single boolean value for specifying if
 measure is symmetric or not. When <code>symmetric = TRUE</code>, associations
 are calculated only for unique variable-pairs, and they are assigned to
 corresponding variable-pair. This decreases the number of calculations in 2-fold
-meaning faster execution. (By default: <code>FALSE</code>)</p></li>
+meaning faster execution. (By default: <code>symmetric = FALSE</code>)</p></li>
 <li><p><code>association.fun</code>:  A function that is used to calculate (dis-)similarity
 between features. Function must take matrix as an input and give numeric
 values as an output. Adjust <code>method</code> and other parameters correspondingly.
@@ -121,23 +121,24 @@ Supported functions are, for example, <code><a href="https://rdrr.io/r/stats/dis
 
 
 <dt id="arg-experiment-">experiment1<a class="anchor" aria-label="anchor" href="#arg-experiment-"></a></dt>
-<dd><p><code>Character scalar</code> or <code>numeric scalar</code>. Selects the experiment 1
+<dd><p>A single character or numeric value for selecting the experiment 1
 from <code>experiments(x)</code> of <code>MultiassayExperiment</code> object.
-(Default: <code>1</code>)</p></dd>
+(By default: <code>experiment1 = 1</code>)</p></dd>
 
 
 <dt id="arg-experiment-">experiment2<a class="anchor" aria-label="anchor" href="#arg-experiment-"></a></dt>
-<dd><p><code>Character scalar</code> or <code>numeric scalar</code>. Selects the experiment 2
+<dd><p>A single character or numeric value for selecting the experiment 2
 from<code>experiments(x)</code> of <code>MultiAssayExperiment</code> object or
 <code>altExp(x)</code> of <code>TreeSummarizedExperiment</code> object. Alternatively,
 <code>experiment2</code> can also be <code>TreeSE</code> object when <code>x</code> is <code>TreeSE</code> object.
-(Default: <code>2</code> when <code>x</code> is <code>MAE</code> and
-<code>x</code> when <code>x</code> is <code>TreeSE</code>)</p></dd>
+(By default: <code>experiment2 = 2</code> when <code>x</code> is <code>MAE</code> and
+<code>experiment2 = x</code> when <code>x</code> is <code>TreeSE</code>)</p></dd>
 
 
 <dt id="arg-assay-type-">assay.type1<a class="anchor" aria-label="anchor" href="#arg-assay-type-"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the assay in experiment 1
-to be transformed.. (Default: <code>"counts"</code>)</p></dd>
+<dd><p>A single character value for selecting the
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> of
+experiment 1 to be transformed. (By default: <code>assay.type1 = "counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name-">assay_name1<a class="anchor" aria-label="anchor" href="#arg-assay-name-"></a></dt>
@@ -145,8 +146,9 @@ to be transformed.. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-type-">assay.type2<a class="anchor" aria-label="anchor" href="#arg-assay-type-"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the assay in experiment 2
-to be transformed.. (Default: <code>"counts"</code>)</p></dd>
+<dd><p>A single character value for selecting the
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> of
+experiment 2 to be transformed. (By default: <code>assay.type2 = "counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name-">assay_name2<a class="anchor" aria-label="anchor" href="#arg-assay-name-"></a></dt>
@@ -154,23 +156,23 @@ to be transformed.. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-altexp-">altexp1<a class="anchor" aria-label="anchor" href="#arg-altexp-"></a></dt>
-<dd><p><code>Character scalar</code> or <code>numeric scalar</code>. Specifies alternative experiment
+<dd><p>A single numeric or character value specifying alternative experiment
 from the altExp of experiment 1. If NULL, then the experiment is itself
 and altExp option is disabled.
-(Default: <code>NULL</code>)</p></dd>
+(By default: <code>altexp1 = NULL</code>)</p></dd>
 
 
 <dt id="arg-altexp-">altexp2<a class="anchor" aria-label="anchor" href="#arg-altexp-"></a></dt>
-<dd><p><code>Character scalar</code> or <code>numeric scalar</code>. Specifies alternative experiment
+<dd><p>A single numeric or character value specifying alternative experiment
 from the altExp of experiment 2. If NULL, then the experiment is itself
 and altExp option is disabled.
-(Default: <code>NULL</code>)</p></dd>
+(By default: <code>altexp2 = NULL</code>)</p></dd>
 
 
 <dt id="arg-col-var-">col.var1<a class="anchor" aria-label="anchor" href="#arg-col-var-"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies column(s) from colData
+<dd><p>A character value specifying column(s) from colData
 of experiment 1. If col.var1 is used, assay.type1 is disabled.
-(Default: <code>NULL</code>)</p></dd>
+(By default: <code>col.var1 = NULL</code>)</p></dd>
 
 
 <dt id="arg-coldata-variable-">colData_variable1<a class="anchor" aria-label="anchor" href="#arg-coldata-variable-"></a></dt>
@@ -178,9 +180,9 @@ of experiment 1. If col.var1 is used, assay.type1 is disabled.
 
 
 <dt id="arg-col-var-">col.var2<a class="anchor" aria-label="anchor" href="#arg-col-var-"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies column(s) from colData
+<dd><p>A character value specifying column(s) from colData
 of experiment 2. If col.var2 is used, assay.type2 is disabled.
-(Default: <code>NULL</code>)</p></dd>
+(By default: <code>col.var2 = NULL</code>)</p></dd>
 
 
 <dt id="arg-coldata-variable-">colData_variable2<a class="anchor" aria-label="anchor" href="#arg-coldata-variable-"></a></dt>
@@ -188,7 +190,7 @@ of experiment 2. If col.var2 is used, assay.type2 is disabled.
 
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
-<dd><p>A<code>Character scalar</code>. Determines if association are calculated
+<dd><p>A character value for selecting if association are calculated
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be <code>'rows'</code> or <code>'cols'</code>.</p></dd>
 
@@ -198,20 +200,20 @@ Must be <code>'rows'</code> or <code>'cols'</code>.</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p><code>Character scalar</code>. Defines the association method
+<dd><p>A single character value for selecting association method
 ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
-(Default: <code>"kendall"</code>)</p></dd>
+(By default: <code>method = "kendall"</code>)</p></dd>
 
 
 <dt id="arg-mode">mode<a class="anchor" aria-label="anchor" href="#arg-mode"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the  output format
-Available formats are  'table' and 'matrix'.  (Default: <code>"table"</code>)</p></dd>
+<dd><p>A single character value for selecting output format
+Available formats are  'table' and 'matrix'.  (By default: <code>mode = "table"</code>)</p></dd>
 
 
 <dt id="arg-p-adj-method">p.adj.method<a class="anchor" aria-label="anchor" href="#arg-p-adj-method"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies adjustment method of
+<dd><p>A single character value for selecting adjustment method of
 p-values. Passed to <code>p.adjust</code> function.
-(Default: <code>"fdr"</code>)</p></dd>
+(By default: <code>p.adj.method = "fdr"</code>)</p></dd>
 
 
 <dt id="arg-p-adj-method">p_adj_method<a class="anchor" aria-label="anchor" href="#arg-p-adj-method"></a></dt>
@@ -219,9 +221,9 @@ p-values. Passed to <code>p.adjust</code> function.
 
 
 <dt id="arg-p-adj-threshold">p.adj.threshold<a class="anchor" aria-label="anchor" href="#arg-p-adj-threshold"></a></dt>
-<dd><p><code>Numeric scalar</code>. From <code>0 to 1</code>, specifies
+<dd><p>A single numeric value (from 0 to 1) for selecting
 adjusted p-value threshold for filtering.
-(Default: <code>NULL</code>)</p></dd>
+(By default: <code>p.adj.threshold = NULL</code>)</p></dd>
 
 
 <dt id="arg-p-adj-threshold">p_adj_threshold<a class="anchor" aria-label="anchor" href="#arg-p-adj-threshold"></a></dt>
@@ -229,9 +231,9 @@ adjusted p-value threshold for filtering.
 
 
 <dt id="arg-cor-threshold">cor.threshold<a class="anchor" aria-label="anchor" href="#arg-cor-threshold"></a></dt>
-<dd><p><code>Numeric scalar</code>. From <code>0 to 1</code>, specifies
+<dd><p>A single numeric absolute value (from 0 to 1) for selecting
 correlation threshold for filtering.
-(Default: <code>NULL</code>)</p></dd>
+(By default: <code>cor.threshold = NULL</code>)</p></dd>
 
 
 <dt id="arg-cor-threshold">cor_threshold<a class="anchor" aria-label="anchor" href="#arg-cor-threshold"></a></dt>
@@ -239,16 +241,16 @@ correlation threshold for filtering.
 
 
 <dt id="arg-sort">sort<a class="anchor" aria-label="anchor" href="#arg-sort"></a></dt>
-<dd><p><code>Logical scalar</code>. Specifies whether to sort features or not
+<dd><p>A single boolean value for selecting whether to sort features or not
 in result matrices. Used method is hierarchical clustering.
-(Default: <code>FALSE</code>)</p></dd>
+(By default: <code>sort = FALSE</code>)</p></dd>
 
 
 <dt id="arg-filter-self-cor">filter.self.cor<a class="anchor" aria-label="anchor" href="#arg-filter-self-cor"></a></dt>
-<dd><p><code>Logical scalar</code>. Specifies whether to
+<dd><p>A single boolean value for selecting whether to
 filter out correlations between identical items. Applies only when correlation
 between experiment itself is tested, i.e., when assays are identical.
-(Default: <code>FALSE</code>)</p></dd>
+(By default: <code>filter.self.cor = FALSE</code>)</p></dd>
 
 
 <dt id="arg-filter-self-correlations">filter_self_correlations<a class="anchor" aria-label="anchor" href="#arg-filter-self-correlations"></a></dt>
@@ -256,14 +258,14 @@ between experiment itself is tested, i.e., when assays are identical.
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p><code>Logical scalar</code>. Specifies whether to get messages
-about progress of calculation. (Default: <code>FALse</code>)</p></dd>
+<dd><p>A single boolean value for selecting whether to get messages
+about progress of calculation.</p></dd>
 
 
 <dt id="arg-test-signif">test.signif<a class="anchor" aria-label="anchor" href="#arg-test-signif"></a></dt>
-<dd><p><code>Logical scalar</code>. Specifies whether to test
+<dd><p>A single boolean value for selecting whether to test
 statistical significance of associations.
-(Default: <code>FALSE</code>)</p></dd>
+(By default: <code>test.signif = FALSE</code>)</p></dd>
 
 
 <dt id="arg-test-significance">test_significance<a class="anchor" aria-label="anchor" href="#arg-test-significance"></a></dt>
@@ -271,9 +273,8 @@ statistical significance of associations.
 
 
 <dt id="arg-show-warnings">show.warnings<a class="anchor" aria-label="anchor" href="#arg-show-warnings"></a></dt>
-<dd><p><code>Logical scalar</code>. specifies whether to show warnings
-that might occur when correlations and p-values are calculated.
-(Default: <code>FALSE</code>)</p></dd>
+<dd><p>A single boolean value for selecting whether to show warnings
+that might occur when correlations and p-values are calculated.</p></dd>
 
 
 <dt id="arg-show-warnings">show_warnings<a class="anchor" aria-label="anchor" href="#arg-show-warnings"></a></dt>
@@ -281,9 +282,9 @@ that might occur when correlations and p-values are calculated.
 
 
 <dt id="arg-paired">paired<a class="anchor" aria-label="anchor" href="#arg-paired"></a></dt>
-<dd><p><code>Logical scalar</code>. Specifies if samples are paired or not.
+<dd><p>A single boolean value for specifying if samples are paired or not.
 <code>colnames</code> must match between twp experiments. <code>paired</code> is disabled
-when <code>by = 1</code>. (Default: <code>FALSE</code>)</p></dd>
+when <code>by = 1</code>. (By default: <code>paired = FALSE</code>)</p></dd>
 
 </dl></div>
     <div id="value">

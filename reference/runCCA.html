@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.33</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Canonical Correspondence Analysis and Redundancy Analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
     <div class="hidden name"><code>runCCA.Rd</code></div>
     </div>
 
@@ -115,26 +115,29 @@ in a <code>SummarizedExperiment</code>.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a numeric matrix with samples as rows or a
+<dd><p>For <code>calculate*</code> a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-object.</p></dd>
+or a numeric matrix with columns as samples</p>
+<p>For <code>run*</code> a
+<code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></code>
+or a derived object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional arguments passed to vegan::cca or vegan::dbrda and
 other internal functions.</p><ul><li><p><code>method</code> a dissimilarity measure to be applied in dbRDA and
 possible following homogeneity test. (By default: <code>method="euclidean"</code>)</p></li>
-<li><p><code>scale</code>: <code>Logical scalar</code>. Should the expression values be
+<li><p><code>scale</code> a logical scalar, should the expression values be
 standardized? <code>scale</code> is disabled when using <code>*RDA</code> functions.
-Please scale before performing RDA. (Default: <code>TRUE</code>)</p></li>
-<li><p><code>full</code> <code>Logical scalar</code>. should all the results from the
+Please scale before performing RDA. (By default: <code>scale=TRUE</code>)</p></li>
+<li><p><code>full</code> a logical scalar, should all the results from the
 significance calculations be returned. When <code>full=FALSE</code>, only
-summary tables are returned. (Default: <code>FALSE</code>)</p></li>
-<li><p><code>homogeneity.test</code>: <code>Character scalar</code>. Specifies
+summary tables are returned. (By default: <code>full=FALSE</code>)</p></li>
+<li><p><code>homogeneity.test</code> a single <code>character</code> value for specifying
 the significance test used to analyse <code><a href="https://rdrr.io/pkg/vegan/man/betadisper.html" class="external-link">vegan::betadisper</a></code> results.
 Options include 'permanova' (<code><a href="https://rdrr.io/pkg/vegan/man/anova.cca.html" class="external-link">vegan::permutest</a></code>), 'anova'
 (<code><a href="https://rdrr.io/r/stats/anova.html" class="external-link">stats::anova</a></code>) and 'tukeyhsd' (<code><a href="https://rdrr.io/r/stats/TukeyHSD.html" class="external-link">stats::TukeyHSD</a></code>).
-(Default: <code>"permanova"</code>)</p></li>
+(By default: <code>homogeneity.test="permanova"</code>)</p></li>
 </ul></dd>
 
 
@@ -148,7 +151,7 @@ into a CA analysis and dbRDA into PCoA/MDS.</p></dd>
 
 
 <dt id="arg-variables">variables<a class="anchor" aria-label="anchor" href="#arg-variables"></a></dt>
-<dd><p><code>Character scalar</code>. When <code>x</code> is a <code>SummarizedExperiment</code>,
+<dd><p>When <code>x</code> is a <code>SummarizedExperiment</code>,
 <code>variables</code> can be used to specify variables from <code>colData</code>.</p>
 <p>When <code>x</code> is a matrix, <code>variables</code> is a <code>data.frame</code> or
 an object coercible to one containing the variables to use.</p>
@@ -158,39 +161,44 @@ into a CA analysis and dbRDA into PCoA/MDS.</p></dd>
 
 
 <dt id="arg-test-signif">test.signif<a class="anchor" aria-label="anchor" href="#arg-test-signif"></a></dt>
-<dd><p><code>Logical scalar</code>. Should the PERMANOVA and analysis of
+<dd><p>a logical scalar, should the PERMANOVA and analysis of
 multivariate homogeneity of group dispersions be performed.
-(Default: <code>TRUE</code>)</p></dd>
+(By default: <code>test.signif = TRUE</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
+will be disabled.)</p></dd>
 
 
 <dt id="arg-exprs-values">exprs_values<a class="anchor" aria-label="anchor" href="#arg-exprs-values"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay.type</code> instead.)</p></dd>
 
 
 <dt id="arg-scores">scores<a class="anchor" aria-label="anchor" href="#arg-scores"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies scores to be returned. Must be
+<dd><p>A string specifying scores to be returned. Must be
 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
 v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-'u' ((weighted) orthonormal site scores). (Default: <code>'wa'</code>)</p></dd>
+'u' ((weighted) orthonormal site scores). (By default: <code>scores='wa'</code>)</p></dd>
 
 
 <dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
-<dd><p><code>Character scalar</code> or <code>integer scalar</code>. Specifies an alternative experiment
+<dd><p>String or integer scalar specifying an alternative experiment
 containing the input data.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p><code>Character scalar</code>. The name to store the result in
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">metadata</a></code></p></dd>
+<dd><p>String specifying the name to be used to store the result in the
+reducedDims of the output.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -203,10 +211,7 @@ significance analysis results.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>For <code>run*</code> a
-<code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></code>
-or a derived object.</p>
-<p>*CCA functions utilize <code>vegan:cca</code> and *RDA functions <code>vegan:dbRDA</code>.
+    <p>*CCA functions utilize <code>vegan:cca</code> and *RDA functions <code>vegan:dbRDA</code>.
 By default dbRDA is done with euclidean distances which equals to RDA.</p>
 <p>Significance tests are done with <code>vegan:anova.cca</code> (PERMANOVA). Group
 dispersion, i.e., homogeneity within groups is analyzed with

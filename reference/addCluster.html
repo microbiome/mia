@@ -18,7 +18,7 @@ information in its colData or rowData"><!-- mathjax --><script src="https://cdnj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.33</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ information in its colData or rowData"><!-- mathjax --><script src="https://cdnj
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Clustering wrapper</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/cluster.R" class="external-link"><code>R/cluster.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/cluster.R" class="external-link"><code>R/cluster.R</code></a></small>
     <div class="hidden name"><code>addCluster.Rd</code></div>
     </div>
 
@@ -98,16 +98,19 @@ object.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
+will be disabled.)</p></dd>
 
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
-<dd><p><code>Character scalar</code>. Determines if association is calculated
+<dd><p>A character value for selecting if association are calculated
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be <code>'rows'</code> or <code>'cols'</code>.</p></dd>
 
@@ -121,14 +124,13 @@ Must be <code>'rows'</code> or <code>'cols'</code>.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p><code>Character scalar</code>. The name to store the result in
+<dd><p>the name to store the result in
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">metadata</a></code></p></dd>
 
 
 <dt id="arg-clust-col">clust.col<a class="anchor" aria-label="anchor" href="#arg-clust-col"></a></dt>
-<dd><p><code>Character scalar</code>. Indicates the name of the
-<code>rowData</code> (or <code>colData</code>) where the data will be stored.
-(Default: <code>"clusters"</code>)</p></dd>
+<dd><p>A single character value indicating the name of the
+<code>rowData</code> (or <code>colData</code>) where the data will be stored.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
