@@ -109,7 +109,7 @@ assay used in calculation. (Default: \code{"counts"})}
 \item{dimred}{\code{Character scalar} or \code{integer scalar}. Specifies the existing dimensionality
 reduction results to use.}
 
-\item{ndimred}{\code{Integer scalar} or \code{integer vector}. Specifies the dimensions to use if
+\item{ndimred}{\code{integer vector}. Specifies the dimensions to use if
 dimred is specified.}
 
 \item{n_dimred}{Deprecated. Use \code{ndimred} instead.}
@@ -117,8 +117,8 @@ dimred is specified.}
 \item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an
 alternative experiment containing the input data. (Default: \code{NULL})}
 
-\item{name}{\code{Character scalar}. The name to store the result in
-\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"DPCoA"})}
 }
 \value{
 For \code{getNMDS}, a matrix is returned containing the MDS

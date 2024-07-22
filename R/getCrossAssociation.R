@@ -91,7 +91,7 @@
 #' @param filter_self_correlations Deprecated. Use \code{filter.self.cor} instead.
 #' 
 #' @param verbose \code{Logical scalar}. Specifies whether to get messages
-#'    about progress of calculation. (Default: \code{FALse})
+#'    about progress of calculation. (Default: \code{FALSE})
 #'    
 #' @param test.signif \code{Logical scalar}. Specifies whether to test
 #'    statistical significance of associations.

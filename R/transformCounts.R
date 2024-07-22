@@ -3,7 +3,7 @@
 #' Variety of transformations for abundance data, stored in \code{assay}.
 #' See details for options.
 #'
-#' @inheritParams calculateDMN
+#' @inheritParams calculateJSD
 #'   
 #' @param method \code{Character scalar}. Specifies the transformation
 #'   method.
@@ -17,6 +17,9 @@
 #'   When FALSE, does not add any pseudocount (pseudocount = 0).
 #'   Alternatively, a user-specified numeric value can be added as pseudocount.
 #'   (Default: \code{FALSE}).
+#' 
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{"method"})
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{

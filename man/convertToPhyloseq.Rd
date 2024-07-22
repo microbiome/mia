@@ -20,7 +20,7 @@ object}
 \item{...}{Additional arguments. Not used currently.}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
-used in calculation. (Default: \code{"counts"})}
+used. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 

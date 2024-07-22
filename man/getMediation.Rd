@@ -32,7 +32,7 @@ getMediation(x, ...)
   outcome,
   treatment,
   mediator = NULL,
-  assay.type = NULL,
+  assay.type = "counts",
   dimred = NULL,
   family = gaussian(),
   covariates = NULL,
@@ -54,15 +54,14 @@ as outcome in the model.}
 \item{treatment}{\code{Character scalar}. Indicates the colData variable
 used as treatment in the model.}
 
-\item{name}{\code{Character scalar}. Indicates the metadata element and avoid
-overwriting other metadata slots. It is supported only by
-\code{addMediation}. (Default: \code{"mediation"})}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"mediation"})}
 
 \item{mediator}{\code{Character scalar}. Indicates the colData variable used
 as mediator in the model. (Default: \code{NULL})}
 
 \item{assay.type}{\code{Character scalar}. Specifies the assay used for
-feature-wise mediation analysis. (Default: \code{NULL})}
+feature-wise mediation analysis. (Default: \code{"counts"})}
 
 \item{dimred}{\code{Character scalar}. Indicates the reduced dimension
 result in \code{reducedDims(object)} for component-wise mediation analysis.

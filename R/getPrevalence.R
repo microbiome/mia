@@ -3,7 +3,7 @@
 #' These functions calculate the population prevalence for taxonomic ranks in a
 #' \code{\link{SummarizedExperiment-class}} object.
 #'
-#' @inheritParams calculateDMN
+#' @inheritParams calculateJSD
 #'
 #' @param detection \code{Numeric scalar}. Detection threshold for absence/presence. 
 #'    If \code{as_relative = FALSE},
@@ -507,13 +507,10 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #'  
 #' @inheritParams agglomerateByRank
 #' 
-#' @param update.tree \code{Logical scalar}. Should
-#'   \code{rowTree()} also be agglomerated? (Default: \code{FALSE})
-#' 
-#' @param other.label \code{Character scalar}. Used as the label for the
+#' @param other.name \code{Character scalar}. Used as the label for the
 #'   summary of non-prevalent taxa. (default: \code{"Other"})
 #' 
-#' @param other_label Deprecated. use \code{other.label} instead.
+#' @param other_label Deprecated. use \code{other.name} instead.
 #'
 #' @details
 #' \code{agglomerateByPrevalence} sums up the values of assays at the taxonomic
@@ -521,7 +518,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' available) and selects the summed results that exceed the given population
 #' prevalence at the given detection level. The other summed values (below the
 #' threshold) are agglomerated in an additional row taking the name indicated by
-#' \code{other.label} (by default "Other").
+#' \code{other.name} (by default "Other").
 #'
 #' @return
 #' \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
@@ -557,10 +554,10 @@ setGeneric("agglomerateByPrevalence", signature = "x",
 #' @rdname agglomerateByPrevalence
 #' @export
 setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, other.label = other_label, other_label = "Other", ...){
+    function(x, rank = NULL, other.name = other_label, other_label = "Other", ...){
         # input check
-        if(!.is_a_string(other.label)){
-            stop("'other.label' must be a single character value.",
+        if(!.is_a_string(other.name)){
+            stop("'other.name' must be a single character value.",
                  call. = FALSE)
         }
         #
@@ -576,9 +573,9 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
                                             check_assays = FALSE)
             rowData(other_x)[,colnames(rowData(other_x))] <- NA
             # set the other label
-            rownames(other_x) <- other.label
+            rownames(other_x) <- other.name
             if(!is.null(rank)){
-                rowData(other_x)[,rank] <- other.label
+                rowData(other_x)[,rank] <- other.name
             }
             x <- rbind(x[f,], other_x)
         }
@@ -590,7 +587,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByPrevalence", 
           signature = c(x = "TreeSummarizedExperiment"),
-    function(x, rank = NULL, other.label = other_label, other_label = "Other",
+    function(x, rank = NULL, other.name = other_label, other_label = "Other",
             update.tree = FALSE, ...){
         # input check
         if(!.is_a_bool(update.tree)){
@@ -615,7 +612,7 @@ setMethod("agglomerateByPrevalence",
             x <- .agg_for_prevalence(x, rank, check.assays = FALSE, ...)
             # Find groups that will be used to agglomerate the data
             f <- rownames(x)[ match(rownames(x), rownames(res)) ]
-            f[ is.na(f) ] <- other.label
+            f[ is.na(f) ] <- other.name
             # Find consensus sequences, and add them to result
             ref_seq <- referenceSeq(x)
             ref_seq <- .merge_refseq_list(ref_seq, f, rownames(res), ...)

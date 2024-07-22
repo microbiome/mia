@@ -175,8 +175,8 @@ setMethod("getUnique", signature = c(x = "SummarizedExperiment"),
 #' @param group With group, it is possible to group the observations in an
 #'   overview. Must be one of the column names of \code{colData}.
 #'   
-#' @param name \code{Character scalar}. The column name for the features.
-#'   (Default: \code{"dominant_taxa"})
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{"dominant_taxa"})
 #'
 #' @param ... Additional arguments passed on to \code{agglomerateByRank()} when
 #'   \code{rank} is specified for \code{summarizeDominance}.

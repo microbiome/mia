@@ -56,7 +56,7 @@ to given column names in \code{rowData}. (Default:
 
 \item{add_row_data}{Deprecated. Use \code{add.row} instead.}
 
-\item{add.col}{\code{Logical scalar}. \code{NULL},or \code{character vector}. Used to
+\item{add.col}{\code{Logical scalar}. \code{NULL} ,or \code{character vector}. Used to
 select information from the \code{colData} to add to the molten assay data.
 If \code{add.col = NULL} no data will be added, if
 \code{add.col = TRUE} all data will be added and if

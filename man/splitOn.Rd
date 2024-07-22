@@ -48,7 +48,7 @@ details.
 list by their group names. (Default: \code{TRUE})
 }}
 
-\item{f}{\code{Character}. Specifies the grouping variable
+\item{f}{\code{Character scalar}. Specifies the grouping variable
 from \code{rowData} or \code{colData} or a \code{factor} or \code{vector}
 with the same length as one of the dimensions. If \code{f} matches with both
 dimensions, \code{by} must be specified.

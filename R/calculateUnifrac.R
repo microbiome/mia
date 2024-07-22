@@ -7,7 +7,7 @@
 #' Please note that if \code{calculateUnifrac} is used as a \code{FUN} for
 #' \code{runMDS}, the argument \code{ntop} has to be set to \code{nrow(x)}.
 #'
-#' @inheritParams calculateDMN
+#' @inheritParams calculateJSD
 #'
 #' @details
 #'   Please  note that \code{runUnifrac} expects a matrix with samples per row

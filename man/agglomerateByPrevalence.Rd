@@ -11,7 +11,7 @@ agglomerateByPrevalence(x, ...)
 \S4method{agglomerateByPrevalence}{SummarizedExperiment}(
   x,
   rank = NULL,
-  other.label = other_label,
+  other.name = other_label,
   other_label = "Other",
   ...
 )
@@ -19,7 +19,7 @@ agglomerateByPrevalence(x, ...)
 \S4method{agglomerateByPrevalence}{TreeSummarizedExperiment}(
   x,
   rank = NULL,
-  other.label = other_label,
+  other.name = other_label,
   other_label = "Other",
   update.tree = FALSE,
   ...
@@ -37,13 +37,13 @@ See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}
 \item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
 
-\item{other.label}{\code{Character scalar}. Used as the label for the
+\item{other.name}{\code{Character scalar}. Used as the label for the
 summary of non-prevalent taxa. (default: \code{"Other"})}
 
-\item{other_label}{Deprecated. use \code{other.label} instead.}
+\item{other_label}{Deprecated. use \code{other.name} instead.}
 
 \item{update.tree}{\code{Logical scalar}. Should
-\code{rowTree()} also be agglomerated? (Default: \code{FALSE})}
+\code{rowTree()} also be merged? (Default: \code{FALSE})}
 }
 \value{
 \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
@@ -58,7 +58,7 @@ level specified by \code{rank} (by default the highest taxonomic level
 available) and selects the summed results that exceed the given population
 prevalence at the given detection level. The other summed values (below the
 threshold) are agglomerated in an additional row taking the name indicated by
-\code{other.label} (by default "Other").
+\code{other.name} (by default "Other").
 }
 \examples{
 ## Data can be aggregated based on prevalent taxonomic results

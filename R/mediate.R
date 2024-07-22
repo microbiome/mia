@@ -16,7 +16,7 @@
 #'   as mediator in the model. (Default: \code{NULL})
 #'
 #' @param assay.type \code{Character scalar}. Specifies the assay used for
-#'   feature-wise mediation analysis. (Default: \code{NULL})
+#'   feature-wise mediation analysis. (Default: \code{"counts"})
 #' 
 #' @param dimred \code{Character scalar}. Indicates the reduced dimension
 #'   result in \code{reducedDims(object)} for component-wise mediation analysis.
@@ -39,9 +39,8 @@
 #' @param verbose \code{Logical scalar}. Should execution messages be printed.
 #'   (Default: \code{TRUE})
 #'   
-#' @param name \code{Character scalar}. Indicates the metadata element and avoid
-#'   overwriting other metadata slots. It is supported only by
-#'   \code{addMediation}. (Default: \code{"mediation"})
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{"mediation"})
 #' 
 #' @param ... additional parameters that can be passed to
 #'   \code{\link[mediation:mediate]{mediate}}.
@@ -184,7 +183,7 @@ setGeneric("getMediation", signature = c("x"),
 #' @importFrom SingleCellExperiment reducedDim reducedDimNames
 setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
         function(x, outcome, treatment,
-                 mediator = NULL, assay.type = NULL, dimred = NULL,
+                 mediator = NULL, assay.type = "counts", dimred = NULL,
                  family = gaussian(), covariates = NULL, p.adj.method = "holm",
                  add.metadata = FALSE, verbose = TRUE, ...) {
 
@@ -236,9 +235,7 @@ setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
                 
         } else if( med_opts[[2]] ){
             # Check that assay is in assays
-            if( !assay.type %in% assayNames(x) ){
-                stop(assay.type, " not found in assays(x).", call. = FALSE)
-            }
+            .check_assay_present(assay.type, x)
             # Define matrix for analysis
             mat <- assay(x, assay.type)
             # Use assay for analysis

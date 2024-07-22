@@ -72,7 +72,7 @@ list that includes all dominant taxa for each sample into colData.}
 \code{rank} is specified.}
 
 \item{name}{\code{Character scalar}. A name for the column of the
-\code{colData} where the dominant taxa will be stored in when using \code{addDominant}.}
+\code{colData} where results will be stored. (Default: \code{"dominant_taxa"})}
 }
 \value{
 \code{getDominant} returns a named character vector \code{x}

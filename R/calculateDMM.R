@@ -22,7 +22,7 @@
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether the calculation should be parallelized.
 #'
-#' @param transposed \code{Logical scalar}. Is x transposed with samples in rows?
+#' @param transposed \code{Logical scalar}. Is \code{x} transposed with samples in rows?
 #' (Default: \code{FALSE})
 #'
 #' @param type \code{Character scalar}. The type of measure used for the goodness of fit. One of

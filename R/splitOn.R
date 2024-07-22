@@ -2,7 +2,7 @@
 #'
 #' @inheritParams agglomerate-methods
 #'
-#' @param f \code{Character}. Specifies the grouping variable
+#' @param f \code{Character scalar}. Specifies the grouping variable
 #'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 
 #'   with the same length as one of the dimensions. If \code{f} matches with both
 #'   dimensions, \code{by} must be specified. 

@@ -4,7 +4,7 @@
 #' \code{ade4} package in typical fashion. Results are stored in the
 #' \code{reducedDims} and are available for all the expected functions.
 #'
-#' @inheritParams calculateDMN
+#' @inheritParams calculateUnifrac
 #'
 #' @details
 #'   For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
@@ -29,12 +29,9 @@
 #'
 #' @param scale \code{Logical scalar}. Sshould the expression values be standardized?
 #' (Default: \code{FALSE})
-#'   
-#' @param tree.name \code{Character scalar}. Specifies the name of the 
-#'   rowTree to be used in calculation. 
-#'   (Default: \code{"phylo"})
 #' 
-#' @param tree_name Deprecated. Use \code{tree.name} instead.
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{"DPCoA"})
 #' 
 #' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an 
 #'   alternative experiment containing the input data. (Default: \code{NULL})

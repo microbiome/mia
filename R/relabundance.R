@@ -5,7 +5,7 @@
 #' flexible and robust way to access and modify relative abundance data stored
 #' in the assay slot of a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
 #'
-#' @inheritParams calculateDMN
+#' @inheritParams calculateJSD
 #' 
 #' @param value \code{Character vector}. A matrix to store as the \sQuote{relabundance} assay
 #' @param ... optional arguments not used currently.

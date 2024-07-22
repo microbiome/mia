@@ -4,7 +4,7 @@
 #' in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
 #' 
-#' @inheritParams calculateDMN
+#' @inheritParams calculateJSD
 #'   
 #' @param detection \code{Numeric scalar}. Defines detection threshold for 
 #'   absence/presence of features. Feature that has abundance under threshold in

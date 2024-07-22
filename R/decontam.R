@@ -4,17 +4,14 @@
 #' \code{isNotContaminant} are made available for
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' objects.
+#' 
+#' @inheritParams calculateJSD
 #'
 #' @param seqtab,x
 #'   a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'
-#' @param assay.type A\code{Character scalar}. Specifies the name of assay 
-#'   used in calculation. (Default: \code{"counts"})
-#'
-#' @param assay_name Deprecated. Use \code{assay.type} instead.
-#'
-#' @param name \code{Character scalar}. A name for the column of the colData in which the contaminant
-#'   information should be stored. (Default: \code{"isContaminant"})
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{"isContaminant"})
 #'
 #' @param concentration \code{Character scalar} or \code{NULL}. Defining
 #'   a column with numeric values from the \code{colData} to use as
@@ -28,7 +25,7 @@
 #'   column with values interpretable as a factor from the \code{colData} to use
 #'   as batch information. (Default: \code{NULL})
 #' 
-#' @param detailed \code{Logical scalar}. If TRUE, the return value is a 
+#' @param detailed \code{Logical scalar}. If \code{TRUE}, the return value is a 
 #'   data.frame containing diagnostic information on the contaminant decision. 
 #'   If FALSE, the return value is a logical vector containing the binary 
 #'   contaminant classifications. (Default: \code{TRUE})

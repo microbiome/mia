@@ -125,8 +125,8 @@ v with weights Xbar, but the multiplying effect of eigenvalues removed) or
 \item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an alternative experiment
 containing the input data.}
 
-\item{name}{\code{Character scalar}. The name to store the result in
-\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"CCA"})}
 }
 \value{
 For \code{getCCA} a matrix with samples as rows and CCA dimensions as

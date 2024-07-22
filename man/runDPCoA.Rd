@@ -76,16 +76,15 @@ assay used in calculation. (Default: \code{"counts"})}
 \item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
 \item{tree.name}{\code{Character scalar}. Specifies the name of the
-rowTree to be used in calculation.
-(Default: \code{"phylo"})}
+tree used in calculation. (Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
 \item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an
 alternative experiment containing the input data. (Default: \code{NULL})}
 
-\item{name}{\code{Character scalar}. The name to store the result in
-\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"DPCoA"})}
 }
 \value{
 For \code{getDPCoA} a matrix with samples as rows and CCA dimensions as

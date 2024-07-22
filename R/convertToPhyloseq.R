@@ -7,7 +7,7 @@
 #'   object
 #'
 #' @param assay.type \code{Character scalar}. Specifies the name of assay 
-#'   used in calculation. (Default: \code{"counts"})
+#'   used. (Default: \code{"counts"})
 #'   
 #' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'   

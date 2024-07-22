@@ -48,8 +48,8 @@ method.}
 transformation is applied sample (column) or feature (row) wise.
 (Default: \code{"samples"})}
 
-\item{name}{\code{Character scalar}. The name to store the result in
-\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"method"})}
 
 \item{pseudocount}{\code{Logical scalar} or \code{numeric scalar}. When TRUE,
 automatically adds half of the minimum positive value of \code{assay.type}.

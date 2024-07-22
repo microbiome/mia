@@ -31,7 +31,7 @@
 #' @param dimred \code{Character scalar} or \code{integer scalar}. Specifies the existing dimensionality
 #'   reduction results to use.
 #'
-#' @param ndimred \code{Integer scalar} or \code{integer vector}. Specifies the dimensions to use if
+#' @param ndimred \code{integer vector}. Specifies the dimensions to use if
 #'   dimred is specified.
 #' 
 #' @param n_dimred Deprecated. Use \code{ndimred} instead.

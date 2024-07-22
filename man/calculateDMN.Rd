@@ -116,7 +116,7 @@ assay used in calculation. (Default: \code{"counts"})}
 
 \item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{transposed}{\code{Logical scalar}. Is x transposed with samples in rows?
+\item{transposed}{\code{Logical scalar}. Is \code{x} transposed with samples in rows?
 (Default: \code{FALSE})}
 
 \item{name}{\code{Character scalar}. The name to store the result in

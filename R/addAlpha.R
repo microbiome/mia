@@ -11,10 +11,8 @@
 #' @param index \code{Character vector}. Specifies the alpha diversity 
 #'   indices to be calculated.
 #'   
-#' @param name \code{Character scalar}. A name for the column(s) of the colData the 
-#'   results should be
-#'   stored in. By default this will use the original names of the calculated
-#'   indices. (Default: \code{index})
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{index})
 #' 
 #' @param niter \code{Integer scalar}. Specifies the number of
 #'   rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
@@ -22,11 +20,11 @@
 #'   
 #' @param ... optional arguments:
 #' \itemize{
-#'   \item \code{sample}: \code{Numeric scalar}. Specifies the rarefaction
+#'   \item \code{sample}: \code{Integer scalar}. Specifies the rarefaction
 #'   depth i.e. the number of counts drawn from each sample.
 #'   (Default: \code{min(colSums2(assay(x, assay.type)))})
 #'   
-#'   \item \code{tree.name}: \code{Character scalar}.Specifies which rowTree 
+#'   \item \code{tree.name}: \code{Character scalar}. Specifies which rowTree 
 #'    will be used. ( Faith's index). (Default: \code{"phylo"})
 #'   
 #'   \item \code{node.label}: \code{Character vector} or \code{NULL} Specifies the 
@@ -35,10 +33,10 @@
 #'   instance should be noted as NA. When \code{NULL}, all the rownames should 
 #'   be found from the tree. (Faith's index). (Default: \code{NULL})
 #'   
-#'   \item \code{only.tips}: \code{Logical scalar}. Specifies
-#'   whether to remove internal nodes when Faith's index is
-#'   calculated. When \code{only.tips=TRUE}, those rows that are not tips of
-#'   tree are removed. (Faith's index). (Default: \code{FALSE})
+#'   \item \code{only.tips}: (Faith's index). \code{Logical scalar}. Specifies
+#'   whether to remove internal nodes when Faith's index is calculated. 
+#'   When \code{only.tips=TRUE}, those rows that are not tips of tree are 
+#'   removed. (Default: \code{FALSE})
 #'   
 #'   \item \code{threshold}: \code{Numeric scalar}. From \code{0 to 1}, determines
 #'   the threshold for coverage and evenness

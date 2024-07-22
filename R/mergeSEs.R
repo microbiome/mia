@@ -1,6 +1,6 @@
 #' Merge SE objects into single SE object.
 #' 
-#' @inheritParams calculateDMN
+#' @inheritParams rarefyAssay
 #' 
 #' @param y a \code{\link{SummarizedExperiment}} object when \code{x} is a
 #' \code{\link{SummarizedExperiment}} object. Disabled when \code{x} is a list.
@@ -9,7 +9,7 @@
 #' Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
 #' when more than two objects are being merged.  (Default: \code{"full"})
 #' 
-#' @param missing.values NA, 0, or \code{Character scalar}. Specifies the notation
+#' @param missing.values \code{NA}, \code{0} or \code{Character scalar}. Specifies the notation
 #' of missing values. (By default: \code{NA})
 #' 
 #' @param missing_values Deprecated. Use \code{missing.values} instead.
@@ -29,9 +29,6 @@
 #' (Default: \code{TRUE})
 #' 
 #' @param collapse_features Deprecated. Use \code{collapse.rows} instead.
-#' 
-#' @param verbose \code{Logical scalar}. Choose whether to show messages. 
-#' (Default: \code{TRUE})
 #'
 #' @param ... optional arguments (not used).
 #'

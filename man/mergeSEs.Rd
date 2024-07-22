@@ -44,7 +44,7 @@ assay used in calculation. (Default: \code{"counts"})}
 Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
 when more than two objects are being merged.  (Default: \code{"full"})}
 
-\item{missing.values}{NA, 0, or \code{Character scalar}. Specifies the notation
+\item{missing.values}{\code{NA}, \code{0} or \code{Character scalar}. Specifies the notation
 of missing values. (By default: \code{NA})}
 
 \item{missing_values}{Deprecated. Use \code{missing.values} instead.}

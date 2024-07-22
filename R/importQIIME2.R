@@ -11,19 +11,19 @@
 #' 
 #' @param featureTableFile Deprecated. use \code{assay.file} instead.
 #'
-#' @param row.file \code{Character scalar}. Defines the file
+#' @param row.file \code{Character scalar} or \code{NULL}. Defines the file
 #'   path of the taxonomy table to be imported. (default:
 #'   \code{NULL}).
 #' 
 #' @param taxonomyTableFile Deprecated. use \code{row.file} instead.
 #'
-#' @param col.file \code{Character scalar}. Defines the file path
+#' @param col.file \code{Character scalar} or \code{NULL}. Defines the file path
 #'   of the sample metadata to be imported. The file has to be in tsv format.
 #'   (Default: \code{NULL}).
 #' 
 #' @param sampleMetaFile Deprecated. Use \code{col.file} instead.
 #'
-#' @param as.refseq \code{Logical scalar}. Should the feature
+#' @param as.refseq \code{Logical scalar} or \code{NULL}. Should the feature
 #'   names of the feature table be regarded as reference sequences? This setting
 #'   will be disregarded, if \code{refseq.file} is not \code{NULL}. If the
 #'   feature names do not contain valid DNA characters only, the reference
@@ -31,7 +31,7 @@
 #' 
 #' @param featureNamesAsRefSeq Deprecated. Use \code{as.refseq} instead.
 #'
-#' @param refseq.file \code{Character scalar}. Defines the file path of
+#' @param refseq.file \code{Character scalar} or \code{NULL}. Defines the file path of
 #'   the reference sequences for each feature. (Default: \code{NULL}).
 #' 
 #' @param refSeqFile Deprecated. Use \code{refseq.file} instead.

@@ -151,7 +151,7 @@ between experiment itself is tested, i.e., when assays are identical.
 \item{filter_self_correlations}{Deprecated. Use \code{filter.self.cor} instead.}
 
 \item{verbose}{\code{Logical scalar}. Specifies whether to get messages
-about progress of calculation. (Default: \code{FALse})}
+about progress of calculation. (Default: \code{FALSE})}
 
 \item{test.signif}{\code{Logical scalar}. Specifies whether to test
 statistical significance of associations.

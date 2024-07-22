@@ -19,7 +19,7 @@
 #' To maintain the reproducibility, please define the seed using set.seed() 
 #' before implement this function.
 #'
-#' @inheritParams calculateDMN
+#' @inheritParams transformAssay
 #'   
 #' @param sample \code{Integer scalar}. Indicates the number of counts being 
 #'   simulated i.e. rarefying depth. This can equal to lowest number of total

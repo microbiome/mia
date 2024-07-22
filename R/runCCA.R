@@ -3,7 +3,7 @@
 #' These functions perform Canonical Correspondence Analysis on data stored
 #' in a \code{SummarizedExperiment}.
 #'
-#' @inheritParams calculateDMN
+#' @inheritParams calculateJSD
 #'
 #' @details
 #'   For \code{run*} a
@@ -34,6 +34,9 @@
 #'   
 #' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an alternative experiment
 #'   containing the input data.
+#' 
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{"CCA"})
 #' 
 #' @param scores \code{Character scalar}. Specifies scores to be returned. Must be
 #' 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of

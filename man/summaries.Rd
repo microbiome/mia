@@ -69,8 +69,8 @@ the output of \code{taxonomyRanks()}. (Default: \code{NULl})}
 \item{group}{With group, it is possible to group the observations in an
 overview. Must be one of the column names of \code{colData}.}
 
-\item{name}{\code{Character scalar}. The column name for the features.
-(Default: \code{"dominant_taxa"})}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"dominant_taxa"})}
 
 \item{object}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}

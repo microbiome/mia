@@ -4,7 +4,7 @@
 \alias{importMetaPhlAn}
 \title{Import Metaphlan results to \code{TreeSummarizedExperiment}}
 \arguments{
-\item{file}{\code{Character scalar}. Defines the file
+\item{file}{\code{NULL} or \code{DataFrame}-like object. Defines the file
 path of the Metaphlan file. The file must be in merged Metaphlan format.}
 
 \item{col.data}{a DataFrame-like object that includes sample names in
