@@ -49,9 +49,6 @@ reference:
     - mergeSEs
     - meltSE
     - rarefyAssay
-- title: Deprecated functions
-  contents:
-    - deprecate
 - title: Diversity
   - subtitle: Alpha Diversity
     - contents:
@@ -77,3 +74,6 @@ reference:
   - subtitle: decontam
   - contents:
     - isContaminant
+- title: Deprecated functions
+  contents:
+    - deprecate
