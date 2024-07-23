@@ -27,7 +27,7 @@
 #' \code{convertToPhyloseq} returns an object of class 
 #' \code{\link[phyloseq:phyloseq-class]{phyloseq}}
 #'
-#' @rdname convertToPhyloseq
+#' @rdname convertFromPhyloseq
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -57,7 +57,7 @@ setGeneric("convertToPhyloseq", signature = c("x"),
                standardGeneric("convertToPhyloseq"))
 
 
-#' @rdname convertToPhyloseq
+#' @rdname convertFromPhyloseq
 #' @export
 setMethod("convertToPhyloseq",
           signature = c(x = "SummarizedExperiment"),
@@ -118,7 +118,7 @@ setMethod("convertToPhyloseq",
     }
 )
 
-#' @rdname convertToPhyloseq
+#' @rdname convertFromPhyloseq
 #' @export
 setMethod("convertToPhyloseq",
           signature = c(x = "TreeSummarizedExperiment"),

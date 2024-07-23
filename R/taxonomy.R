@@ -31,7 +31,7 @@
 #'
 #' @inheritParams agglomerate-methods
 #'
-#' @param with.rank \code{logical scalar}. Should the level be add as a
+#' @param with.rank \code{Logical scalar}. Should the level be add as a
 #'   suffix? For example: "Phylum:Crenarchaeota". (Default: \code{FALSE})
 #' 
 #' @param with_rank Deprecated. Use \code{with.rank} instead.
@@ -53,7 +53,7 @@
 #'
 #' @param from 
 #' \itemize{
-#'   \item For \code{mapTaxonomy}: a scalar \code{character} value, which 
+#'   \item For \code{mapTaxonomy}: \code{character scalar}. A value which 
 #'     must be a valid taxonomic rank. (Default: \code{NULL})
 #'   \item otherwise a \code{Taxa} object as returned by 
 #'     \code{\link[DECIPHER:IdTaxa]{IdTaxa}}

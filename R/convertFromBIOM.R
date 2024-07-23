@@ -39,7 +39,7 @@
 #' \code{convertFromBIOM} returns an object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   
-#' @name convertFromBIOM
+#' @name importBIOM
 #' 
 #' @seealso
 #' \code{\link[=importQIIME2]{importQIIME2}}
@@ -115,7 +115,7 @@ importBIOM <- function(file, ...) {
     convertFromBIOM(biom, ...)
 }
 
-#' @rdname convertFromBIOM
+#' @rdname importBIOM
 #' 
 #' @param x object of type \code{\link[biomformat:biom-class]{biom}}
 #'
@@ -243,7 +243,7 @@ convertFromBIOM <- function(
     return(tse)
 }
 
-#' @rdname convertFromBIOM
+#' @rdname importBIOM
 #' 
 #' @param x \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' 
@@ -260,7 +260,7 @@ setGeneric(
         x, assay.type = "counts", ...)
     standardGeneric("convertToBIOM"))
 
-#' @rdname convertFromBIOM
+#' @rdname importBIOM
 #' @export
 setMethod(
     "convertToBIOM", signature = c(x = "SummarizedExperiment"),

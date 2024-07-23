@@ -18,10 +18,8 @@ reference:
   - importMetaPhlAn
   - importHUMAnN
   - importTaxpasta
-  - convertFromBIOM
   - convertFromDADA2
   - convertFromPhyloseq
-  - convertToPhyloseq
 - title: Taxonomic data
   contents:
   - taxonomyRanks

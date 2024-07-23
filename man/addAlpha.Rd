@@ -38,13 +38,13 @@ addAlpha(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
 
-\item{assay.type}{\code{Character vector}. Specifies the name of assay
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
 
 \item{index}{\code{Character vector}. Specifies the alpha diversity
 indices to be calculated.}
 
-\item{name}{\code{Character scalar}. A name for the column of the
+\item{name}{\code{Character vector}. A name for the column of the
 \code{colData} where results will be stored. (Default: \code{index})}
 
 \item{niter}{\code{Integer scalar}. Specifies the number of
@@ -71,33 +71,32 @@ whether to remove internal nodes when Faith's index is calculated.
 When \code{only.tips=TRUE}, those rows that are not tips of tree are
 removed. (Default: \code{FALSE})
 
-\item \code{threshold}: \code{Numeric scalar}. From \code{0 to 1}, determines
-the threshold for coverage and evenness
+\item \code{threshold}: (Coverage and all evenness indices). \code{Numeric scalar}.
+From \code{0 to 1}, determines the threshold for coverage and evenness
 indices. When evenness indices are calculated values under or equal to
-this threshold are denoted as zeroes. (coverage and all evenness indices).
-For coverage index, see details.
+this threshold are denoted as zeroes. For coverage index, see details.
 (Default: \code{0.5} for coverage, \code{0} for evenness indices)
 
-\item \code{quantile}: (log modulo skewness index) Arithmetic abundance
-classes are evenly cut up to to this quantile of the data. The assumption
-is that abundances higher than this are not common, and they are classified
-in their own group. (Default: \code{0.5})
+\item \code{quantile}: (log modulo skewness index). \code{Numeric scalar}.
+Arithmetic abundance classes are evenly cut up to to this quantile of the data.
+The assumption is that abundances higher than this are not common, and they
+are classified in their own group. (Default: \code{0.5})
 
-\item \code{nclasses}: (log modulo skewness index) The number of arithmetic
-abundance classes from zero to the quantile cutoff indicated by
-\code{quantile}. (Default: \code{50})
+\item \code{nclasses}: (log modulo skewness index). \code{Integer scalar}.
+The number of arithmetic abundance classes from zero to the quantile cutoff
+indicated by \code{quantile}. (Default: \code{50})
 
-\item \code{ntaxa}: (absolute and relative indices) The n-th position of
-the dominant taxa to consider. (Default: \code{1})
+\item \code{ntaxa}: (absolute and relative indices). \code{Integer scalar}.
+The n-th position of the dominant taxa to consider. (Default: \code{1})
 
-\item \code{aggregate}: (absolute, dbp, dmn, and relative indices)
-Aggregate the values for top members selected by \code{ntaxa} or not. If
-\code{TRUE}, then the sum of relative abundances is returned. Otherwise the
-relative abundance is returned for the single taxa with the indicated rank
-(default: \code{aggregate = TRUE}).
+\item \code{aggregate}: (absolute, dbp, dmn, and relative indices).
+\code{Logical scalar}. Aggregate the values for top members selected by
+\code{ntaxa} or not. If \code{TRUE}, then the sum of relative abundances
+is returned. Otherwise the relative abundance is returned for the single
+taxa with the indicated rank (default: \code{aggregate = TRUE}).
 
-\item \code{detection}: \code{Numeric scalar} Selects
-detection threshold for the abundances. (observed index). (Default: \code{0})
+\item \code{detection}: (observed index). \code{Numeric scalar} Selects
+detection threshold for the abundances (Default: \code{0})
 }}
 }
 \value{
