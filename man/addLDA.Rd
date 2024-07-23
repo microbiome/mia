@@ -11,7 +11,7 @@ getLDA(x, ...)
 
 addLDA(x, ...)
 
-\S4method{getLDA}{SummarizedExperiment}(x, k = 2, assay.type = "counts", ...)
+\S4method{getLDA}{SummarizedExperiment}(x, k = 2, assay.type = "counts", eval.metric = "perplexity", ...)
 
 \S4method{addLDA}{SummarizedExperiment}(x, k = 2, assay.type = "counts", name = "LDA", ...)
 }
@@ -21,11 +21,17 @@ object.}
 
 \item{...}{optional arguments passed to \code{\link[topicmodels:LDA]{LDA}}}
 
-\item{k}{\code{Integer scalar}. A number of latent vectors/topics.
+\item{k}{\code{Integer vector}. A number of latent vectors/topics.
 (Default: \code{2})}
 
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 LDA ordination. (Default: \code{"counts"})}
+
+\item{eval.metric}{\code{Character scalar}. Specifies evaluation metric that
+will be used to select the model with the best fit. Must be either
+\code{"perplexity"} (\code{topicmodels::perplexity}) or \code{"coherence"}
+(\code{topicdoc::topic_coherence}, the best model is selected based on mean
+coherence). (Default: \code{"perplexity"})}
 
 \item{name}{\code{Character scalar}. The name to be used to store the result
 in the reducedDims of the output. (Default: \code{"LDA"})}
@@ -61,4 +67,11 @@ tse <- addLDA(tse)
 # Extract feature loadings
 loadings <- attr(reducedDim(tse, "LDA"), "loadings")
 head(loadings)
+
+# Estimate models with number of topics from 2 to 10
+tse <- addLDA(tse, k = c(2, 3, 4, 5, 6, 7, 8, 9, 10), name = "LDA_10")
+# Get the evaluation metrics
+tab <- attr(reducedDim(tse, "LDA_10"),"eval_metrics")
+# Plot
+plot(tab[["k"]], tab[["perplexity"]], xlab = "k", ylab = "perplexity")
 }

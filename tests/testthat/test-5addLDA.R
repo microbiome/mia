@@ -10,7 +10,7 @@ test_that("addLDA", {
   expect_equal(dim(reducedDim(tse,"LDA")),c(26,2))
   red <- reducedDim(tse,"LDA")
   expect_equal(names(attributes(red)),
-               c("dim","dimnames","loadings", "model"))
+               c("dim","dimnames","loadings", "model", "eval_metrics"))
   expect_equal(dim(attr(red,"loadings")),c(19216,2))
   # Check if ordination matrix returned by topicmodels::LDA is the same as
   # getLDA and addLDA ones
@@ -49,4 +49,10 @@ test_that("addLDA", {
   expect_error(
     addLDA(GlobalPatterns, k = 2, assay.type = "counts", name = TRUE)
   )
+  # Check that perplexity is calculated correctly
+  k <- sample(seq(2, 10), 1)
+  lda <- getLDA(tse, k = k)
+  ref <- topicmodels::perplexity(attr(lda, "model"))
+  test <- attr(lda, "eval_metrics")[["perplexity"]]
+  expect_equal(test, ref)
 })

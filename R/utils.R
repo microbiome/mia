@@ -34,8 +34,12 @@
   is.character(x) && length(x) == 1L
 }
 
+.is_integer <- function(x){
+  is.numeric(x) && all(x%%1==0)
+}
+
 .is_an_integer <- function(x){
-    is.numeric(x) && length(x) == 1L && x%%1==0
+    .is_integer(x) && x%%1==0
 }
 
 .are_whole_numbers <- function(x){
