@@ -18,7 +18,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.33</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.32</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Transform assay</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/transformCounts.R" class="external-link"><code>R/transformCounts.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/transformCounts.R" class="external-link"><code>R/transformCounts.R</code></a></small>
     <div class="hidden name"><code>transformAssay.Rd</code></div>
     </div>
 
@@ -88,51 +88,48 @@ See details for options.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A
+<dd><p>a numeric matrix with samples as rows or a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>A single character value for selecting the
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> to be
-transformed.</p></dd>
+<dd><p><code>Character scalar</code>. Specifies the name of the
+assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p>A single character value for selecting the transformation
+<dd><p><code>Character scalar</code>. Specifies the transformation
 method.</p></dd>
 
 
 <dt id="arg-margin">MARGIN<a class="anchor" aria-label="anchor" href="#arg-margin"></a></dt>
-<dd><p>A single character value for specifying whether the
+<dd><p><code>Character scalar</code>. Determines whether the
 transformation is applied sample (column) or feature (row) wise.
-(By default: <code>MARGIN = "samples"</code>)</p></dd>
+(Default: <code>"samples"</code>)</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>A single character value specifying the name of transformed
-abundance table.</p></dd>
+<dd><p><code>Character scalar</code>. A name for the column of the
+<code>colData</code> where results will be stored. (Default: <code>"method"</code>)</p></dd>
 
 
 <dt id="arg-pseudocount">pseudocount<a class="anchor" aria-label="anchor" href="#arg-pseudocount"></a></dt>
-<dd><p>TRUE, FALSE, or a numeric value. When TRUE,
+<dd><p><code>Logical scalar</code> or <code>numeric scalar</code>. When TRUE,
 automatically adds half of the minimum positive value of <code>assay.type</code>.
 When FALSE, does not add any pseudocount (pseudocount = 0).
-Alternatively, a user-specified numeric value can be added as pseudocount.</p></dd>
+Alternatively, a user-specified numeric value can be added as pseudocount.
+(Default: <code>FALSE</code>).</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional arguments passed on to <code>vegan:decostand</code>:</p><ul><li><p><code>reference</code>: A single value which will be used to fill
-reference sample's column in returned assay when calculating alr.
-(default: <code>reference = NA</code>)</p></li>
+<dd><p>additional arguments passed on to <code>vegan:decostand</code>:</p><ul><li><p><code>reference</code>: <code>Character scalar</code>. use to
+to fill reference sample's column in returned assay when calculating alr.
+(Default: <code>NA</code>)</p></li>
 <li><p><code>ref_vals</code> Deprecated. Use <code>reference</code> instead.</p></li>
 </ul></dd>
 
