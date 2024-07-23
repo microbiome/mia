@@ -7,22 +7,22 @@
 #' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
 #'
-#' @param method Character scalar. Specifies which distance to calculate.
+#' @param method \code{Character scalar}. Specifies which distance to calculate.
 #'
-#' @param assay.type Character scalar. Specifies which assay to use for 
+#' @param assay.type \code{Character scalar}. Specifies which assay to use for 
 #'   calculation. (Default: \code{"counts"})
 #'
-#' @param assay_name Character scalar. Specifies which assay to use for 
+#' @param assay_name \code{Character scalar}. Specifies which assay to use for 
 #'   calculation. (Please use \code{assay.type} instead. At 
 #'   some point \code{assay_name} will be disabled.)
 #'
-#' @param tree.name Character scalar. Specifies which tree will be used in 
+#' @param tree.name \code{Character scalar}. Specifies which tree will be used in 
 #'   calculation. (Default: \code{"phylo"})
 #'   
-#' @param transposed Logical scalar. Specifies if x is transposed with cells in
+#' @param transposed \code{Logical scalar}. Specifies if x is transposed with cells in
 #'   rows. (Default: \code{FALSE})
 #'   
-#' @param detection A single numeric value for selecting detection threshold for 
+#' @param detection \code{Integer}. Specifies detection threshold for 
 #'   absence/presence of features. Feature that has abundance under threshold in
 #'   either of samples, will be discarded when evaluating overlap between 
 #'   samples. 

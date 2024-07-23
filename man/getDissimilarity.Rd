@@ -47,24 +47,24 @@ addDissimilarity(x, method, ...)
 \item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
-\item{method}{Character scalar. Specifies which distance to calculate.}
+\item{method}{\code{Character scalar}. Specifies which distance to calculate.}
 
 \item{...}{other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}}
 
-\item{assay_name}{Character scalar. Specifies which assay to use for
+\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Please use \code{assay.type} instead. At
 some point \code{assay_name} will be disabled.)}
 
-\item{assay.type}{Character scalar. Specifies which assay to use for
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
 
-\item{tree.name}{Character scalar. Specifies which tree will be used in
+\item{tree.name}{\code{Character scalar}. Specifies which tree will be used in
 calculation. (Default: \code{"phylo"})}
 
-\item{transposed}{Logical scalar. Specifies if x is transposed with cells in
+\item{transposed}{\code{Logical scalar}. Specifies if x is transposed with cells in
 rows. (Default: \code{FALSE})}
 
-\item{detection}{A single numeric value for selecting detection threshold for
+\item{detection}{\code{Integer}. Specifies detection threshold for
 absence/presence of features. Feature that has abundance under threshold in
 either of samples, will be discarded when evaluating overlap between
 samples.}
