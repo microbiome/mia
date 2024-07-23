@@ -374,15 +374,17 @@
             call. = FALSE)
     }
     # Throw warning if values of reducedDim are overwritten
-    if ( name %in% names(reducedDims(x)) ){
-        warning("The following values are already present in `reducedDims` and", 
-                " will be overwritten: '", name,
-                "'. Consider using the 'name' argument to specify alternative ",
-                "names.", call. = FALSE)
+    if( name %in% names(reducedDims(x)) ){
+        warning(
+            "The following values are already present in `reducedDims` and", 
+            " will be overwritten: '", name,
+            "'. Consider using the 'name' argument to specify alternative ",
+            "names.", call. = FALSE)
     }
     reducedDim(x, name) <- values
     return(x)
 }
+
 ################################################################################
 # Other common functions
 
