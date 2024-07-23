@@ -28,27 +28,24 @@ runOverlap(x, ...)
 \S4method{runOverlap}{SummarizedExperiment}(x, name = "overlap", ...)
 }
 \arguments{
-\item{x}{a
+\item{x}{a numeric matrix with samples as rows or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object containing a tree.}
+object.}
 
-\item{assay.type}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to calculate the overlap.}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{detection}{A single numeric value for selecting detection threshold for
+\item{detection}{\code{Numeric scalar}. Defines detection threshold for
 absence/presence of features. Feature that has abundance under threshold in
-either of samples, will be discarded when evaluating overlap between samples.}
+either of samples, will be discarded when evaluating overlap between samples.
+(Default: \code{0})}
 
 \item{...}{Optional arguments not used.}
 
-\item{name}{A single character value specifying the name of overlap matrix that
-is stored in reducedDim(x).}
+\item{name}{\code{Character scalar}. Specifies the name of overlap matrix that
+is stored in reducedDim(x). (Default: \code{"overlap"})}
 }
 \value{
 calculateOverlap returns sample-by-sample distance matrix.
@@ -61,7 +58,7 @@ in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExpe
 object.
 }
 \details{
-These function calculates overlap between all the sample-pairs. Overlap
+This function calculates overlap between all the sample-pairs. Overlap
 reflects similarity between sample-pairs.
 
 When overlap is calculated using relative abundances, the higher the value the

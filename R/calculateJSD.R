@@ -3,31 +3,28 @@
 #' This function calculates the Jensen-Shannon Divergence (JSD) in a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
+#' 
+#' @param x a numeric matrix with samples as rows or a
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#'   object.
 #'
-#' @param x a numeric matrix or a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
+#' @param assay.type \code{Character scalar}. Specifies the name of the
+#'   assay used in calculation. (Default: \code{"counts"})
 #'   
-#' @param assay.type a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'
-#' @param exprs_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead.)
+#' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'
-#' @param transposed Logical scalar, is x transposed with cells in rows?
-#'
+#' @param chunkSize \code{Integer scalar}. Defines the size of data send
+#'   to the individual worker. Only has an effect, if \code{BPPARAM} defines
+#'   more than one worker. (Default: \code{nrow(x)})
+#' 
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether the JSD calculation should be parallelized.
+#'   object specifying whether the calculation should be parallelized.
 #'
-#' @param chunkSize an integer scalar, defining the size of data send
-#'   to the individual worker. Only has an effect, if \code{BPPARAM} defines
-#'   more than one worker. (default: \code{chunkSize = nrow(x)})
+#' @param transposed \code{Logical scalar}. Is x transposed with samples in rows?
+#' (Default: \code{FALSE})
 #'
 #' @param ... optional arguments not used.
 #'

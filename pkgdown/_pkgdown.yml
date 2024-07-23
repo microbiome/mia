@@ -1,74 +1,31 @@
 destination: docs
 reference:
+- title: Association
+- contents:
+  - getCrossAssociation
+  - getMediation
+
+- title: Clustering
+- contents:
+  - calculateDMN
+  - addCluster
+
 - title: Data handling
 - subtitle: Agglomeration
 - contents:
   - agglomerateByRank
-  - mergeRows
+  - agglomerateByPrevalence
   - splitOn
-  - mergeSEs
 - subtitle: Transformation
 - contents:
   - transformAssay
-- subtitle: Data loading
+- subtitle: Other functions
 - contents:
-  - importBIOM
-  - importQIIME2
-  - importMothur
-  - importMetaPhlAn
-  - importHUMAnN
-  - importTaxpasta
-  - convert
-- title: Taxonomic data
-  contents:
-  - taxonomyRanks
-- title: Diversity indeces
-- subtitle: Alpha Diversity
-- contents:
-  - addDivergence
-  - addAlpha
-- subtitle: Beta Diversity
-- contents:
-  - calculateUnifrac
-  - calculateJSD
-  - runNMDS
-  - runCCA
-  - calculateOverlap
-- subtitle: Other diversity measurements
-- contents:
-  - runDPCoA
-  - estimateRichness
-- title: Other functions
-- subtitle: Dataset description
-- contents:
-  - getPrevalence
-  - getPrevalentAbundance
-  - summaries
-  - getCrossAssociation
-  - getMediation
-  - hierarchy-tree
-- subtitle: Dominance
-- contents:
-  - getDominant
-  - estimateDominance
-- subtitle: Evenness indeces
-- contents:
-  - estimateEvenness
-- subtitle: Clustering
-- contents:
-  - calculateDMN
-  - addCluster
-  - addLDA
-- subtitle: decontam
-- contents:
-  - isContaminant
-- subtitle: Helper
-- contents:
+  - mergeSEs
   - meltSE
-  - relabundance
   - rarefyAssay
-  - subsetSamples
-- subtitle: Datasets
+  
+- title: Datasets
 - contents:
   - mia-datasets
   - dmn_se
@@ -79,9 +36,52 @@ reference:
   - peerj13075
   - Tengeler2020
   - Tito2024QMP
-- subtitle: Package
+- title: Dataset description
+- contents:
+  - getPrevalence
+  - getPrevalentAbundance
+  - summaries
+  - getDominant
+- title: Data loading
+- contents:
+  - importBIOM
+  - importQIIME2
+  - importMothur
+  - importMetaPhlAn
+  - importHUMAnN
+  - importTaxpasta
+  - convertFromDADA2
+  - convertFromPhyloseq
+
+- title: Diversity
+- subtitle: Alpha Diversity
+- contents:
+  - addAlpha
+- subtitle: Dissimilarity
+- contents:
+  - calculateUnifrac
+  - calculateJSD
+  - calculateOverlap
+  - addDivergence
+- subtitle: Ordination
+- contents:
+  - runNMDS
+  - runCCA
+  - runDPCoA
+  - addLDA
+
+- title: Package
 - contents:
   - mia-package
-- subtitle: Deprecated functions
+
+- title: Taxonomy information
+- contents:
+  - taxonomyRanks
+  - hierarchy-tree
+- subtitle: decontam
+- contents:
+  - isContaminant
+
+- title: Deprecated functions
 - contents:
   - deprecate

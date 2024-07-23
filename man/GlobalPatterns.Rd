@@ -3,7 +3,7 @@
 \docType{data}
 \name{GlobalPatterns}
 \alias{GlobalPatterns}
-\title{GlobalPatterns}
+\title{Global patterns of 16S rRNA diversity at a depth of millions of sequences per sample.}
 \format{
 A TreeSummarizedExperiment with 19216 features and 26 samples. The
 rowData contains taxonomic information at Kingdom, Phylum, Class, Order,

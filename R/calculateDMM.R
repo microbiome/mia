@@ -8,37 +8,33 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #'
-#' @param assay.type a single \code{character} value for specifying which
-#'   assay to use for calculation.
+#' @param assay.type \code{Character scalar}. Specifies the name of the
+#'   assay used in calculation. (Default: \code{"counts"})
 #'   
-#' @param exprs_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead.)
+#' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'
-#' @param k the number of Dirichlet components to fit. See
-#'   \code{\link[DirichletMultinomial:dmn]{dmn}}
+#' @param k \code{Numeric scalar}. The number of Dirichlet components to fit. See
+#'   \code{\link[DirichletMultinomial:dmn]{dmn}}. (Default: \code{1})
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether the UniFrac calculation should be parallelized.
+#'   object specifying whether the calculation should be parallelized.
 #'
-#' @param transposed Logical scalar, is x transposed with samples in rows?
+#' @param transposed \code{Logical scalar}. Is \code{x} transposed with samples in rows?
+#' (Default: \code{FALSE})
 #'
-#' @param type the type of measure used for the goodness of fit. One of
+#' @param type \code{Character scalar}. The type of measure used for the goodness of fit. One of
 #'   \sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.
 #'
-#' @param name the name to store the result in
+#' @param name \code{Character scalar}. The name to store the result in
 #'   \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}
 #'
-#' @param variable a variable from \code{colData} to use as a grouping variable.
-#'   Must be a character of factor.
+#' @param variable \code{Character scalar}. A variable from \code{colData} to use as a 
+#'   grouping variable. Must be a character of factor.
 #'
-#' @param seed random number seed. See
+#' @param seed \code{Numeric scalar}. Random number seed. See
 #'   \code{\link[DirichletMultinomial:dmn]{dmn}}
 #'
 #' @param ... optional arguments not used.

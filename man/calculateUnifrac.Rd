@@ -32,14 +32,9 @@ runUnifrac(
 )
 }
 \arguments{
-\item{x}{a numeric matrix or a
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object containing a tree.
-
-Please  note that \code{runUnifrac} expects a matrix with samples per row
-and not per column. This is implemented to be compatible with other
-distance calculations such as \code{\link[stats:dist]{dist}} as much as
-possible.}
+\item{x}{a numeric matrix with samples as rows or a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
 \item{tree}{if \code{x} is a matrix, a
 \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
@@ -48,33 +43,27 @@ to the same type of features (aka. microorganisms).}
 
 \item{...}{optional arguments not used.}
 
-\item{weighted}{\code{TRUE} or \code{FALSE}: Should use weighted-Unifrac
+\item{weighted}{\code{Logical scalar}. Should use weighted-Unifrac
 calculation? Weighted-Unifrac takes into account the relative abundance of
 species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is \code{FALSE}, meaning the
-unweighted-Unifrac distance is calculated for all pairs of samples.}
+unweighted-Unifrac distance is calculated for all pairs of samples.
+(Default: \code{FALSE})}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{exprs_values}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead.)}
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{tree.name}{a single \code{character} value for specifying which
-tree will be used in calculation.
-(By default: \code{tree.name = "phylo"})}
+\item{tree.name}{\code{Character scalar}. Specifies the name of the
+tree used in calculation. (Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
-\item{transposed}{Logical scalar, is x transposed with cells in rows, i.e.,
-is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
-(By default: \code{transposed = FALSE})}
+\item{transposed}{\code{Logical scalar}. Is x transposed with samples in rows?
+(Default: \code{FALSE})}
 
 \item{node.label}{if \code{x} is a matrix,
 a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
@@ -94,6 +83,11 @@ object. The function utilizes \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
 \details{
 Please note that if \code{calculateUnifrac} is used as a \code{FUN} for
 \code{runMDS}, the argument \code{ntop} has to be set to \code{nrow(x)}.
+
+Please  note that \code{runUnifrac} expects a matrix with samples per row
+and not per column. This is implemented to be compatible with other
+distance calculations such as \code{\link[stats:dist]{dist}} as much as
+possible.
 }
 \examples{
 data(esophagus)

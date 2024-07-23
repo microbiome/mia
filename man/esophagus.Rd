@@ -3,7 +3,7 @@
 \docType{data}
 \name{esophagus}
 \alias{esophagus}
-\title{esophagus}
+\title{Human esophageal community from 3 individuals}
 \format{
 A TreeSummarizedExperiment with 58 features and 3 samples. The
 rowData contains no taxonomic information. The colData is empty.

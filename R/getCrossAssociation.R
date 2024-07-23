@@ -5,118 +5,117 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #'   
-#' @param experiment1 A single character or numeric value for selecting the experiment 1
+#' @param experiment1 \code{Character scalar} or \code{numeric scalar}. Selects the experiment 1
 #'    from \code{experiments(x)} of \code{MultiassayExperiment} object. 
-#'    (By default: \code{experiment1 = 1})
+#'    (Default: \code{1})
 #'    
-#' @param experiment2 A single character or numeric value for selecting the experiment 2
+#' @param experiment2 \code{Character scalar} or \code{numeric scalar}. Selects the experiment 2
 #'    from\code{experiments(x)} of \code{MultiAssayExperiment} object or 
 #'    \code{altExp(x)} of \code{TreeSummarizedExperiment} object. Alternatively, 
 #'    \code{experiment2} can also be \code{TreeSE} object when \code{x} is \code{TreeSE} object.
-#'    (By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and 
-#'    \code{experiment2 = x} when \code{x} is \code{TreeSE})
+#'    (Default: \code{2} when \code{x} is \code{MAE} and 
+#'    \code{x} when \code{x} is \code{TreeSE})
 #'    
-#' @param assay.type1 A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
-#'   experiment 1 to be transformed. (By default: \code{assay.type1 = "counts"})
+#' @param assay.type1 \code{Character scalar}. Specifies the name of the assay in experiment 1 
+#'   to be transformed.. (Default: \code{"counts"})
 #'   
-#' @param assay.type2 A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
-#'   experiment 2 to be transformed. (By default: \code{assay.type2 = "counts"})
+#' @param assay.type2  \code{Character scalar}. Specifies the name of the assay in experiment 2 
+#'   to be transformed.. (Default: \code{"counts"})
 #'    
 #' @param assay_name1 Deprecated. Use \code{assay.type1} instead.
 #' 
 #' @param assay_name2 Deprecated. Use \code{assay.type2} instead.
 #' 
-#' @param altexp1 A single numeric or character value specifying alternative experiment
+#' @param altexp1 \code{Character scalar} or \code{numeric scalar}. Specifies alternative experiment
 #'   from the altExp of experiment 1. If NULL, then the experiment is itself 
 #'   and altExp option is disabled. 
-#'   (By default: \code{altexp1 = NULL})
+#'   (Default: \code{NULL})
 #'   
-#' @param altexp2 A single numeric or character value specifying alternative experiment
+#' @param altexp2 \code{Character scalar} or \code{numeric scalar}. Specifies alternative experiment
 #'   from the altExp of experiment 2. If NULL, then the experiment is itself 
 #'   and altExp option is disabled. 
-#'   (By default: \code{altexp2 = NULL})
+#'   (Default: \code{NULL})
 #'   
-#' @param col.var1 A character value specifying column(s) from colData
+#' @param col.var1 \code{Character scalar}. Specifies column(s) from colData
 #'   of experiment 1. If col.var1 is used, assay.type1 is disabled.
-#'   (By default: \code{col.var1 = NULL})
+#'   (Default: \code{NULL})
 #' 
 #' @param colData_variable1 Deprecated. Use \code{col.var1} instead.
 #'   
-#' @param col.var2 A character value specifying column(s) from colData
+#' @param col.var2 \code{Character scalar}. Specifies column(s) from colData
 #'   of experiment 2. If col.var2 is used, assay.type2 is disabled.
-#'   (By default: \code{col.var2 = NULL})
+#'   (Default: \code{NULL})
 #' 
 #' @param colData_variable2 Deprecated. Use \code{col.var2} instead.
 #' 
-#' @param by A character value for selecting if association are calculated
+#' @param by A\code{Character scalar}. Determines if association are calculated
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}. 
 #' 
 #' @param MARGIN Deperecated. Use \code{by} instead.
 #'   
-#' @param method A single character value for selecting association method 
+#' @param method \code{Character scalar}. Defines the association method 
 #'    ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
-#'     (By default: \code{method = "kendall"})
+#'     (Default: \code{"kendall"})
 #' 
-#' @param mode A single character value for selecting output format 
-#'    Available formats are  'table' and 'matrix'.  (By default: \code{mode = "table"})
+#' @param mode \code{Character scalar}. Specifies the  output format 
+#'    Available formats are  'table' and 'matrix'.  (Default: \code{"table"})
 #' 
-#' @param p.adj.method A single character value for selecting adjustment method of
+#' @param p.adj.method \code{Character scalar}. Specifies adjustment method of
 #'    p-values. Passed to \code{p.adjust} function. 
-#'    (By default: \code{p.adj.method = "fdr"})
+#'    (Default: \code{"fdr"})
 #' 
 #' @param p_adj_method Deprecated. Use \code{p.adj.method} isntead.
 #' 
-#' @param p.adj.threshold A single numeric value (from 0 to 1) for selecting 
+#' @param p.adj.threshold \code{Numeric scalar}. From \code{0 to 1}, specifies
 #'    adjusted p-value threshold for filtering. 
-#'    (By default: \code{p.adj.threshold = NULL})
+#'    (Default: \code{NULL})
 #' 
 #' @param p_adj_threshold Deprecated. Use \code{p.dj.threshold} instead.
 #' 
-#' @param cor.threshold A single numeric absolute value (from 0 to 1) for selecting 
+#' @param cor.threshold \code{Numeric scalar}. From \code{0 to 1}, specifies
 #'    correlation threshold for filtering.
-#'    (By default: \code{cor.threshold = NULL})
+#'    (Default: \code{NULL})
 #' 
 #' @param cor_threshold Deprecated. Use \code{cor.threshold} instead.
 #' 
-#' @param sort A single boolean value for selecting whether to sort features or not
+#' @param sort \code{Logical scalar}. Specifies whether to sort features or not
 #'    in result matrices. Used method is hierarchical clustering. 
-#'    (By default: \code{sort = FALSE})
+#'    (Default: \code{FALSE})
 #' 
-#' @param filter.self.cor A single boolean value for selecting whether to 
+#' @param filter.self.cor \code{Logical scalar}. Specifies whether to 
 #'    filter out correlations between identical items. Applies only when correlation
 #'    between experiment itself is tested, i.e., when assays are identical. 
-#'    (By default: \code{filter.self.cor = FALSE})
+#'    (Default: \code{FALSE})
 #' 
 #' @param filter_self_correlations Deprecated. Use \code{filter.self.cor} instead.
 #' 
-#' @param verbose A single boolean value for selecting whether to get messages
-#'    about progress of calculation.
+#' @param verbose \code{Logical scalar}. Specifies whether to get messages
+#'    about progress of calculation. (Default: \code{FALSE})
 #'    
-#' @param test.signif A single boolean value for selecting whether to test
+#' @param test.signif \code{Logical scalar}. Specifies whether to test
 #'    statistical significance of associations.
-#'    (By default: \code{test.signif = FALSE})
+#'    (Default: \code{FALSE})
 #' 
 #' @param test_significance Deprecated. Use \code{test.signif} instead.
 #'    
-#' @param show.warnings A single boolean value for selecting whether to show warnings
+#' @param show.warnings \code{Logical scalar}. specifies whether to show warnings
 #'    that might occur when correlations and p-values are calculated.
+#'    (Default: \code{FALSE})
 #' 
 #' @param show_warnings Deprecated. use \code{show.warnings} instead.
 #'
-#' @param paired A single boolean value for specifying if samples are paired or not.
+#' @param paired \code{Logical scalar}. Specifies if samples are paired or not.
 #'    \code{colnames} must match between twp experiments. \code{paired} is disabled
-#'    when \code{by = 1}. (By default: \code{paired = FALSE})
+#'    when \code{by = 1}. (Default: \code{FALSE})
 #'
 #' @param ... Additional arguments:
 #'    \itemize{
-#'        \item \code{symmetric}:  A single boolean value for specifying if 
+#'        \item \code{symmetric}:   \code{Logical scalar}. Specifies if 
 #'        measure is symmetric or not. When \code{symmetric = TRUE}, associations
 #'        are calculated only for unique variable-pairs, and they are assigned to 
 #'        corresponding variable-pair. This decreases the number of calculations in 2-fold 
-#'        meaning faster execution. (By default: \code{symmetric = FALSE}) 
+#'        meaning faster execution. (By default: \code{FALSE}) 
 #'        \item \code{association.fun}:  A function that is used to calculate (dis-)similarity
 #'        between features. Function must take matrix as an input and give numeric
 #'        values as an output. Adjust \code{method} and other parameters correspondingly.

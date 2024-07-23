@@ -32,7 +32,7 @@ getMediation(x, ...)
   outcome,
   treatment,
   mediator = NULL,
-  assay.type = NULL,
+  assay.type = "counts",
   dimred = NULL,
   family = gaussian(),
   covariates = NULL,
@@ -48,42 +48,41 @@ getMediation(x, ...)
 \item{...}{additional parameters that can be passed to
 \code{\link[mediation:mediate]{mediate}}.}
 
-\item{outcome}{A single character value indicating the colData variable used
+\item{outcome}{\code{Character scalar}. Indicates the colData variable used
 as outcome in the model.}
 
-\item{treatment}{A single character value indicating the colData variable
+\item{treatment}{\code{Character scalar}. Indicates the colData variable
 used as treatment in the model.}
 
-\item{name}{A single character value to name the metadata element and avoid
-overwriting other metadata slots. It is supported only by
-\code{addMediation}. (default: \code{name = "mediation"})}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"mediation"})}
 
-\item{mediator}{A single character value indicating the colData variable used
-as mediator in the model. (default: \code{mediator = NULL})}
+\item{mediator}{\code{Character scalar}. Indicates the colData variable used
+as mediator in the model. (Default: \code{NULL})}
 
-\item{assay.type}{A single character value indicating the assay used for
-feature-wise mediation analysis. (default: \code{assay.type = NULL})}
+\item{assay.type}{\code{Character scalar}. Specifies the assay used for
+feature-wise mediation analysis. (Default: \code{"counts"})}
 
-\item{dimred}{A single character value indicating the reduced dimension
+\item{dimred}{\code{Character scalar}. Indicates the reduced dimension
 result in \code{reducedDims(object)} for component-wise mediation analysis.
-(default: \code{dimred = NULL})}
+(Default: \code{NULL})}
 
-\item{family}{A specification for the outcome model link function.
-(default: \code{family = gaussian("identity")})}
+\item{family}{\code{Character scalar}. A specification for the outcome model link function.
+(Default: \code{gaussian("identity")})}
 
-\item{covariates}{Single character value or list indicating the colData
+\item{covariates}{\code{Character scalar} or \code{character vector}. Indicates the colData
 variables used as covariates in the model.
-(default: \code{covariates = NULL})}
+(Default: \code{NULL})}
 
-\item{p.adj.method}{A single character value for selecting adjustment method
+\item{p.adj.method}{\code{Character scalar}. Selects adjustment method
 of p-values. Passed to \code{p.adjust} function.
-(default: \code{p.adj.method = "holm"})}
+(Default: \code{"holm"})}
 
-\item{add.metadata}{TRUE or FALSE, should the model metadata be returned.
-(default: \code{add.metadata = FALSE})}
+\item{add.metadata}{\code{Logical scalar}. Should the model metadata be returned.
+(Default: \code{FALSE})}
 
-\item{verbose}{TRUE or FALSE, should execution messages be printed.
-(default: \code{verbose = TRUE})}
+\item{verbose}{\code{Logical scalar}. Should execution messages be printed.
+(Default: \code{TRUE})}
 }
 \value{
 \code{getMediation} returns a \code{data.frame} of adjusted p-values and

@@ -99,38 +99,34 @@ object.}
 
 \item{...}{optional arguments not used.}
 
-\item{k}{the number of Dirichlet components to fit. See
-\code{\link[DirichletMultinomial:dmn]{dmn}}}
+\item{k}{\code{Numeric scalar}. The number of Dirichlet components to fit. See
+\code{\link[DirichletMultinomial:dmn]{dmn}}. (Default: \code{1})}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether the UniFrac calculation should be parallelized.}
+object specifying whether the calculation should be parallelized.}
 
-\item{seed}{random number seed. See
+\item{seed}{\code{Numeric scalar}. Random number seed. See
 \code{\link[DirichletMultinomial:dmn]{dmn}}}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{exprs_values}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead.)}
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{transposed}{Logical scalar, is x transposed with samples in rows?}
+\item{transposed}{\code{Logical scalar}. Is \code{x} transposed with samples in rows?
+(Default: \code{FALSE})}
 
-\item{name}{the name to store the result in
+\item{name}{\code{Character scalar}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
-\item{type}{the type of measure used for the goodness of fit. One of
+\item{type}{\code{Character scalar}. The type of measure used for the goodness of fit. One of
 \sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.}
 
-\item{variable}{a variable from \code{colData} to use as a grouping variable.
-Must be a character of factor.}
+\item{variable}{\code{Character scalar}. A variable from \code{colData} to use as a
+grouping variable. Must be a character of factor.}
 }
 \value{
 \code{calculateDMN} and \code{getDMN} return a list of \code{DMN} objects,
