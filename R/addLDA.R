@@ -152,7 +152,7 @@ setMethod("addLDA", "SummarizedExperiment",
         # If topicdoc package is available, calculate also coherence. Each topic
         # has own coherence, so calculate mean.
         if( require("topicdoc", quietly = TRUE) ){
-            coherence <- topicdoc::topic_coherence(model, df)
+            coherence <- topic_coherence(model, df)
             names(coherence) <- paste0("coherence_", seq_len(length(coherence)))
             coherence <- c(coherence = mean(coherence), coherence)
             res <- c(res, coherence)
