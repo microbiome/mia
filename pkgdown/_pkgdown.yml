@@ -1,79 +1,86 @@
 destination: docs
 reference:
 - title: Association
-  contents:
-    - getCrossAssociation
-    - getMediation
+- contents:
+  - getCrossAssociation
+  - getMediation
+
 - title: Clustering
-  contents:
-    - calculateDMN
-    - addCluster
+- contents:
+  - calculateDMN
+  - addCluster
+
 - title: Data handling
-  - subtitle: Agglomeration
-    - contents:
-    - agglomerateByRank
-    - agglomerateByPrevalence
-    - splitOn
-  - subtitle: Transformation
-    - contents:
-    - transformAssay
+- subtitle: Agglomeration
+- contents:
+  - agglomerateByRank
+  - agglomerateByPrevalence
+  - splitOn
+- subtitle: Transformation
+- contents:
+  - transformAssay
+- subtitle: Other functions
+- contents:
+  - mergeSEs
+  - meltSE
+  - rarefyAssay
+  
 - title: Datasets
-  contents:
-    - mia-datasets
-    - dmn_se
-    - enterotype
-    - esophagus
-    - GlobalPatterns
-    - HintikkaXOData
-    - peerj13075
-    - Tengeler2020
-    - Tito2024QMP
+- contents:
+  - mia-datasets
+  - dmn_se
+  - enterotype
+  - esophagus
+  - GlobalPatterns
+  - HintikkaXOData
+  - peerj13075
+  - Tengeler2020
+  - Tito2024QMP
 - title: Dataset description
-  contents:
-    - getPrevalence
-    - getPrevalentAbundance
-    - summaries
-    - getDominant
-  - subtitle: Data loading
-  - contents:
-    - importBIOM
-    - importQIIME2
-    - importMothur
-    - importMetaPhlAn
-    - importHUMAnN
-    - importTaxpasta
-    - convertFromDADA2
-    - convertFromPhyloseq
-  - subtitle: Other function
-  - contents:
-    - mergeSEs
-    - meltSE
-    - rarefyAssay
+- contents:
+  - getPrevalence
+  - getPrevalentAbundance
+  - summaries
+  - getDominant
+- title: Data loading
+- contents:
+  - importBIOM
+  - importQIIME2
+  - importMothur
+  - importMetaPhlAn
+  - importHUMAnN
+  - importTaxpasta
+  - convertFromDADA2
+  - convertFromPhyloseq
+
 - title: Diversity
-  - subtitle: Alpha Diversity
-    - contents:
-    - addAlpha
-  - subtitle: Dissimilarity
-    - contents:
-    - calculateUnifrac
-    - calculateJSD
-    - calculateOverlap
-    - addDivergence
-  - subtitle: Ordination
-    - contents:
-    - runNMDS
-    - runCCA
-    - runDPCoA
+- subtitle: Alpha Diversity
+- contents:
+  - addAlpha
+- subtitle: Dissimilarity
+- contents:
+  - calculateUnifrac
+  - calculateJSD
+  - calculateOverlap
+  - addDivergence
+- subtitle: Ordination
+- contents:
+  - runNMDS
+  - runCCA
+  - runDPCoA
+
 - title: Package
-  contents:
-    - mia-package
+- contents:
+  - mia-package
+
 - title: Taxonomy information
-  contents:
-    - taxonomyRanks
-    - hierarchy-tree
-  - subtitle: decontam
-  - contents:
-    - isContaminant
+- contents:
+  - taxonomyRanks
+  - hierarchy-tree
+- subtitle: decontam
+- contents:
+  - isContaminant
+
 - title: Deprecated functions
-  contents:
-    - deprecate
+- contents:
+  - deprecate
