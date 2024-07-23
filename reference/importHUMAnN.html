@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.33</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Import HUMAnN results to <code>TreeSummarizedExperiment</code></h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/importHumann.R" class="external-link"><code>R/importHumann.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/importHumann.R" class="external-link"><code>R/importHumann.R</code></a></small>
     <div class="hidden name"><code>importHUMAnN.Rd</code></div>
     </div>
 
@@ -58,7 +58,7 @@
 
 
 <dl><dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
-<dd><p><code>Character scalar</code>. Defines the file
+<dd><p>a single <code>character</code> value defining the file
 path of the HUMAnN file. The file must be in merged HUMAnN format.</p></dd>
 
 
@@ -66,7 +66,7 @@ path of the HUMAnN file. The file must be in merged HUMAnN format.</p></dd>
 <dd><p>a DataFrame-like object that includes sample names in
 rownames, or a single <code>character</code> value defining the file
 path of the sample metadata file. The file must be in <code>tsv</code> format
-(Default: <code>NULL</code>).</p></dd>
+(default: <code>col.data = NULL</code>).</p></dd>
 
 
 <dt id="arg-coldata">colData<a class="anchor" aria-label="anchor" href="#arg-coldata"></a></dt>
@@ -74,16 +74,17 @@ path of the sample metadata file. The file must be in <code>tsv</code> format
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional arguments:</p><ul><li><p><code>assay.type</code>:  <code>Character scalar</code>. Specifes the name of the assy
-used in calculation.
-(Default: <code>"counts"</code>)</p></li>
-<li><p><code>prefix.rm</code>:  <code>Logical scalar</code>. Should
-taxonomic prefixes be removed? (Default: <code>FALSE</code>)</p></li>
-<li><p><code>remove.suffix</code>: <code>Logical scalar</code>. Should
+<dd><p>additional arguments:</p><ul><li><p><code>assay.type</code>: A single character value for naming
+<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">assay</a></code>
+(default: <code>assay.type = "counts"</code>)</p></li>
+<li><p><code>prefix.rm</code>: <code>TRUE</code> or <code>FALSE</code>: Should
+taxonomic prefixes be removed? (default:
+<code>prefix.rm = FALSE</code>)</p></li>
+<li><p><code>remove.suffix</code>: <code>TRUE</code> or <code>FALSE</code>: Should
 suffixes of sample names be removed? HUMAnN pipeline adds suffixes
 to sample names. Suffixes are formed from file names. By selecting
 <code>remove.suffix = TRUE</code>, you can remove pattern from end of sample
-names that is shared by all. (Default: <code>FALSE</code>)</p></li>
+names that is shared by all. (default: <code>remove.suffix = FALSE</code>)</p></li>
 </ul></dd>
 
 </dl></div>
@@ -117,9 +118,9 @@ microbial communities with bioBakery 3. <em>eLife</em>. 10:e65088.</p>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="importMetaPhlAn.html">importMetaPhlAn</a></code>
-<code><a href="convertFromPhyloseq.html">convertFromPhyloseq</a></code>
-<code><a href="convertFromBIOM.html">convertFromBIOM</a></code>
-<code><a href="convertFromDADA2.html">convertFromDADA2</a></code>
+<code><a href="convert.html">convertFromPhyloseq</a></code>
+<code><a href="convert.html">convertFromBIOM</a></code>
+<code><a href="convert.html">convertFromDADA2</a></code>
 <code><a href="importQIIME2.html">importQIIME2</a></code>
 <code><a href="importMothur.html">importMothur</a></code></p></div>
     </div>

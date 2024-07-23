@@ -19,7 +19,7 @@ reducedDims and are available for all the expected functions."><!-- mathjax --><
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.33</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ reducedDims and are available for all the expected functions."><!-- mathjax --><
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculation of Double Principal Correspondance analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/runDPCoA.R" class="external-link"><code>R/runDPCoA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/runDPCoA.R" class="external-link"><code>R/runDPCoA.R</code></a></small>
     <div class="hidden name"><code>runDPCoA.Rd</code></div>
     </div>
 
@@ -95,9 +95,12 @@ reducedDims and are available for all the expected functions."><!-- mathjax --><
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a numeric matrix with samples as rows or a
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-object.</p></dd>
+<dd><p>For <code>getDPCoA</code>, a numeric matrix of expression values
+where rows are features and columns are cells.
+Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.</p>
+<p>For <code>addDPCoA</code> a <a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a> containing the
+expression values as well as a <code>rowTree</code> to calculate <code>y</code> using
+<code><a href="https://rdrr.io/pkg/ape/man/cophenetic.phylo.html" class="external-link">cophenetic.phylo</a></code>.</p></dd>
 
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
@@ -110,20 +113,20 @@ object.</p></dd>
 
 
 <dt id="arg-ncomponents">ncomponents<a class="anchor" aria-label="anchor" href="#arg-ncomponents"></a></dt>
-<dd><p><code>Numeric scalar</code>. Indicates the number of DPCoA dimensions
-to obtain. (Default: <code>2</code>)</p></dd>
+<dd><p>Numeric scalar indicating the number of DPCoA dimensions
+to obtain.</p></dd>
 
 
 <dt id="arg-ntop">ntop<a class="anchor" aria-label="anchor" href="#arg-ntop"></a></dt>
-<dd><p><code>Numeric scalar</code>. Specifies the number of features with the highest
+<dd><p>Numeric scalar specifying the number of features with the highest
 variances to use for dimensionality reduction. Alternatively <code>NULL</code>,
-if all features should be used. (Default: <code>NULL</code>)</p></dd>
+if all features should be used. (default: <code>ntop = NULL</code>)</p></dd>
 
 
 <dt id="arg-subset-row">subset.row<a class="anchor" aria-label="anchor" href="#arg-subset-row"></a></dt>
-<dd><p><code>Character Vector</code>. Specifies the subset of features to use for
+<dd><p>Vector specifying the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
-integer vector of row indices or a logical vector. (Default: <code>NULL</code>)</p></dd>
+integer vector of row indices or a logical vector.</p></dd>
 
 
 <dt id="arg-subset-row">subset_row<a class="anchor" aria-label="anchor" href="#arg-subset-row"></a></dt>
@@ -131,31 +134,35 @@ integer vector of row indices or a logical vector. (Default: <code>NULL</code>)<
 
 
 <dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
-<dd><p><code>Logical scalar</code>. Sshould the expression values be standardized?
-(Default: <code>FALSE</code>)</p></dd>
+<dd><p>Logical scalar, should the expression values be standardized?</p></dd>
 
 
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
-<dd><p><code>Logical scalar</code>. Is x transposed with samples in rows?
-(Default: <code>FALSE</code>)</p></dd>
+<dd><p>Logical scalar, is x transposed with cells in rows?</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
+will be disabled.)</p></dd>
 
 
 <dt id="arg-exprs-values">exprs_values<a class="anchor" aria-label="anchor" href="#arg-exprs-values"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay.type</code> instead.)</p></dd>
 
 
 <dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-tree used in calculation. (Default: <code>"phylo"</code>)</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+rowTree will be used in calculation.
+(By default: <code>tree.name = "phylo"</code>)</p></dd>
 
 
 <dt id="arg-tree-name">tree_name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
@@ -163,13 +170,13 @@ tree used in calculation. (Default: <code>"phylo"</code>)</p></dd>
 
 
 <dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
-<dd><p><code>Character scalar</code> or <code>integer scalar</code>. Specifies an
-alternative experiment containing the input data. (Default: <code>NULL</code>)</p></dd>
+<dd><p>String or integer scalar specifying an alternative experiment
+containing the input data.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p><code>Character scalar</code>. A name for the column of the
-<code>colData</code> where results will be stored. (Default: <code>"DPCoA"</code>)</p></dd>
+<dd><p>String specifying the name to be used to store the result in the
+reducedDims of the output.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -181,10 +188,7 @@ columns</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>For <code>addDPCoA</code> a <a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a> containing the
-expression values as well as a <code>rowTree</code> to calculate <code>y</code> using
-<code><a href="https://rdrr.io/pkg/ape/man/cophenetic.phylo.html" class="external-link">cophenetic.phylo</a></code>.</p>
-<p>In addition to the reduced dimension on the features, the reduced dimension
+    <p>In addition to the reduced dimension on the features, the reduced dimension
 for samples are returned as well as <code>sample_red</code> attribute.
 <code>eig</code>, <code>feature_weights</code> and <code>sample_weights</code> are
 returned as attributes as well.</p>
