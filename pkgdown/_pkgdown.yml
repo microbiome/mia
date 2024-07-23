@@ -6,7 +6,6 @@ reference:
   - agglomerateByRank
   - agglomerateByPrevalence
   - splitOn
-  - mergeSEs
 - subtitle: Transformation
 - contents:
   - transformAssay
@@ -26,10 +25,10 @@ reference:
 - title: Diversity indeces
 - subtitle: Alpha Diversity
 - contents:
-  - addDivergence
   - addAlpha
 - subtitle: Beta Diversity
 - contents:
+  - addDivergence
   - calculateUnifrac
   - calculateJSD
   - runNMDS
@@ -47,6 +46,7 @@ reference:
   - getCrossAssociation
   - getMediation
   - hierarchy-tree
+  - mergeSEs
 - subtitle: Dominance
 - contents:
   - getDominant
@@ -60,9 +60,7 @@ reference:
 - subtitle: Helper
 - contents:
   - meltSE
-  - relabundance
   - rarefyAssay
-  - subsetSamples
 - subtitle: Datasets
 - contents:
   - mia-datasets
