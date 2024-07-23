@@ -55,4 +55,9 @@ test_that("addLDA", {
   ref <- topicmodels::perplexity(attr(lda, "model"))
   test <- attr(lda, "eval_metrics")[["perplexity"]]
   expect_equal(test, ref)
+  # Check coherence
+  skip_if_not(require("topicdoc", quietly = TRUE))
+  ref <- mean( topicdoc::topic_coherence(attr(lda, "model"), df) )
+  test <- attr(lda, "eval_metrics")[["coherence"]]
+  expect_equal(test, ref)
 })
