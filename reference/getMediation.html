@@ -19,7 +19,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.39</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Perform mediation analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/mediate.R" class="external-link"><code>R/mediate.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/mediate.R" class="external-link"><code>R/mediate.R</code></a></small>
     <div class="hidden name"><code>getMediation.Rd</code></div>
     </div>
 
@@ -84,7 +84,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
 <span>  <span class="va">outcome</span>,</span>
 <span>  <span class="va">treatment</span>,</span>
 <span>  mediator <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dimred <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  covariates <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -109,61 +109,62 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
 
 
 <dt id="arg-outcome">outcome<a class="anchor" aria-label="anchor" href="#arg-outcome"></a></dt>
-<dd><p><code>Character scalar</code>. Indicates the colData variable used
+<dd><p>A single character value indicating the colData variable used
 as outcome in the model.</p></dd>
 
 
 <dt id="arg-treatment">treatment<a class="anchor" aria-label="anchor" href="#arg-treatment"></a></dt>
-<dd><p><code>Character scalar</code>. Indicates the colData variable
+<dd><p>A single character value indicating the colData variable
 used as treatment in the model.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p><code>Character scalar</code>. A name for the column of the
-<code>colData</code> where results will be stored. (Default: <code>"mediation"</code>)</p></dd>
+<dd><p>A single character value to name the metadata element and avoid
+overwriting other metadata slots. It is supported only by
+<code>addMediation</code>. (default: <code>name = "mediation"</code>)</p></dd>
 
 
 <dt id="arg-mediator">mediator<a class="anchor" aria-label="anchor" href="#arg-mediator"></a></dt>
-<dd><p><code>Character scalar</code>. Indicates the colData variable used
-as mediator in the model. (Default: <code>NULL</code>)</p></dd>
+<dd><p>A single character value indicating the colData variable used
+as mediator in the model. (default: <code>mediator = NULL</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the assay used for
-feature-wise mediation analysis. (Default: <code>"counts"</code>)</p></dd>
+<dd><p>A single character value indicating the assay used for
+feature-wise mediation analysis. (default: <code>assay.type = NULL</code>)</p></dd>
 
 
 <dt id="arg-dimred">dimred<a class="anchor" aria-label="anchor" href="#arg-dimred"></a></dt>
-<dd><p><code>Character scalar</code>. Indicates the reduced dimension
+<dd><p>A single character value indicating the reduced dimension
 result in <code>reducedDims(object)</code> for component-wise mediation analysis.
-(Default: <code>NULL</code>)</p></dd>
+(default: <code>dimred = NULL</code>)</p></dd>
 
 
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
-<dd><p><code>Character scalar</code>. A specification for the outcome model link function.
-(Default: <code>gaussian("identity")</code>)</p></dd>
+<dd><p>A specification for the outcome model link function.
+(default: <code>family = gaussian("identity")</code>)</p></dd>
 
 
 <dt id="arg-covariates">covariates<a class="anchor" aria-label="anchor" href="#arg-covariates"></a></dt>
-<dd><p><code>Character scalar</code> or <code>character vector</code>. Indicates the colData
+<dd><p>Single character value or list indicating the colData
 variables used as covariates in the model.
-(Default: <code>NULL</code>)</p></dd>
+(default: <code>covariates = NULL</code>)</p></dd>
 
 
 <dt id="arg-p-adj-method">p.adj.method<a class="anchor" aria-label="anchor" href="#arg-p-adj-method"></a></dt>
-<dd><p><code>Character scalar</code>. Selects adjustment method
+<dd><p>A single character value for selecting adjustment method
 of p-values. Passed to <code>p.adjust</code> function.
-(Default: <code>"holm"</code>)</p></dd>
+(default: <code>p.adj.method = "holm"</code>)</p></dd>
 
 
 <dt id="arg-add-metadata">add.metadata<a class="anchor" aria-label="anchor" href="#arg-add-metadata"></a></dt>
-<dd><p><code>Logical scalar</code>. Should the model metadata be returned.
-(Default: <code>FALSE</code>)</p></dd>
+<dd><p>TRUE or FALSE, should the model metadata be returned.
+(default: <code>add.metadata = FALSE</code>)</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p><code>Logical scalar</code>. Should execution messages be printed.
-(Default: <code>TRUE</code>)</p></dd>
+<dd><p>TRUE or FALSE, should execution messages be printed.
+(default: <code>verbose = TRUE</code>)</p></dd>
 
 </dl></div>
     <div id="value">

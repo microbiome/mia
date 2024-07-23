@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.39</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Estimate overlap</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/harm/R/calculateOverlap.R" class="external-link"><code>R/calculateOverlap.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/calculateOverlap.R" class="external-link"><code>R/calculateOverlap.R</code></a></small>
     <div class="hidden name"><code>calculateOverlap.Rd</code></div>
     </div>
 
@@ -85,25 +85,28 @@ object.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a numeric matrix with samples as rows or a
+<dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-object.</p></dd>
+object containing a tree.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p>A single character value for selecting the
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
+to calculate the overlap.</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
+will be disabled.)</p></dd>
 
 
 <dt id="arg-detection">detection<a class="anchor" aria-label="anchor" href="#arg-detection"></a></dt>
-<dd><p><code>Numeric scalar</code>. Defines detection threshold for
+<dd><p>A single numeric value for selecting detection threshold for
 absence/presence of features. Feature that has abundance under threshold in
-either of samples, will be discarded when evaluating overlap between samples.
-(Default: <code>0</code>)</p></dd>
+either of samples, will be discarded when evaluating overlap between samples.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -111,8 +114,8 @@ either of samples, will be discarded when evaluating overlap between samples.
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of overlap matrix that
-is stored in reducedDim(x). (Default: <code>"overlap"</code>)</p></dd>
+<dd><p>A single character value specifying the name of overlap matrix that
+is stored in reducedDim(x).</p></dd>
 
 </dl></div>
     <div id="value">
@@ -123,7 +126,7 @@ reducedDim.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>This function calculates overlap between all the sample-pairs. Overlap
+    <p>These function calculates overlap between all the sample-pairs. Overlap
 reflects similarity between sample-pairs.</p>
 <p>When overlap is calculated using relative abundances, the higher the value the
 higher the similarity is, When using relative abundances, overlap value 1 means that

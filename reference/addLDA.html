@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.33</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.39</span>
       </span>
     </div>
 
@@ -62,7 +62,7 @@ object.</p>
 <span><span class="fu">addLDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">getLDA</span><span class="op">(</span><span class="va">x</span>, k <span class="op">=</span> <span class="fl">2</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">getLDA</span><span class="op">(</span><span class="va">x</span>, k <span class="op">=</span> <span class="fl">2</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, eval.metric <span class="op">=</span> <span class="st">"perplexity"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">addLDA</span><span class="op">(</span><span class="va">x</span>, k <span class="op">=</span> <span class="fl">2</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, name <span class="op">=</span> <span class="st">"LDA"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
@@ -82,13 +82,21 @@ object.</p></dd>
 
 
 <dt id="arg-k">k<a class="anchor" aria-label="anchor" href="#arg-k"></a></dt>
-<dd><p><code>Integer scalar</code>. A number of latent vectors/topics.
+<dd><p><code>Integer vector</code>. A number of latent vectors/topics.
 (Default: <code>2</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
 <dd><p><code>Character scalar</code>. Specifies which assay to use for
 LDA ordination. (Default: <code>"counts"</code>)</p></dd>
+
+
+<dt id="arg-eval-metric">eval.metric<a class="anchor" aria-label="anchor" href="#arg-eval-metric"></a></dt>
+<dd><p><code>Character scalar</code>. Specifies evaluation metric that
+will be used to select the model with the best fit. Must be either
+<code>"perplexity"</code> (<code><a href="https://rdrr.io/pkg/topicmodels/man/perplexity.html" class="external-link">topicmodels::perplexity</a></code>) or <code>"coherence"</code>
+(<code><a href="https://rdrr.io/pkg/topicdoc/man/topic_coherence.html" class="external-link">topicdoc::topic_coherence</a></code>, the best model is selected based on mean
+coherence). (Default: <code>"perplexity"</code>)</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
@@ -126,12 +134,20 @@ feature loadings.</p>
 <span class="r-in"><span><span class="va">loadings</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu">reducedDim</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"LDA"</span><span class="op">)</span>, <span class="st">"loadings"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">loadings</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                            1            2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AD3             1.020253e-03 2.819242e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Acidobacteria   3.347098e-02 6.296243e-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  5.566462e-02 1.294803e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Armatimonadetes 1.776064e-04 5.327639e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BRC1            5.688214e-05 2.429580e-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   2.794636e-01 9.743763e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AD3             1.719380e-07 0.0015045987</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Acidobacteria   2.714110e-05 0.0558112697</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  3.048172e-02 0.1695599059</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Armatimonadetes 1.046407e-05 0.0007947817</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BRC1            1.195113e-07 0.0001087366</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   2.904463e-01 0.0755158799</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Estimate models with number of topics from 2 to 10</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addLDA</span><span class="op">(</span><span class="va">tse</span>, k <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">9</span>, <span class="fl">10</span><span class="op">)</span>, name <span class="op">=</span> <span class="st">"LDA_10"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Get the evaluation metrics</span></span></span>
+<span class="r-in"><span><span class="va">tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu">reducedDim</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"LDA_10"</span><span class="op">)</span>,<span class="st">"eval_metrics"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Plot</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tab</span><span class="op">[[</span><span class="st">"k"</span><span class="op">]</span><span class="op">]</span>, <span class="va">tab</span><span class="op">[[</span><span class="st">"perplexity"</span><span class="op">]</span><span class="op">]</span>, xlab <span class="op">=</span> <span class="st">"k"</span>, ylab <span class="op">=</span> <span class="st">"perplexity"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="addLDA-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>
