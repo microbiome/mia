@@ -353,7 +353,7 @@
 # This function can be used to add values to reducedDims
 .add_values_to_reducedDims <- function(x, values, name, ...){
     # Check values
-    if( !((is(values, "matrix") && length(values) > 0)) ){
+    if( !((is(values, "matrix") || is(values, "dist")) && length(values) > 0) ){
         stop("'values' must be a matrix.", call. = FALSE)
     }
     # Check names
@@ -371,12 +371,10 @@
     }
     # Throw warning if values of reducedDim are overwritten
     if ( name %in% names(reducedDims(x)) ){
-        warning(
-          "The following values are already present in `reducedDims` and will ",
-          "be overwritten: '",
-          name,
-          "'. Consider using the 'name' argument to specify alternative ",
-          "names.", call. = FALSE)
+        warning("The following values are already present in `reducedDims` and", 
+                " will be overwritten: '", name,
+                "'. Consider using the 'name' argument to specify alternative ",
+                "names.", call. = FALSE)
     }
     reducedDim(x, name) <- values
     return(x)
