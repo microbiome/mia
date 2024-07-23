@@ -71,7 +71,7 @@ setMethod("getLDA", "SummarizedExperiment",
         }
         .check_assay_present(assay.type, x) 
         df <- as.data.frame(t(assay(x, assay.type)))
-        # Estimate LDA model using VEM algorithm
+        # Estimate LDA model
         lda_model <- topicmodels::LDA(df, k, ...)
         # Calculate scores and loadings
         posteriors <- topicmodels::posterior(lda_model, df)

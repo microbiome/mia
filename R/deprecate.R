@@ -1031,7 +1031,7 @@ setMethod(
     "estimateEvenness", signature = c(x = "ANY"), function(x, ...){
         .Deprecated(msg = paste0(
             "'estimateEvenness' is deprecated. Use 'addAlpha' instead."))
-        .estimate_evenness(x, ...)
+        addAlpha(x, ...)
     }
 )
 
@@ -1048,7 +1048,7 @@ setMethod(
     function(x, ...){
         .Deprecated(msg = paste0(
           "'estimateRichness' is deprecated. Use 'addAlpha' instead."))
-        .estimate_richness(x, ...)
+        addAlpha(x, ...)
     }
 )
 
@@ -1064,7 +1064,7 @@ setMethod(
     "estimateDiversity", signature = c(x = "ANY"), function(x, ...){
         .Deprecated(msg = paste0(
             "'estimateDiversity' is deprecated. Use 'addAlpha' instead."))
-        .estimate_diversity(x, ...)
+        addAlpha(x, ...)
     }
 )
 
@@ -1081,7 +1081,7 @@ setMethod(
     function(x, ...){
         .Deprecated(msg = paste0(
           "'estimateFaith' is deprecated. Use 'addAlpha' instead."))
-        .estimate_faith(x, ...)
+        addAlpha(x, ...)
     }
 )
 
@@ -1098,5 +1098,5 @@ setMethod(
     function(x, ...){
         .Deprecated(msg = paste0(
           "'estimateDominance' is deprecated. Use 'addAlpha' instead."))
-        .estimate_dominance(x, ...)
+        addAlpha(x, ...)
     })
