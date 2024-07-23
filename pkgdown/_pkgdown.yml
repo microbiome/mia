@@ -5,7 +5,7 @@ reference:
     - getCrossAssociation
     - getMediation
 - title: Clustering
-  - contents:
+  contents:
     - calculateDMN
     - addCluster
 - title: Data handling
