@@ -1,68 +1,25 @@
 destination: docs
 reference:
-- title: Data handling
-- subtitle: Agglomeration
-- contents:
-  - agglomerateByRank
-  - agglomerateByPrevalence
-  - splitOn
-- subtitle: Transformation
-- contents:
-  - transformAssay
-- subtitle: Data loading
-- contents:
-  - importBIOM
-  - importQIIME2
-  - importMothur
-  - importMetaPhlAn
-  - importHUMAnN
-  - importTaxpasta
-  - convertFromDADA2
-  - convertFromPhyloseq
-- title: Taxonomic data
+- title: Association
   contents:
-  - taxonomyRanks
-- title: Diversity indeces
-- subtitle: Alpha Diversity
-- contents:
-  - addAlpha
-- subtitle: Beta Diversity
-- contents:
-  - addDivergence
-  - calculateUnifrac
-  - calculateJSD
-  - runNMDS
-  - runCCA
-  - calculateOverlap
-- subtitle: Other diversity measurements
-- contents:
-  - runDPCoA
-- title: Other functions
-- subtitle: Dataset description
-- contents:
-  - getPrevalence
-  - getPrevalentAbundance
-  - summaries
   - getCrossAssociation
   - getMediation
-  - hierarchy-tree
-  - mergeSEs
-- subtitle: Dominance
-- contents:
-  - getDominant
-- subtitle: Clustering
-- contents:
+- title: Clustering
+  contents:
   - calculateDMN
   - addCluster
-- subtitle: decontam
-- contents:
-  - isContaminant
-- subtitle: Helper
-- contents:
-  - meltSE
-  - rarefyAssay
-- subtitle: Datasets
-- contents:
+- title: Data handling
+  subtitles:
+  - Agglomeration
+    contents:
+    - agglomerateByRank
+    - agglomerateByPrevalence
+    - splitOn
+  - Transformation
+    contents:
+    - transformAssay
+- title: Datasets
+  contents:
   - mia-datasets
   - dmn_se
   - enterotype
@@ -72,9 +29,55 @@ reference:
   - peerj13075
   - Tengeler2020
   - Tito2024QMP
-- subtitle: Package
-- contents:
-  - mia-package
-- subtitle: Deprecated functions
-- contents:
+- title: Dataset description
+  contents:
+  - getPrevalence
+  - getPrevalentAbundance
+  - summaries
+  - getDominant
+  subtitles:
+  - Data loading
+    contents:
+    - importBIOM
+    - importQIIME2
+    - importMothur
+    - importMetaPhlAn
+    - importHUMAnN
+    - importTaxpasta
+    - convertFromDADA2
+    - convertFromPhyloseq
+  - Other function
+    contents:
+    - mergeSEs
+    - meltSE
+    - rarefyAssay
+- title: Deprecated functions
+  contents:
   - deprecate
+- title: Diversity
+  subtitles:
+  - Alpha Diversity
+    contents:
+    - addAlpha
+  - Dissimilarity
+    contents:
+    - calculateUnifrac
+    - calculateJSD
+    - calculateOverlap
+    - addDivergence
+  - Ordination
+    contents:
+    - runNMDS
+    - runCCA
+    - runDPCoA
+- title: Package
+  contents:
+  - mia-package
+- title: Taxonomy information
+  contents:
+  - taxonomyRanks
+  - hierarchy-tree
+  subtitles:
+  - decontam
+    contents:
+    - isContaminant
