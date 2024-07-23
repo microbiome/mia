@@ -68,6 +68,7 @@ reference:
   - runNMDS
   - runCCA
   - runDPCoA
+  - addLDA
 
 - title: Package
 - contents:
