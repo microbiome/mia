@@ -1,7 +1,7 @@
 destination: docs
 reference:
 - title: Association
-  - contents:
+  contents:
     - getCrossAssociation
     - getMediation
 - title: Clustering
@@ -18,7 +18,7 @@ reference:
     - contents:
     - transformAssay
 - title: Datasets
-  - contents:
+  contents:
     - mia-datasets
     - dmn_se
     - enterotype
@@ -29,7 +29,7 @@ reference:
     - Tengeler2020
     - Tito2024QMP
 - title: Dataset description
-  - contents:
+  contents:
     - getPrevalence
     - getPrevalentAbundance
     - summaries
@@ -50,7 +50,7 @@ reference:
     - meltSE
     - rarefyAssay
 - title: Deprecated functions
-  - contents:
+  contents:
     - deprecate
 - title: Diversity
   - subtitle: Alpha Diversity
@@ -68,10 +68,10 @@ reference:
     - runCCA
     - runDPCoA
 - title: Package
-  - contents:
+  contents:
     - mia-package
 - title: Taxonomy information
-  - contents:
+  contents:
     - taxonomyRanks
     - hierarchy-tree
   - subtitle: decontam
