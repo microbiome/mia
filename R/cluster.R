@@ -7,14 +7,15 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #' 
-#' @param by A character value for selecting if association are calculated
+#' @param by \code{Character scalar}. Determines if association is calculated
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}.
 #'   
 #' @param MARGIN Deprecated. Use \code{by} instead.
 #'   
-#' @param clust.col A single character value indicating the name of the 
+#' @param clust.col \code{Character scalar}. Indicates the name of the 
 #'   \code{rowData} (or \code{colData}) where the data will be stored.
+#'   (Default: \code{"clusters"})
 #'   
 #' @param ... Additional parameters to use altExps for example
 #' @inheritParams bluster::clusterRows

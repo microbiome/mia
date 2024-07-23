@@ -1,22 +1,19 @@
-#' Create a phyloseq object from a TreeSummarizedExperiment object
-#'
+#' Create a phyloseq object from a \code{TreeSummarizedExperiment} object
+#'  
+#' @inheritParams convertFromBIOM
+#' 
 #' @param x a 
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object
 #'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   included in the phyloseq object that is created. 
-#'   (By default: \code{assay.type = "counts"})
+#' @param assay.type \code{Character scalar}. Specifies the name of assay 
+#'   used. (Default: \code{"counts"})
 #'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'   
-#' @param tree.name a single \code{character} value for specifying which
-#'   tree will be included in the phyloseq object that is created, 
-#'   (By default: \code{tree.name = "phylo"})
+#' @param tree.name \code{Character scalar}. Specifies the name of the
+#'   tree to be included in the phyloseq object that is created, 
+#'   (Default: \code{"phylo"})
 #'   
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
@@ -30,7 +27,7 @@
 #' \code{convertToPhyloseq} returns an object of class 
 #' \code{\link[phyloseq:phyloseq-class]{phyloseq}}
 #'
-#' @rdname convert
+#' @rdname convertFromPhyloseq
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -60,7 +57,7 @@ setGeneric("convertToPhyloseq", signature = c("x"),
                standardGeneric("convertToPhyloseq"))
 
 
-#' @rdname convert
+#' @rdname convertFromPhyloseq
 #' @export
 setMethod("convertToPhyloseq",
           signature = c(x = "SummarizedExperiment"),
@@ -121,7 +118,7 @@ setMethod("convertToPhyloseq",
     }
 )
 
-#' @rdname convert
+#' @rdname convertFromPhyloseq
 #' @export
 setMethod("convertToPhyloseq",
           signature = c(x = "TreeSummarizedExperiment"),

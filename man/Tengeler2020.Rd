@@ -3,7 +3,7 @@
 \docType{data}
 \name{Tengeler2020}
 \alias{Tengeler2020}
-\title{Tengeler2020}
+\title{Gut microbiota profiles of 27 individuals with ADHD and healthy controls}
 \format{
 A TreeSummarizedExperiment with 151 features and 27 samples. The
 rowData contains taxonomic information at Kingdom, Phylum, Class, Order,

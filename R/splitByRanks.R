@@ -7,29 +7,22 @@
 #' experiments and flattens them again into a single 
 #' \code{SummarizedExperiment}.
 #'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
-#'
-#' @param ranks a character vector defining taxonomic ranks. Must all be values
+#' @inheritParams getPrevalence
+#' 
+#' @param ranks \code{Character vector}. Defines taxonomic ranks. Must all be values
 #'   of \code{taxonomyRanks()} function.
 #'
-#' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
-#'   removed? Use it with caution, since results with NA on the selected rank
-#'   will be dropped. This setting can be tweaked by defining
-#'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
-#'
-#' @param keep.dimred \code{TRUE} or \code{FALSE}: Should the
+#' @param keep.dimred \code{Logical scalar}. Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this
 #'   breaks the link between the data used to calculate the reduced dims.
-#'   (default: \code{keep.dimred = FALSE})
+#'   (Default: \code{FALSE})
 #' 
 #' @param keep_reducedDims Deprecated. Use \code{keep.dimred} instead.
 #'   
-#' @param as.list \code{TRUE} or \code{FALSE}: Should the list of 
+#' @param as.list \code{Logical scalar}. Should the list of 
 #'   \code{SummarizedExperiment} objects be returned by the function 
 #'   \code{agglomerateByRanks} as a SimpleList or stored in altExps?
-#'   (default: \code{as.list = FALSE})
+#'   (Default: \code{FALSE})
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects and other functions.

@@ -17,9 +17,9 @@ addHierarchyTree(x, ...)
 \S4method{addHierarchyTree}{SummarizedExperiment}(x, ...)
 }
 \arguments{
-\item{x}{a
+\item{x}{a numeric matrix with samples as rows or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object}
+object.}
 
 \item{...}{optional arguments not used currently.}
 }

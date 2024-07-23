@@ -3,37 +3,27 @@
 #' These functions calculate the population prevalence for taxonomic ranks in a
 #' \code{\link{SummarizedExperiment-class}} object.
 #'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
+#' @inheritParams calculateJSD
 #'
-#' @param detection Detection threshold for absence/presence. If \code{as_relative = FALSE},
+#' @param detection \code{Numeric scalar}. Detection threshold for absence/presence. 
+#'    If \code{as_relative = FALSE},
 #'    it sets the counts threshold for a taxon to be considered present.
 #'    If \code{as_relative = TRUE}, it sets the relative abundance threshold
-#'    for a taxon to be considered present. (default: \code{detection = 0})
+#'    for a taxon to be considered present. (Default: \code{0})
 #'
-#' @param include.lowest logical scalar: Should the lower boundary of the
-#'   detection and prevalence cutoffs be included? (default: \code{FALSE})
+#' @param include.lowest \code{Logical scalar}. Should the lower boundary of the
+#'   detection and prevalence cutoffs be included? (Default: \code{FALSE})
 #' 
 #' @param include_lowest Deprecated. Use \code{include.lowest} instead.
 #'
-#' @param sort logical scalar: Should the result be sorted by prevalence?
-#'   (default: \code{FALSE})
+#' @param sort \code{Logical scalar}. Should the result be sorted by prevalence?
+#'   (Default: \code{FALSE})
 #'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to use for prevalence calculation.
-#'
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
-#' @param rank a single character defining a taxonomic rank. Must be a value of
+#' @param rank \code{Character scalar}. Defines a taxonomic rank. Must be a value of
 #'   \code{taxonomyRanks()} function.
 #'
-#' @param na.rm logical scalar: Should NA values be omitted when calculating
-#' prevalence? (default: \code{na.rm = TRUE})
+#' @param na.rm \code{Logical scalar}. Should NA values be omitted when calculating
+#' prevalence? (Default: \code{TRUE})
 #'
 #' @param ... additional arguments
 #' \itemize{
@@ -511,16 +501,16 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 
 ############################# agglomerateByPrevalence ##########################
 
-#' @rdname agglomerate-methods
-#'   
-#' @param update.tree \code{TRUE} or \code{FALSE}: should
-#'   \code{rowTree()} also be agglomerated? (Default:
-#'   \code{update.tree = FALSE})
+#' Agglomerate data based on population prevalence
 #' 
-#' @param other.label A single \code{character} valued used as the label for the
-#'   summary of non-prevalent taxa. (default: \code{other.label = "Other"})
+#' @rdname agglomerateByPrevalence
+#'  
+#' @inheritParams agglomerateByRank
 #' 
-#' @param other_label Deprecated. use \code{other.label} instead.
+#' @param other.name \code{Character scalar}. Used as the label for the
+#'   summary of non-prevalent taxa. (default: \code{"Other"})
+#' 
+#' @param other_label Deprecated. use \code{other.name} instead.
 #'
 #' @details
 #' \code{agglomerateByPrevalence} sums up the values of assays at the taxonomic
@@ -528,7 +518,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' available) and selects the summed results that exceed the given population
 #' prevalence at the given detection level. The other summed values (below the
 #' threshold) are agglomerated in an additional row taking the name indicated by
-#' \code{other.label} (by default "Other").
+#' \code{other.name} (by default "Other").
 #'
 #' @return
 #' \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
@@ -536,6 +526,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #'
 #' @examples
 #' ## Data can be aggregated based on prevalent taxonomic results
+#' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' tse <- transformAssay(tse, method = "relabundance")
 #' tse <- agglomerateByPrevalence(
@@ -560,13 +551,13 @@ setGeneric("agglomerateByPrevalence", signature = "x",
            function(x, ...)
                standardGeneric("agglomerateByPrevalence"))
 
-#' @rdname agglomerate-methods
+#' @rdname agglomerateByPrevalence
 #' @export
 setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, other.label = other_label, other_label = "Other", ...){
+    function(x, rank = NULL, other.name = other_label, other_label = "Other", ...){
         # input check
-        if(!.is_a_string(other.label)){
-            stop("'other.label' must be a single character value.",
+        if(!.is_a_string(other.name)){
+            stop("'other.name' must be a single character value.",
                  call. = FALSE)
         }
         #
@@ -582,9 +573,9 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
                                             check_assays = FALSE)
             rowData(other_x)[,colnames(rowData(other_x))] <- NA
             # set the other label
-            rownames(other_x) <- other.label
+            rownames(other_x) <- other.name
             if(!is.null(rank)){
-                rowData(other_x)[,rank] <- other.label
+                rowData(other_x)[,rank] <- other.name
             }
             x <- rbind(x[f,], other_x)
         }
@@ -592,11 +583,11 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname agglomerate-methods
+#' @rdname agglomerateByPrevalence
 #' @export
 setMethod("agglomerateByPrevalence", 
           signature = c(x = "TreeSummarizedExperiment"),
-    function(x, rank = NULL, other.label = other_label, other_label = "Other",
+    function(x, rank = NULL, other.name = other_label, other_label = "Other",
             update.tree = FALSE, ...){
         # input check
         if(!.is_a_bool(update.tree)){
@@ -621,7 +612,7 @@ setMethod("agglomerateByPrevalence",
             x <- .agg_for_prevalence(x, rank, check.assays = FALSE, ...)
             # Find groups that will be used to agglomerate the data
             f <- rownames(x)[ match(rownames(x), rownames(res)) ]
-            f[ is.na(f) ] <- other.label
+            f[ is.na(f) ] <- other.name
             # Find consensus sequences, and add them to result
             ref_seq <- referenceSeq(x)
             ref_seq <- .merge_refseq_list(ref_seq, f, rownames(res), ...)

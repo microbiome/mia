@@ -1,34 +1,18 @@
 #' Split \code{TreeSummarizedExperiment} column-wise or row-wise based on grouping variable
 #'
-#' @param x A
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object or a list of 
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   objects.
+#' @inheritParams agglomerate-methods
 #'
-#' @param f A single character value for selecting the grouping variable
+#' @param f \code{Character vector}. Specifies the grouping variable
 #'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 
 #'   with the same length as one of the dimensions. If \code{f} matches with both
 #'   dimensions, \code{by} must be specified. 
 #'   Split by cols is not encouraged, since this is not compatible with 
-#'   storing the results in \code{altExps}.
-#'
-#' @param keep.dimred \code{TRUE} or \code{FALSE}: Should the
-#'   \code{reducedDims(x)} be transferred to the result? Please note, that this
-#'   breaks the link between the data used to calculate the reduced dims.
-#'   (By default: \code{keep.dimred = FALSE})
-#' 
-#' @param keep_reducedDims Deprecated. Use \code{keep.dimred} instead.
-#'   
-#' @param update.tree \code{TRUE} or \code{FALSE}: Should the rowTree be updated
-#'   based on splitted data? Option is enabled when \code{x} is a 
-#'   \code{TreeSummarizedExperiment} object or a list of such objects. 
-#'   (By default: \code{update.tree = FALSE})
+#'   storing the results in \code{altExps}. (Default: \code{NULL})
 #' 
 #' @param update_rowTree Deprecated. Use \code{update.tree } instead.
 #'   
-#' @param altexp a \code{character} vector specifying the alternative experiments
-#'   to be unsplit. (By default: \code{altexp = names(altExps(x))})
+#' @param altexp \code{Character vector}. Specify the alternative experiments
+#'   to be unsplit. (Default: \code{names(altExps(x))})
 #' 
 #' @param altExpNames Deprecated. Use \code{altexp} instead.
 #'   
@@ -37,8 +21,8 @@
 #'   See \code{\link[=agglomerate-methods]{agglomerateByVariable}} for more 
 #'   details.
 #'   \itemize{
-#'     \item{\code{use.names} A single boolean value to select whether to name elements of
-#'     list by their group names.}
+#'     \item \code{use.names}: \code{Logical scalar}. Specifies whether to name elements of
+#'     list by their group names. (Default: \code{TRUE})
 #'   }
 #'
 #'

@@ -3,23 +3,13 @@
 #' This function calculates overlap for all sample-pairs
 #' in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
-#'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object containing a tree.
+#' 
+#' @inheritParams calculateJSD
 #'   
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to calculate the overlap.
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'   
-#' @param detection A single numeric value for selecting detection threshold for 
+#' @param detection \code{Numeric scalar}. Defines detection threshold for 
 #'   absence/presence of features. Feature that has abundance under threshold in
-#'   either of samples, will be discarded when evaluating overlap between samples. 
+#'   either of samples, will be discarded when evaluating overlap between samples.
+#'   (Default: \code{0}) 
 #'   
 #' @param ... Optional arguments not used.
 #'   
@@ -27,7 +17,7 @@
 #'   runOverlap returns \code{x} that includes overlap matrix in its 
 #'   reducedDim. 
 #' 
-#' @details These function calculates overlap between all the sample-pairs. Overlap
+#' @details This function calculates overlap between all the sample-pairs. Overlap
 #'   reflects similarity between sample-pairs. 
 #'   
 #'   When overlap is calculated using relative abundances, the higher the value the 
@@ -117,8 +107,8 @@ setGeneric("runOverlap", signature = c("x"),
 
 #' @rdname calculateOverlap
 #' 
-#' @param name A single character value specifying the name of overlap matrix that
-#' is stored in reducedDim(x).
+#' @param name \code{Character scalar}. Specifies the name of overlap matrix that
+#' is stored in reducedDim(x). (Default: \code{"overlap"})
 #'   
 #' @export
 #' @importFrom SingleCellExperiment reducedDim<-

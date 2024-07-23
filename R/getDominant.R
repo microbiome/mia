@@ -3,33 +3,20 @@
 #' These functions return information about the most dominant taxa in a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
-#'
-#' @param x A
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object.
-#'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to use for identifying dominant taxa.
-#'
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'   
-#' @param rank A single character defining a taxonomic rank. Must be a value of
-#'   the output of \code{taxonomyRanks()}.
-#'
-#' @param name A name for the column of the \code{colData} where the dominant
-#'   taxa will be stored in when using \code{addDominant}.
-#'   
-#' @param other.name A name for features that are not included in n the most frequent 
-#' dominant features in the data. Default is "Other".
 #' 
-#' @param n The number of features that are the most frequent dominant features.
-#' Default is NULL, which defaults that each sample is assigned a dominant taxon.
+#' @inheritParams getPrevalence
+#'
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{"dominant_taxa"})
+#'   
+#' @param other.name \code{Character scalar}. A name for features that are not 
+#' included in n the most frequent dominant features in the data. (Default: \code{"Other"})
 #' 
-#' @param complete A boolean value to manage multiple dominant taxa for a sample.
+#' @param n \code{Numeric scalar}. The number of features that are the most frequent 
+#' dominant features. Default is NULL, which defaults that each sample is assigned 
+#' a dominant taxon. (Default: \code{NULL})
+#' 
+#' @param complete \code{Logical scalar}. A value to manage multiple dominant taxa for a sample.
 #' Default for getDominant is TRUE to include all equally dominant taxa
 #' for each sample. complete = FALSE samples one taxa for the samples that have 
 #' multiple. 
