@@ -490,7 +490,6 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
         }
         # Check if index exists. For each index input, detect it and get
         # information (e.g. internal function) to calculate the index.
-
         index <- .get_indices(index, name, x, assay.type, ...)
 
         ############################ Input check end ###########################
@@ -518,8 +517,7 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
 
 # Search alpha diversity index that user wants to calculate.
 
-.get_indices <- function(index, name, x, tree = NULL, assay.type, ...){
-
+.get_indices <- function(index, name, x, assay.type, tree = NULL,...){
     # Initialize list for supported indices
     supported <- list()
     # Supported diversity indices
