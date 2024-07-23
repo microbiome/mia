@@ -1148,10 +1148,12 @@ setMethod("subsetTaxa", signature = "SummarizedExperiment",
           }
 )
 #' @rdname deprecate
+#' @export
 setGeneric("relabundance", signature = c("x"),
            function(x, ...) standardGeneric("relabundance"))
 
 #' @rdname deprecate
+#' @export
 setGeneric("relabundance<-", signature = c("x"),
            function(x, value) standardGeneric("relabundance<-"))
 
