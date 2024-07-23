@@ -1,6 +1,6 @@
 context("addLDA")
 test_that("addLDA", {
-  skip_if_not(require("topicmodels", quietly = TRUE))
+  skip_if_not_installed("topicmodels")
   data(GlobalPatterns, package="mia")
   #
   tse <- GlobalPatterns
@@ -56,7 +56,7 @@ test_that("addLDA", {
   test <- attr(lda, "eval_metrics")[["perplexity"]]
   expect_equal(test, ref)
   # Check coherence
-  skip_if_not(require("topicdoc", quietly = TRUE))
+  skip_if_not_installed("topicdoc")
   ref <- mean( topicdoc::topic_coherence(attr(lda, "model"), df) )
   test <- attr(lda, "eval_metrics")[["coherence"]]
   expect_equal(test, ref)
