@@ -142,7 +142,7 @@ setMethod("addLDA", "SummarizedExperiment",
 
 ################################ HELP FUNCTIONS ################################
 # This function is for evaluating a fit of LDA models
-#' @importFrom dplur bind_rows
+#' @importFrom dplyr bind_rows
 .calculate_lda_metrics <- function(models, df){
     # Loop over each model
     metrics <- lapply(models, function(model){
