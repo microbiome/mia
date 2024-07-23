@@ -57,7 +57,17 @@
 #' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
 #' \item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data by accounting for differences 
-#' in library sizes.
+#' in library sizes. [Paulson et al. (2013) Differential abundance analysis for microbial marker-gene surveys]
+#' (https://doi.org/10.1038/nmeth.2658) outlines this in more detail. 
+#' 
+#' Also, please note, the \code{css_percentile} additional argument is used to set the percentile value that 
+#' calculates the scaling factors in the css normalization. (default 0.5). Furthermore, the \code{scaling_constant} 
+#' argument adjusts the normalization scale by dividing the calculated scaling factors, effectively changing 
+#' the magnitude of the normalized counts. (default 1000).
+#' 
+#' It's also important to note that we used the [\pkg{metagenomeSeq}]
+#' (https://www.bioconductor.org/packages/release/bioc/html/metagenomeSeq.html)
+#' source code to help with the css implementation. 
 #' 
 #' \item 'log10': log10 transformation can be used for reducing the skewness
 #' of the data.
@@ -233,9 +243,9 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 
     # Function is selected based on the "method" variable
     FUN <- switch(method,
-                  log10 = .calc_log,
-                   log2 = .calc_log,
-                  css = .calc_css,
+                      log10 = .calc_log,
+                      log2 = .calc_log,
+                      css = .calc_css,
     )
 
     # Get transformed table
@@ -325,23 +335,44 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-####################################.apply_css###################################
+####################################.apply_css##################################
 # This function applies cumulative sum scaling (CSS) to the abundance table.
-.calc_css <- function(mat, ...){
-  # If mat is a DelayedArray, convert it to a regular matrix for computation
-  if (inherits(mat, "DelayedArray")) {
-    mat <- as.matrix(mat)
-  }
-  
-  # Calculate the cumulative sum for each sample
-  cum_sum <- apply(mat, 2, cumsum)
+.calc_css <- function(mat, ...) {
+    # Check for the presence of the scaling factor percentile and scaling 
+    # constant in additional args
+    css_percentile <- ifelse("css_percentile" %in% names(list(...)), 
+                             list(...)$css_percentile, 0.5)
+    scaling_constant <- ifelse("scaling_constant" %in% names(list(...)), 
+                               list(...)$scaling_constant, 1000)
+    
+    # Call .calc_scaling_factors method to calculate scaling factors
+    scaling_factors <- .calc_scaling_factors(mat, css_percentile)
+    
+    # Normalize the count data by dividing by the scaling factor
+    normalized_data <- sweep(mat, 2, scaling_factors / scaling_constant, "/")
+    return(normalized_data)
+}
 
-  # Find the scaling factor for each sample, typically the 75th percentile of the cumulative sum
-  scaling_factors <- apply(cum_sum, 2, function(x) quantile(x, 0.75))
-  
-  # Normalize the count data by dividing by the scaling factor
-  normalized_data <- sweep(mat, 2, scaling_factors, "/")
-  return(normalized_data)
+#################################.calc_scaling_factors#############################
+# Calculates the cumulative sum scaling (css) scaling factors.
+#'  @importFrom matrixStats colQuantiles
+.calc_scaling_factors <- function(mat, css_percentile) {
+    # Replace zero values with NA
+    mat_tmp <- mat
+    mat_tmp[mat_tmp == 0] <- NA
+    
+    # Calculate quantiles for each column
+    quantiles <- colQuantiles(mat_tmp, probs = css_percentile, na.rm = TRUE)
+    
+    # Find the scaling factor for each sample
+    scaling_factors <- sapply(1:ncol(mat_tmp), function(i) {
+        col_values <- mat[, i] - .Machine$double.eps
+        sum(col_values[col_values <= quantiles[i]], na.rm = TRUE)
+    })
+    
+    # Give scaling_factors names corresponding to the original matrix cols
+    names(scaling_factors) <- colnames(mat)
+    return(scaling_factors)
 }
 
 #################################.calc_rel_abund################################

@@ -1,4 +1,5 @@
 context("transformAssay")
+library(metagenomeSeq)
 
 test_that("transformAssay", {
     testTransformations <- function(tse){
@@ -71,18 +72,53 @@ test_that("transformAssay", {
                      }), check.attributes = FALSE)
         
         ############################ CSS ######################################
+        ## Test that the css_percentile parameter works
         # Apply CSS normalization using transformAssay
-        tmp <- mia::transformAssay(tse, method = "css")
+        tmp <- mia::transformAssay(tse, method = "css", assay.type = "counts")
         ass <- assays(tmp)$css
         
-        # Calculates CSS normalization. Should be equal.
-        mat <- as.matrix(assay(tse, "counts"))
+        # Apply CSS normalization using transformAssay setting the css_percentile arg
+        tmp_2 <- mia::transformAssay(tse, method = "css", css_percentile = 0.65)
+        ass_2 <- assays(tmp_2)$css
         
-        # Manually compute CSS normalization
-        css_manual <- sweep(mat, 2, apply(apply(mat, 2, cumsum), 2, function(x) quantile(x, 0.75)), "/")
+        # Assert assays are different
+        expect_false(identical(ass, ass_2))
         
-        # Test for equality
-        expect_equal(as.matrix(ass), css_manual, check.attributes = FALSE)
+        
+        ## Test the scaling_constant parameter
+        # Manually compute CSS normalization using default scaling_constant
+        css_default <- .calc_css(mat)
+        
+        # Manually compute CSS normalization using scaling_constant of 2000
+        css_2000 <- .calc_css(mat, scaling_constant = 2000)
+        
+        # Ensure the scaling_constant changes the results
+        expect_false(identical(css_default, css_2000))
+
+        
+        ## Test the .calc_scaling_factors method directly
+        # Calculate scaling factors in 2 scenarios
+        scaling_factors_default <- .calc_scaling_factors(as.matrix(assay(tse, "counts")), 0.5)
+        scaling_factors_75 <- .calc_scaling_factors(as.matrix(assay(tse, "counts")), 0.75)
+        
+        # Ensure scaling factors are calculated correctly for different percentiles
+        expect_true(length(scaling_factors_default) == ncol(assay(tse, "counts")))
+        expect_true(length(scaling_factors_75) == ncol(assay(tse, "counts")))
+        expect_false(identical(scaling_factors_default, scaling_factors_75))
+        
+        
+        ## Check internal CSS equals CSS from metagenomeSeq package
+        # First create the `MRexperiment` object
+        MRexperiment_obj <- newMRexperiment(counts = assay(tse, "counts"), phenoData = AnnotatedDataFrame(as.data.frame(colData(tse))))
+        
+        # Then perform the CSS normalization using metagenomeSeq's method with p = 0.5
+        MRexperiment_obj <- cumNorm(MRexperiment_obj, p = 0.5)
+        
+        # Extract the normalized counts
+        normalized_counts <- MRcounts(MRexperiment_obj, norm = TRUE)
+        
+        # Test for equality of your CSS normalization with metagenomeSeq normalization
+        expect_true(all.equal(as.matrix(ass), normalized_counts, check.attributes = FALSE))
         
         ########################## PA ##########################################
         # Calculates pa transformation. Should be equal.

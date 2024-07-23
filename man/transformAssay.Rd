@@ -94,7 +94,17 @@ The available transformation methods include:
 \code{\link[vegan:decostand]{decostand}} for details.
 
 \item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data by accounting for differences
-in library sizes.
+in library sizes. \link{Paulson et al. (2013) Differential abundance analysis for microbial marker-gene surveys}
+(https://doi.org/10.1038/nmeth.2658) outlines this in more detail.
+
+Also, please note, the \code{css_percentile} additional argument is used to set the percentile value that
+calculates the scaling factors in the css normalization. (default 0.5). Furthermore, the \code{scaling_constant}
+argument adjusts the normalization scale by dividing the calculated scaling factors, effectively changing
+the magnitude of the normalized counts. (default 1000).
+
+It's also important to note that we used the \link{\pkg{metagenomeSeq}}
+(https://www.bioconductor.org/packages/release/bioc/html/metagenomeSeq.html)
+source code to help with the css implementation.
 
 \item 'log10': log10 transformation can be used for reducing the skewness
 of the data.
