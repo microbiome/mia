@@ -3,10 +3,9 @@
 #' These functions perform Canonical Correspondence Analysis on data stored
 #' in a \code{SummarizedExperiment}.
 #'
-#' @param x For \code{calculate*} a 
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} 
-#'   or a numeric matrix with columns as samples 
+#' @inheritParams calculateJSD
 #'
+#' @details
 #'   For \code{run*} a
 #'   \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
 #'   or a derived object.
@@ -19,7 +18,7 @@
 #'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis 
 #'   into a CA analysis and dbRDA into PCoA/MDS.
 #'
-#' @param variables When \code{x} is a \code{SummarizedExperiment},
+#' @param variables \code{Character scalar}. When \code{x} is a \code{SummarizedExperiment},
 #'   \code{variables} can be used to specify variables from \code{colData}. 
 #'   
 #'   When \code{x} is a matrix, \code{variables} is a \code{data.frame} or 
@@ -29,45 +28,33 @@
 #'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis 
 #'   into a CA analysis and dbRDA into PCoA/MDS.
 #' 
-#' @param test.signif a logical scalar, should the PERMANOVA and analysis of
+#' @param test.signif \code{Logical scalar}. Should the PERMANOVA and analysis of
 #'   multivariate homogeneity of group dispersions be performed.
-#'   (By default: \code{test.signif = TRUE})
-#'
-#' @param assay.type a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'
-#' @param exprs_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead.)
+#'   (Default: \code{TRUE})
 #'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'   
-#' @param altexp String or integer scalar specifying an alternative experiment
+#' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an alternative experiment
 #'   containing the input data.
-#'
-#' @param name String specifying the name to be used to store the result in the
-#'   reducedDims of the output.
 #' 
-#' @param scores A string specifying scores to be returned. Must be
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{"CCA"})
+#' 
+#' @param scores \code{Character scalar}. Specifies scores to be returned. Must be
 #' 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
 #' v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-#' 'u' ((weighted) orthonormal site scores). (By default: \code{scores='wa'})
+#' 'u' ((weighted) orthonormal site scores). (Default: \code{'wa'})
 #'
 #' @param ... additional arguments passed to vegan::cca or vegan::dbrda and
 #' other internal functions.
 #' \itemize{
 #'   \item{\code{method} a dissimilarity measure to be applied in dbRDA and
 #'   possible following homogeneity test. (By default: \code{method="euclidean"})}
-#'   \item{\code{scale} a logical scalar, should the expression values be
+#'   \item{\code{scale}: \code{Logical scalar}. Should the expression values be
 #'   standardized? \code{scale} is disabled when using \code{*RDA} functions.
-#'   Please scale before performing RDA. (By default: \code{scale=TRUE})}
-#'   \item{\code{full} a logical scalar, should all the results from the
+#'   Please scale before performing RDA. (Default: \code{TRUE})}
+#'   \item{\code{full} \code{Logical scalar}. should all the results from the
 #'   significance calculations be returned. When \code{full=FALSE}, only
-#'   summary tables are returned. (By default: \code{full=FALSE})}
-#'   \item{\code{homogeneity.test} a single \code{character} value for specifying
+#'   summary tables are returned. (Default: \code{FALSE})}
+#'   \item{\code{homogeneity.test}: \code{Character scalar}. Specifies
 #'   the significance test used to analyse \code{vegan::betadisper} results.
 #'   Options include 'permanova' (\code{vegan::permutest}), 'anova'
 #'   (\code{stats::anova}) and 'tukeyhsd' (\code{stats::TukeyHSD}).

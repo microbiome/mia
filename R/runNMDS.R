@@ -3,50 +3,22 @@
 #' Perform non-metric multi-dimensional scaling (nMDS) on samples, based on the
 #' data in a \code{SingleCellExperiment} object.
 #'
-#' @param x For \code{getNMDS}, a numeric matrix of expression values
-#'   where rows are features and columns are cells.
-#'   Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
+#' @inheritParams runDPCoA
 #'
+#' @details
 #'   For \code{addNMDS} a \linkS4class{SingleCellExperiment}
 #'
-#' @param ncomponents Numeric scalar indicating the number of NMDS dimensions
-#'   to obtain.
-#'
-#' @param ntop Numeric scalar specifying the number of features with the highest
-#'   variances to use for dimensionality reduction.
-#'
-#' @param subset.row Vector specifying the subset of features to use for
-#'   dimensionality reduction. This can be a character vector of row names, an
-#'   integer vector of row indices or a logical vector.
-#' 
-#' @param subset_row Deprecated. Use \code{subset.row} instead.
-#'
-#' @param scale Logical scalar, should the expression values be standardized?
-#'
-#' @param keep.dist Logical scalar indicating whether the \code{dist} object
+#' @param keep.dist \code{Logical scalar}. Indicates whether the \code{dist} object
 #'   calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
-#'   the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}.
+#'   the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}. (Default: 
+#'   \code{FALSE})
 #' 
 #' @param keep_dist Deprecated. Use \code{keep.dist} instead.
 #'
-#' @param transposed Logical scalar, is x transposed with cells in rows?
-#'
-#' @param assay.type a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   
-#' @param exprs_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead.)
-#' 
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
-#' @param FUN a \code{function} or \code{character} value with a function
+#' @param FUN \code{Function} or \code{Character scalar}. A value with a function
 #'   name returning a \code{\link[stats:dist]{dist}} object
 #'
-#' @param nmds.fun a \code{character} value to choose the scaling
+#' @param nmds.fun \code{Character scalar}. A value to choose the scaling
 #'   implementation, either \dQuote{isoMDS} for
 #'   \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 #'   \code{\link[vegan:monoMDS]{vegan::monoMDS}}
@@ -56,19 +28,13 @@
 #' @param ... additional arguments to pass to \code{FUN} and
 #'   \code{nmds.fun}.
 #'
-#' @param dimred String or integer scalar specifying the existing dimensionality
+#' @param dimred \code{Character scalar} or \code{integer scalar}. Specifies the existing dimensionality
 #'   reduction results to use.
 #'
-#' @param ndimred Integer scalar or vector specifying the dimensions to use if
+#' @param ndimred \code{integer vector}. Specifies the dimensions to use if
 #'   dimred is specified.
 #' 
 #' @param n_dimred Deprecated. Use \code{ndimred} instead.
-#'
-#' @param altexp String or integer scalar specifying an alternative experiment
-#'   containing the input data.
-#'
-#' @param name String specifying the name to be used to store the result in the
-#'   reducedDims of the output.
 #'
 #' @return For \code{getNMDS}, a matrix is returned containing the MDS
 #'   coordinates for each sample (row) and dimension (column).

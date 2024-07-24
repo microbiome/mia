@@ -9,7 +9,7 @@
 #' taxpasta from
 #' \href{https://taxpasta.readthedocs.io/en/latest/}{taxpasta documentation}.
 #'
-#' @param file A single \code{character} value specifying the file path to a
+#' @param file \code{Character scalar}. Defines the file path to a
 #' BIOM file.
 #'
 #' @return A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.

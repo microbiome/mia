@@ -127,6 +127,16 @@
 \alias{estimateFaith,ANY-method}
 \alias{estimateDominance}
 \alias{estimateDominance,ANY-method}
+\alias{subsetSamples}
+\alias{subsetFeatures}
+\alias{subsetTaxa}
+\alias{subsetSamples,SummarizedExperiment-method}
+\alias{subsetFeatures,SummarizedExperiment-method}
+\alias{subsetTaxa,SummarizedExperiment-method}
+\alias{relabundance}
+\alias{relabundance<-}
+\alias{relabundance,SummarizedExperiment-method}
+\alias{relabundance<-,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -378,6 +388,26 @@ estimateFaith(x, ...)
 estimateDominance(x, ...)
 
 \S4method{estimateDominance}{ANY}(x, ...)
+
+subsetSamples(x, ...)
+
+subsetFeatures(x, ...)
+
+subsetTaxa(x, ...)
+
+\S4method{subsetSamples}{SummarizedExperiment}(x, ...)
+
+\S4method{subsetFeatures}{SummarizedExperiment}(x, ...)
+
+\S4method{subsetTaxa}{SummarizedExperiment}(x, ...)
+
+relabundance(x, ...)
+
+relabundance(x) <- value
+
+\S4method{relabundance}{SummarizedExperiment}(x)
+
+\S4method{relabundance}{SummarizedExperiment}(x) <- value
 }
 \arguments{
 \item{x}{A
@@ -385,6 +415,8 @@ estimateDominance(x, ...)
 object.}
 
 \item{...}{Additional parameters. See dedicated function.}
+
+\item{value}{a matrix to store as the \sQuote{relabundance} assay}
 }
 \description{
 These functions will be deprecated. Please use other functions instead.

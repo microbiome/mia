@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.13.32
+Version: 1.13.34
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut"),
              email = "felix.gm.ernst@outlook.com",
@@ -100,7 +100,9 @@ Suggests:
     ade4,
     microbiomeDataSets,
     rmarkdown,
-    rhdf5
+    rhdf5,
+    topicmodels,
+    topicdoc
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)

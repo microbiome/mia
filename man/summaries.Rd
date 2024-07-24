@@ -42,37 +42,35 @@ summarizeDominance(x, group = NULL, name = "dominant_taxa", ...)
 \S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
 }
 \arguments{
-\item{x}{A
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}
+\item{x}{a numeric matrix with samples as rows or a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
-\item{top}{Numeric value, how many top taxa to return. Default return top
-five taxa.}
+\item{top}{\code{Numeric scalar}. Determines how many top taxa to return. Default is
+to return top five taxa. (Default: \code{5})}
 
-\item{method}{Specify the method to determine top taxa. Either sum, mean,
-median or prevalence. Default is 'mean'.}
+\item{method}{\code{Character scalar}. Specify the method to determine top taxa. Either
+sum, mean, median or prevalence. (Default: \code{"mean"})}
 
-\item{assay.type}{a \code{character} value to select an
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
-By default it expects count data.}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{na.rm}{For \code{getTop} logical argument for calculation method
-specified to argument \code{method}. Default is TRUE.}
+\item{na.rm}{\code{Logical scalar}. Should NA values be omitted when calculating
+prevalence? (Default: \code{TRUE})}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
 \code{rank} is specified for \code{summarizeDominance}.}
 
-\item{rank}{A single character defining a taxonomic rank. Must be a value of
-the output of \code{taxonomyRanks()}.}
+\item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a value of
+the output of \code{taxonomyRanks()}. (Default: \code{NULl})}
 
 \item{group}{With group, it is possible to group the observations in an
 overview. Must be one of the column names of \code{colData}.}
 
-\item{name}{The column name for the features. The default is 'dominant_taxa'.}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"dominant_taxa"})}
 
 \item{object}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}

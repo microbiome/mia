@@ -6,42 +6,41 @@
 #'                                                                              
 #' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 #' 
-#' @param outcome A single character value indicating the colData variable used
+#' @param outcome \code{Character scalar}. Indicates the colData variable used
 #'   as outcome in the model.
 #' 
-#' @param treatment A single character value indicating the colData variable
+#' @param treatment \code{Character scalar}. Indicates the colData variable
 #'   used as treatment in the model.
 #'
-#' @param mediator A single character value indicating the colData variable used
-#'   as mediator in the model. (default: \code{mediator = NULL})
+#' @param mediator \code{Character scalar}. Indicates the colData variable used
+#'   as mediator in the model. (Default: \code{NULL})
 #'
-#' @param assay.type A single character value indicating the assay used for
-#'   feature-wise mediation analysis. (default: \code{assay.type = NULL})
+#' @param assay.type \code{Character scalar}. Specifies the assay used for
+#'   feature-wise mediation analysis. (Default: \code{"counts"})
 #' 
-#' @param dimred A single character value indicating the reduced dimension
+#' @param dimred \code{Character scalar}. Indicates the reduced dimension
 #'   result in \code{reducedDims(object)} for component-wise mediation analysis.
-#'   (default: \code{dimred = NULL})
+#'   (Default: \code{NULL})
 #'
-#' @param family A specification for the outcome model link function.
-#'   (default: \code{family = gaussian("identity")})
+#' @param family \code{Character scalar}. A specification for the outcome model link function.
+#'   (Default: \code{gaussian("identity")})
 #' 
-#' @param covariates Single character value or list indicating the colData
+#' @param covariates \code{Character scalar} or \code{character vector}. Indicates the colData
 #'   variables used as covariates in the model.
-#'   (default: \code{covariates = NULL})
+#'   (Default: \code{NULL})
 #' 
-#' @param p.adj.method A single character value for selecting adjustment method
+#' @param p.adj.method \code{Character scalar}. Selects adjustment method
 #'   of p-values. Passed to `p.adjust` function.
-#'   (default: \code{p.adj.method = "holm"})
+#'   (Default: \code{"holm"})
 #' 
-#' @param add.metadata TRUE or FALSE, should the model metadata be returned.
-#'   (default: \code{add.metadata = FALSE})
+#' @param add.metadata \code{Logical scalar}. Should the model metadata be returned.
+#'   (Default: \code{FALSE})
 #' 
-#' @param verbose TRUE or FALSE, should execution messages be printed.
-#'   (default: \code{verbose = TRUE})
+#' @param verbose \code{Logical scalar}. Should execution messages be printed.
+#'   (Default: \code{TRUE})
 #'   
-#' @param name A single character value to name the metadata element and avoid
-#'   overwriting other metadata slots. It is supported only by
-#'   \code{addMediation}. (default: \code{name = "mediation"})
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{"mediation"})
 #' 
 #' @param ... additional parameters that can be passed to
 #'   \code{\link[mediation:mediate]{mediate}}.
@@ -184,7 +183,7 @@ setGeneric("getMediation", signature = c("x"),
 #' @importFrom SingleCellExperiment reducedDim reducedDimNames
 setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
         function(x, outcome, treatment,
-                 mediator = NULL, assay.type = NULL, dimred = NULL,
+                 mediator = NULL, assay.type = "counts", dimred = NULL,
                  family = gaussian(), covariates = NULL, p.adj.method = "holm",
                  add.metadata = FALSE, verbose = TRUE, ...) {
 
@@ -236,9 +235,7 @@ setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
                 
         } else if( med_opts[[2]] ){
             # Check that assay is in assays
-            if( !assay.type %in% assayNames(x) ){
-                stop(assay.type, " not found in assays(x).", call. = FALSE)
-            }
+            .check_assay_present(assay.type, x)
             # Define matrix for analysis
             mat <- assay(x, assay.type)
             # Use assay for analysis
