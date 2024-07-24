@@ -1,6 +1,6 @@
 .get_unifrac <- function(x, assay.type = assay_name, assay_name = exprs_values, 
                           exprs_values = "counts", tree.name = tree_name, 
-                          tree_name = "phylo", ...){
+                          tree_name = "phylo", transposed = FALSE, ...){
         # Get functions and parameters based on direction
         tree_present_FUN <- if (transposed) .check_colTree_present
             else .check_rowTree_present
@@ -36,7 +36,7 @@
         links <- links_FUN(x)
         links <- links[ , "nodeLab" ]
         # Calculate unifrac
-        res <- getUnifrac(x, tree = tree, node.label = links, ...)
+        res <- .calculate_unifrac(mat, tree = tree, node.label = links, ...)
         return(res)
 }
 
@@ -45,6 +45,9 @@
 #' @importFrom rbiom unifrac
 .calculate_unifrac <- function(
         x, tree, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
+    browser(
+      
+    )
     # Check x
     if( !is.matrix(as.matrix(x)) ){
         stop("'x' must be a matrix", call. = FALSE)

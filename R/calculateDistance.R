@@ -162,7 +162,7 @@ setMethod(
 
 .calculate_dissimilarity <- function(
         mat, method, diss.fun = NULL, tree = NULL, ...){
-    # inout check
+    # input check
     if( !(is.null(diss.fun) || is.function(diss.fun)) ){
         stop("'diss.fun' must be NULL or a function.", call. = FALSE)
     }
@@ -172,14 +172,14 @@ setMethod(
     if( is.null(diss.fun) ){
         if( method %in% c("overlap") ){
             diss.fun <- .get_overlap
-            message("'diss.fun' defaults to getOverlap.")
+            message("'diss.fun' defaults to .get_overlap.")
         } else if( method %in% c("unifrac")  ){
             args[["tree"]] <- tree
             diss.fun <- .get_unifrac
-            message("'diss.fun' defaults to getUnifrac.")
+            message("'diss.fun' defaults to .get_unifrac.")
         } else if( method %in% c("jsd")  ){
             diss.fun <- .get_jsd
-            message("'diss.fun' defaults to getJSD.")
+            message("'diss.fun' defaults to .get_jsd.")
         } else if( requireNamespace("vegan") ){
             diss.fun <- vegan::vegdist
             message("'diss.fun' defaults to vegan::vegdist.")
