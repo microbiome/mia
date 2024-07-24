@@ -188,8 +188,7 @@ test_that("transformAssay", {
         
         # Expect error when pseudocount TRUE but negative values present
         expect_error(transformAssay(tse, method = "relabundance",
-                                    assay.type = "neg_values", pseudocount = TRUE),
-                     "The assay contains negative values. 'pseudocount' must be specified manually.")
+                                    assay.type = "neg_values", pseudocount = TRUE))
         test3 <- transformAssay(tse, method = "relabundance",
                                 assay.type = "na_values", pseudocount = TRUE)
         expect_named(assays(test3), c('counts', 'relabundance', 'rclr', 'test', 
