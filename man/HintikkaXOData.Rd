@@ -3,7 +3,7 @@
 \docType{data}
 \name{HintikkaXOData}
 \alias{HintikkaXOData}
-\title{HintikkaXOData}
+\title{Multiomics dataset from 40 rat samples}
 \format{
 A MultiAssayExperiment with 3 experiments (microbiota, metabolites and
 biomarkers). rowData of the microbiota experiment contains taxonomic information

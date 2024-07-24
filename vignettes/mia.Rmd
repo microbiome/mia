@@ -6,7 +6,8 @@ output:
     BiocStyle::html_document:
         fig_height: 7
         fig_width: 10
-        toc: yes
+        toc: true
+        toc_float: true
         toc_depth: 2
         number_sections: true
 vignette: >
@@ -91,16 +92,16 @@ For more details see the man page `?taxonomyRanks`.
 
 Agglomeration of data based on these taxonomic descriptors can be performed
 using functions implemented in `mia`. In addition to the `aggValue` functions
-provide by `TreeSummarizedExperiment` `mergeFeaturesByRank` is available.
-`mergeFeaturesByRank` does not require tree data to be present.
+provide by `TreeSummarizedExperiment` `agglomerateByRank` is available.
+`agglomerateByRank` does not require tree data to be present.
 
-`mergeFeaturesByRank` constructs a `factor` to guide merging from the available
+`agglomerateByRank` constructs a `factor` to guide merging from the available
 taxonomic information. For more information on merging have a look at the man
 page via `?mergeFeatures`.
 
 ```{r}
 # agglomerate at the Family taxonomic rank
-x1 <- mergeFeaturesByRank(tse, rank = "Family")
+x1 <- agglomerateByRank(tse, rank = "Family")
 ## How many taxa before/after agglomeration?
 nrow(tse)
 nrow(x1)
@@ -111,21 +112,21 @@ by default.
 
 ```{r}
 # with agglomeration of the tree
-x2 <- mergeFeaturesByRank(tse, rank = "Family",
+x2 <- agglomerateByRank(tse, rank = "Family",
                         agglomerateTree = TRUE)
 nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree
 ```
 
-For `mergeFeaturesByRank` to work, taxonomic data must be present. Even though
+For `agglomerateByRank` to work, taxonomic data must be present. Even though
 only one rank is available for the `enterotype` dataset, agglomeration can be
 performed effectively de-duplicating entries for the genus level.
 
 ```{r}
 data(enterotype, package = "mia")
 taxonomyRanks(enterotype)
-mergeFeaturesByRank(enterotype)
+agglomerateByRank(enterotype)
 ```
 
 To keep data tidy, the agglomerated data can be stored as an alternative 
@@ -141,8 +142,8 @@ Keep in mind, that if you set `na.rm = TRUE`, rows with `NA` or similar value
 settings different number of rows will be returned.
 
 ```{r}
-x1 <- mergeFeaturesByRank(tse, rank = "Species", na.rm = TRUE)
-altExp(tse,"species") <- mergeFeaturesByRank(tse, rank = "Species", na.rm = FALSE)
+x1 <- agglomerateByRank(tse, rank = "Species", na.rm = TRUE)
+altExp(tse,"species") <- agglomerateByRank(tse, rank = "Species", na.rm = FALSE)
 dim(x1)
 dim(altExp(tse,"species"))
 ```

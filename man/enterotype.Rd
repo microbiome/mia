@@ -3,7 +3,7 @@
 \docType{data}
 \name{enterotype}
 \alias{enterotype}
-\title{enterotype}
+\title{Human gut microbiome dataset from 22 subjects based on shotgun DNA sequencing}
 \format{
 A TreeSummarizedExperiment with 553 features and 280 samples. The
 rowData contains taxonomic information at Genus level. The colData includes:

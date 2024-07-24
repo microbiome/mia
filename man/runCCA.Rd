@@ -66,30 +66,22 @@ calculateRDA(x, ...)
 runRDA(x, ...)
 }
 \arguments{
-\item{x}{For \code{calculate*} a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-or a numeric matrix with columns as samples
-
-For \code{run*} a
-\code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
-or a derived object.}
-
 \item{...}{additional arguments passed to vegan::cca or vegan::dbrda and
 other internal functions.
 \itemize{
 \item{\code{method} a dissimilarity measure to be applied in dbRDA and
 possible following homogeneity test. (By default: \code{method="euclidean"})}
-\item{\code{scale} a logical scalar, should the expression values be
+\item{\code{scale}: \code{Logical scalar}. Should the expression values be
 standardized? \code{scale} is disabled when using \code{*RDA} functions.
-Please scale before performing RDA. (By default: \code{scale=TRUE})}
-\item{\code{full} a logical scalar, should all the results from the
+Please scale before performing RDA. (Default: \code{TRUE})}
+\item{\code{full} \code{Logical scalar}. should all the results from the
 significance calculations be returned. When \code{full=FALSE}, only
-summary tables are returned. (By default: \code{full=FALSE})}
-\item{\code{homogeneity.test} a single \code{character} value for specifying
+summary tables are returned. (Default: \code{FALSE})}
+\item{\code{homogeneity.test}: \code{Character scalar}. Specifies
 the significance test used to analyse \code{vegan::betadisper} results.
 Options include 'permanova' (\code{vegan::permutest}), 'anova'
 (\code{stats::anova}) and 'tukeyhsd' (\code{stats::TukeyHSD}).
-(By default: \code{homogeneity.test="permanova"})}
+(Default: \code{"permanova"})}
 }}
 
 \item{formula}{If \code{x} is a
@@ -100,7 +92,7 @@ a formula can be supplied. Based on the right-hand side of the given formula
 \code{variables} and \code{formula} can be missing, which turns the CCA analysis
 into a CA analysis and dbRDA into PCoA/MDS.}
 
-\item{variables}{When \code{x} is a \code{SummarizedExperiment},
+\item{variables}{\code{Character scalar}. When \code{x} is a \code{SummarizedExperiment},
 \code{variables} can be used to specify variables from \code{colData}.
 
 When \code{x} is a matrix, \code{variables} is a \code{data.frame} or
@@ -110,32 +102,20 @@ All variables are used. Please subset, if you want to consider only some of them
 \code{variables} and \code{formula} can be missing, which turns the CCA analysis
 into a CA analysis and dbRDA into PCoA/MDS.}
 
-\item{test.signif}{a logical scalar, should the PERMANOVA and analysis of
+\item{test.signif}{\code{Logical scalar}. Should the PERMANOVA and analysis of
 multivariate homogeneity of group dispersions be performed.
-(By default: \code{test.signif = TRUE})}
+(Default: \code{TRUE})}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
-
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
-
-\item{exprs_values}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead.)}
-
-\item{scores}{A string specifying scores to be returned. Must be
+\item{scores}{\code{Character scalar}. Specifies scores to be returned. Must be
 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
 v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-'u' ((weighted) orthonormal site scores). (By default: \code{scores='wa'})}
+'u' ((weighted) orthonormal site scores). (Default: \code{'wa'})}
 
-\item{altexp}{String or integer scalar specifying an alternative experiment
+\item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an alternative experiment
 containing the input data.}
 
-\item{name}{String specifying the name to be used to store the result in the
-reducedDims of the output.}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"CCA"})}
 }
 \value{
 For \code{getCCA} a matrix with samples as rows and CCA dimensions as
@@ -150,6 +130,10 @@ These functions perform Canonical Correspondence Analysis on data stored
 in a \code{SummarizedExperiment}.
 }
 \details{
+For \code{run*} a
+\code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
+or a derived object.
+
 *CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
 By default dbRDA is done with euclidean distances which equals to RDA.
 

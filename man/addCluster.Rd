@@ -38,15 +38,12 @@ object.}
 
 \item{BLUSPARAM}{A \linkS4class{BlusterParam} object specifying the algorithm to use.}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{by}{A character value for selecting if association are calculated
+\item{by}{\code{Character scalar}. Determines if association is calculated
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}
 
@@ -54,11 +51,12 @@ Must be \code{'rows'} or \code{'cols'}.}
 
 \item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
 
-\item{name}{the name to store the result in
+\item{name}{\code{Character scalar}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
-\item{clust.col}{A single character value indicating the name of the
-\code{rowData} (or \code{colData}) where the data will be stored.}
+\item{clust.col}{\code{Character scalar}. Indicates the name of the
+\code{rowData} (or \code{colData}) where the data will be stored.
+(Default: \code{"clusters"})}
 
 \item{...}{Additional parameters to use altExps for example}
 }

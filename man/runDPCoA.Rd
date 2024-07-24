@@ -40,59 +40,32 @@ addDPCoA(x, ..., altexp = NULL, name = "DPCoA")
 runDPCoA(x, ...)
 }
 \arguments{
-\item{x}{For \code{getDPCoA}, a numeric matrix of expression values
-where rows are features and columns are cells.
-Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
-
-For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
-expression values as well as a \code{rowTree} to calculate \code{y} using
-\code{\link[ape:cophenetic.phylo]{cophenetic.phylo}}.}
-
 \item{y}{a \code{dist} or a symmetric \code{matrix} compatible with
 \code{ade4:dpcoa}}
 
 \item{...}{Currently not used.}
 
-\item{ncomponents}{Numeric scalar indicating the number of DPCoA dimensions
-to obtain.}
+\item{ncomponents}{\code{Numeric scalar}. Indicates the number of DPCoA dimensions
+to obtain. (Default: \code{2})}
 
-\item{ntop}{Numeric scalar specifying the number of features with the highest
+\item{ntop}{\code{Numeric scalar}. Specifies the number of features with the highest
 variances to use for dimensionality reduction. Alternatively \code{NULL},
-if all features should be used. (default: \code{ntop = NULL})}
+if all features should be used. (Default: \code{NULL})}
 
-\item{subset.row}{Vector specifying the subset of features to use for
+\item{subset.row}{\code{Character Vector}. Specifies the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
-integer vector of row indices or a logical vector.}
+integer vector of row indices or a logical vector. (Default: \code{NULL})}
 
 \item{subset_row}{Deprecated. Use \code{subset.row} instead.}
 
-\item{scale}{Logical scalar, should the expression values be standardized?}
+\item{scale}{\code{Logical scalar}. Sshould the expression values be standardized?
+(Default: \code{FALSE})}
 
-\item{transposed}{Logical scalar, is x transposed with cells in rows?}
+\item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an
+alternative experiment containing the input data. (Default: \code{NULL})}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
-
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
-
-\item{exprs_values}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead.)}
-
-\item{tree.name}{a single \code{character} value for specifying which
-rowTree will be used in calculation.
-(By default: \code{tree.name = "phylo"})}
-
-\item{tree_name}{Deprecated. Use \code{tree.name} instead.}
-
-\item{altexp}{String or integer scalar specifying an alternative experiment
-containing the input data.}
-
-\item{name}{String specifying the name to be used to store the result in the
-reducedDims of the output.}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"DPCoA"})}
 }
 \value{
 For \code{getDPCoA} a matrix with samples as rows and CCA dimensions as
@@ -107,6 +80,10 @@ Double Principal Correspondance analysis is made available via the
 \code{reducedDims} and are available for all the expected functions.
 }
 \details{
+For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
+expression values as well as a \code{rowTree} to calculate \code{y} using
+\code{\link[ape:cophenetic.phylo]{cophenetic.phylo}}.
+
 In addition to the reduced dimension on the features, the reduced dimension
 for samples are returned as well as \code{sample_red} attribute.
 \code{eig}, \code{feature_weights} and \code{sample_weights} are

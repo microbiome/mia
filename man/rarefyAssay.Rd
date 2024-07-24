@@ -30,34 +30,22 @@ rarefyAssay(
 )
 }
 \arguments{
-\item{x}{A \code{SummarizedExperiment} object.}
-
-\item{assay.type}{A single character value for selecting the
-\code{SummarizedExperiment} \code{assay} used for random subsampling.
-Only counts are useful and other transformed data as input will give
-meaningless output.}
-
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
-
-\item{sample}{A single integer value equal to the number of counts being
+\item{sample}{\code{Integer scalar}. Indicates the number of counts being
 simulated i.e. rarefying depth. This can equal to lowest number of total
 counts found in a sample or a user specified number.}
 
 \item{min_size}{Deprecated. Use \code{sample} instead.}
 
-\item{replace}{Logical Default is \code{TRUE}. The default is with
+\item{replace}{\code{Logical scalar}. The default is with
 replacement (\code{replace=TRUE}).
 See \code{\link[phyloseq:rarefy_even_depth]{phyloseq::rarefy_even_depth}}
-for details on implications of this parameter.}
+for details on implications of this parameter. (Default: \code{TRUE})}
 
-\item{name}{A single character value specifying the name of transformed
-abundance table that will be added to the new \code{SummarizedExperiment}.}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"method"})}
 
-\item{verbose}{Logical Default is \code{TRUE}. When \code{TRUE} an additional
-message about the random number used is printed.}
+\item{verbose}{\code{Logical scalar}. Choose whether to show messages.
+(Default: \code{TRUE})}
 
 \item{...}{additional arguments not used}
 }

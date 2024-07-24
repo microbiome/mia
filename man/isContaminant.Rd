@@ -47,37 +47,33 @@ addNotContaminantQC(x, name = "isNotContaminant", ...)
 \arguments{
 \item{seqtab, x}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
 
-\item{assay.type}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to use.}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"isContaminant"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
-
-\item{name}{A name for the column of the colData in which the contaminant
-information should be stored.}
-
-\item{concentration}{\code{NULL} or a single \code{character} value. Defining
+\item{concentration}{\code{Character scalar} or \code{NULL}. Defining
 a column with numeric values from the \code{colData} to use as
-concentration information. (default: \code{concentration = NULL})}
+concentration information. (Default: \code{NULL})}
 
-\item{control}{\code{NULL} or a single \code{character} value. Defining a
+\item{control}{\code{Character scalar} or \code{NULL}. Defining a
 column with logical values from the \code{colData} to define control and
-non-control samples. (default: \code{control = NULL})}
+non-control samples. (Default: \code{NULL})}
 
-\item{batch}{\code{NULL} or a single \code{character} value. Defining a
+\item{batch}{\code{Character scalar} or \code{NULL}. Defining a
 column with values interpretable as a factor from the \code{colData} to use
-as batch information. (default: \code{batch = NULL})}
+as batch information. (Default: \code{NULL})}
 
-\item{threshold}{numeric scalar. See
+\item{threshold}{\code{Numeric scalar}.. See
 \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
 
-\item{normalize, detailed}{logical scalar. See
+\item{normalize}{\code{Logical scalar}. See
 \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
+
+\item{detailed}{\code{Logical scalar}. If \code{TRUE}, the return value is a
+data.frame containing diagnostic information on the contaminant decision.
+If FALSE, the return value is a logical vector containing the binary
+contaminant classifications. (Default: \code{TRUE})}
 
 \item{...}{\itemize{
 \item for \code{isContaminant}/ \code{isNotContaminant}: arguments

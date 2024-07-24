@@ -3,7 +3,7 @@
 \docType{data}
 \name{peerj13075}
 \alias{peerj13075}
-\title{peerj13075}
+\title{Skin microbial profiles 58 genetically unrelated individuals}
 \format{
 A TreeSummarizedExperiment with 674 features and 58 samples. The
 rowData contains taxonomic information at kingdom, phylum, class, order,

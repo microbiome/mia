@@ -2,28 +2,100 @@
 % Please edit documentation in R/convertFromBIOM.R
 \name{importBIOM}
 \alias{importBIOM}
-\title{Loading a BIOM file}
+\alias{convertFromBIOM}
+\alias{convertToBIOM}
+\alias{convertToBIOM,SummarizedExperiment-method}
+\title{Convert a \code{TreeSummarizedExperiment} object to/from \sQuote{BIOM} results}
 \usage{
 importBIOM(file, ...)
+
+convertFromBIOM(
+  x,
+  prefix.rm = removeTaxaPrefixes,
+  removeTaxaPrefixes = FALSE,
+  rank.from.prefix = rankFromPrefix,
+  rankFromPrefix = FALSE,
+  artifact.rm = remove.artifacts,
+  remove.artifacts = FALSE,
+  ...
+)
+
+convertToBIOM(x, assay.type = "counts", ...)
+
+\S4method{convertToBIOM}{SummarizedExperiment}(x, assay.type = "counts", ...)
 }
 \arguments{
 \item{file}{BIOM file location}
 
-\item{...}{additional arguments to be passed to \code{convertFromBIOM}}
+\item{...}{Additional arguments. Not used currently.}
+
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
+
+\item{prefix.rm}{\code{Logical scalar}. Should
+taxonomic prefixes be removed? The prefixes is removed only from detected
+taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
+(Default: \code{FALSE})}
+
+\item{removeTaxaPrefixes}{Deprecated. Use \code{prefix.rm} instead.}
+
+\item{rank.from.prefix}{\code{Logical scalar}. If file does not have
+taxonomic ranks on feature table, should they be scraped from prefixes?
+(Default: \code{FALSE})}
+
+\item{rankFromPrefix}{Deprecated.Use \code{rank.from.prefix} instead.}
+
+\item{artifact.rm}{\code{Logical scalar}. If file have
+some taxonomic character naming artifacts, should they be removed.
+(default (Default: \code{FALSE})}
+
+\item{remove.artifacts}{Deprecated. Use \code{artifact.rm} instead.}
+
+\item{assay.type}{\code{Character scaler}. The name of assay.
+(Default: \code{"counts"})}
 }
 \value{
+\code{convertFromBIOM} returns an object of class
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+
 \code{importBIOM} returns an object of class
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 }
 \description{
-Loading a BIOM file
+For convenience, a few functions are available to convert BIOM, DADA2 and
+phyloseq objects to
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+objects, and
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+objects to phyloseq objects.
 }
 \details{
+\code{convertFromBIOM} coerces a \code{\link[biomformat:biom-class]{biom}} object to a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.
+
+\code{convertToBIOM} coerces a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object to a \code{\link[biomformat:biom-class]{biom}} object.
+
 \code{importBIOM} loads a BIOM file and creates a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object from the BIOM object contained in the loaded file.
 }
 \examples{
+
+# Convert BIOM results to a TreeSE
+# Load biom file
+library(biomformat)
+biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
+                         package = "biomformat")
+
+# Make TreeSE from BIOM object
+biom_object <- biomformat::read_biom(biom_file)
+tse <- convertFromBIOM(biom_object)
+
+# Convert TreeSE object to BIOM
+biom <- convertToBIOM(tse)
+
 # Load biom file
 library(biomformat)
 biom_file <- system.file(
@@ -45,10 +117,13 @@ tse <- importBIOM(biom_file, artifact.rm = TRUE)
                     
 }
 \seealso{
+\code{\link[=importQIIME2]{importQIIME2}}
+\code{\link[=importMothur]{importMothur}}
+
 \code{\link[=importMetaPhlAn]{importMetaPhlAn}}
-\code{\link[=convert]{convertFromPhyloseq}}
-\code{\link[=convert]{convertFromBIOM}}
-\code{\link[=convert]{convertFromDADA2}}
+\code{\link[=convertFromPhyloseq]{convertFromPhyloseq}}
+\code{\link[=convertFromBIOM]{convertFromBIOM}}
+\code{\link[=convertFromDADA2]{convertFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
 \code{\link[=importMothur]{importMothur}}
 \code{\link[=importHUMAnN]{importHUMAnN}}

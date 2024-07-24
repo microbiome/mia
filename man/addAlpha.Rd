@@ -38,68 +38,65 @@ addAlpha(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
 
-\item{assay.type}{the name of the assay used for calculation of the
-sample-wise estimates. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
+used in calculation. (Default: \code{"counts"})}
 
-\item{index}{a \code{character} vector, specifying the alpha diversity
+\item{index}{\code{Character vector}. Specifies the alpha diversity
 indices to be calculated.}
 
-\item{name}{a name for the column(s) of the colData the results should be
-stored in. By default this will use the original names of the calculated
-indices. (Default: \code{index})}
+\item{name}{\code{Character vector}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{index})}
 
-\item{niter}{\code{NULL} or a single \code{integer} value for the number of
+\item{niter}{\code{Integer scalar}. Specifies the number of
 rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
 (see Details section). (Default: \code{NULL})}
 
 \item{...}{optional arguments:
 \itemize{
-\item \code{sample}: A \code{numeric} value specifying the rarefaction
+\item \code{sample}: \code{Integer scalar}. Specifies the rarefaction
 depth i.e. the number of counts drawn from each sample.
 (Default: \code{min(colSums2(assay(x, assay.type)))})
 
-\item \code{tree.name}: (Faith's index) A single \code{character}
-value for specifying which rowTree will be used.
-(Default: \code{"phylo"})
+\item \code{tree.name}: \code{Character scalar}. Specifies which rowTree
+will be used. ( Faith's index). (Default: \code{"phylo"})
 
-\item \code{node.label}: (Faith's index) \code{NULL} or a
-\code{character} vector specifying the links between rows and node labels
-of phylogeny tree specified by \code{tree.name}. If a certain row is not
-linked with the tree, missing instance should be noted as NA. When
-\code{NULL}, all the rownames should be found from the tree.
-(Default: \code{NULL})
+\item \code{node.label}: \code{Character vector} or \code{NULL} Specifies the
+links between rows and node labels of phylogeny tree specified
+by \code{tree.name}. If a certain row is not linked with the tree, missing
+instance should be noted as NA. When \code{NULL}, all the rownames should
+be found from the tree. (Faith's index). (Default: \code{NULL})
 
-\item \code{only.tips}: (Faith's index) A \code{boolean} value
-specifying whether to remove internal nodes when Faith's index is
-calculated. When \code{only.tips=TRUE}, those rows that are not tips of
-tree are removed. (Default: \code{FALSE})
+\item \code{only.tips}: (Faith's index). \code{Logical scalar}. Specifies
+whether to remove internal nodes when Faith's index is calculated.
+When \code{only.tips=TRUE}, those rows that are not tips of tree are
+removed. (Default: \code{FALSE})
 
-\item \code{threshold}: (coverage and all evenness indices) A numeric value
-in the unit interval determining the threshold for coverage and evenness
+\item \code{threshold}: (Coverage and all evenness indices). \code{Numeric scalar}.
+From \code{0 to 1}, determines the threshold for coverage and evenness
 indices. When evenness indices are calculated values under or equal to
 this threshold are denoted as zeroes. For coverage index, see details.
 (Default: \code{0.5} for coverage, \code{0} for evenness indices)
 
-\item \code{quantile}: (log modulo skewness index) Arithmetic abundance
-classes are evenly cut up to to this quantile of the data. The assumption
-is that abundances higher than this are not common, and they are classified
-in their own group. (Default: \code{0.5})
+\item \code{quantile}: (log modulo skewness index). \code{Numeric scalar}.
+Arithmetic abundance classes are evenly cut up to to this quantile of the data.
+The assumption is that abundances higher than this are not common, and they
+are classified in their own group. (Default: \code{0.5})
 
-\item \code{nclasses}: (log modulo skewness index) The number of arithmetic
-abundance classes from zero to the quantile cutoff indicated by
-\code{quantile}. (Default: \code{50})
+\item \code{nclasses}: (log modulo skewness index). \code{Integer scalar}.
+The number of arithmetic abundance classes from zero to the quantile cutoff
+indicated by \code{quantile}. (Default: \code{50})
 
-\item \code{ntaxa}: (absolute and relative indices) The n-th position of
-the dominant taxa to consider. (Default: \code{1})
+\item \code{ntaxa}: (absolute and relative indices). \code{Integer scalar}.
+The n-th position of the dominant taxa to consider. (Default: \code{1})
 
-\item \code{aggregate}: (absolute, dbp, dmn, and relative indices)
-Aggregate the values for top members selected by \code{ntaxa} or not. If
-\code{TRUE}, then the sum of relative abundances is returned. Otherwise the
-relative abundance is returned for the single taxa with the indicated rank
-(default: \code{aggregate = TRUE}).
+\item \code{aggregate}: (absolute, dbp, dmn, and relative indices).
+\code{Logical scalar}. Aggregate the values for top members selected by
+\code{ntaxa} or not. If \code{TRUE}, then the sum of relative abundances
+is returned. Otherwise the relative abundance is returned for the single
+taxa with the indicated rank (default: \code{aggregate = TRUE}).
 
-\item \code{detection}: (observed index) A \code{numeric} value for
-selecting detection threshold for the abundances. (Default: \code{0})
+\item \code{detection}: (observed index). \code{Numeric scalar} Selects
+detection threshold for the abundances (Default: \code{0})
 }}
 }
 \value{
