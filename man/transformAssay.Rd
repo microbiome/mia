@@ -52,7 +52,8 @@ transformation is applied sample (column) or feature (row) wise.
 \code{colData} where results will be stored. (Default: \code{"method"})}
 
 \item{pseudocount}{\code{Logical scalar} or \code{numeric scalar}. When TRUE,
-automatically adds half of the minimum positive value of \code{assay.type}.
+missing values(NAs) are ignored and, it automatically adds half of the
+minimum positive value of \code{assay.type}.
 When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.
 (Default: \code{FALSE}).}
