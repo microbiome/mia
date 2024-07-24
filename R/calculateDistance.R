@@ -78,6 +78,18 @@ setMethod(
     function(
         x, method, assay_name = "counts", assay.type = assay_name, 
           transposed = FALSE, ...){
+    # Input checks
+    if(!.is_non_empty_string(assay.type)){
+        stop("'assay.type' must be a non-empty single character value",
+            call. = FALSE)
+    }
+    if(!.is_non_empty_string(method)){
+        stop("'method' must be a non-empty single character value",
+            call. = FALSE)
+    }
+    if(!.is_a_bool(transposed)){
+        stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+    }
     mat <- assay(x, assay.type)
     if(!transposed){
         mat <- t(mat)
@@ -115,18 +127,34 @@ setGeneric(
 setMethod(
   "addDissimilarity", signature = c(x = "SummarizedExperiment"),
   function(
-    x, method, assay_name = "counts", assay.type = assay_name, 
+    x, method, assay_name = "counts", assay.type = assay_name, name = method,
       transposed = FALSE, ...){
     res <- getDissimilarity(x, method = method, assay.type = assay.type, 
                             transposed = transposed, ...)
-    if ( !identical(rownames(as.matrix(res)), colnames(assay(x, assay.type))) ){
+    # Input checks
+    if(!.is_non_empty_string(assay.type)){
+      stop("'assay.type' must be a non-empty single character value",
+           call. = FALSE)
+    }
+    if(!.is_non_empty_string(method)){
+      stop("'method' must be a non-empty single character value",
+           call. = FALSE)
+    }
+    if(!.is_non_empty_string(name)){
+      stop("'name' must be a non-empty single character value",
+           call. = FALSE)
+    }
+    if(!.is_a_bool(transposed)){
+      stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !identical(rownames(as.matrix(res)), colnames(assay(x, assay.type))) ){
       warning("Samples of the dissimilarity matrix should be the same as the
             samples in columns of the assay specified with 'assay.type'. The 
             result is not added to reducedDim.")
       return(res)
     }
     else{
-      .add_values_to_reducedDims(x, res, name = method)
+      .add_values_to_reducedDims(x, as.matrix(res), name)
     }
       
   }
@@ -147,7 +175,7 @@ setMethod(
             message("'diss.fun' defaults to getOverlap.")
         } else if( method %in% c("unifrac")  ){
             args[["tree"]] <- tree
-            diss.fun <- getUnifrac
+            diss.fun <- .get_unifrac
             message("'diss.fun' defaults to getUnifrac.")
         } else if( method %in% c("jsd")  ){
             diss.fun <- .get_jsd

@@ -39,6 +39,7 @@ addDissimilarity(x, method, ...)
   method,
   assay_name = "counts",
   assay.type = assay_name,
+  name = method,
   transposed = FALSE,
   ...
 )
