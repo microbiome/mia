@@ -3,37 +3,24 @@
 #' To query a \code{SummarizedExperiment} for interesting features, several
 #' functions are available.
 #'
-#' @param x A
-#'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
+#' @inheritParams getPrevalence
+#' 
+#' @param top \code{Numeric scalar}. Determines how many top taxa to return. Default is
+#' to return top five taxa. (Default: \code{5})
 #'
-#' @param top Numeric value, how many top taxa to return. Default return top
-#'   five taxa.
-#'
-#' @param method Specify the method to determine top taxa. Either sum, mean,
-#'   median or prevalence. Default is 'mean'.
-#'
-#' @param assay.type A \code{character} value to select an
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}} 
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'   
-#' @param na.rm For \code{getTop} logical argument for calculation method 
-#'              specified to argument \code{method}. Default is TRUE. 
-#'
+#' @param method \code{Character scalar}. Specify the method to determine top taxa. Either 
+#' sum, mean, median or prevalence. (Default: \code{"mean"})
 #'
 #' @param ... Additional arguments passed, e.g., to getPrevalence:
 #'    \itemize{
-#'        \item{\code{sort}}{A single boolean value for selecting 
+#'        \item \code{sort}: \code{Logical scalar}. Specify
 #'        whether to sort taxa in alphabetical order or not. Enabled in functions
 #'        \code{getUnique}, and \code{getTop}.
-#'        (By default: \code{sort = FALSE})}
-#'        \item{\code{na.rm}}{A single boolean value for selecting 
+#'        (Default: \code{FALSE})
+#'        \item \code{na.rm}: \code{Logical scalar}. Specify
 #'        whether to remove missing values or not. Enabled in functions
 #'        \code{getUnique}, and \code{getTop}.
-#'        (By default: \code{na.rm = FALSE})}
+#'        (Default: \code{FALSE})
 #'    }
 #'    
 #' @details
@@ -158,8 +145,8 @@ setMethod("getTop", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname summaries
 #'
-#' @param rank A single character defining a taxonomic rank. Must be a value of
-#' the output of \code{taxonomyRanks()}.
+#' @param rank \code{Character scalar}. Defines a taxonomic rank. Must be a value of
+#' the output of \code{taxonomyRanks()}. (Default: \code{NULl})
 #'
 #' @return
 #' The \code{getUnique} returns a vector of unique taxa present at a
@@ -188,7 +175,8 @@ setMethod("getUnique", signature = c(x = "SummarizedExperiment"),
 #' @param group With group, it is possible to group the observations in an
 #'   overview. Must be one of the column names of \code{colData}.
 #'   
-#' @param name The column name for the features. The default is 'dominant_taxa'.
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{"dominant_taxa"})
 #'
 #' @param ... Additional arguments passed on to \code{agglomerateByRank()} when
 #'   \code{rank} is specified for \code{summarizeDominance}.
@@ -311,9 +299,8 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
 #' @param object A
 #'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
-#' @param assay.type a \code{character} value to select an
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
-#'   By default it expects count data.
+#' @param assay.type \code{Character scalar}. Specifies the name of the
+#'   assay used in calculation. (Default: \code{"counts"})
 #'
 #' @details
 #' The \code{summary} will return a summary of counts for all samples and

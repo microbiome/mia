@@ -10,54 +10,44 @@
 #' \code{rowData} contains a column \dQuote{FeatureID}, they will be renamed to
 #' \dQuote{SampleID_col} and \dQuote{FeatureID_row}, if row names or column
 #' names are set.
+#' 
+#' @inheritParams calculateJSD
 #'
-#' @param x A numeric matrix or a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   
-#' @param assay.type a \code{character} value to select an
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
-#' @param add.col \code{NULL}, \code{TRUE} or a \code{character} vector to
+#' @param add.col \code{Logical scalar}. \code{NULL} ,or \code{character vector}. Used to
 #'   select information from the \code{colData} to add to the molten assay data.
 #'   If \code{add.col = NULL} no data will be added, if
 #'   \code{add.col = TRUE} all data will be added and if
 #'   \code{add.col} is a \code{character} vector, it will be used to subset
-#'   to given column names in \code{colData}. (default:
-#'   \code{add.col = NULL})
+#'   to given column names in \code{colData}. (Default: \code{NULL})
 #' 
 #' @param add_col_data Deprecated. Use \code{add.col} instead.
 #'
-#' @param add.row \code{NULL}, \code{TRUE} or a \code{character} vector to
+#' @param add.row \code{Logical scalar} or \code{Character vector}. To
 #'   select information from the \code{rowData} to add to the molten assay data.
 #'   If \code{add.row = NULL} no data will be added, if
 #'   \code{add.row = TRUE} all data will be added and if
 #'   \code{add.row} is a \code{character} vector, it will be used to subset
-#'   to given column names in \code{rowData}. (default:
-#'   \code{add.row = NULL})
+#'   to given column names in \code{rowData}. (Default:
+#'   \code{NULL})
 #' 
 #' @param add_row_data Deprecated. Use \code{add.row} instead.
 #'
-#' @param row.name a \code{character} scalar to use as the output's name
-#'   for the feature identifier. (default: \code{row.name = "FeatureID"})
+#' @param row.name \code{Character scalar}. To use as the output's name
+#'   for the feature identifier. (Default: \code{"FeatureID"})
 #' 
 #' @param feature_name Deprecated. Use \code{row.name} instead.
 #'
-#' @param col.name a \code{character} scalar to use as the output's name
-#'   for the sample identifier. (default: \code{col.name = "SampleID"})
+#' @param col.name \code{Character scalar}. To use as the output's name
+#'   for the sample identifier. (Default: \code{"SampleID"})
 #' 
 #' @param sample_name Deprecated. Use \code{col.name} instead.
 #'
 #' @param ... optional arguments:
 #' \itemize{
-#'   \item check_names: A boolean value passed to data.frame function's check.name
+#'   \item check_names: \code{Logical scalar}. Passed to data.frame function's check.name
 #'   argument. Determines if sample names are checked that they are syntactically 
 #'   valid variable names and are not duplicated. If they are not, sample names 
-#'   are modified. (default: \code{check_names = TRUE})
+#'   are modified. (Default: \code{TRUE})
 #' }
 #'
 #' @return A \code{tibble} with the molten data. The assay values are given in a

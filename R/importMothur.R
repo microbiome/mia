@@ -3,23 +3,22 @@
 #' This method creates a \code{TreeSummarizedExperiment} object from \code{Mothur}
 #' files provided as input. 
 #'
-#' @param assay.file a single \code{character} value defining the file
+#' @param assay.file \code{Character scalar}. Defines the file
 #'   path of the feature table to be imported. The File has to be in 
 #'   \code{shared file} format as defined in Mothur documentation.
 #' 
 #' @param sharedFile Deprecated. Use \code{assay.file} instead.
 #'
-#' @param row.file a single \code{character} value defining the file path of
+#' @param row.file \code{Character scalar}. Defines the file path of
 #'   the taxonomy table to be imported. The File has to be in \code{taxonomy
 #'   file} or \code{constaxonomy file} format  as defined in Mothur
-#'   documentation. (default: \code{row.file = NULL}).
+#'   documentation. (Default: \code{NULL}).
 #' 
 #' @param taxonomyFile Deprecated. Use \code{row.file} instead.
 #'
-#' @param col.file a single \code{character} value defining the file path of
+#' @param col.file \code{Character scalar}. Defines file path of
 #'   the sample metadata to be imported. The File has to be in \code{desing
-#'   file} format as defined in Mothur documentation. (default: \code{col.file
-#'   = NULL}).
+#'   file} format as defined in Mothur documentation. (Default: \code{NULL}).
 #' 
 #' @param designFile Deprecated. Use \code{col.file} instead.
 #'
@@ -35,9 +34,9 @@
 #'
 #' @name importMothur
 #' @seealso
-#' \code{\link[=convert]{convertFromPhyloseq}}
-#' \code{\link[=convert]{convertFromBIOM}}
-#' \code{\link[=convert]{convertFromDADA2}}
+#' \code{\link[=convertFromPhyloseq]{convertFromPhyloseq}}
+#' \code{\link[=convertFromBIOM]{convertFromBIOM}}
+#' \code{\link[=convertFromDADA2]{convertFromDADA2}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

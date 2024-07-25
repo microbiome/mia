@@ -3,47 +3,36 @@
 #' Variety of transformations for abundance data, stored in \code{assay}.
 #' See details for options.
 #'
-#' @param x A
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'    object.
-#'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   transformed.
-#'
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @inheritParams calculateJSD
 #'   
-#' @param method A single character value for selecting the transformation
+#' @param method \code{Character scalar}. Specifies the transformation
 #'   method.
 #' 
-#' @param MARGIN A single character value for specifying whether the
+#' @param MARGIN \code{Character scalar}. Determines whether the
 #'   transformation is applied sample (column) or feature (row) wise.
-#'   (By default: \code{MARGIN = "samples"})
-#'
-#' @param name A single character value specifying the name of transformed
-#'   abundance table.
+#'   (Default: \code{"samples"})
 #' 
-#' @param pseudocount TRUE, FALSE, or a numeric value. When TRUE,
-#'   automatically adds the minimum positive value of \code{assay.type}.
+#' @param pseudocount \code{Logical scalar} or \code{numeric scalar}. When TRUE,
+#'   automatically adds half of the minimum positive value of \code{assay.type}.
 #'   When FALSE, does not add any pseudocount (pseudocount = 0).
 #'   Alternatively, a user-specified numeric value can be added as pseudocount.
+#'   (Default: \code{FALSE}).
+#' 
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{"method"})
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
-#'   \item \code{reference}: A single value which will be used to fill 
-#'   reference sample's column in returned assay when calculating alr. 
-#'   (default: \code{reference = NA})
+#'   \item \code{reference}: \code{Character scalar}. use to
+#'   to fill reference sample's column in returned assay when calculating alr. 
+#'   (Default: \code{NA})
 #'   \item \code{ref_vals} Deprecated. Use \code{reference} instead.
 #' }
 #' @details
 #'
-#' These \code{transformCount} function provides a variety of options for transforming abundance data.
-#' The transformed data is calculated and stored in a new \code{assay}. The previously available
-#' wrappers transformSamples, transformFeatures
-#' ZTransform, and relAbundanceCounts have been deprecated.
+#' \code{transformAssay} function provides a variety of options for
+#' transforming abundance data. The transformed data is calculated and stored
+#' in a new \code{assay}.
 #'
 #' The \code{transformAssay} provides sample-wise (column-wise) or feature-wise
 #' (row-wise) transformation to the abundance table
@@ -377,11 +366,12 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
             stop("The assay contains missing or negative values. ",
                  "'pseudocount' must be specified manually.", call. = FALSE)
         }
-        # If pseudocount TRUE, set it to half of non-zero minimum value, else set 
-        # it to zero.
+        # If pseudocount TRUE, set it to  half of non-zero minimum value
+        # else set it to zero.
         # Get min value
-        value <- min(mat[mat>0]) 
-        pseudocount <- ifelse(pseudocount, value / 2, 0)
+        value <- min(mat[mat>0])
+        value <- value/2
+        pseudocount <- ifelse(pseudocount, value, 0)
         # Report pseudocount if positive value
         if ( pseudocount > 0 ){
             message("A pseudocount of ", pseudocount, " was applied.")
@@ -390,13 +380,16 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     # Give warning if pseudocount should not be added
     # Case 1: only positive values
     if( pseudocount != 0 && all(mat > 0, na.rm = TRUE) ){
-        warning("The assay contains only positive values. ",
-                "Applying a pseudocount may be unnecessary.", call. = FALSE)
+        warning(
+            "The assay contains only positive values. ",
+            "Applying a pseudocount may be unnecessary.", call. = FALSE)
     }
     # Case 2: some negative values
     if( pseudocount != 0 && any(mat < 0, na.rm = TRUE) ){
-        warning("The assay contains some negative values. ",
-                "Applying a pseudocount may produce meaningless data.", call. = FALSE)
+        warning(
+            "The assay contains some negative values. ",
+            "Applying a pseudocount may produce meaningless data.",
+            call. = FALSE)
     }
     # Add pseudocount
     mat <- mat + pseudocount

@@ -29,58 +29,48 @@
 #'   returned. This function allows handy conversions between different
 #    taxonomic levels.
 #'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
+#' @inheritParams agglomerate-methods
 #'
-#' @param rank a single character defining a taxonomic rank. Must be a value of
-#'   \code{taxonomyRanks()} function
-#'
-#' @param empty.fields a \code{character} value defining, which values should be
-#'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
-#'   removed if \code{na.rm = TRUE} before agglomeration
-#'
-#' @param with.rank \code{TRUE} or \code{FALSE}: Should the level be add as a
-#'   suffix? For example: "Phylum:Crenarchaeota" (default:
-#'   \code{with.rank = FALSE})
+#' @param with.rank \code{Logical scalar}. Should the level be add as a
+#'   suffix? For example: "Phylum:Crenarchaeota". (Default: \code{FALSE})
 #' 
 #' @param with_rank Deprecated. Use \code{with.rank} instead.
 #'
-#' @param make.unique \code{TRUE} or \code{FALSE}: Should the labels be made
-#'   unique, if there are any duplicates? (default: \code{make.unique = TRUE})
+#' @param make.unique \code{Logical scalar}. Should the labels be made
+#'   unique, if there are any duplicates? (Default: \code{TRUE})
 #' 
 #' @param make_unique Deprecated. Use \code{make.unique} instead.
 #'
-#' @param resolve.loops \code{TRUE} or \code{FALSE}: Should \code{resolveLoops}
+#' @param resolve.loops \code{Logical scalar}. Should \code{resolveLoops}
 #'   be applied to the taxonomic data? Please note that has only an effect,
-#'   if the data is unique. (default: \code{resolve.loops = TRUE})
+#'   if the data is unique. (Default: \code{TRUE})
 #' 
 #' @param resolve_loops Deprecated. Use \code{resolve.loops} instead.
 #'
-#' @param taxa a \code{character} vector, which is used for subsetting the 
+#' @param taxa \code{Character vector}. Used for subsetting the 
 #'   taxonomic information. If no information is found,\code{NULL} is returned
-#'   for the individual element. (default: \code{NULL})
+#'   for the individual element. (Default: \code{NULL})
 #'
 #' @param from 
 #' \itemize{
-#'   \item For \code{mapTaxonomy}: a scalar \code{character} value, which 
-#'     must be a valid taxonomic rank. (default: \code{NULL})
+#'   \item For \code{mapTaxonomy}: \code{character scalar}. A value which 
+#'     must be a valid taxonomic rank. (Default: \code{NULL})
 #'   \item otherwise a \code{Taxa} object as returned by 
 #'     \code{\link[DECIPHER:IdTaxa]{IdTaxa}}
 #' }
 #'
-#' @param to a scalar \code{character} value, which must be a valid 
-#'   taxonomic rank. (default: \code{NULL})
+#' @param to \code{Character Scalar}. Must be a valid 
+#'   taxonomic rank. (Default: \code{NULL})
 #'   
-#' @param use.grepl \code{TRUE} or \code{FALSE}: should pattern matching via
+#' @param use.grepl \code{Logical}. Should pattern matching via
 #'   \code{grepl} be used? Otherwise literal matching is used.
-#'   (default: \code{FALSE})
+#'   (Default: \code{FALSE})
 #' 
 #' @param use_grepl Deprecated. Use \code{use.grepl} instead.
 #'
 #' @param ... optional arguments not used currently.
 #' 
-#' @param ranks Avector of ranks to be set
+#' @param ranks \code{Character vector}. A vector of ranks to be set.
 #' @details
 #' Taxonomic information from the \code{IdTaxa} function of \code{DECIPHER}
 #' package are returned as a special class. With \code{as(taxa,"DataFrame")}

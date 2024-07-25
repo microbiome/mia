@@ -3,6 +3,7 @@
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
+#' @param value a matrix to store as the \sQuote{relabundance} assay
 #'    
 #' @param ... Additional parameters. See dedicated function.
 #' 
@@ -1031,7 +1032,7 @@ setMethod(
     "estimateEvenness", signature = c(x = "ANY"), function(x, ...){
         .Deprecated(msg = paste0(
             "'estimateEvenness' is deprecated. Use 'addAlpha' instead."))
-        .estimate_evenness(x, ...)
+        addAlpha(x, ...)
     }
 )
 
@@ -1048,7 +1049,7 @@ setMethod(
     function(x, ...){
         .Deprecated(msg = paste0(
           "'estimateRichness' is deprecated. Use 'addAlpha' instead."))
-        .estimate_richness(x, ...)
+        addAlpha(x, ...)
     }
 )
 
@@ -1064,7 +1065,7 @@ setMethod(
     "estimateDiversity", signature = c(x = "ANY"), function(x, ...){
         .Deprecated(msg = paste0(
             "'estimateDiversity' is deprecated. Use 'addAlpha' instead."))
-        .estimate_diversity(x, ...)
+        addAlpha(x, ...)
     }
 )
 
@@ -1081,7 +1082,7 @@ setMethod(
     function(x, ...){
         .Deprecated(msg = paste0(
           "'estimateFaith' is deprecated. Use 'addAlpha' instead."))
-        .estimate_faith(x, ...)
+        addAlpha(x, ...)
     }
 )
 
@@ -1098,5 +1099,83 @@ setMethod(
     function(x, ...){
         .Deprecated(msg = paste0(
           "'estimateDominance' is deprecated. Use 'addAlpha' instead."))
-        .estimate_dominance(x, ...)
+        addAlpha(x, ...)
     })
+#' @rdname deprecate
+#' @export
+setGeneric("subsetSamples", signature = "x",
+           function(x, ...)
+               standardGeneric("subsetSamples"))
+#' @rdname deprecate
+#' @export
+setGeneric("subsetFeatures", signature = "x",
+           function(x, ...)
+               standardGeneric("subsetFeatures"))
+#' @rdname deprecate
+#' @export
+setGeneric("subsetTaxa", signature = "x",
+           function(x, ...)
+               standardGeneric("subsetTaxa"))
+#' @rdname deprecate
+#' @export
+setMethod("subsetSamples", signature = "SummarizedExperiment",
+          function(x, ...){
+              .Deprecated(msg = paste0("subsetSamples is deprecated. Please ",
+                                       "use '[]' for subsetting instead."))
+              subset_args <- .get_subset_args(x, ...)
+              x[subset_args$columns,subset_args$rows]
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("subsetFeatures", signature = "SummarizedExperiment",
+          function(x, ...){
+              .Deprecated(msg = paste0("subsetFeatures is deprecated. Please",
+                                       " use '[]' for subsetting instead."))
+              subset_args <- .get_subset_args(x, ...)
+              x[subset_args$rows, subset_args$columns]
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("subsetTaxa", signature = "SummarizedExperiment",
+          function(x, ...){
+              .Deprecated(msg = paste0("subsetFeatures is deprecated. Please",
+                                       " use '[]' for subsetting instead."))
+              subsetFeatures(x, ...)
+          }
+)
+#' @rdname deprecate
+#' @export
+setGeneric("relabundance", signature = c("x"),
+           function(x, ...) standardGeneric("relabundance"))
+
+#' @rdname deprecate
+#' @export
+setGeneric("relabundance<-", signature = c("x"),
+           function(x, value) standardGeneric("relabundance<-"))
+
+#' @rdname deprecate
+#' @importFrom SummarizedExperiment assays
+#' @export
+setMethod("relabundance", signature = c(x = "SummarizedExperiment"),
+    function(x){
+        .Deprecated(msg = paste0("'relabundance' is deprecated\n",
+                                 "Use 'assay(x, 'relabundance')' instead."))
+        assays(x)[["relabundance"]]
+    }
+)
+
+#' @rdname deprecate
+#' @importFrom SummarizedExperiment assays<-
+#' @export
+setReplaceMethod("relabundance", signature = c(x = "SummarizedExperiment"),
+    function(x, value){
+        .Deprecated(msg = paste0("'relabundance' is deprecated\n",
+                                 "Use 'assay(x, 'relabundance')' instead."))
+        assays(x)[["relabundance"]] <- value
+        x
+    }
+)

@@ -46,8 +46,12 @@
   is.character(x) && length(x) == 1L
 }
 
+.is_integer <- function(x){
+  is.numeric(x) && all(x%%1==0)
+}
+
 .is_an_integer <- function(x){
-    is.numeric(x) && length(x) == 1L && x%%1==0
+    .is_integer(x) && x%%1==0
 }
 
 .are_whole_numbers <- function(x){
@@ -361,6 +365,38 @@
     altExps(x) <- values
     return(x)
 }
+
+# This function can be used to add values to reducedDims
+.add_values_to_reducedDims <- function(x, values, name, ...){
+    # Check values
+    if( !((is(values, "matrix") || is(values, "dist")) && length(values) > 0) ){
+        stop("'values' must be a matrix.", call. = FALSE)
+    }
+    # Check names
+    if( !.is_a_string(name) ){
+        stop("'name' must be a character value.", call. = FALSE)
+    }
+    #
+    # If the object is SE, convert it to TreeSE
+    if( !is(x, "SingleCellExperiment") ){
+        x <- as(x, "TreeSummarizedExperiment")
+        warning(
+            "SummarizedExperiment does not have reducedDims slot. ",
+            "Therefore, it is converted to TreeSummarizedExperiment.",
+            call. = FALSE)
+    }
+    # Throw warning if values of reducedDim are overwritten
+    if( name %in% names(reducedDims(x)) ){
+        warning(
+            "The following values are already present in `reducedDims` and", 
+            " will be overwritten: '", name,
+            "'. Consider using the 'name' argument to specify alternative ",
+            "names.", call. = FALSE)
+    }
+    reducedDim(x, name) <- values
+    return(x)
+}
+
 ################################################################################
 # Other common functions
 

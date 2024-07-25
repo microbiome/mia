@@ -1,4 +1,4 @@
-#' Converters
+#' Convert a \code{TreeSummarizedExperiment} object to/from \sQuote{BIOM} results
 #'
 #' For convenience, a few functions are available to convert BIOM, DADA2 and 
 #' phyloseq objects to 
@@ -7,39 +7,39 @@
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' objects to phyloseq objects.
 #' 
-#' @param prefix.rm \code{TRUE} or \code{FALSE}: Should
+#' @param prefix.rm \code{Logical scalar}. Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
 #' taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
-#' (default \code{prefix.rm = FALSE})
+#' (Default: \code{FALSE})
 #' 
 #' @param removeTaxaPrefixes Deprecated. Use \code{prefix.rm} instead.
 #' 
-#' @param rank.from.prefix \code{TRUE} or \code{FALSE}: If file does not have
+#' @param rank.from.prefix \code{Logical scalar}. If file does not have
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
-#' (default \code{rank.from.prefix = FALSE})
+#' (Default: \code{FALSE})
 #' 
 #' @param rankFromPrefix Deprecated.Use \code{rank.from.prefix} instead.
 #' 
-#' @param artifact.rm \code{TRUE} or \code{FALSE}: If file have
+#' @param artifact.rm \code{Logical scalar}. If file have
 #' some taxonomic character naming artifacts, should they be removed.
-#' (default \code{artifact.rm = FALSE})
+#' (default (Default: \code{FALSE})
 #' 
 #' @param remove.artifacts Deprecated. Use \code{artifact.rm} instead.
 #' 
 #' @details 
-#' \code{convertFromBIOM} coerces a BIOM object to a 
+#' \code{convertFromBIOM} coerces a \code{\link[biomformat:biom-class]{biom}} object to a 
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object.
 #' 
-#' \code{convertFromBIOM} coerces a
+#' \code{convertToBIOM} coerces a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object to a \code{\link[biomformat:biom-class]{biom}} object.
 #'   
 #' @return
 #' \code{convertFromBIOM} returns an object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'
-#' @name convert
+#'   
+#' @name importBIOM
 #' 
 #' @seealso
 #' \code{\link[=importQIIME2]{importQIIME2}}
@@ -62,7 +62,7 @@
 #' 
 NULL
 
-#' Loading a BIOM file
+#' Import BIOM results to \code{TreeSummarizedExperiment}
 #' 
 #' @param file BIOM file location
 #' 
@@ -81,9 +81,9 @@ NULL
 #' 
 #' @seealso
 #' \code{\link[=importMetaPhlAn]{importMetaPhlAn}}
-#' \code{\link[=convert]{convertFromPhyloseq}}
-#' \code{\link[=convert]{convertFromBIOM}}
-#' \code{\link[=convert]{convertFromDADA2}}
+#' \code{\link[=convertFromPhyloseq]{convertFromPhyloseq}}
+#' \code{\link[=convertFromBIOM]{convertFromBIOM}}
+#' \code{\link[=convertFromDADA2]{convertFromDADA2}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #' \code{\link[=importMothur]{importMothur}}
 #' \code{\link[=importHUMAnN]{importHUMAnN}}
@@ -115,8 +115,8 @@ importBIOM <- function(file, ...) {
     convertFromBIOM(biom, ...)
 }
 
-#' @rdname convert
-#'
+#' @rdname importBIOM
+#' 
 #' @param x object of type \code{\link[biomformat:biom-class]{biom}}
 #'
 #' @export
@@ -243,8 +243,8 @@ convertFromBIOM <- function(
     return(tse)
 }
 
-#' @rdname convert
-#'
+#' @rdname importBIOM
+#' 
 #' @param x \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' 
 #' @param assay.type \code{Character scaler}. The name of assay.
@@ -260,7 +260,7 @@ setGeneric(
         x, assay.type = "counts", ...)
     standardGeneric("convertToBIOM"))
 
-#' @rdname convert
+#' @rdname importBIOM
 #' @export
 setMethod(
     "convertToBIOM", signature = c(x = "SummarizedExperiment"),
