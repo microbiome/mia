@@ -90,7 +90,7 @@ Suggests:
     rhdf5,
     topicmodels,
     topicdoc,
-    nmf
+    NMF
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)

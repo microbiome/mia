@@ -37,8 +37,8 @@
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' 
-#' # Reduce the number of features 
-#' tse <- agglomerateByPrevalence(tse, rank="Phylum")
+#' # Reduce the number of features
+#' tse <- agglomerateByPrevalence(tse, rank = "Phylum")
 #' 
 #' # Run NMF and add the result to reducedDim(tse, "NMF")
 #' tse <- addNMF(tse)
@@ -65,7 +65,7 @@ setGeneric("addNMF", signature = c("x"),
 #' @rdname addNMF
 setMethod("getNMF", "SummarizedExperiment",
           function(x, k = 2, assay.type = "counts", ...){
-            .require_package("nmf")
+            .require_package("NMF")
             # Input checks
             if( !.is_integer(k) ){
               stop("'k' must be an integer.", call. = FALSE)
@@ -74,13 +74,13 @@ setMethod("getNMF", "SummarizedExperiment",
             ######################################
             mat <- t(assay(x, assay.type))
             # Calculate nmf model
-            nmf <- nmf(x, k)
+            nmf_model <- NMF::nmf(mat, rank = k, ...)
             # store scores
-            scores <- nmf@fit@W
+            scores <- nmf_model@fit@W
             # Add loadings as attribute of the scores matrix
-            attr(scores, "loadings") <- nmf@fit@H
+            attr(scores, "loadings") <- nmf_model@fit@H
             # Add NMF model as attribute of the scores matrix
-            attr(scores, "model") <- nmf
+            attr(scores, "model") <- nmf_model
             # Return scores with loadings, metrics and model as attribute
             return(scores)
           }
@@ -96,9 +96,9 @@ setMethod("addNMF", "SummarizedExperiment",
                    call. = FALSE)
             }
             # Fit the model
-            nmf <- t(getNMF(x, k, assay.type, ...))
+            nmf <- getNMF(x, k = k, assay.type = assay.type, ...)
             # Add scores matrix with loadings as attribute to reducedDims
-            x <- .add_values_to_reducedDims(x, name, values = scores)
+            x <- .add_values_to_reducedDims(x, name = name, values = nmf)
             return(x)
           }
 )

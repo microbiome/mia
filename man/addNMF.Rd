@@ -19,7 +19,7 @@ addNMF(x, ...)
 \item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
-\item{...}{optional arguments passed to \code{\link[nmf:NMF]{NMF}}}
+\item{...}{optional arguments passed to \code{nmf::NMF}}
 
 \item{k}{\code{Integer vector}. A number of latent vectors/topics.
 (Default: \code{2})}
@@ -44,16 +44,16 @@ These functions perform Non-negative Matrix Factorization on data stored in a
 object.
 }
 \details{
-The functions \code{getNMF} and \code{addNMF} internally use
-\code{\link[nmf:nmf]{NMF}} to compute the ordination matrix and
+The functions \code{getNMF} and \code{addNMF} internally use \code{nmf::NMF}
+compute the ordination matrix and
 feature loadings.
 }
 \examples{
 data(GlobalPatterns)
 tse <- GlobalPatterns
 
-# Reduce the number of features 
-tse <- agglomerateByPrevalence(tse, rank="Phylum")
+# Reduce the number of features
+tse <- agglomerateByPrevalence(tse, rank = "Phylum")
 
 # Run NMF and add the result to reducedDim(tse, "NMF")
 tse <- addNMF(tse)
