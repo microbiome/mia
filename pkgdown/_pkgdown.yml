@@ -59,9 +59,7 @@ reference:
   - addAlpha
 - subtitle: Dissimilarity
 - contents:
-  - calculateUnifrac
-  - calculateJSD
-  - calculateOverlap
+  - getDissimilarity
   - addDivergence
 - subtitle: Ordination
 - contents:
