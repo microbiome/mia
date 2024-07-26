@@ -9,9 +9,9 @@ transformAssay(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "css", "frequency", "hellinger", "log", "log10",
-    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
-    "standardize", "total", "z"),
+  method = c("alr", "chi.square", "clr", "css", "css_fast", "frequency", "hellinger",
+    "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr",
+    "relabundance", "rrank", "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
@@ -22,9 +22,9 @@ transformAssay(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "css", "frequency", "hellinger", "log", "log10",
-    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
-    "standardize", "total", "z"),
+  method = c("alr", "chi.square", "clr", "css", "css_fast", "frequency", "hellinger",
+    "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr",
+    "relabundance", "rrank", "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
@@ -93,18 +93,35 @@ The available transformation methods include:
 'relabundance', 'rrank', 'standardize', 'total': please refer to
 \code{\link[vegan:decostand]{decostand}} for details.
 
-\item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data by accounting for differences
-in library sizes. \link{Paulson et al. (2013) Differential abundance analysis for microbial marker-gene surveys}
+\item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data
+by accounting for differences in library sizes. \link{Paulson et al. (2013) Differential abundance analysis for microbial marker-gene surveys}
 (https://doi.org/10.1038/nmeth.2658) outlines this in more detail.
 
-Also, please note, the \code{css_percentile} additional argument is used to set the percentile value that
-calculates the scaling factors in the css normalization. (default 0.5). Furthermore, the \code{scaling_constant}
-argument adjusts the normalization scale by dividing the calculated scaling factors, effectively changing
+Also, please note, the \code{css_percentile} additional argument is used to set
+the percentile value that calculates the scaling factors in the css normalization.
+(default 0.5). Furthermore, the \code{scaling_constant} argument adjusts the
+normalization scale by dividing the calculated scaling factors, effectively changing
 the magnitude of the normalized counts. (default 1000).
 
 It's also important to note that we used the \link{\pkg{metagenomeSeq}}
 (https://www.bioconductor.org/packages/release/bioc/html/metagenomeSeq.html)
 source code to help with the css implementation.
+
+\item 'css_fast': This method implements the \link{\pkg{metagenomeSeq}}
+(https://www.bioconductor.org/packages/release/bioc/html/metagenomeSeq.html)
+\code{cumNormStatFast} approach for determining the normalization percentile for
+summing and scaling counts. It utilizes row means for reference, allowing for
+faster computation compared to the traditional method.
+
+It is essentially a fast variant of CSS, as it determines a more optimal
+percentile for CSS normalization, using row means for quick computation. This
+then yields better normalization results.
+
+Just as with the base css method, \code{scaling_constant} is an optional
+additional arg. Also, \code{rel} is another additional arg just for the
+\code{css_fast} method. It represents a relative difference threshold and
+determines the first point where the relative change in differences between
+consecutive quantiles exceeds this threshold. (default 0.1).
 
 \item 'log10': log10 transformation can be used for reducing the skewness
 of the data.
@@ -141,6 +158,10 @@ head(assay(tse, "clr"))
 # Perform CSS normalization.
 tse <- transformAssay(tse, method = "css")
 head(assay(tse, "css"))
+
+# Perform CSS fast variant normalization.
+tse <- transformAssay(tse, method = "css_fast")
+head(assay(tse, "css_fast"))
 
 # With MARGIN, you can specify the if transformation is done for samples or
 # for features. Here Z-transformation is done feature-wise.

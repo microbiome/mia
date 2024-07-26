@@ -56,18 +56,35 @@
 #' 'relabundance', 'rrank', 'standardize', 'total': please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data by accounting for differences 
-#' in library sizes. [Paulson et al. (2013) Differential abundance analysis for microbial marker-gene surveys]
+#' \item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data 
+#' by accounting for differences in library sizes. [Paulson et al. (2013) Differential abundance analysis for microbial marker-gene surveys]
 #' (https://doi.org/10.1038/nmeth.2658) outlines this in more detail. 
 #' 
-#' Also, please note, the \code{css_percentile} additional argument is used to set the percentile value that 
-#' calculates the scaling factors in the css normalization. (default 0.5). Furthermore, the \code{scaling_constant} 
-#' argument adjusts the normalization scale by dividing the calculated scaling factors, effectively changing 
+#' Also, please note, the \code{css_percentile} additional argument is used to set 
+#' the percentile value that calculates the scaling factors in the css normalization. 
+#' (default 0.5). Furthermore, the \code{scaling_constant} argument adjusts the 
+#' normalization scale by dividing the calculated scaling factors, effectively changing 
 #' the magnitude of the normalized counts. (default 1000).
 #' 
 #' It's also important to note that we used the [\pkg{metagenomeSeq}]
 #' (https://www.bioconductor.org/packages/release/bioc/html/metagenomeSeq.html)
 #' source code to help with the css implementation. 
+#' 
+#' \item 'css_fast': This method implements the [\pkg{metagenomeSeq}]
+#' (https://www.bioconductor.org/packages/release/bioc/html/metagenomeSeq.html)
+#' `cumNormStatFast` approach for determining the normalization percentile for
+#' summing and scaling counts. It utilizes row means for reference, allowing for 
+#' faster computation compared to the traditional method.
+#' 
+#' It is essentially a fast variant of CSS, as it determines a more optimal
+#' percentile for CSS normalization, using row means for quick computation. This
+#' then yields better normalization results. 
+#' 
+#' Just as with the base css method, \code{scaling_constant} is an optional
+#' additional arg. Also, \code{rel} is another additional arg just for the 
+#' \code{css_fast} method. It represents a relative difference threshold and 
+#' determines the first point where the relative change in differences between
+#' consecutive quantiles exceeds this threshold. (default 0.1).
 #' 
 #' \item 'log10': log10 transformation can be used for reducing the skewness
 #' of the data.
@@ -114,6 +131,10 @@
 #' tse <- transformAssay(tse, method = "css")
 #' head(assay(tse, "css"))
 #' 
+#' # Perform CSS fast variant normalization.
+#' tse <- transformAssay(tse, method = "css_fast")
+#' head(assay(tse, "css_fast"))
+#' 
 #' # With MARGIN, you can specify the if transformation is done for samples or
 #' # for features. Here Z-transformation is done feature-wise.
 #' tse <- transformAssay(tse, method = "standardize", MARGIN = "features")
@@ -142,9 +163,9 @@ NULL
 setGeneric("transformAssay", signature = c("x"),
            function(x,
                     assay.type = "counts", assay_name = NULL,
-                    method = c("alr", "chi.square", "clr", "css", "frequency",
-                               "hellinger", "log", "log10", "log2", "max",
-                               "normalize", "pa", "range", "rank", "rclr",
+                    method = c("alr", "chi.square", "clr", "css", "css_fast", 
+                               "frequency", "hellinger", "log", "log10", "log2", 
+                               "max", "normalize", "pa", "range", "rank", "rclr",
                                "relabundance", "rrank", "standardize", "total",
                                "z"),
                     MARGIN = "samples",
@@ -158,9 +179,9 @@ setGeneric("transformAssay", signature = c("x"),
 setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     function(x,
              assay.type = "counts", assay_name = NULL,
-             method = c("alr", "chi.square", "clr", "css", "frequency", "hellinger",
-                        "log", "log10", "log2", "max", "normalize", "pa",
-                        "range", "rank", "rclr", "relabundance", "rrank",
+             method = c("alr", "chi.square", "clr", "css", "css_fast", "frequency", 
+                        "hellinger", "log", "log10", "log2", "max", "normalize", 
+                        "pa", "range", "rank", "rclr", "relabundance", "rrank",
                         "standardize", "total", "z"),
              MARGIN = "samples",
              name = method,
@@ -212,7 +233,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         
         # Calls help function that does the transformation
         # Help function is different for mia and vegan transformations
-        if( method %in% c("log10", "log2", "css") ){
+        if( method %in% c("log10", "log2", "css", "css_fast") ){
             transformed_table <- .apply_transformation(
                 assay, method, MARGIN, ...)
         } else {
@@ -235,7 +256,6 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 # as input and returns transformed table. This function utilizes mia's
 # transformation functions.
 .apply_transformation <- function(assay, method, MARGIN, ...){
-
     # Transpose if MARGIN is row
     if( MARGIN == 1L ){
         assay <- t(assay)
@@ -246,6 +266,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
                       log10 = .calc_log,
                       log2 = .calc_log,
                       css = .calc_css,
+                      css_fast = .calc_css_fast
     )
 
     # Get transformed table
@@ -335,13 +356,15 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-####################################.apply_css##################################
+####################################.calc_css###################################
 # This function applies cumulative sum scaling (CSS) to the abundance table.
-.calc_css <- function(mat, ...) {
+.calc_css <- function(mat, css_percentile = NULL, ...) {
     # Check for the presence of the scaling factor percentile and scaling 
     # constant in additional args
-    css_percentile <- ifelse("css_percentile" %in% names(list(...)), 
-                             list(...)$css_percentile, 0.5)
+    if (is.null(css_percentile)) {
+      css_percentile <- ifelse("css_percentile" %in% names(list(...)), 
+                               list(...)$css_percentile, 0.5)
+    }
     scaling_constant <- ifelse("scaling_constant" %in% names(list(...)), 
                                list(...)$scaling_constant, 1000)
     
@@ -351,6 +374,78 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     # Normalize the count data by dividing by the scaling factor
     normalized_data <- sweep(mat, 2, scaling_factors / scaling_constant, "/")
     return(normalized_data)
+}
+
+####################################.calc_css_fast##############################
+# This function applies cumulative sum scaling (CSS) to the abundance table 
+# using the fast variant method.
+.calc_css_fast <- function(mat, ...) {
+    # Check for the presence of the rel additional arg and set default if not present
+    rel <- ifelse("rel" %in% names(list(...)), list(...)$rel, 0.1)
+    
+    # Calculate the percentile using .calc_css_percentile
+    css_percentile <- .calc_css_percentile(mat, rel, ...)
+    
+    # Call .calc_css with the calculated percentile
+    normalized_data <- .calc_css(mat, css_percentile, ...)
+    return(normalized_data)
+}
+
+#################################.calc_css_percentile######################
+# Calculates the cumulative sum scaling (css) scaling percentiles from the given 
+# data
+#'  @importFrom matrixStats rowMedians
+.calc_css_percentile <- function(mat, rel, ...) {
+    # Sort the non-zero values in each column of the matrix in decreasing order
+    smat <- lapply(1:ncol(mat), function(i) {
+      sort(mat[which(mat[, i] > 0), i], decreasing = TRUE)
+    })
+    
+    # Find the maximum length of the sorted columns
+    leng <- max(sapply(smat, length))
+    
+    # Check if any column has only one or zero features and stop if true
+    if (any(sapply(smat, length) == 1)) stop("Warning: sample with one or zero features")
+    
+    # Create an empty matrix (smat2) with dimensions (max length, number of columns)
+    smat2 <- array(NA, dim = c(leng, ncol(mat)))
+    
+    # Populate smat2 with the sorted values from smat
+    for (i in 1:ncol(mat)) {
+      smat2[leng:(leng - length(smat[[i]]) + 1), i] <- smat[[i]]
+    }
+    
+    # Calculate quantiles for each column in smat2
+    rmat2 <- sapply(1:ncol(smat2), function(i) {
+      quantile(smat2[, i], probs = seq(0, 1, length.out = nrow(smat2)), na.rm = TRUE)
+    })
+    
+    # Replace NA values in smat2 with 0
+    smat2[is.na(smat2)] <- 0
+    
+    # Compute the row means of smat2 to create a reference profile
+    ref1 <- rowMeans(smat2)
+    
+    # Number of columns in rmat2
+    ncols <- ncol(rmat2)
+    
+    # Calculate the differences between the reference profile and each column's quantiles
+    diffr <- sapply(1:ncols, function(i) {
+      ref1 - rmat2[, i]
+    })
+    
+    # Compute the row medians of absolute differences
+    diffr1 <- matrixStats::rowMedians(abs(diffr))
+    
+    # Find the first point where the relative change exceeds the threshold (rel)
+    x <- which(abs(diff(diffr1)) / diffr1[-1] > rel)[1] / length(diffr1)
+    
+    # If the calculated percentile is less than or equal to 0.50, use 0.50 as the default value
+    if (is.na(x) || x <= 0.50) {
+      message("Default value being used.")
+      x <- 0.50
+    }
+    return(x)
 }
 
 #################################.calc_scaling_factors#############################
