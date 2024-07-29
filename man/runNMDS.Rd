@@ -56,6 +56,9 @@ addNMDS(x, ..., altexp = NULL, name = "NMDS")
 runNMDS(x, ...)
 }
 \arguments{
+\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.}
+
 \item{...}{additional arguments to pass to \code{FUN} and
 \code{nmds.fun}.}
 
@@ -85,12 +88,22 @@ integer vector of row indices or a logical vector. (Default: \code{NULL})}
 \item{scale}{\code{Logical scalar}. Sshould the expression values be standardized?
 (Default: \code{FALSE})}
 
+\item{transposed}{\code{Logical scalar}. Specifies if x is transposed with cells in
+rows. (Default: \code{FALSE})}
+
 \item{keep.dist}{\code{Logical scalar}. Indicates whether the \code{dist} object
 calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
 the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}. (Default:
 \code{FALSE})}
 
 \item{keep_dist}{Deprecated. Use \code{keep.dist} instead.}
+
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
+
+\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Please use \code{assay.type} instead. At
+some point \code{assay_name} will be disabled.)}
 
 \item{dimred}{\code{Character scalar} or \code{integer scalar}. Specifies the existing dimensionality
 reduction results to use.}

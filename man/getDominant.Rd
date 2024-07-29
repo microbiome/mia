@@ -41,6 +41,16 @@ addDominant(x, name = "dominant_taxa", other.name = "Other", n = NULL, ...)
 )
 }
 \arguments{
+\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.}
+
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
+
+\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Please use \code{assay.type} instead. At
+some point \code{assay_name} will be disabled.)}
+
 \item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
 

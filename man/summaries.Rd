@@ -42,6 +42,9 @@ summarizeDominance(x, group = NULL, name = "dominant_taxa", ...)
 \S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
 }
 \arguments{
+\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.}
+
 \item{top}{\code{Numeric scalar}. Determines how many top taxa to return. Default is
 to return top five taxa. (Default: \code{5})}
 
@@ -50,6 +53,10 @@ sum, mean, median or prevalence. (Default: \code{"mean"})}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of the
 assay used in calculation. (Default: \code{"counts"})}
+
+\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Please use \code{assay.type} instead. At
+some point \code{assay_name} will be disabled.)}
 
 \item{na.rm}{\code{Logical scalar}. Should NA values be omitted when calculating
 prevalence? (Default: \code{TRUE})}

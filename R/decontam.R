@@ -5,7 +5,7 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' objects.
 #' 
-#' @inheritParams calculateJSD
+#' @inheritParams getDissimilarity
 #'
 #' @param seqtab,x
 #'   a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}

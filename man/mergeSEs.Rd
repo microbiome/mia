@@ -29,7 +29,17 @@ mergeSEs(x, ...)
 \S4method{mergeSEs}{list}(x, ...)
 }
 \arguments{
+\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.}
+
 \item{...}{optional arguments (not used).}
+
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
+
+\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Please use \code{assay.type} instead. At
+some point \code{assay_name} will be disabled.)}
 
 \item{join}{\code{Character scalar}. A value for selecting the joining method.
 Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled

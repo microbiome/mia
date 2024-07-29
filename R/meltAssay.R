@@ -11,7 +11,7 @@
 #' \dQuote{SampleID_col} and \dQuote{FeatureID_row}, if row names or column
 #' names are set.
 #' 
-#' @inheritParams calculateJSD
+#' @inheritParams getDissimilarity
 #'
 #' @param add.col \code{Logical scalar}. \code{NULL} ,or \code{character vector}. Used to
 #'   select information from the \code{colData} to add to the molten assay data.

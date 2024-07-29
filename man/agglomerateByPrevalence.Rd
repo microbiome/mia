@@ -26,6 +26,9 @@ agglomerateByPrevalence(x, ...)
 )
 }
 \arguments{
+\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.}
+
 \item{...}{arguments passed to \code{agglomerateByRank} function for
 \code{SummarizedExperiment} objects and other functions.
 See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}

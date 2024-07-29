@@ -102,6 +102,9 @@ getPrevalentAbundance(
 \S4method{getPrevalentAbundance}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts", ...)
 }
 \arguments{
+\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.}
+
 \item{...}{additional arguments
 \itemize{
 \item If \code{!is.null(rank)} arguments are passed on to
@@ -134,6 +137,13 @@ detection and prevalence cutoffs be included? (Default: \code{FALSE})}
 
 \item{na.rm}{\code{Logical scalar}. Should NA values be omitted when calculating
 prevalence? (Default: \code{TRUE})}
+
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
+
+\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Please use \code{assay.type} instead. At
+some point \code{assay_name} will be disabled.)}
 
 \item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}

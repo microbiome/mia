@@ -3,7 +3,7 @@
 #' These functions perform Canonical Correspondence Analysis on data stored
 #' in a \code{SummarizedExperiment}.
 #'
-#' @inheritParams calculateJSD
+#' @inheritParams getDissimilarity
 #'
 #' @details
 #'   For \code{run*} a

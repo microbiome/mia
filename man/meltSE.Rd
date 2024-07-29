@@ -37,6 +37,16 @@ meltSE(
 )
 }
 \arguments{
+\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.}
+
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
+
+\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Please use \code{assay.type} instead. At
+some point \code{assay_name} will be disabled.)}
+
 \item{add.row}{\code{Logical scalar} or \code{Character vector}. To
 select information from the \code{rowData} to add to the molten assay data.
 If \code{add.row = NULL} no data will be added, if

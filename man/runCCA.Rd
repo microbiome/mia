@@ -66,6 +66,9 @@ calculateRDA(x, ...)
 runRDA(x, ...)
 }
 \arguments{
+\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.}
+
 \item{...}{additional arguments passed to vegan::cca or vegan::dbrda and
 other internal functions.
 \itemize{
@@ -105,6 +108,13 @@ into a CA analysis and dbRDA into PCoA/MDS.}
 \item{test.signif}{\code{Logical scalar}. Should the PERMANOVA and analysis of
 multivariate homogeneity of group dispersions be performed.
 (Default: \code{TRUE})}
+
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
+
+\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Please use \code{assay.type} instead. At
+some point \code{assay_name} will be disabled.)}
 
 \item{scores}{\code{Character scalar}. Specifies scores to be returned. Must be
 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of

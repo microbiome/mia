@@ -40,6 +40,9 @@ addDPCoA(x, ..., altexp = NULL, name = "DPCoA")
 runDPCoA(x, ...)
 }
 \arguments{
+\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.}
+
 \item{y}{a \code{dist} or a symmetric \code{matrix} compatible with
 \code{ade4:dpcoa}}
 
@@ -60,6 +63,19 @@ integer vector of row indices or a logical vector. (Default: \code{NULL})}
 
 \item{scale}{\code{Logical scalar}. Sshould the expression values be standardized?
 (Default: \code{FALSE})}
+
+\item{transposed}{\code{Logical scalar}. Specifies if x is transposed with cells in
+rows. (Default: \code{FALSE})}
+
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
+
+\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Please use \code{assay.type} instead. At
+some point \code{assay_name} will be disabled.)}
+
+\item{tree.name}{\code{Character scalar}. Specifies which tree will be used in
+calculation. (Default: \code{"phylo"})}
 
 \item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an
 alternative experiment containing the input data. (Default: \code{NULL})}
