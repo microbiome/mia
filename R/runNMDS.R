@@ -35,6 +35,8 @@
 #'   dimred is specified.
 #' 
 #' @param n_dimred Deprecated. Use \code{ndimred} instead.
+#' 
+#' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #'
 #' @return For \code{getNMDS}, a matrix is returned containing the MDS
 #'   coordinates for each sample (row) and dimension (column).

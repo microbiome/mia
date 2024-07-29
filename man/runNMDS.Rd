@@ -105,6 +105,8 @@ calculation. (Default: \code{"counts"})}
 calculation. (Please use \code{assay.type} instead. At
 some point \code{assay_name} will be disabled.)}
 
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
+
 \item{dimred}{\code{Character scalar} or \code{integer scalar}. Specifies the existing dimensionality
 reduction results to use.}
 

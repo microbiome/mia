@@ -65,10 +65,8 @@ calculation. (Default: \code{"phylo"})}
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with cells in
 rows. (Default: \code{FALSE})}
 
-\item{detection}{\code{Integer}. Specifies detection threshold for
-absence/presence of features. Feature that has abundance under threshold in
-either of samples, will be discarded when evaluating overlap between
-samples.}
+\item{name}{\code{Character scalar}. The name to be used to store the result
+in the reducedDims of the output. (Default: \code{method})}
 }
 \value{
 \code{getDissimilarity} returns a distance matrix.

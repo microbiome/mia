@@ -8,6 +8,9 @@
 #'   object.
 #'
 #' @param method \code{Character scalar}. Specifies which distance to calculate.
+#' 
+#' @param name \code{Character scalar}. The name to be used to store the result 
+#'  in the reducedDims of the output. (Default: \code{method})
 #'
 #' @param assay.type \code{Character scalar}. Specifies which assay to use for 
 #'   calculation. (Default: \code{"counts"})
@@ -21,11 +24,6 @@
 #'   
 #' @param transposed \code{Logical scalar}. Specifies if x is transposed with cells in
 #'   rows. (Default: \code{FALSE})
-#'   
-#' @param detection \code{Integer}. Specifies detection threshold for 
-#'   absence/presence of features. Feature that has abundance under threshold in
-#'   either of samples, will be discarded when evaluating overlap between 
-#'   samples. 
 #'
 #' @param ... other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}
 #'

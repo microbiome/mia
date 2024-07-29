@@ -35,6 +35,10 @@
 #' 
 #' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an 
 #'   alternative experiment containing the input data. (Default: \code{NULL})
+#'   
+#' @param exprs_values Deprecated. Use \code{assay.type} instead.
+#' 
+#' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
 #' @param ... Currently not used.
 #'

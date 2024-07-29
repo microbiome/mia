@@ -74,8 +74,12 @@ calculation. (Default: \code{"counts"})}
 calculation. (Please use \code{assay.type} instead. At
 some point \code{assay_name} will be disabled.)}
 
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
+
 \item{tree.name}{\code{Character scalar}. Specifies which tree will be used in
 calculation. (Default: \code{"phylo"})}
+
+\item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
 \item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an
 alternative experiment containing the input data. (Default: \code{NULL})}

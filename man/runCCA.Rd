@@ -116,6 +116,8 @@ calculation. (Default: \code{"counts"})}
 calculation. (Please use \code{assay.type} instead. At
 some point \code{assay_name} will be disabled.)}
 
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
+
 \item{scores}{\code{Character scalar}. Specifies scores to be returned. Must be
 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
 v with weights Xbar, but the multiplying effect of eigenvalues removed) or
