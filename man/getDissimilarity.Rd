@@ -30,7 +30,13 @@ getDissimilarity(x, method, ...)
   ...
 )
 
-\S4method{getDissimilarity}{ANY}(x, method, ...)
+\S4method{getDissimilarity}{ANY}(
+  x,
+  method,
+  assay_name = "counts",
+  assay.type = assay_name,
+  ...
+)
 
 addDissimilarity(x, method, ...)
 

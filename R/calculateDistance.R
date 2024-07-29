@@ -76,6 +76,7 @@ setMethod(
     function(
         x, method, assay_name = "counts", assay.type = assay_name, 
           transposed = FALSE, ...){
+    browser()
     # Input checks
     if(!.is_non_empty_string(assay.type)){
         stop("'assay.type' must be a non-empty single character value",
@@ -92,8 +93,15 @@ setMethod(
     if(!transposed){
         mat <- t(mat)
     }
-    res <- getDissimilarity(mat, method = method, ...)
-    return(res)
+    if( method == "unifrac"){
+      node.label <- .get_rowlinks(x, assay.type)
+      mat <- .calculate_dissimilarity(mat = x, method = method, 
+                                      node.label = node.label, ...)
+    }
+    else{
+      mat <- .calculate_dissimilarity(mat = x, method = method, ...)
+    }
+    return(mat)
     }
 )
 
@@ -102,7 +110,7 @@ setMethod(
 setMethod(
     "getDissimilarity", signature = c(x = "ANY"),
     function(
-        x, method, ...){
+        x, method, assay_name = "counts", assay.type = assay_name, ...){
     # Input check
     if( !.is_a_string(method) ){
         stop("'method' must be a single character value.", call. = FALSE)
@@ -159,13 +167,14 @@ setMethod(
 )
 
 .calculate_dissimilarity <- function(
-        mat, method, diss.fun = NULL, tree = NULL, ...){
+        mat, method, node.label = NULL, diss.fun = NULL, tree = NULL, ...){
+    browser()
     # input check
     if( !(is.null(diss.fun) || is.function(diss.fun)) ){
         stop("'diss.fun' must be NULL or a function.", call. = FALSE)
     }
     #
-    args <- c(list(mat, method = method), list(...))
+    args <- c(list(mat, method = method, node.label = node.label, list(...)))
     # If the dissimilarity functon is not specified, get default choice
     if( is.null(diss.fun) ){
         if( method %in% c("overlap") ){
@@ -186,7 +195,7 @@ setMethod(
             message("'diss.fun' defaults to stats::dist.")
         }
     }
-    # Calcuate dissimilarity with specified function
+    # Calculate dissimilarity with specified function
     res <- do.call(diss.fun, args)
     return(res)
 }

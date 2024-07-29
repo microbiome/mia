@@ -79,7 +79,7 @@ test_that("Unifrac beta diversity", {
                                               rowTree(tse_ref)))
     expect_equal(unifrac_mia, unifrac_rbiom, tolerance = 1e-3)
     
-    # Test the function with agglomerated data. .calculate_unifrac renames 
+    # Test the function with agglomerated data. .get_unifrac renames 
     # rownames based on tips and links to them. Then it also prunes the tree so 
     # that rows are in tips.
     tse <- GlobalPatterns

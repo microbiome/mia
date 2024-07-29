@@ -1,4 +1,4 @@
-.get_unifrac <- function(x, assay.type = assay_name, assay_name = exprs_values, 
+.get_rowlinks <- function(x, assay.type = assay_name, assay_name = exprs_values, 
                           exprs_values = "counts", tree.name = tree_name, 
                           tree_name = "phylo", transposed = FALSE, ...){
         # Get functions and parameters based on direction
@@ -36,18 +36,15 @@
         links <- links_FUN(x)
         links <- links[ , "nodeLab" ]
         # Calculate unifrac
-        res <- .calculate_unifrac(mat, tree = tree, node.label = links, ...)
-        return(res)
+        node.label <- links
+        return(node.label)
 }
 
 ################################################################################
 #' @importFrom ape drop.tip
 #' @importFrom rbiom unifrac
-.calculate_unifrac <- function(
+.get_unifrac <- function(
         x, tree, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
-    browser(
-      
-    )
     # Check x
     if( !is.matrix(as.matrix(x)) ){
         stop("'x' must be a matrix", call. = FALSE)
