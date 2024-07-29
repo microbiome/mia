@@ -21,32 +21,29 @@
 runJSD(x, BPPARAM = SerialParam(), chunkSize = nrow(x))
 }
 \arguments{
-\item{x}{a numeric matrix or a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.}
+\item{x}{a numeric matrix with samples as rows or a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
 \item{...}{optional arguments not used.}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{exprs_values}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead.)}
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{transposed}{Logical scalar, is x transposed with cells in rows?}
+\item{transposed}{\code{Logical scalar}. Is x transposed with samples in rows?
+(Default: \code{FALSE})}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether the JSD calculation should be parallelized.}
+object specifying whether the calculation should be parallelized.}
 
-\item{chunkSize}{an integer scalar, defining the size of data send
+\item{chunkSize}{\code{Integer scalar}. Defines the size of data send
 to the individual worker. Only has an effect, if \code{BPPARAM} defines
-more than one worker. (default: \code{chunkSize = nrow(x)})}
+more than one worker. (Default: \code{nrow(x)})}
 }
 \value{
 a sample-by-sample distance matrix, suitable for NMDS, etc.

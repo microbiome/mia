@@ -4,7 +4,7 @@
 \name{dmn_se}
 \alias{dmn_se}
 \alias{twins}
-\title{dmn_se}
+\title{Twins' microbiome data from 278 individuals}
 \format{
 A SummarizedExperiment with 130 features and 278 samples. The
 rowData contains no taxonomic information. The colData includes:

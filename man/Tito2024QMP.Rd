@@ -3,7 +3,7 @@
 \docType{data}
 \name{Tito2024QMP}
 \alias{Tito2024QMP}
-\title{Tito2024QMP}
+\title{Fecal microbiota samples from 589 patients across different colorectal cancer stages}
 \format{
 A TreeSummarizedExperiment with 676 features and 589 samples.
 The rowData contains species. The colData includes:

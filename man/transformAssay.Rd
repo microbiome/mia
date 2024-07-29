@@ -32,39 +32,36 @@ transformAssay(
 )
 }
 \arguments{
-\item{x}{A
+\item{x}{a numeric matrix with samples as rows or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{assay.type}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-transformed.}
+\item{assay.type}{\code{Character scalar}. Specifies the name of the
+assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{method}{A single character value for selecting the transformation
+\item{method}{\code{Character scalar}. Specifies the transformation
 method.}
 
-\item{MARGIN}{A single character value for specifying whether the
+\item{MARGIN}{\code{Character scalar}. Determines whether the
 transformation is applied sample (column) or feature (row) wise.
-(By default: \code{MARGIN = "samples"})}
+(Default: \code{"samples"})}
 
-\item{name}{A single character value specifying the name of transformed
-abundance table.}
+\item{name}{\code{Character scalar}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{"method"})}
 
-\item{pseudocount}{TRUE, FALSE, or a numeric value. When TRUE,
+\item{pseudocount}{\code{Logical scalar} or \code{numeric scalar}. When TRUE,
 automatically adds half of the minimum positive value of \code{assay.type}.
 When FALSE, does not add any pseudocount (pseudocount = 0).
-Alternatively, a user-specified numeric value can be added as pseudocount.}
+Alternatively, a user-specified numeric value can be added as pseudocount.
+(Default: \code{FALSE}).}
 
 \item{...}{additional arguments passed on to \code{vegan:decostand}:
 \itemize{
-\item \code{reference}: A single value which will be used to fill
-reference sample's column in returned assay when calculating alr.
-(default: \code{reference = NA})
+\item \code{reference}: \code{Character scalar}. use to
+to fill reference sample's column in returned assay when calculating alr.
+(Default: \code{NA})
 \item \code{ref_vals} Deprecated. Use \code{reference} instead.
 }}
 }

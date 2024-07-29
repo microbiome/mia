@@ -4,44 +4,42 @@
 #' \code{isNotContaminant} are made available for
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' objects.
+#' 
+#' @inheritParams calculateJSD
 #'
 #' @param seqtab,x
 #'   a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to use.
+#' @param name \code{Character scalar}. A name for the column of the 
+#'   \code{colData} where results will be stored. (Default: \code{"isContaminant"})
 #'
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
-#' @param name A name for the column of the colData in which the contaminant
-#'   information should be stored.
-#'
-#' @param concentration \code{NULL} or a single \code{character} value. Defining
+#' @param concentration \code{Character scalar} or \code{NULL}. Defining
 #'   a column with numeric values from the \code{colData} to use as
-#'   concentration information. (default: \code{concentration = NULL})
+#'   concentration information. (Default: \code{NULL})
 #'
-#' @param control \code{NULL} or a single \code{character} value. Defining a
+#' @param control \code{Character scalar} or \code{NULL}. Defining a
 #'   column with logical values from the \code{colData} to define control and
-#'   non-control samples. (default: \code{control = NULL})
+#'   non-control samples. (Default: \code{NULL})
 #'
-#' @param batch \code{NULL} or a single \code{character} value. Defining a
+#' @param batch \code{Character scalar} or \code{NULL}. Defining a
 #'   column with values interpretable as a factor from the \code{colData} to use
-#'   as batch information. (default: \code{batch = NULL})
+#'   as batch information. (Default: \code{NULL})
+#' 
+#' @param detailed \code{Logical scalar}. If \code{TRUE}, the return value is a 
+#'   data.frame containing diagnostic information on the contaminant decision. 
+#'   If FALSE, the return value is a logical vector containing the binary 
+#'   contaminant classifications. (Default: \code{TRUE})
 #'
 #' @param ... arguments passed onto
 #'   \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 #'   \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}.
 #'   Currently these are \code{method} and \code{batch.combine}.
 #'
-#' @param threshold numeric scalar. See
+#' @param threshold  \code{Numeric scalar}.. See
 #'   \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 #'   \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}
 #'
-#' @param normalize,detailed logical scalar. See
+#' @param normalize \code{Logical scalar}. See
 #'   \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 #'   \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}
 #'
