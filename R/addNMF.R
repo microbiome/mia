@@ -66,6 +66,10 @@ setGeneric("addNMF", signature = c("x"),
 setMethod("getNMF", "SummarizedExperiment",
           function(x, k = 2, assay.type = "counts", ...){
             .require_package("NMF")
+            # Both NmF and DelayedArray have method seed(). When running
+            # NMF::nmf() an error occurs due to wrong method. That is why NMF
+            # is first loaded into the session. 
+            library("NMF")
             # Input checks
             if( !.is_integer(k) ){
               stop("'k' must be an integer.", call. = FALSE)
@@ -81,6 +85,8 @@ setMethod("getNMF", "SummarizedExperiment",
             attr(scores, "loadings") <- nmf_model@fit@H
             # Add NMF model as attribute of the scores matrix
             attr(scores, "model") <- nmf_model
+            # The NMF package is unloaded
+            detach("package:NMF", unload = TRUE)
             # Return scores with loadings, metrics and model as attribute
             return(scores)
           }
