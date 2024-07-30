@@ -2,42 +2,12 @@
 % Please edit documentation in R/calculateDistance.R
 \name{getDissimilarity}
 \alias{getDissimilarity}
-\alias{getDissimilarity,TreeSummarizedExperiment-method}
-\alias{getDissimilarity,SummarizedExperiment-method}
-\alias{getDissimilarity,ANY-method}
 \alias{addDissimilarity}
 \alias{addDissimilarity,SummarizedExperiment-method}
+\alias{getDissimilarity,SummarizedExperiment-method}
+\alias{getDissimilarity,ANY-method}
 \title{Calculate dissimilarities}
 \usage{
-getDissimilarity(x, method, ...)
-
-\S4method{getDissimilarity}{TreeSummarizedExperiment}(
-  x,
-  method,
-  assay_name = "counts",
-  assay.type = assay_name,
-  tree.name = "phylo",
-  transposed = FALSE,
-  ...
-)
-
-\S4method{getDissimilarity}{SummarizedExperiment}(
-  x,
-  method,
-  assay_name = "counts",
-  assay.type = assay_name,
-  transposed = FALSE,
-  ...
-)
-
-\S4method{getDissimilarity}{ANY}(
-  x,
-  method,
-  assay_name = "counts",
-  assay.type = assay_name,
-  ...
-)
-
 addDissimilarity(x, method, ...)
 
 \S4method{addDissimilarity}{SummarizedExperiment}(
@@ -49,6 +19,19 @@ addDissimilarity(x, method, ...)
   transposed = FALSE,
   ...
 )
+
+getDissimilarity(x, method, ...)
+
+\S4method{getDissimilarity}{SummarizedExperiment}(
+  x,
+  method,
+  assay_name = "counts",
+  assay.type = assay_name,
+  transposed = FALSE,
+  ...
+)
+
+\S4method{getDissimilarity}{ANY}(x, method, ...)
 }
 \arguments{
 \item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -65,14 +48,14 @@ some point \code{assay_name} will be disabled.)}
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
 
-\item{tree.name}{\code{Character scalar}. Specifies which tree will be used in
-calculation. (Default: \code{"phylo"})}
+\item{name}{\code{Character scalar}. The name to be used to store the result
+in the reducedDims of the output. (Default: \code{method})}
 
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with cells in
 rows. (Default: \code{FALSE})}
 
-\item{name}{\code{Character scalar}. The name to be used to store the result
-in the reducedDims of the output. (Default: \code{method})}
+\item{tree.name}{\code{Character scalar}. Specifies which tree will be used in
+calculation. (Default: \code{"phylo"})}
 }
 \value{
 \code{getDissimilarity} returns a distance matrix.
