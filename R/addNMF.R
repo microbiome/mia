@@ -52,59 +52,59 @@ NULL
 #' @rdname addNMF
 #' @export
 setGeneric("getNMF", signature = c("x"),
-           function(x, ...)
-             standardGeneric("getNMF"))
+            function(x, ...)
+                standardGeneric("getNMF"))
 
 #' @rdname addNMF
 #' @export
 setGeneric("addNMF", signature = c("x"),
-           function(x, ...)
-             standardGeneric("addNMF"))
+            function(x, ...)
+                standardGeneric("addNMF"))
 
 #' @export
 #' @rdname addNMF
 setMethod("getNMF", "SummarizedExperiment",
-          function(x, k = 2, assay.type = "counts", ...){
-            .require_package("NMF")
-            # Both NmF and DelayedArray have method seed(). When running
-            # NMF::nmf() an error occurs due to wrong method. That is why NMF
-            # is first loaded into the session. 
-            library("NMF")
-            # Input checks
-            if( !.is_integer(k) ){
-              stop("'k' must be an integer.", call. = FALSE)
-            }
-            .check_assay_present(assay.type, x)
-            ######################################
-            mat <- t(assay(x, assay.type))
-            # Calculate nmf model
-            nmf_model <- NMF::nmf(mat, rank = k, ...)
-            # store scores
-            scores <- nmf_model@fit@W
-            # Add loadings as attribute of the scores matrix
-            attr(scores, "loadings") <- nmf_model@fit@H
-            # Add NMF model as attribute of the scores matrix
-            attr(scores, "model") <- nmf_model
-            # The NMF package is unloaded
-            detach("package:NMF", unload = TRUE)
-            # Return scores with loadings, metrics and model as attribute
-            return(scores)
-          }
+    function(x, k = 2, assay.type = "counts", ...){
+        .require_package("NMF")
+        # Both NmF and DelayedArray have method seed(). When running
+        # NMF::nmf() an error occurs due to wrong method. That is why NMF
+        # is first loaded into the session. 
+        library("NMF")
+        # Input checks
+        if( !.is_integer(k) ){
+            stop("'k' must be an integer.", call. = FALSE)
+        }
+        .check_assay_present(assay.type, x)
+        ######################################
+        mat <- t(assay(x, assay.type))
+        # Calculate nmf model
+        nmf_model <- NMF::nmf(mat, rank = k, ...)
+        # store scores
+        scores <- nmf_model@fit@W
+        # Add loadings as attribute of the scores matrix
+        attr(scores, "loadings") <- nmf_model@fit@H
+        # Add NMF model as attribute of the scores matrix
+        attr(scores, "model") <- nmf_model
+        # The NMF package is unloaded
+        detach("package:NMF", unload = TRUE)
+        # Return scores with loadings, metrics and model as attribute
+        return(scores)
+    }
 )
 
 #' @export
 #' @rdname addNMF
 setMethod("addNMF", "SummarizedExperiment",
-          function(x, k = 2, assay.type = "counts", name = "NMF", ...){
-            # Input checks
-            if( !.is_a_string(name) ){
-              stop("'name' must be a non-empty single character value.",
-                   call. = FALSE)
-            }
-            # Fit the model
-            nmf <- getNMF(x, k = k, assay.type = assay.type, ...)
-            # Add scores matrix with loadings as attribute to reducedDims
-            x <- .add_values_to_reducedDims(x, name = name, values = nmf)
-            return(x)
-          }
+    function(x, k = 2, assay.type = "counts", name = "NMF", ...){
+        # Input checks
+        if( !.is_a_string(name) ){
+            stop("'name' must be a non-empty single character value.",
+                call. = FALSE)
+        }
+        # Fit the model
+        nmf <- getNMF(x, k = k, assay.type = assay.type, ...)
+        # Add scores matrix with loadings as attribute to reducedDims
+        x <- .add_values_to_reducedDims(x, name = name, values = nmf)
+        return(x)
+    }
 )
