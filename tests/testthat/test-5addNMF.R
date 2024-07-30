@@ -4,13 +4,14 @@ test_that("addNMF", {
   data(GlobalPatterns, package="mia")
   #
   tse <- GlobalPatterns
+  tse <- agglomerateByPrevalence(tse, rank = "Phylum")
   tse <- addNMF(tse)
   expect_named(reducedDims(tse),"NMF")
   expect_true(is.matrix(reducedDim(tse,"NMF")))
   expect_equal(dim(reducedDim(tse,"NMF")),c(26,2))
   red <- reducedDim(tse,"NMF")
   expect_equal(names(attributes(red)),
-               c("dim","dimnames","loadings", "model", "eval_metrics"))
+               c("dim","dimnames","loadings", "model"))
   expect_equal(dim(attr(red,"loadings")),c(19216,2))
   # Check if ordination matrix returned by NMF::nmf is the same as
   # getNMF and addNMF ones

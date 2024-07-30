@@ -65,7 +65,6 @@ setGeneric("addNMF", signature = c("x"),
 #' @rdname addNMF
 setMethod("getNMF", "SummarizedExperiment",
     function(x, k = 2, assay.type = "counts", ...){
-        browser()
         .require_package("NMF")
         # Both NmF and DelayedArray have method seed(). When running
         # NMF::nmf() an error occurs due to wrong method. That is why NMF
@@ -80,14 +79,13 @@ setMethod("getNMF", "SummarizedExperiment",
             stop("'k' must be an integer.", call. = FALSE)
         }
         .check_assay_present(assay.type, x)
-        ######################################
         mat <- t(assay(x, assay.type))
         # Calculate nmf model
         nmf_model <- NMF::nmf(mat, rank = k, ...)
         # store scores
         scores <- nmf_model@fit@W
         # Add loadings as attribute of the scores matrix
-        attr(scores, "loadings") <- nmf_model@fit@H
+        attr(scores, "loadings") <- t(nmf_model@fit@H)
         # Add NMF model as attribute of the scores matrix
         attr(scores, "model") <- nmf_model
         # The NMF package is unloaded
