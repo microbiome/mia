@@ -71,7 +71,7 @@ setMethod("getNMF", "SummarizedExperiment",
         # NMF::nmf() an error occurs due to wrong method. That is why NMF
         # is first loaded into the session. 
         # Check if NMF package is loaded
-        if (requireNamespace("NMF", quietly = TRUE)) {
+        if("NMF" %in% (.packages())){
             detach("package:NMF", unload = TRUE)
         }
         library("NMF")
