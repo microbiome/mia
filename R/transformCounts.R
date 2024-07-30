@@ -122,7 +122,8 @@ setGeneric("transformAssay", signature = c("x"),
                                "z"),
                     MARGIN = "samples",
                     name = method,
-                    pseudocount = FALSE,		    
+                    pseudocount = FALSE,
+                    altexp = NULL,
                     ...)
                standardGeneric("transformAssay"))
 
@@ -138,6 +139,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
              MARGIN = "samples",
              name = method,
              pseudocount = FALSE,
+             altexp = NULL,
              ...){
         # Input check
 
@@ -173,32 +175,36 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         }
         # Input check end
 
-        # Get the method and abundance table
-        method <- match.arg(method)
-        assay <- assay(x, assay.type)
+        # List of available altExps
+        available_altexp <- altExpNames(x)
         
-        # Apply pseudocount, if it is not 0
-        assay <- .apply_pseudocount(assay, pseudocount)
-        # Store pseudocount value and set attr equal to NULL
-        pseudocount <- attr(assay, "pseudocount")
-        attr(assay, "pseudocount") <- NULL
-        
-        # Calls help function that does the transformation
-        # Help function is different for mia and vegan transformations
-        if( method %in% c("log10", "log2") ){
-            transformed_table <- .apply_transformation(
-                assay, method, MARGIN, ...)
-        } else{
-            transformed_table <- .apply_transformation_from_vegan(
-                assay, method, MARGIN, ...)
+        # Create missing altexp assays
+        if (!is.null(altexp)) {
+            for (alt in altexp) {
+                if (!(alt %in% available_altexp)) {
+                    # Create a new altExp assay with the same dimensions as the main assay
+                    altExp(x, alt) <- SummarizedExperiment(
+                        assays = SimpleList(counts = matrix(NA, nrow = nrow(x), ncol = ncol(x))),
+                        rowData = rowData(x),
+                        colData = colData(x)
+                    )
+                }
+            }
         }
         
-        # Add pseudocount info to transformed table
-        attr(transformed_table, "parameters")$pseudocount <- pseudocount
+        # Perform transformation on the main assay
+        x <- .perform_transformation(x, assay.type, method, MARGIN, pseudocount, name, ...)
         
-        # Assign transformed table to assays
-        assay(x, name, withDimnames=FALSE) <- transformed_table
-        x
+        # Perform transformations on alternative experiments if specified
+        if (!is.null(altexp) && length(altexp) > 0) {
+            for (alt in altexp) {
+                alt_exp <- altExp(x, alt)
+                transformed_alt_exp <- .perform_transformation(alt_exp, assay.type, method, MARGIN, pseudocount, name, ...)
+                altExp(x, alt) <- transformed_alt_exp
+            }
+        }
+        
+        return(x)
     }
 )
 
@@ -396,4 +402,32 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     # Set attr equal to pseudocount
     attr(mat, "pseudocount") <- pseudocount
     return(mat)
+}
+
+.perform_transformation <- function(x, assay.type, method, MARGIN, pseudocount, name, ...) {
+    # Check that the assay is present
+    .check_assay_present(assay.type, x)
+    
+    # Get the assay data
+    assay <- assay(x, assay.type)
+    
+    # Apply pseudocount
+    assay <- .apply_pseudocount(assay, pseudocount)
+    pseudocount_value <- attr(assay, "pseudocount")
+    attr(assay, "pseudocount") <- NULL
+    
+    # Apply transformation
+    if (method %in% c("log10", "log2")) {
+        transformed_table <- .apply_transformation(assay, method, MARGIN, ...)
+    } else {
+        transformed_table <- .apply_transformation_from_vegan(assay, method, MARGIN, ...)
+    }
+    
+    # Add pseudocount info to transformed table
+    attr(transformed_table, "parameters")$pseudocount <- pseudocount_value
+    
+    # Assign transformed table to assays
+    assay(x, name, withDimnames=FALSE) <- transformed_table
+    
+    return(x)
 }
