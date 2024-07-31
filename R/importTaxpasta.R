@@ -34,7 +34,7 @@ NULL
 #' @export
 #'
 #' @importFrom SummarizedExperiment rowData
-importTaxpasta <- function(file) {
+importTaxpasta <- function(file, addHierarchyTree = TRUE) {
     # Check dependencies.
     .require_package("rhdf5")
     .require_package("biomformat")
@@ -45,6 +45,9 @@ importTaxpasta <- function(file) {
     }
     if( !file.exists(file) ){
         stop("'", file, "' not found.", call. = FALSE)
+    }
+    if (!addHierarchyTree %in% c(TRUE,FALSE)) {
+        stop("'addHierarchyTree' must be TRUE or FALSE.", call. = FALSE)
     }
     
     # We read our own HDF5 array to later be able to read observation group
@@ -61,7 +64,7 @@ importTaxpasta <- function(file) {
         # Create rowData and rowTree
         rowData(tse) <- .create_row_data(biom, ranks)
         .set_ranks_based_on_rowdata(tse, set.ranks = TRUE)
-        tse <- addHierarchyTree(tse)
+	if (addHierarchyTree) tse <- addHierarchyTree(tse)
         # Agglomerate to all existing ranks
         tse <- agglomerateByRanks(tse, agglomerate.tree = TRUE)
     } else{
@@ -104,6 +107,7 @@ importTaxpasta <- function(file) {
     format <- sprintf("Biological Observation Matrix %s.%s", vs[1], vs[2])
     format_url <- attr(h5array, "format-url")
     type <- attr(h5array, "type")
+    type <- ifelse(type == "", 'OTU table', type)
     generated_by <- attr(h5array, "generated-by")
     date <- attr(h5array, "creation-date")
     matrix_type <- "dense"
