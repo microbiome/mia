@@ -59,6 +59,11 @@ When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.
 (Default: \code{FALSE}).}
 
+\item{altexp}{\code{Character vector} or \code{NULL}. Specifies the names
+of alternative experiments to which the transformation should also be
+applied. If \code{NULL}, the transformation is only applied to the main
+experiment. (Default: \code{NULL}).}
+
 \item{...}{additional arguments passed on to \code{vegan:decostand}:
 \itemize{
 \item \code{reference}: \code{Character scalar}. use to
@@ -144,6 +149,12 @@ head(assay(tse, "rank"))
 # In order to use other ranking variants, modify the chosen assay directly:
 assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(
     assay(tse, "counts"), ties.method = "average", preserveShape = TRUE)  
+
+#using altexp parameter
+data("GlobalPatterns", package="mia")
+tse <- GlobalPatterns
+tse <- transformAssay(tse, method = "relabundance", altexp = c("phylum", "genus"))
+tse
 
 }
 \author{
