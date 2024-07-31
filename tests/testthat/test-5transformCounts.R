@@ -1,3 +1,4 @@
+
 context("transformAssay")
 
 test_that("transformAssay", {
@@ -44,7 +45,7 @@ test_that("transformAssay", {
 
         ########################### LOG10 ######################################
         # Calculates log10 transformation with pseudocount. Should be equal.
-	    tmp <- mia::transformAssay(tse, method = "log10", pseudocount = 1)
+        tmp <- mia::transformAssay(tse, method = "log10", pseudocount = 1)
 
         ass <- assays(tmp)$log10
         expect_equal(as.matrix(ass),
@@ -52,7 +53,7 @@ test_that("transformAssay", {
                          log10(x+1)
                      }), check.attributes = FALSE)
 
-        # Tests transformAssay(MARGIN = "features"), , calculates log10 transformation with pseudocount.
+        # Tests transformAssay(MARGIN = "features"), calculates log10 transformation with pseudocount.
         # Should be equal.
         tmp <- mia::transformAssay(tse, MARGIN = "features", method = "log10", pseudocount = 1)
         ass <- assays(tmp)$log10
@@ -76,14 +77,14 @@ test_that("transformAssay", {
         expect_equal(as.vector(actual),
                      as.integer(as.matrix(assay(tse, "counts")) > 0),
                      check.attributes = FALSE)
-        expect_equal(type(actual),"double")
+        expect_equal(typeof(actual),"double")
         expect_true(all(actual == 1 | actual == 0))
         
-        # Tests transformAssay(MARGIN = "features"), , calculates pa transformation. Should be equal.
+        # Tests transformAssay(MARGIN = "features"), calculates pa transformation. Should be equal.
         actual <- assay(mia::transformAssay(tse, MARGIN = "features", method = "pa"),"pa")
         expect_equal(as.vector(actual),
                      as.integer(t(as.matrix(t(assay(tse, "counts"))) > 0)))
-        expect_equal(type(actual),"double")
+        expect_equal(typeof(actual),"double")
         expect_true(all(actual == 1 | actual == 0))
         
         ######################## HELLINGER #####################################
@@ -113,11 +114,11 @@ test_that("transformAssay", {
         mat_comp <- apply(as.matrix(relative), 2, FUN=function(x){
             log(x) - mean(log(x))
         })
-        # Remove atributes since vegan adds additional ones
+        # Remove attributes since vegan adds additional ones
         attributes(mat) <- NULL
         attributes(mat_comp) <- NULL
         # Compare
-        expect_equal( mat, mat_comp )
+        expect_equal(mat, mat_comp)
 
         # Tests rclr
         # Calc RCLRs
@@ -174,7 +175,7 @@ test_that("transformAssay", {
         test2 <- test2[-1, ]
         
         # Expect that under 10 values are unequal. Values have only one decimal.
-        expect_true( sum(round(test, 1) != round(test2, 1), na.rm = TRUE) < 10 )
+        expect_true(sum(round(test, 1) != round(test2, 1), na.rm = TRUE) < 10)
 
         tse <- transformAssay(tse, method = "relabundance")
         # Expect error when counts and zeroes
@@ -199,7 +200,7 @@ test_that("transformAssay", {
         tse <- transformAssay(tse, assay.type = "pseudo", method = "clr", name = "clr1")
         tse <- transformAssay(
             tse, assay.type = "counts", method = "clr", name = "clr2",
-            pseudocount =1)
+            pseudocount = 1)
         expect_equal(assay(tse, "clr1"), assay(tse, "clr2"),
                      check.attributes = FALSE)
         # Same with relabundance
@@ -248,9 +249,9 @@ test_that("transformAssay", {
         # Calculates rank
         tse_rank <- transformAssay(tse, method = "rank")
         # Expect that assay contains count and rank table
-        expect_true( all(c("counts", "rank") %in% assayNames(tse_rank)) )
+        expect_true(all(c("counts", "rank") %in% assayNames(tse_rank)))
 
-        for( i in c(1:10) ){
+        for(i in c(1:10)){
             # Gets columns from 'rank' table
             ranks <- assay(tse_rank, "rank")[,i]
             # Gets columns from 'counts' table, and calculates ranks
@@ -309,7 +310,7 @@ test_that("transformAssay", {
                                     pseudocount = 4, reference = 2)	    
 
         # The TreeSE version maintains the row & col number including the reference
-	      coms <- intersect(rownames(actual), rownames(compare))
+	    coms <- intersect(rownames(actual), rownames(compare))
         expect_equal(actual[coms, -2], compare[coms, -2], check.attributes = FALSE)
 
         # hellinger
@@ -339,4 +340,3 @@ test_that("transformAssay", {
     assay(tse,"counts") <- DelayedArray(assay(tse,"counts"))
     testTransformations(tse)
 })
-

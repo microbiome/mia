@@ -128,6 +128,7 @@ setGeneric("transformAssay", signature = c("x"),
                standardGeneric("transformAssay"))
 
 #' @rdname transformAssay
+#' @importFrom SingleCellExperiment altExpNames
 #' @export
 setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     function(x,
@@ -144,7 +145,8 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         # Input check
 
         if (!is.null(assay_name)) {
-            .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
+            .Deprecated(old="assay_name", new="assay.type", 
+                        "Now assay_name is deprecated. Use assay.type instead.")
 	    assay.type <- assay_name
         }
 
@@ -175,19 +177,22 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         }
         # Input check end
 
-        # List of available altExps
-        available_altexp <- altExpNames(x)
+        # Only check for altExpNames if x is a SingleCellExperiment
+        if (inherits(x, "SingleCellExperiment")) {
+            # List of available altExps
+            available_altexp <- altExpNames(x)
         
-        # Create missing altexp assays
-        if (!is.null(altexp)) {
-            for (alt in altexp) {
-                if (!(alt %in% available_altexp)) {
-                    # Create a new altExp assay with the same dimensions as the main assay
-                    altExp(x, alt) <- SummarizedExperiment(
-                        assays = SimpleList(counts = matrix(NA, nrow = nrow(x), ncol = ncol(x))),
-                        rowData = rowData(x),
-                        colData = colData(x)
-                    )
+            # Create missing altexp assays
+            if (!is.null(altexp)) {
+                for (alt in altexp) {
+                    if (!(alt %in% available_altexp)) {
+                        # Create a new altExp assay with the same dimensions as the main assay
+                        altExp(x, alt) <- SummarizedExperiment(
+                            assays = SimpleList(counts = matrix(NA, nrow = nrow(x), ncol = ncol(x))),
+                            rowData = rowData(x),
+                            colData = colData(x)
+                        )
+                    }
                 }
             }
         }
@@ -207,7 +212,6 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         return(x)
     }
 )
-
 ###########################HELP FUNCTIONS####################################
 ##############################.apply_transformation#############################
 # Help function for transformAssay, takes abundance table
@@ -404,7 +408,8 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.perform_transformation <- function(x, assay.type, method, MARGIN, pseudocount, name, ...) {
+.perform_transformation <- function(x, assay.type, method, MARGIN, pseudocount,
+                                    name, ...) {
     # Check that the assay is present
     .check_assay_present(assay.type, x)
     
@@ -420,7 +425,8 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     if (method %in% c("log10", "log2")) {
         transformed_table <- .apply_transformation(assay, method, MARGIN, ...)
     } else {
-        transformed_table <- .apply_transformation_from_vegan(assay, method, MARGIN, ...)
+        transformed_table <- .apply_transformation_from_vegan(assay, method,
+                                                              MARGIN, ...)
     }
     
     # Add pseudocount info to transformed table

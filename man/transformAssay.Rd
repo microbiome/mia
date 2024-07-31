@@ -15,6 +15,7 @@ transformAssay(
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
+  altexp = NULL,
   ...
 )
 
@@ -28,6 +29,7 @@ transformAssay(
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
+  altexp = NULL,
   ...
 )
 }
