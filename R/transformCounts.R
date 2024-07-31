@@ -20,6 +20,11 @@
 #' 
 #' @param name \code{Character scalar}. A name for the column of the 
 #'   \code{colData} where results will be stored. (Default: \code{"method"})
+#'   
+#' @param altexp \code{Character vector} or \code{NULL}. Specifies the names 
+#' of alternative experiments to which the transformation should also be 
+#' applied. If \code{NULL}, the transformation is only applied to the main 
+#' experiment. (Default: \code{NULL}).
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
@@ -107,6 +112,12 @@
 #' # In order to use other ranking variants, modify the chosen assay directly:
 #' assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(
 #'     assay(tse, "counts"), ties.method = "average", preserveShape = TRUE)  
+#' 
+#' #using altexp parameter
+#' data("GlobalPatterns", package="mia")
+#' tse <- GlobalPatterns
+#' tse <- transformAssay(tse, method = "relabundance", altexp = c("phylum", "genus"))
+#' tse
 #' 
 NULL
 
