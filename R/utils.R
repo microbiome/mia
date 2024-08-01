@@ -393,8 +393,17 @@
             "'. Consider using the 'name' argument to specify alternative ",
             "names.", call. = FALSE)
     }
-    reducedDim(x, name) <- values
-    return(x)
+    if( !identical(rownames(as.matrix(values)), 
+                  colnames(assay(x, assay.type))) ){
+        warning("Samples of the dissimilarity matrix should be the same as the",
+                " samples in columns of the assay specified with 'assay.type'.",
+                " The result is not added to reducedDim.")
+        return(values)
+    }
+    else{
+        reducedDim(x, name) <- values
+        return(x)
+  }
 }
 
 ################################################################################

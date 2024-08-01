@@ -159,16 +159,8 @@ setMethod(
     res <- getDissimilarity(
       x, method = method, assay.type = assay.type, transposed = transposed,
       tree.name = tree.name, ...)
-    if( !identical(rownames(as.matrix(res)), colnames(assay(x, assay.type))) ){
-      warning("Samples of the dissimilarity matrix should be the same as the ",
-              "samples in columns of the assay specified with 'assay.type'. The ",
-              "result is not added to reducedDim.")
-      return(res)
-    }
-    else{
-      .add_values_to_reducedDims(x, as.matrix(res), name)
-    }
     
+    .add_values_to_reducedDims(x, as.matrix(res), name)
   }
 )
 
