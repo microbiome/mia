@@ -70,14 +70,12 @@ rows. (Default: \code{FALSE})}
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Please use \code{assay.type} instead. At
-some point \code{assay_name} will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{tree.name}{\code{Character scalar}. Specifies which tree will be used in
-calculation. (Default: \code{"phylo"})}
+\item{tree.name}{\code{Character scalar}. Specific to unifrac dissimilarity.
+Specifies the name of the tree used in calculation. (Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 

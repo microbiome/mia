@@ -1,8 +1,11 @@
 #' Calculate dissimilarities
 #'
-#' These functions calculate dissimilarities on data stored in a 
-#'  \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'  object.
+#' These functions are designed to calculate dissimilarities on data stored 
+#' within a 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'  object. For overlap, Unifrac, and Jensen-Shannon Divergence (JSD) 
+#'  dissimilarities, the functions use mia internal algorithms, while for other 
+#'  types of dissimilarities, they rely on \code{\link[vegan:vegdist]{vegdist}}.
 #'
 #' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
@@ -15,15 +18,42 @@
 #' @param assay.type \code{Character scalar}. Specifies which assay to use for 
 #'   calculation. (Default: \code{"counts"})
 #'
-#' @param assay_name \code{Character scalar}. Specifies which assay to use for 
-#'   calculation. (Please use \code{assay.type} instead. At 
-#'   some point \code{assay_name} will be disabled.)
-#'
-#' @param tree.name \code{Character scalar}. Specifies which tree will be used in 
-#'   calculation. (Default: \code{"phylo"})
+#' @param assay_name Deprecated. Use \code{assay.type} instead.
+#'   
+#' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #'   
 #' @param transposed \code{Logical scalar}. Specifies if x is transposed with cells in
 #'   rows. (Default: \code{FALSE})
+#'   
+#' @param chunkSize \code{Integer scalar}. Defines the size of data send
+#'   to the individual worker. Only has an effect, if \code{BPPARAM} defines
+#'   more than one worker. (Default: \code{nrow(x)})
+#' 
+#' @param BPPARAM A
+#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
+#'   object specifying whether the calculation should be parallelized.
+#'   
+#' @param detection \code{Numeric scalar}. Specific to overlap dissimilarity.
+#'   Defines detection threshold for absence/presence of features. Feature that 
+#'   has abundance under threshold in either of samples, will be discarded when 
+#'   evaluating overlap between samples. (Default: \code{0}) 
+#'   
+#' @param tree if \code{x} is a matrix, a
+#'   \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
+#'   matrix. This means that the phylo object and the columns should relate
+#'   to the same type of features (aka. microorganisms).
+#'
+#' @param tree.name \code{Character scalar}. Specific to unifrac dissimilarity. 
+#' Specifies the name of the tree used in calculation. (Default: \code{"phylo"})
+#' 
+#' @param tree_name Deprecated. Use \code{tree.name} instead.
+#'   
+#' @param weighted \code{Logical scalar}. Should use weighted-Unifrac
+#'   calculation? Weighted-Unifrac takes into account the relative abundance of
+#'   species/taxa shared between samples, whereas unweighted-Unifrac only
+#'   considers presence/absence. Default is \code{FALSE}, meaning the
+#'   unweighted-Unifrac distance is calculated for all pairs of samples.
+#'   (Default: \code{FALSE})
 #'
 #' @param ... other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}
 #'
@@ -57,8 +87,8 @@ setGeneric(
 setMethod(
     "getDissimilarity", signature = c(x = "TreeSummarizedExperiment"),
     function(
-        x, method, assay_name = "counts", assay.type = assay_name,
-          tree.name = "phylo", transposed = FALSE, ...){
+        x, method, exprs_values = "counts", assay_name = exprs_values, 
+        assay.type = assay_name, tree.name = "phylo", transposed = FALSE, ...){
     mat <- assay(x, assay.type)
     if(!transposed){
         mat <- t(mat)
@@ -74,9 +104,8 @@ setMethod(
 setMethod(
     "getDissimilarity", signature = c(x = "SummarizedExperiment"),
     function(
-        x, method, assay_name = "counts", assay.type = assay_name, 
-          transposed = FALSE, ...){
-    browser()
+        x, method, exprs_values = "counts", assay_name = exprs_values, 
+        assay.type = assay_name, transposed = FALSE, ...){
     # Input checks
     if(!.is_non_empty_string(assay.type)){
         stop("'assay.type' must be a non-empty single character value",
@@ -110,7 +139,8 @@ setMethod(
 setMethod(
     "getDissimilarity", signature = c(x = "ANY"),
     function(
-        x, method, assay_name = "counts", assay.type = assay_name, ...){
+        x, method, exprs_values = "counts", assay_name = exprs_values, 
+        assay.type = assay_name, ...){
     # Input check
     if( !.is_a_string(method) ){
         stop("'method' must be a single character value.", call. = FALSE)
@@ -133,8 +163,8 @@ setGeneric(
 setMethod(
   "addDissimilarity", signature = c(x = "SummarizedExperiment"),
   function(
-    x, method, assay_name = "counts", assay.type = assay_name, name = method,
-      transposed = FALSE, ...){
+    x, method, exprs_values = "counts", assay_name = exprs_values, 
+    assay.type = assay_name, name = method, transposed = FALSE, ...){
     res <- getDissimilarity(x, method = method, assay.type = assay.type, 
                             transposed = transposed, ...)
     # Input checks
@@ -168,7 +198,6 @@ setMethod(
 
 .calculate_dissimilarity <- function(
         mat, method, node.label = NULL, diss.fun = NULL, tree = NULL, ...){
-    browser()
     # input check
     if( !(is.null(diss.fun) || is.function(diss.fun)) ){
         stop("'diss.fun' must be NULL or a function.", call. = FALSE)

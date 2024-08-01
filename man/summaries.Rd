@@ -54,9 +54,7 @@ sum, mean, median or prevalence. (Default: \code{"mean"})}
 \item{assay.type}{\code{Character scalar}. Specifies the name of the
 assay used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Please use \code{assay.type} instead. At
-some point \code{assay_name} will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{na.rm}{\code{Logical scalar}. Should NA values be omitted when calculating
 prevalence? (Default: \code{TRUE})}

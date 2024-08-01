@@ -14,7 +14,8 @@ getDissimilarity(x, method, ...)
 \S4method{getDissimilarity}{TreeSummarizedExperiment}(
   x,
   method,
-  assay_name = "counts",
+  exprs_values = "counts",
+  assay_name = exprs_values,
   assay.type = assay_name,
   tree.name = "phylo",
   transposed = FALSE,
@@ -24,7 +25,8 @@ getDissimilarity(x, method, ...)
 \S4method{getDissimilarity}{SummarizedExperiment}(
   x,
   method,
-  assay_name = "counts",
+  exprs_values = "counts",
+  assay_name = exprs_values,
   assay.type = assay_name,
   transposed = FALSE,
   ...
@@ -33,7 +35,8 @@ getDissimilarity(x, method, ...)
 \S4method{getDissimilarity}{ANY}(
   x,
   method,
-  assay_name = "counts",
+  exprs_values = "counts",
+  assay_name = exprs_values,
   assay.type = assay_name,
   ...
 )
@@ -43,7 +46,8 @@ addDissimilarity(x, method, ...)
 \S4method{addDissimilarity}{SummarizedExperiment}(
   x,
   method,
-  assay_name = "counts",
+  exprs_values = "counts",
+  assay_name = exprs_values,
   assay.type = assay_name,
   name = method,
   transposed = FALSE,
@@ -58,21 +62,48 @@ object.}
 
 \item{...}{other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}}
 
-\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Please use \code{assay.type} instead. At
-some point \code{assay_name} will be disabled.)}
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
+
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
 
-\item{tree.name}{\code{Character scalar}. Specifies which tree will be used in
-calculation. (Default: \code{"phylo"})}
+\item{tree.name}{\code{Character scalar}. Specific to unifrac dissimilarity.
+Specifies the name of the tree used in calculation. (Default: \code{"phylo"})}
 
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with cells in
 rows. (Default: \code{FALSE})}
 
 \item{name}{\code{Character scalar}. The name to be used to store the result
 in the reducedDims of the output. (Default: \code{method})}
+
+\item{chunkSize}{\code{Integer scalar}. Defines the size of data send
+to the individual worker. Only has an effect, if \code{BPPARAM} defines
+more than one worker. (Default: \code{nrow(x)})}
+
+\item{BPPARAM}{A
+\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
+object specifying whether the calculation should be parallelized.}
+
+\item{detection}{\code{Numeric scalar}. Specific to overlap dissimilarity.
+Defines detection threshold for absence/presence of features. Feature that
+has abundance under threshold in either of samples, will be discarded when
+evaluating overlap between samples. (Default: \code{0})}
+
+\item{tree}{if \code{x} is a matrix, a
+\code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
+matrix. This means that the phylo object and the columns should relate
+to the same type of features (aka. microorganisms).}
+
+\item{tree_name}{Deprecated. Use \code{tree.name} instead.}
+
+\item{weighted}{\code{Logical scalar}. Should use weighted-Unifrac
+calculation? Weighted-Unifrac takes into account the relative abundance of
+species/taxa shared between samples, whereas unweighted-Unifrac only
+considers presence/absence. Default is \code{FALSE}, meaning the
+unweighted-Unifrac distance is calculated for all pairs of samples.
+(Default: \code{FALSE})}
 }
 \value{
 \code{getDissimilarity} returns a distance matrix.
@@ -82,9 +113,12 @@ in the reducedDims of the output. (Default: \code{method})}
 with distance matrix added to reducedDim slot.
 }
 \description{
-These functions calculate dissimilarities on data stored in a
+These functions are designed to calculate dissimilarities on data stored
+within a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object.
+object. For overlap, Unifrac, and Jensen-Shannon Divergence (JSD)
+dissimilarities, the functions use mia internal algorithms, while for other
+types of dissimilarities, they rely on \code{\link[vegan:vegdist]{vegdist}}.
 }
 \examples{
 data(GlobalPatterns)

@@ -50,9 +50,7 @@ addNotContaminantQC(x, name = "isNotContaminant", ...)
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Please use \code{assay.type} instead. At
-some point \code{assay_name} will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{name}{\code{Character scalar}. A name for the column of the
 \code{colData} where results will be stored. (Default: \code{"isContaminant"})}
