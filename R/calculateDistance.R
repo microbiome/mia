@@ -4,7 +4,7 @@
 #' within a 
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'  object. For overlap, Unifrac, and Jensen-Shannon Divergence (JSD) 
-#'  dissimilarities, the functions use mia internal algorithms, while for other 
+#'  dissimilarities, the functions use mia internal functions, while for other 
 #'  types of dissimilarities, they rely on \code{\link[vegan:vegdist]{vegdist}}.
 #'
 #' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -24,55 +24,121 @@
 #'   
 #' @param transposed \code{Logical scalar}. Specifies if x is transposed with cells in
 #'   rows. (Default: \code{FALSE})
-#'   
-#' @param chunkSize \code{Integer scalar}. Defines the size of data send
-#'   to the individual worker. Only has an effect, if \code{BPPARAM} defines
-#'   more than one worker. (Default: \code{nrow(x)})
-#' 
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether the calculation should be parallelized.
-#'   
-#' @param detection \code{Numeric scalar}. Specific to overlap dissimilarity.
-#'   Defines detection threshold for absence/presence of features. Feature that 
-#'   has abundance under threshold in either of samples, will be discarded when 
-#'   evaluating overlap between samples. (Default: \code{0}) 
-#'   
-#' @param tree if \code{x} is a matrix, a
-#'   \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
-#'   matrix. This means that the phylo object and the columns should relate
-#'   to the same type of features (aka. microorganisms).
 #'
 #' @param tree.name \code{Character scalar}. Specific to unifrac dissimilarity. 
 #' Specifies the name of the tree used in calculation. (Default: \code{"phylo"})
 #' 
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
-#'   
-#' @param weighted \code{Logical scalar}. Should use weighted-Unifrac
-#'   calculation? Weighted-Unifrac takes into account the relative abundance of
+#'
+#' @param ... other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}, 
+#'  or the following arguments passed onto mia internal functions for overlap,
+#'  unifrac and JSD dissimilarities:
+#' \itemize{
+#'   \item \code{weighted}: Specific to unifrac dissimilarity.
+#'   \code{Logical scalar}. Should use weighted-Unifrac calculation? 
+#'   Weighted-Unifrac takes into account the relative abundance of
 #'   species/taxa shared between samples, whereas unweighted-Unifrac only
 #'   considers presence/absence. Default is \code{FALSE}, meaning the
 #'   unweighted-Unifrac distance is calculated for all pairs of samples.
 #'   (Default: \code{FALSE})
-#'
-#' @param ... other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}
+#'   
+#'   \item \code{chunkSize}: \code{Integer scalar}. Defines the size of data 
+#'   send to the individual worker. Only has an effect, if \code{BPPARAM} 
+#'   defines more than one worker. (Default: \code{nrow(x)})
+#'   
+#'   \item \code{BPPARAM}: 
+#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam} object}.
+#'   Specifies whether the calculation should be parallelized.
+#'   
+#'   \item \code{detection}: \code{Numeric scalar}. Specific to overlap dissimilarity.
+#'   Defines detection threshold for absence/presence of features. Feature that 
+#'   has abundance under threshold in either of samples, will be discarded when 
+#'   evaluating overlap between samples. (Default: \code{0}) 
+#' }
 #'
 #' @return 
-#' \code{getDissimilarity} returns a distance matrix.
+#' \code{getDissimilarity} returns a sample-by-sample distance matrix, suitable 
+#'   for NMDS, etc.
 #' 
-#' \code{addDissimilarity} returns a
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   with distance matrix added to reducedDim slot.
-#'
+#' \code{addDissimilarity} returns \code{x} that includes distance matrix in its 
+#'   reducedDim. 
+#'   
+#' @details 
+#'   Overlap reflects similarity between sample-pairs. When overlap is 
+#'   calculated using relative abundances, the higher the value the higher the 
+#'   similarity is. 
+#'   When using relative abundances, overlap value 1 means that 
+#'   all the abundances of features are equal between two samples, and 0 means 
+#'   that samples have completely different relative abundances. 
+#'   
+#'   Mia unifrac internal function utilizes 
+#'   \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
+#'   
 #' @name getDissimilarity
+#' 
+#' @author
+#' For overlap implementation: 
+#' Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
+#' 
+#' For JSD implementation:
+#' Susan Holmes \email{susan@@stat.stanford.edu}.
+#' Adapted for phyloseq by Paul J. McMurdie.
+#' Adapted for mia by Felix G.M. Ernst
+#' 
+#' @seealso
+#' \url{http://en.wikipedia.org/wiki/Jensen-Shannon_divergence}
+#' 
+#' @references
+#' For unifrac dissimilarity: \url{http://bmf.colorado.edu/unifrac/}
+#' 
+#' See also additional descriptions of Unifrac in the following articles:
+#'
+#' Lozupone, Hamady and Knight, ``Unifrac - An Online Tool for Comparing
+#' Microbial Community Diversity in a Phylogenetic Context.'', BMC
+#' Bioinformatics 2006, 7:371
+#'
+#' Lozupone, Hamady, Kelley and Knight, ``Quantitative and qualitative (beta)
+#' diversity measures lead to different insights into factors that structure
+#' microbial communities.'' Appl Environ Microbiol. 2007
+#'
+#' Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
+#' microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
+#' 
+#' For JSD dissimilarity: 
+#' Jensen-Shannon Divergence and Hilbert space embedding.
+#' Bent Fuglede and Flemming Topsoe University of Copenhagen,
+#' Department of Mathematics
+#' \url{http://www.math.ku.dk/~topsoe/ISIT2004JSD.pdf}
 #'
 #' @export
 #'
 #' @examples
+#' # load data
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
+#' 
+#' ### Overlap dissimilarity
+#' 
 #' tse <- addDissimilarity(tse, method = "overlap", detection = 0.25)
-#' reducedDim(tse, "overlap")
+#' reducedDim(tse, "overlap")[1:6, 1:6]
+#' 
+#' ### JSD dissimilarity
+#' 
+#' tse <- addDissimilarity(tse, method = "jsd")
+#' reducedDim(tse, "jsd")[1:6, 1:6]
+#' 
+#' # Multi Dimensional Scaling applied to JSD distance matrix
+#' tse <- runMDS(tse, FUN = getDissimilarity, method = "overlap", 
+#'               assay.type = "counts")
+#' reducedDim(tse, "MDS")[1:6, ]
+#'               
+#' ### Unifrac dissimilarity
+#' 
+#' res <- getDissimilarity(tse, method = "unifrac", weighted = FALSE)
+#' dim(as.matrix((res)))
+#' 
+#' tse <- addDissimilarity(tse, method = "unifrac", weighted = TRUE)
+#' reducedDim(tse, "unifrac")[1:6, 1:6]
 #' 
 NULL
 
@@ -88,11 +154,11 @@ setMethod(
   "addDissimilarity", signature = c(x = "SummarizedExperiment"),
   function(
     x, method, assay_name = "counts", assay.type = assay_name, name = method,
-    transposed = FALSE, ...){
+    transposed = FALSE, tree_name = "phylo", tree.name = tree_name, ...){
     #
     res <- getDissimilarity(
       x, method = method, assay.type = assay.type, transposed = transposed,
-      ...)
+      tree.name = tree.name, ...)
     if( !identical(rownames(as.matrix(res)), colnames(assay(x, assay.type))) ){
       warning("Samples of the dissimilarity matrix should be the same as the ",
               "samples in columns of the assay specified with 'assay.type'. The ",
@@ -118,7 +184,8 @@ setMethod(
     "getDissimilarity", signature = c(x = "SummarizedExperiment"),
     function(
         x, method, exprs_values = "counts", assay_name = exprs_values, 
-        assay.type = assay_name, transposed = FALSE, ...){
+        assay.type = assay_name, transposed = FALSE, tree_name = "phylo",
+        tree.name = tree_name, ...){
     # Input checks
     .check_assay_present(assay.type, x)
     if( !.is_non_empty_string(method) ){
@@ -135,7 +202,7 @@ setMethod(
             is(x, "TreeSummarizedExperiment") ){
         args <- .get_tree_args(
             x,  method = method, assay.type = assay.type,
-            transposed = transposed, ...)
+            transposed = transposed, tree.name = tree.name, ...)
     } else{
       # For other methods, get only matrix and method for arguments.
         mat <- assay(x, assay.type)
