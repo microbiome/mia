@@ -39,6 +39,19 @@ Other contributors:
   \item Muluh Muluh [contributor]
   \item Giulio Benedetti [contributor]
   \item Moritz Emanuel Beber \email{moritz.beber@igdore.org} (\href{https://orcid.org/0000-0003-2406-1978}{ORCID}) [contributor]
+  \item Nitesh Turaga [contributor]
+  \item Chouaib Benchraka [contributor]
+  \item Akewak Jeba [contributor]
+  \item Himmi Lindgren [contributor]
+  \item Noah De Gunst [contributor]
+  \item Théotime Pralas [contributor]
+  \item Shadman Ishraq [contributor]
+  \item Eineje Ameh [contributor]
+  \item Artur Sannikov [contributor]
+  \item Hervé Pagès [contributor]
+  \item Rajesh Shigdel [contributor]
+  \item Katariina Pärnänen [contributor]
+  \item Pande Erawijantari [contributor]
 }
 
 }

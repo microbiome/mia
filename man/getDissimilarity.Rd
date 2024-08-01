@@ -2,25 +2,25 @@
 % Please edit documentation in R/calculateDistance.R
 \name{getDissimilarity}
 \alias{getDissimilarity}
-\alias{getDissimilarity,TreeSummarizedExperiment-method}
-\alias{getDissimilarity,SummarizedExperiment-method}
-\alias{getDissimilarity,ANY-method}
 \alias{addDissimilarity}
 \alias{addDissimilarity,SummarizedExperiment-method}
+\alias{getDissimilarity,SummarizedExperiment-method}
+\alias{getDissimilarity,ANY-method}
 \title{Calculate dissimilarities}
 \usage{
-getDissimilarity(x, method, ...)
+addDissimilarity(x, method, ...)
 
-\S4method{getDissimilarity}{TreeSummarizedExperiment}(
+\S4method{addDissimilarity}{SummarizedExperiment}(
   x,
   method,
-  exprs_values = "counts",
-  assay_name = exprs_values,
+  assay_name = "counts",
   assay.type = assay_name,
-  tree.name = "phylo",
+  name = method,
   transposed = FALSE,
   ...
 )
+
+getDissimilarity(x, method, ...)
 
 \S4method{getDissimilarity}{SummarizedExperiment}(
   x,
@@ -40,19 +40,6 @@ getDissimilarity(x, method, ...)
   assay.type = assay_name,
   ...
 )
-
-addDissimilarity(x, method, ...)
-
-\S4method{addDissimilarity}{SummarizedExperiment}(
-  x,
-  method,
-  exprs_values = "counts",
-  assay_name = exprs_values,
-  assay.type = assay_name,
-  name = method,
-  transposed = FALSE,
-  ...
-)
 }
 \arguments{
 \item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -62,21 +49,18 @@ object.}
 
 \item{...}{other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}}
 
-\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
-
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
 
-\item{tree.name}{\code{Character scalar}. Specific to unifrac dissimilarity.
-Specifies the name of the tree used in calculation. (Default: \code{"phylo"})}
+\item{name}{\code{Character scalar}. The name to be used to store the result
+in the reducedDims of the output. (Default: \code{method})}
 
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with cells in
 rows. (Default: \code{FALSE})}
 
-\item{name}{\code{Character scalar}. The name to be used to store the result
-in the reducedDims of the output. (Default: \code{method})}
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
 \item{chunkSize}{\code{Integer scalar}. Defines the size of data send
 to the individual worker. Only has an effect, if \code{BPPARAM} defines
@@ -95,6 +79,9 @@ evaluating overlap between samples. (Default: \code{0})}
 \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
 matrix. This means that the phylo object and the columns should relate
 to the same type of features (aka. microorganisms).}
+
+\item{tree.name}{\code{Character scalar}. Specific to unifrac dissimilarity.
+Specifies the name of the tree used in calculation. (Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
