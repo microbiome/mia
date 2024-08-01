@@ -45,7 +45,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Transform assay</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/transformCounts.R" class="external-link"><code>R/transformCounts.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/pseufix/R/transformCounts.R" class="external-link"><code>R/transformCounts.R</code></a></small>
     <div class="hidden name"><code>transformAssay.Rd</code></div>
     </div>
 
@@ -119,8 +119,10 @@ transformation is applied sample (column) or feature (row) wise.
 
 
 <dt id="arg-pseudocount">pseudocount<a class="anchor" aria-label="anchor" href="#arg-pseudocount"></a></dt>
-<dd><p><code>Logical scalar</code> or <code>numeric scalar</code>. When TRUE,
-automatically adds half of the minimum positive value of <code>assay.type</code>.
+<dd><p><code>Logical scalar</code> or <code>numeric scalar</code>.
+When <code>TRUE</code>, automatically adds half of the minimum positive
+value of <code>assay.type</code> (missing values ignored by default:
+<code>na.rm = TRUE</code>).
 When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.
 (Default: <code>FALSE</code>).</p></dd>
