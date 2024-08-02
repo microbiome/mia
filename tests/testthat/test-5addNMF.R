@@ -12,14 +12,15 @@ test_that("addNMF", {
   red <- reducedDim(tse,"NMF")
   expect_equal(names(attributes(red)),
                c("dim","dimnames","loadings", "model"))
-  expect_equal(dim(attr(red,"loadings")),c(19216,2))
+  expect_equal(dim(attr(red,"loadings")),c(35,2))
   # Check if ordination matrix returned by NMF::nmf is the same as
   # getNMF and addNMF ones
   mat <- t(assay(tse, "counts"))
+  library("NMF")
   nmf_model <- NMF::nmf(mat, 2)
   loadings <- nmf_model@fit@H
   # Compare NMF::nmf and addNMF
-  expect_equal(loadings, attr(red, "loadings"), tolerance = 10**-4)
+  expect_equal(loadings, t(attr(red, "loadings")), tolerance = 10**-4)
   scores2 <- getNMF(tse)
   # Compare NMF::nmf and getNMF
   expect_equal(loadings, attr(scores2, "loadings"), tolerance = 10**-4)
