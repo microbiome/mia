@@ -1210,8 +1210,8 @@ setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
             .Deprecated(msg = paste0("'calculateOverlap' is deprecated\n",
                                      "Use 'getDissimilarity' with parameter ",
                                      "method = 'overlap' instead."))
+            getDissimilarity(x, method = "overlap", ...)
           }
-          getDissimilarity(x, method = "overlap", ...)
 )
 
 #' @rdname deprecate
@@ -1227,8 +1227,9 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
             .Deprecated(msg = paste0("'calculateJSD' is deprecated\n",
                                      "Use 'getDissimilarity' with parameter ",
                                      "method = 'jsd' instead."))
+            getDissimilarity(x, method = "jsd", ...)
           }
-          getDissimilarity(x, method = "jsd", ...)
+          
 )
 
 #' @rdname deprecate
@@ -1244,24 +1245,23 @@ setMethod("runJSD", signature = c(x = "SummarizedExperiment"),
             .Deprecated(msg = paste0("'runJSD' is deprecated\n",
                                      "Use 'getDissimilarity' with parameter ",
                                      "method = 'jsd' instead."))
+            getDissimilarity(x, method = "jsd", ...)
           }
-          getDissimilarity(x, method = "jsd", ...)
 )
 
 #' @rdname deprecate
 #' @export
-setGeneric("calculateUnifrac", signature = c("x", "tree"),
+setGeneric("calculateUnifrac", signature = c("x"),
            function(x, ...)
              standardGeneric("calculateUnifrac"))
 
 #' @rdname deprecate
 #' @export
-setMethod("calculateUnifrac", signature = c(x = "TreeSummarizedExperiment",
-                                            tree = "missing"),
+setMethod("calculateUnifrac", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ...){
             .Deprecated(msg = paste0("'calculateUnifrac' is deprecated\n",
                                      "Use 'getDissimilarity' with parameter ",
                                      "method = 'unifrac' instead."))
+            getDissimilarity(x, method = "unifrac", ...)
           }
-          getDissimilarity(x, method = "unifrac", ...)
 )

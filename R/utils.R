@@ -367,7 +367,8 @@
 }
 
 # This function can be used to add values to reducedDims
-.add_values_to_reducedDims <- function(x, values, name, ...){
+.add_values_to_reducedDims <- function(x, values, name, 
+                                        assay.type = "counts", ...){
     # Check values
     if( !((is(values, "matrix") || is(values, "dist")) && length(values) > 0) ){
         stop("'values' must be a matrix.", call. = FALSE)
@@ -395,10 +396,9 @@
     }
     if( !identical(rownames(as.matrix(values)), 
                   colnames(assay(x, assay.type))) ){
-        warning("Samples of the dissimilarity matrix should be the same as the",
+        stop("Samples of the dissimilarity matrix should be the same as the",
                 " samples in columns of the assay specified with 'assay.type'.",
                 " The result is not added to reducedDim.")
-        return(values)
     }
     else{
         reducedDim(x, name) <- values

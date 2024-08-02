@@ -137,9 +137,16 @@
 \alias{relabundance<-}
 \alias{relabundance,SummarizedExperiment-method}
 \alias{relabundance<-,SummarizedExperiment-method}
-\alias{calculateJSD}
+\alias{runOverlap}
+\alias{runOverlap,SummarizedExperiment-method}
 \alias{calculateOverlap}
+\alias{calculateOverlap,SummarizedExperiment-method}
+\alias{calculateJSD}
+\alias{calculateJSD,SummarizedExperiment-method}
+\alias{runJSD}
+\alias{runJSD,SummarizedExperiment-method}
 \alias{calculateUnifrac}
+\alias{calculateUnifrac,TreeSummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -412,13 +419,25 @@ relabundance(x) <- value
 
 \S4method{relabundance}{SummarizedExperiment}(x) <- value
 
-calculateJSD(x, ...)
+runOverlap(x, ...)
 
-calculateJSD(x, ...)
+\S4method{runOverlap}{SummarizedExperiment}(x, ...)
 
 calculateOverlap(x, ...)
 
+\S4method{calculateOverlap}{SummarizedExperiment}(x, ...)
+
+calculateJSD(x, ...)
+
+\S4method{calculateJSD}{SummarizedExperiment}(x, ...)
+
+runJSD(x, ...)
+
+\S4method{runJSD}{SummarizedExperiment}(x, ...)
+
 calculateUnifrac(x, ...)
+
+\S4method{calculateUnifrac}{TreeSummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

@@ -113,7 +113,10 @@
 #' @export
 #'
 #' @examples
-#' # load data
+#' library(mia)
+#' library(scater)
+#' 
+#' # load dataset
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' 
@@ -160,7 +163,8 @@ setMethod(
       x, method = method, assay.type = assay.type, transposed = transposed,
       tree.name = tree.name, ...)
     
-    .add_values_to_reducedDims(x, as.matrix(res), name)
+    .add_values_to_reducedDims(x, values = as.matrix(res), name = name, 
+                                assay.type = assay.type)
   }
 )
 

@@ -122,7 +122,10 @@ Mia unifrac internal function utilizes
 \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
 }
 \examples{
-# load data
+library(mia)
+library(scater)
+
+# load dataset
 data(GlobalPatterns)
 tse <- GlobalPatterns
 
