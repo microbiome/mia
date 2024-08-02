@@ -11,7 +11,7 @@ getNMF(x, ...)
 
 addNMF(x, ...)
 
-\S4method{getNMF}{SummarizedExperiment}(x, k = 2, assay.type = "counts", ...)
+\S4method{getNMF}{SummarizedExperiment}(x, assay.type = "counts", ...)
 
 \S4method{addNMF}{SummarizedExperiment}(x, k = 2, assay.type = "counts", name = "NMF", ...)
 }
@@ -21,11 +21,11 @@ object.}
 
 \item{...}{optional arguments passed to \code{nmf::NMF}}
 
-\item{k}{\code{Integer vector}. A number of latent vectors/topics.
-(Default: \code{2})}
-
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 NMF ordination. (Default: \code{"counts"})}
+
+\item{k}{\code{Integer vector}. A number of latent vectors/topics.
+(Default: \code{2})}
 
 \item{name}{\code{Character scalar}. The name to be used to store the result
 in the reducedDims of the output. (Default: \code{"NMF"})}
@@ -47,6 +47,10 @@ object.
 The functions \code{getNMF} and \code{addNMF} internally use \code{nmf::NMF}
 compute the ordination matrix and
 feature loadings.
+
+All NMF scores for rank values from 2 to 10 are calculated and the rank value
+with highest explained variance is selected. The scores for this rank value
+are returned with the NMF model and loadings as attributes.
 }
 \examples{
 data(GlobalPatterns)

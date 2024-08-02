@@ -31,6 +31,10 @@
 #'  compute the ordination matrix and 
 #'  feature loadings.
 #'  
+#' All NMF scores for rank values from 2 to 10 are calculated and the rank value
+#'  with highest explained variance is selected. The scores for this rank value 
+#'  are returned with the NMF model and loadings as attributes.
+#'  
 #' @name addNMF
 #' 
 #' @examples
@@ -64,7 +68,7 @@ setGeneric("addNMF", signature = c("x"),
 #' @export
 #' @rdname addNMF
 setMethod("getNMF", "SummarizedExperiment",
-    function(x, k = 2, assay.type = "counts", ...){
+    function(x, assay.type = "counts", ...){
         .require_package("NMF")
         # Both NmF and DelayedArray have method seed(). When running
         # NMF::nmf() an error occurs due to wrong method. That is why NMF
@@ -74,14 +78,14 @@ setMethod("getNMF", "SummarizedExperiment",
             detach("package:NMF", unload = TRUE)
         }
         library("NMF")
-        # Input checks
-        if( !.is_integer(k) ){
-            stop("'k' must be an integer.", call. = FALSE)
-        }
         .check_assay_present(assay.type, x)
         mat <- t(assay(x, assay.type))
-        # Calculate nmf model
-        nmf_model <- NMF::nmf(mat, rank = k, ...)
+        # Calculate nmf scores for different rank values
+        k = c(2, 3, 4, 5, 6, 7, 8, 9, 10)
+        nmf_rank <- NMF::nmf(mat, rank = k, ...)
+        max_indice <- which.max(nmf_rank$measures$evar)
+        # Calculate NMF model for best rank value
+        nmf_model <- NMF::nmf(mat, rank = max_indice)
         # store scores
         scores <- nmf_model@fit@W
         # Add loadings as attribute of the scores matrix
