@@ -69,7 +69,6 @@ setGeneric("addNMF", signature = c("x"),
 #' @rdname addNMF
 setMethod("getNMF", "SummarizedExperiment",
     function(x, assay.type = "counts", ...){
-        browser()
         .require_package("NMF")
         # Both NmF and DelayedArray have method seed(). When running
         # NMF::nmf() an error occurs due to wrong method. That is why NMF
