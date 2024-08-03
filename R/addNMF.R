@@ -69,6 +69,7 @@ setGeneric("addNMF", signature = c("x"),
 #' @rdname addNMF
 setMethod("getNMF", "SummarizedExperiment",
     function(x, assay.type = "counts", ...){
+        browser()
         .require_package("NMF")
         # Both NmF and DelayedArray have method seed(). When running
         # NMF::nmf() an error occurs due to wrong method. That is why NMF
@@ -83,15 +84,14 @@ setMethod("getNMF", "SummarizedExperiment",
         # Calculate nmf scores for different rank values
         k = c(2, 3, 4, 5, 6, 7, 8, 9, 10)
         nmf_rank <- NMF::nmf(mat, k)
-        max_i <- which.max(nmf_rank$measures$evar)
-        # Calculate NMF model for rank value with highest explained variance
-        nmf_model <- NMF::nmf(mat, rank = max_i)
-        # store scores
-        scores <- nmf_model@fit@W
+        max_i <- which.max(nmf_rank$measures$evar) + 1
+        # store scores for the rank with highest explained variance 
+        scores <- nmf_rank[["fit"]][[as.character(max_i)]]@fit@W
         # Add loadings as attribute of the scores matrix
-        attr(scores, "loadings") <- t(nmf_model@fit@H)
-        # Add NMF model as attribute of the scores matrix
-        attr(scores, "model") <- nmf_model
+        attr(scores, "loadings") <- 
+                              t(nmf_rank[["fit"]][[as.character(max_i)]]@fit@H)
+        # Add NMF output as attribute of the scores matrix
+        attr(scores, "output") <- nmf_rank
         # The NMF package is unloaded
         detach("package:NMF", unload = TRUE)
         # Return scores with loadings, metrics and model as attribute
