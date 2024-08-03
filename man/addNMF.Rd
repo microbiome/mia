@@ -50,7 +50,7 @@ feature loadings.
 
 All NMF scores for rank values from 2 to 10 are calculated and the rank value
 with highest explained variance is selected. The scores for this rank value
-are returned with the NMF model and loadings as attributes.
+are returned with the NMF model and feature loadings as attributes.
 }
 \examples{
 data(GlobalPatterns)

@@ -33,7 +33,7 @@
 #'  
 #' All NMF scores for rank values from 2 to 10 are calculated and the rank value
 #'  with highest explained variance is selected. The scores for this rank value 
-#'  are returned with the NMF model and loadings as attributes.
+#'  are returned with the NMF model and feature loadings as attributes.
 #'  
 #' @name addNMF
 #' 
@@ -82,10 +82,10 @@ setMethod("getNMF", "SummarizedExperiment",
         mat <- t(assay(x, assay.type))
         # Calculate nmf scores for different rank values
         k = c(2, 3, 4, 5, 6, 7, 8, 9, 10)
-        nmf_rank <- NMF::nmf(mat, rank = k, ...)
-        max_indice <- which.max(nmf_rank$measures$evar)
-        # Calculate NMF model for best rank value
-        nmf_model <- NMF::nmf(mat, rank = max_indice)
+        nmf_rank <- NMF::nmf(mat, k)
+        max_i <- which.max(nmf_rank$measures$evar)
+        # Calculate NMF model for rank value with highest explained variance
+        nmf_model <- NMF::nmf(mat, rank = max_i)
         # store scores
         scores <- nmf_model@fit@W
         # Add loadings as attribute of the scores matrix
