@@ -47,7 +47,7 @@ subsampled assay."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aja
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Subsample Counts</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/getDissimilarity/R/rarefyAssay.R" class="external-link"><code>R/rarefyAssay.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/pseufix/R/rarefyAssay.R" class="external-link"><code>R/rarefyAssay.R</code></a></small>
     <div class="hidden name"><code>rarefyAssay.Rd</code></div>
     </div>
 
@@ -90,13 +90,14 @@ subsampled assay.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>
+<dd><p>a numeric matrix with samples as rows or a
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies which assay to use for
-calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. Specifies the name of the
+assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
