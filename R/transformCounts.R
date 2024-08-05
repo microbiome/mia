@@ -384,58 +384,48 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 #################################.calc_css_percentile######################
 # Calculates the cumulative sum scaling (css) scaling percentiles from the given 
 # data
-#'  @importFrom matrixStats rowMedians
+#'  @importFrom DelayedMatrixStats colQuantiles
+#'  @importFrom matrixStats colSums2 rowMeans2 rowMedians
 .calc_css_percentile <- function(mat, rel, ...) {
-    # Sort the non-zero values in each column of the matrix in decreasing order
-    smat <- lapply(1:ncol(mat), function(i) {
-      sort(mat[which(mat[, i] > 0), i], decreasing = TRUE)
-    })
-    
-    # Find the maximum length of the sorted columns
-    leng <- max(sapply(smat, length))
-    
-    # Check if any column has only one or zero features and stop if true
-    if (any(sapply(smat, length) == 1)) stop("Warning: sample with one or zero features")
-    
-    # Create an empty matrix (smat2) with dimensions (max length, number of columns)
-    smat2 <- array(NA, dim = c(leng, ncol(mat)))
-    
-    # Populate smat2 with the sorted values from smat
-    for (i in 1:ncol(mat)) {
-      smat2[leng:(leng - length(smat[[i]]) + 1), i] <- smat[[i]]
+    # Replace zero values to NA, i.e. not detected
+    mat[ mat == 0 ] <- NA
+    # Calculate number of features detected
+    found_features <- colSums2(!is.na(mat))
+    # Stop if there are columsn with only 1 or 0 found features
+    if( any(found_features <= 1) ){
+        stop(
+            "There are samples that contain 1 or less found features.",
+            "'fast CSS' method cannot be applied.", call. = FALSE)
     }
-    
-    # Calculate quantiles for each column in smat2
-    rmat2 <- sapply(1:ncol(smat2), function(i) {
-      quantile(smat2[, i], probs = seq(0, 1, length.out = nrow(smat2)), na.rm = TRUE)
+    # Calculate quantiles. Take into account only positive, found features
+    quantiles <- colQuantiles(
+        mat, prob = seq(0, 1, length.out = max(found_features)), na.rm = TRUE)
+    quantiles <- t(quantiles)
+    # Sort the columns based on abundance
+    mat <- apply(mat, 2, function(col){
+        col[ is.na(col) ] <- 0
+        col <- sort(col)
+        return(col)
     })
-    
-    # Replace NA values in smat2 with 0
-    smat2[is.na(smat2)] <- 0
-    
-    # Compute the row means of smat2 to create a reference profile
-    ref1 <- rowMeans(smat2)
-    
-    # Number of columns in rmat2
-    ncols <- ncol(rmat2)
-    
-    # Calculate the differences between the reference profile and each column's quantiles
-    diffr <- sapply(1:ncols, function(i) {
-      ref1 - rmat2[, i]
-    })
-    
+    # Compute the row means of sorted matrix to create a reference profile
+    ref <- rowMeans2(mat)
+    ref <- ref[ ref > 0 ]
+    # Calculate the differences between the reference profile and each
+    # column's quantiles
+    difference <- ref - quantiles
     # Compute the row medians of absolute differences
-    diffr1 <- matrixStats::rowMedians(abs(diffr))
-    
-    # Find the first point where the relative change exceeds the threshold (rel)
-    x <- which(abs(diff(diffr1)) / diffr1[-1] > rel)[1] / length(diffr1)
-    
-    # If the calculated percentile is less than or equal to 0.50, use 0.50 as the default value
-    if (is.na(x) || x <= 0.50) {
-      message("Default value being used.")
-      x <- 0.50
+    difference <- rowMedians(abs(difference))
+    # Find the first point where the relative change exceeds the threshold
+    res <- abs(diff(difference)) / difference[-1]
+    res <- which(res > rel)
+    res <- res[[1]] / max(found_features)
+    # If the calculated percentile is less than or equal to 0.50, use 0.50 as
+    # the default value
+    if( res < 0.50 ){
+        res <- 0.50
+        message("Default value being used (", res, ").")
     }
-    return(x)
+    return(res)
 }
 
 #################################.calc_scaling_factors#############################
