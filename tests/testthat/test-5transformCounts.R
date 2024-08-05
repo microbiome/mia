@@ -292,13 +292,20 @@ test_that("transformAssay", {
         expect_error(transformAssay(tse, assay.type = "relabundance", 
                                      method = "clr"))
         
-        # Expect error when pseudocount TRUE but missing or negative values present
+        # Expect error when pseudocount TRUE but negative values present
         expect_error(transformAssay(tse, method = "relabundance",
-                                    assay.type = "neg_values", pseudocount = TRUE),
-                     "The assay contains missing or negative values. 'pseudocount' must be specified manually.")
-        expect_error(transformAssay(tse, method = "relabundance",
-                                    assay.type = "na_values", pseudocount = TRUE),
-                     "The assay contains missing or negative values. 'pseudocount' must be specified manually.")
+                                    assay.type = "neg_values", pseudocount = TRUE))
+        
+        # Expect pseudocount to be half of min value when NA values present
+        test3 <- tmp
+        assay(test3, "na_values") <- assay(test3, "counts")
+        assay(test3, "na_values")[4, 5] <- NA
+        actual <- transformAssay(test3, method = "relabundance",
+                                assay.type = "na_values", pseudocount = TRUE)
+        value <- attr(assay(actual, "relabundance"), "parameters")[["pseudocount"]]
+        ref <- assay(actual, "na_values")
+        ref <- min(ref[ref > 0], na.rm = TRUE)/2
+        expect_equal(value, ref)
 
         # Test that CLR with counts equal to CLR with relabundance
         assay(tse, "pseudo") <- assay(tse, "counts") + 1
