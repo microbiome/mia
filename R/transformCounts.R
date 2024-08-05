@@ -370,7 +370,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         }    
         # If pseudocount TRUE but some negative values, numerical pseudocount needed
         if ( pseudocount && any(mat < 0, na.rm = TRUE) ){
-            stop("The assay contains missing values (NAs) or negative values. ",
+            stop("The assay contains negative values. ",
                  "'pseudocount' must be specified manually.", call. = FALSE)
         }
         # If pseudocount TRUE, set it to  half of non-zero minimum value
