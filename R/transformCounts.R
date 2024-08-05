@@ -384,8 +384,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 #################################.calc_css_percentile######################
 # Calculates the cumulative sum scaling (css) scaling percentiles from the given 
 # data
-#'  @importFrom DelayedMatrixStats colQuantiles
-#'  @importFrom matrixStats colSums2 rowMeans2 rowMedians
+#'  @importFrom matrixStats colSums2 colQuantiles rowMeans2 rowMedians
 .calc_css_percentile <- function(mat, rel, ...) {
     # Replace zero values to NA, i.e. not detected
     mat[ mat == 0 ] <- NA
