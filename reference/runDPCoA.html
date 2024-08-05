@@ -46,7 +46,7 @@ reducedDims and are available for all the expected functions."><!-- mathjax --><
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculation of Double Principal Correspondance analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/runDPCoA.R" class="external-link"><code>R/runDPCoA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/getDissimilarity/R/runDPCoA.R" class="external-link"><code>R/runDPCoA.R</code></a></small>
     <div class="hidden name"><code>runDPCoA.Rd</code></div>
     </div>
 
@@ -95,8 +95,7 @@ reducedDims and are available for all the expected functions."><!-- mathjax --><
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a numeric matrix with samples as rows or a
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
+<dd><p>a <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>
 object.</p></dd>
 
 
@@ -136,13 +135,13 @@ integer vector of row indices or a logical vector. (Default: <code>NULL</code>)<
 
 
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
-<dd><p><code>Logical scalar</code>. Is x transposed with samples in rows?
-(Default: <code>FALSE</code>)</p></dd>
+<dd><p><code>Logical scalar</code>. Specifies if x is transposed with cells in
+rows. (Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. Specifies which assay to use for
+calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
@@ -154,8 +153,8 @@ assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-tree used in calculation. (Default: <code>"phylo"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. Specific to unifrac dissimilarity.
+Specifies the name of the tree used in calculation. (Default: <code>"phylo"</code>)</p></dd>
 
 
 <dt id="arg-tree-name">tree_name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
