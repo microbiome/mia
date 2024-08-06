@@ -79,7 +79,7 @@
 #' dominant_taxa
 #'
 #' # Get an overview of sample and taxa counts
-#' summary(GlobalPatterns, assay_name= "counts")
+#' summary(GlobalPatterns, assay.type= "counts")
 #'
 #' # Get unique taxa at a particular taxonomic rank
 #' # sort = TRUE means that output is sorted in alphabetical order
