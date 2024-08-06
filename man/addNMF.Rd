@@ -11,21 +11,34 @@ getNMF(x, ...)
 
 addNMF(x, ...)
 
-\S4method{getNMF}{SummarizedExperiment}(x, assay.type = "counts", ...)
+\S4method{getNMF}{SummarizedExperiment}(x, k = 2, assay.type = "counts", eval.metric = "evar", ...)
 
-\S4method{addNMF}{SummarizedExperiment}(x, k = 2, assay.type = "counts", name = "NMF", ...)
+\S4method{addNMF}{SummarizedExperiment}(
+  x,
+  k = 2,
+  assay.type = "counts",
+  eval.metric = "evar",
+  name = "NMF",
+  ...
+)
 }
 \arguments{
 \item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
-\item{...}{optional arguments passed to \code{nmf::NMF}}
+\item{...}{optional arguments passed to \code{nmf::NMF}.}
+
+\item{k}{\code{Integer vector}. A number of latent vectors/topics.
+(Default: \code{2})}
 
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 NMF ordination. (Default: \code{"counts"})}
 
-\item{k}{\code{Integer vector}. A number of latent vectors/topics.
-(Default: \code{2})}
+\item{eval.metric}{\code{Character scalar}. Specifies evaluation metric that
+will be used to select the model with the best fit. Must be in
+\code{c("evar", "sparseness.basis", "sparseness.coef", "rss", "evar",
+ "silhouette.coef", "silhouette.basis", "cophenetic", "dispersion")}.
+(Default: \code{"evar"})}
 
 \item{name}{\code{Character scalar}. The name to be used to store the result
 in the reducedDims of the output. (Default: \code{"NMF"})}
@@ -36,7 +49,10 @@ as attribute \code{"loadings"}.
 
 For \code{addNMF}, a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object is returned containing the ordination matrix in reducedDims(..., name)
-with feature loadings matrix as attribute \code{"loadings"}.
+with the following attributes:
+"loadings" which is a matrix containing the feature loadings
+"NMF_output" which is the output of function \code{nmf::NMF}
+"best_fit" which is the result of the best fit if k is a vector of integers
 }
 \description{
 These functions perform Non-negative Matrix Factorization on data stored in a
@@ -48,9 +64,9 @@ The functions \code{getNMF} and \code{addNMF} internally use \code{nmf::NMF}
 compute the ordination matrix and
 feature loadings.
 
-All NMF scores for rank values from 2 to 10 are calculated and the rank value
-with highest explained variance is selected. The scores for this rank value
-are returned with the NMF model and feature loadings as attributes.
+If k is a vector of integers, NMF output is calculated for all the rank
+values contained in k, and the best fit is selected based on
+\code{eval.metric} value.
 }
 \examples{
 data(GlobalPatterns)
@@ -60,10 +76,17 @@ tse <- GlobalPatterns
 tse <- agglomerateByPrevalence(tse, rank = "Phylum")
 
 # Run NMF and add the result to reducedDim(tse, "NMF")
-tse <- addNMF(tse)
+tse <- addNMF(tse, k = 2, name = "NMF")
 
 # Extract feature loadings
-loadings <- attr(reducedDim(tse, "NMF"), "loadings")
-head(loadings)
+loadings_NMF <- attr(reducedDim(tse, "NMF"), "loadings")
+head(loadings_NMF)
+
+# Estimate models with number of topics from 2 to 4
+tse <- addNMF(tse, k = c(2,3,4), name = "NMF_4")
+
+# Extract feature loadings
+loadings_NMF_4 <- attr(reducedDim(tse, "NMF_4"), "loadings")
+head(loadings_NMF_4)
 
 }
