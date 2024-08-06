@@ -64,8 +64,8 @@ integer vector of row indices or a logical vector. (Default: \code{NULL})}
 \item{scale}{\code{Logical scalar}. Sshould the expression values be standardized?
 (Default: \code{FALSE})}
 
-\item{transposed}{\code{Logical scalar}. Specifies if x is transposed with cells in
-rows. (Default: \code{FALSE})}
+\item{transposed}{\code{Logical scalar}. Specifies if x is transposed with
+cells in rows. (Default: \code{FALSE})}
 
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
@@ -74,8 +74,8 @@ calculation. (Default: \code{"counts"})}
 
 \item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{tree.name}{\code{Character scalar}. Specific to unifrac dissimilarity.
-Specifies the name of the tree used in calculation. (Default: \code{"phylo"})}
+\item{tree.name}{\code{Character scalar}. Specifies the name of the tree
+used in calculation. (Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 

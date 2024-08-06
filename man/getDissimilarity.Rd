@@ -55,23 +55,23 @@ object.}
 or the following arguments passed onto mia internal functions for overlap,
 unifrac and JSD dissimilarities:
 \itemize{
-\item \code{weighted}: Specific to unifrac dissimilarity.
-\code{Logical scalar}. Should use weighted-Unifrac calculation?
+\item \code{weighted}: (Unifrac) \code{Logical scalar}. Should use
+weighted-Unifrac calculation?
 Weighted-Unifrac takes into account the relative abundance of
 species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is \code{FALSE}, meaning the
 unweighted-Unifrac distance is calculated for all pairs of samples.
 (Default: \code{FALSE})
 
-\item \code{chunkSize}: \code{Integer scalar}. Defines the size of data
-send to the individual worker. Only has an effect, if \code{BPPARAM}
+\item \code{chunkSize}: (JSD) \code{Integer scalar}. Defines the size of
+data  send to the individual worker. Only has an effect, if \code{BPPARAM}
 defines more than one worker. (Default: \code{nrow(x)})
 
-\item \code{BPPARAM}:
+\item \code{BPPARAM}: (JSD)
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam} object}.
 Specifies whether the calculation should be parallelized.
 
-\item \code{detection}: \code{Numeric scalar}. Specific to overlap dissimilarity.
+\item \code{detection}: (overlap) \code{Numeric scalar}.
 Defines detection threshold for absence/presence of features. Feature that
 has abundance under threshold in either of samples, will be discarded when
 evaluating overlap between samples. (Default: \code{0})
@@ -85,13 +85,13 @@ calculation. (Default: \code{"counts"})}
 \item{name}{\code{Character scalar}. The name to be used to store the result
 in the reducedDims of the output. (Default: \code{method})}
 
-\item{transposed}{\code{Logical scalar}. Specifies if x is transposed with cells in
-rows. (Default: \code{FALSE})}
+\item{transposed}{\code{Logical scalar}. Specifies if x is transposed with
+cells in rows. (Default: \code{FALSE})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
-\item{tree.name}{\code{Character scalar}. Specific to unifrac dissimilarity.
-Specifies the name of the tree used in calculation. (Default: \code{"phylo"})}
+\item{tree.name}{\code{Character scalar}. Specifies the name of the tree
+used in calculation. (Default: \code{"phylo"})}
 
 \item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 }
@@ -108,18 +108,17 @@ within a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object. For overlap, Unifrac, and Jensen-Shannon Divergence (JSD)
 dissimilarities, the functions use mia internal functions, while for other
-types of dissimilarities, they rely on \code{\link[vegan:vegdist]{vegdist}}.
+types of dissimilarities, they rely on \code{\link[vegan:vegdist]{vegdist}}
+by default.
 }
 \details{
 Overlap reflects similarity between sample-pairs. When overlap is
 calculated using relative abundances, the higher the value the higher the
-similarity is.
-When using relative abundances, overlap value 1 means that
+similarity is. When using relative abundances, overlap value 1 means that
 all the abundances of features are equal between two samples, and 0 means
 that samples have completely different relative abundances.
 
-Mia unifrac internal function utilizes
-\code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
+Unifrac is calculated with \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
 }
 \examples{
 library(mia)

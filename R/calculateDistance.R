@@ -5,7 +5,8 @@
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'  object. For overlap, Unifrac, and Jensen-Shannon Divergence (JSD) 
 #'  dissimilarities, the functions use mia internal functions, while for other 
-#'  types of dissimilarities, they rely on \code{\link[vegan:vegdist]{vegdist}}.
+#'  types of dissimilarities, they rely on \code{\link[vegan:vegdist]{vegdist}}
+#'  by default.
 #'
 #' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
@@ -22,11 +23,11 @@
 #'   
 #' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #'   
-#' @param transposed \code{Logical scalar}. Specifies if x is transposed with cells in
-#'   rows. (Default: \code{FALSE})
+#' @param transposed \code{Logical scalar}. Specifies if x is transposed with
+#'   cells in rows. (Default: \code{FALSE})
 #'
-#' @param tree.name \code{Character scalar}. Specific to unifrac dissimilarity. 
-#' Specifies the name of the tree used in calculation. (Default: \code{"phylo"})
+#' @param tree.name \code{Character scalar}. Specifies the name of the tree
+#'   used in calculation. (Default: \code{"phylo"})
 #' 
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
@@ -34,23 +35,23 @@
 #'  or the following arguments passed onto mia internal functions for overlap,
 #'  unifrac and JSD dissimilarities:
 #' \itemize{
-#'   \item \code{weighted}: Specific to unifrac dissimilarity.
-#'   \code{Logical scalar}. Should use weighted-Unifrac calculation? 
+#'   \item \code{weighted}: (Unifrac) \code{Logical scalar}. Should use
+#'   weighted-Unifrac calculation? 
 #'   Weighted-Unifrac takes into account the relative abundance of
 #'   species/taxa shared between samples, whereas unweighted-Unifrac only
 #'   considers presence/absence. Default is \code{FALSE}, meaning the
 #'   unweighted-Unifrac distance is calculated for all pairs of samples.
 #'   (Default: \code{FALSE})
 #'   
-#'   \item \code{chunkSize}: \code{Integer scalar}. Defines the size of data 
-#'   send to the individual worker. Only has an effect, if \code{BPPARAM} 
+#'   \item \code{chunkSize}: (JSD) \code{Integer scalar}. Defines the size of
+#'   data  send to the individual worker. Only has an effect, if \code{BPPARAM} 
 #'   defines more than one worker. (Default: \code{nrow(x)})
 #'   
-#'   \item \code{BPPARAM}: 
+#'   \item \code{BPPARAM}: (JSD)
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam} object}.
 #'   Specifies whether the calculation should be parallelized.
 #'   
-#'   \item \code{detection}: \code{Numeric scalar}. Specific to overlap dissimilarity.
+#'   \item \code{detection}: (overlap) \code{Numeric scalar}.
 #'   Defines detection threshold for absence/presence of features. Feature that 
 #'   has abundance under threshold in either of samples, will be discarded when 
 #'   evaluating overlap between samples. (Default: \code{0}) 
@@ -66,13 +67,11 @@
 #' @details 
 #'   Overlap reflects similarity between sample-pairs. When overlap is 
 #'   calculated using relative abundances, the higher the value the higher the 
-#'   similarity is. 
-#'   When using relative abundances, overlap value 1 means that 
+#'   similarity is. When using relative abundances, overlap value 1 means that 
 #'   all the abundances of features are equal between two samples, and 0 means 
 #'   that samples have completely different relative abundances. 
 #'   
-#'   Mia unifrac internal function utilizes 
-#'   \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
+#'   Unifrac is calculated with \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
 #'   
 #' @name getDissimilarity
 #' 
@@ -154,17 +153,19 @@ setGeneric(
 #' @rdname getDissimilarity
 #' @export
 setMethod(
-  "addDissimilarity", signature = c(x = "SummarizedExperiment"),
-  function(
-    x, method, assay_name = "counts", assay.type = assay_name, name = method,
-    transposed = FALSE, tree_name = "phylo", tree.name = tree_name, ...){
+    "addDissimilarity", signature = c(x = "SummarizedExperiment"),
+    function(
+          x, method, assay_name = "counts", assay.type = assay_name,
+          name = method, transposed = FALSE, tree_name = "phylo",
+          tree.name = tree_name, ...){
     #
     res <- getDissimilarity(
-      x, method = method, assay.type = assay.type, transposed = transposed,
-      tree.name = tree.name, ...)
-    
-    .add_values_to_reducedDims(x, values = as.matrix(res), name = name, 
-                                assay.type = assay.type)
+        x, method = method, assay.type = assay.type, transposed = transposed,
+        tree.name = tree.name, ...)
+    # Add matrix to original SE
+    x <- .add_values_to_reducedDims(
+      x, values = as.matrix(res), name = name, assay.type = assay.type)
+    return(x)
   }
 )
 
@@ -243,17 +244,13 @@ setMethod(
     if( is.null(diss.fun) ){
         if( method %in% c("overlap") ){
             diss.fun <- .get_overlap
-            message("'diss.fun' defaults to .get_overlap.")
         } else if( method %in% c("unifrac")  ){
             args <- c(args, list(tree = tree, node.label = node.label))
             diss.fun <- .get_unifrac
-            message("'diss.fun' defaults to .get_unifrac.")
         } else if( method %in% c("jsd")  ){
             diss.fun <- .get_jsd
-            message("'diss.fun' defaults to mia:::.get_jsd.")
         } else if( requireNamespace("vegan") ){
             diss.fun <- vegan::vegdist
-            message("'diss.fun' defaults to vegan::vegdist.")
         } else{
             diss.fun <- stats::dist
             message("'diss.fun' defaults to stats::dist.")
@@ -270,7 +267,7 @@ setMethod(
         tree_name = "phylo", transposed = FALSE, ...){
     # Get functions and parameters based on direction
     tree_present_FUN <- if (transposed) .check_colTree_present
-    else .check_rowTree_present
+        else .check_rowTree_present
     tree_FUN <- if (transposed) colTree else rowTree
     links_FUN <- if (transposed) colLinks else rowLinks
     margin_name <- if (transposed) "col" else "row"

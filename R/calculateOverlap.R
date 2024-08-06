@@ -1,4 +1,5 @@
-.get_overlap <- function(x,detection = 0, ...){
+
+.get_overlap <- function(x, detection = 0, ...){
     ############################# INPUT CHECK ##############################
     # Check detection
     if (!.is_numeric_string(detection)) {
