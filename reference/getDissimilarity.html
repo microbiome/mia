@@ -50,7 +50,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate dissimilarities</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/getDissimilarity/R/calculateDistance.R" class="external-link"><code>R/calculateDistance.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/getDissimilarity/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
     <div class="hidden name"><code>getDissimilarity.Rd</code></div>
     </div>
 
@@ -75,8 +75,6 @@ by default.</p>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
 <span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
-<span>  tree.name <span class="op">=</span> <span class="va">tree_name</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -90,8 +88,6 @@ by default.</p>
 <span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
-<span>  tree.name <span class="op">=</span> <span class="va">tree_name</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -116,26 +112,37 @@ object.</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies which distance to calculate.</p></dd>
+<dd><p><code>Character scalar</code>. Specifies which dissimilarity to
+calculate.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>other arguments passed onto <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code>,
 or the following arguments passed onto mia internal functions for overlap,
-unifrac and JSD dissimilarities:</p><ul><li><p><code>weighted</code>: (Unifrac) <code>Logical scalar</code>. Should use
+unifrac and JSD dissimilarities:</p><ul><li><p><code>diss.fun</code>: <code>Character scalar</code>. Specifies the dissimilarity
+function to be used.</p></li>
+<li><p><code>weighted</code>: (Unifrac) <code>Logical scalar</code>. Should use
 weighted-Unifrac calculation?
 Weighted-Unifrac takes into account the relative abundance of
 species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is <code>FALSE</code>, meaning the
-unweighted-Unifrac distance is calculated for all pairs of samples.
+unweighted-Unifrac dissimilarity is calculated for all pairs of samples.
 (Default: <code>FALSE</code>)</p></li>
+<li><p><code>tree</code>: (Unifrac)
+<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/phylo.html" class="external-link">phylo</a></code> object. Used only if
+<code>x</code> is a matrix. The phylo object and the columns should relate to the
+same type of features (aka. microorganisms).</p></li>
+<li><p><code>node.label</code> (Unifrac) <code>character vector</code>. Used only if
+<code>x</code> is a matrix. Specifies links between rows/columns and tips of
+<code>tree</code>. The length must equal the number of rows/columns of <code>x</code>.
+Furthermore, all the node labs must be present in <code>tree</code>.</p></li>
 <li><p><code>chunkSize</code>: (JSD) <code>Integer scalar</code>. Defines the size of
 data  send to the individual worker. Only has an effect, if <code>BPPARAM</code>
 defines more than one worker. (Default: <code>nrow(x)</code>)</p></li>
 <li><p><code>BPPARAM</code>: (JSD)
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallelParam</a> object</code>.
 Specifies whether the calculation should be parallelized.</p></li>
-<li><p><code>detection</code>: (overlap) <code>Numeric scalar</code>.
+<li><p><code>detection</code>: (Overlap) <code>Numeric scalar</code>.
 Defines detection threshold for absence/presence of features. Feature that
 has abundance under threshold in either of samples, will be discarded when
 evaluating overlap between samples. (Default: <code>0</code>)</p></li>
@@ -161,25 +168,16 @@ in the reducedDims of the output. (Default: <code>method</code>)</p></dd>
 cells in rows. (Default: <code>FALSE</code>)</p></dd>
 
 
-<dt id="arg-tree-name">tree_name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
-<dd><p>Deprecated. Use <code>tree.name</code> instead.</p></dd>
-
-
-<dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the tree
-used in calculation. (Default: <code>"phylo"</code>)</p></dd>
-
-
 <dt id="arg-exprs-values">exprs_values<a class="anchor" aria-label="anchor" href="#arg-exprs-values"></a></dt>
 <dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>getDissimilarity</code> returns a sample-by-sample distance matrix, suitable
-for NMDS, etc.</p>
-<p><code>addDissimilarity</code> returns <code>x</code> that includes distance matrix in its
-reducedDim.</p>
+    <p><code>getDissimilarity</code> returns a sample-by-sample dissimilarity matrix,
+suitable for PCA, PCoA, MDS, NMDS, CCA, RDA, NMF.</p>
+<p><code>addDissimilarity</code> returns <code>x</code> that includes dissimilarity matrix
+in its reducedDims.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -257,7 +255,7 @@ Adapted for mia by Felix G.M. Ernst</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw 0.6813418 0.6869444 0.6850675 0.2864774 0.0000000 0.6831013</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr 0.6713074 0.6620168 0.6649845 0.6720375 0.6831013 0.0000000</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Multi Dimensional Scaling applied to JSD distance matrix</span></span></span>
+<span class="r-in"><span><span class="co"># Multi Dimensional Scaling applied to JSD dissimilarity matrix</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runMDS.html" class="external-link">runMDS</a></span><span class="op">(</span><span class="va">tse</span>, FUN <span class="op">=</span> <span class="va">getDissimilarity</span>, method <span class="op">=</span> <span class="st">"overlap"</span>, </span></span>
 <span class="r-in"><span>              assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"MDS"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="op">]</span></span></span>
