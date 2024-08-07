@@ -67,9 +67,9 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 data-toc-skip class="date">2024-08-06</h4>
+            <h4 data-toc-skip class="date">2024-08-07</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/getDissimilarity/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/wangru/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
 
     </div>
@@ -440,12 +440,13 @@ any other package using comparable inputs.</p>
 <span>                              assay.type <span class="op">=</span> <span class="st">"counts"</span>, </span>
 <span>                              keep_dist <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>JSD and UniFrac are implemented in <code>mia</code> as well.
-<code>getJSD</code> can be used as a drop-in replacement in the example
-above (omit the <code>method</code> argument as well) to calculate the
-JSD. For calculating the UniFrac distance via <code>getUniFrac</code>
-either a <code>TreeSummarizedExperiment</code> must be used or a tree
-supplied via the <code>tree</code> argument. For more details see
-<code>?getJSD</code>, <code>?getUnifrac</code> or
+<code>calculateJSD</code> can be used as a drop-in replacement in the
+example above (omit the <code>method</code> argument as well) to
+calculate the JSD. For calculating the UniFrac distance via
+<code>calculateUniFrac</code> either a
+<code>TreeSummarizedExperiment</code> must be used or a tree supplied
+via the <code>tree</code> argument. For more details see
+<code><a href="../reference/calculateJSD.html">?calculateJSD</a></code>, <code><a href="../reference/calculateUnifrac.html">?calculateUnifrac</a></code> or
 <code><a href="../reference/runDPCoA.html">?getDPCoA</a></code>.</p>
 <p><code>runMDS</code> performs the decomposition. Alternatively
 <code>addNMDS</code> can also be used.</p>
