@@ -4,6 +4,7 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
 #' 
+#' @inheritParams agglomerateByVariable
 #' @inheritParams getPrevalence
 #'
 #' @param name \code{Character scalar}. A name for the column of the 
@@ -73,7 +74,7 @@ setGeneric("getDominant",signature = c("x"),
 #' @export
 setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
-             rank = NULL, other.name = "Other", n = NULL, complete = TRUE, ...){
+             rank = NULL, by = NULL, f = NULL, other.name = "Other", n = NULL, complete = TRUE, ...){
         # Input check
         # Check assay.type
         .check_assay_present(assay.type, x)
@@ -90,7 +91,13 @@ setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
         if(!is.null(rank)){
             x <- agglomerateByRank(x, rank, ...)
             mat <- assay(x, assay.type)
-        } # Otherwise, if "rank" is NULL, abundances are stored without ranking
+        # or factor that is specified by user
+        } else if (!is.null(f)) {
+            x <- agglomerateByVariable(x, f, by = "rows", ...)
+            mat <- assay(x, assay.type)
+        }
+        # Otherwise, if "rank" or "factor"  is NULL, abundances are stored 
+        # without ranking
         else {
             mat <- assay(x, assay.type)
         }

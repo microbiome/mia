@@ -23,6 +23,8 @@ getDominant(
   assay.type = assay_name,
   assay_name = "counts",
   rank = NULL,
+  by = "rows",
+  f = NULL,
   other.name = "Other",
   n = NULL,
   complete = TRUE,
@@ -70,6 +72,15 @@ list that includes all dominant taxa for each sample into colData.}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
 \code{rank} is specified.}
+
+\item{by}{\code{Character scalar}. Determines if data is merged
+row-wise / for features ('rows') or column-wise / for samples ('cols').
+Must be \code{'rows'} or \code{'cols'}.}
+
+\item{f}{A factor for merging. Must be the same length as
+\code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
+merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
+returned unchanged.}
 
 \item{name}{\code{Character scalar}. A name for the column of the
 \code{colData} where results will be stored. (Default: \code{"dominant_taxa"})}
