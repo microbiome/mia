@@ -23,11 +23,11 @@ getDominant(
   assay.type = assay_name,
   assay_name = "counts",
   rank = NULL,
-  by = NULL,
-  f = NULL,
   other.name = "Other",
   n = NULL,
   complete = TRUE,
+  by = NULL,
+  f = NULL,
   ...
 )
 
