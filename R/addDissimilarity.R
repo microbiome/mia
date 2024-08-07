@@ -11,7 +11,8 @@
 #' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
 #'
-#' @param method \code{Character scalar}. Specifies which distance to calculate.
+#' @param method \code{Character scalar}. Specifies which dissimilarity to 
+#'   calculate.
 #' 
 #' @param name \code{Character scalar}. The name to be used to store the result 
 #'  in the reducedDims of the output. (Default: \code{method})
@@ -26,22 +27,30 @@
 #' @param transposed \code{Logical scalar}. Specifies if x is transposed with
 #'   cells in rows. (Default: \code{FALSE})
 #'
-#' @param tree.name \code{Character scalar}. Specifies the name of the tree
-#'   used in calculation. (Default: \code{"phylo"})
-#' 
-#' @param tree_name Deprecated. Use \code{tree.name} instead.
-#'
 #' @param ... other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}, 
 #'  or the following arguments passed onto mia internal functions for overlap,
 #'  unifrac and JSD dissimilarities:
 #' \itemize{
+#'   \item \code{diss.fun}: \code{Character scalar}. Specifies the dissimilarity
+#'   function to be used.
+#'   
 #'   \item \code{weighted}: (Unifrac) \code{Logical scalar}. Should use
 #'   weighted-Unifrac calculation? 
 #'   Weighted-Unifrac takes into account the relative abundance of
 #'   species/taxa shared between samples, whereas unweighted-Unifrac only
 #'   considers presence/absence. Default is \code{FALSE}, meaning the
-#'   unweighted-Unifrac distance is calculated for all pairs of samples.
+#'   unweighted-Unifrac dissimilarity is calculated for all pairs of samples.
 #'   (Default: \code{FALSE})
+#'   
+#'   \item \code{tree}: (Unifrac) 
+#'   \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object. Used only if 
+#'   \code{x} is a matrix. The phylo object and the columns should relate to the
+#'   same type of features (aka. microorganisms).
+#'   
+#'   \item \code{node.label} (Unifrac) \code{character vector}. Used only if
+#'   \code{x} is a matrix. Specifies links between rows/columns and tips of 
+#'   \code{tree}. The length must equal the number of rows/columns of \code{x}. 
+#'   Furthermore, all the node labs must be present in \code{tree}.
 #'   
 #'   \item \code{chunkSize}: (JSD) \code{Integer scalar}. Defines the size of
 #'   data  send to the individual worker. Only has an effect, if \code{BPPARAM} 
@@ -51,18 +60,18 @@
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam} object}.
 #'   Specifies whether the calculation should be parallelized.
 #'   
-#'   \item \code{detection}: (overlap) \code{Numeric scalar}.
+#'   \item \code{detection}: (Overlap) \code{Numeric scalar}.
 #'   Defines detection threshold for absence/presence of features. Feature that 
 #'   has abundance under threshold in either of samples, will be discarded when 
 #'   evaluating overlap between samples. (Default: \code{0}) 
 #' }
 #'
 #' @return 
-#' \code{getDissimilarity} returns a sample-by-sample distance matrix, suitable 
-#'   for NMDS, etc.
+#' \code{getDissimilarity} returns a sample-by-sample dissimilarity matrix, 
+#'   suitable for PCA, PCoA, MDS, NMDS, CCA, RDA, NMF.
 #' 
-#' \code{addDissimilarity} returns \code{x} that includes distance matrix in its 
-#'   reducedDim. 
+#' \code{addDissimilarity} returns \code{x} that includes dissimilarity matrix 
+#'   in its reducedDims. 
 #'   
 #' @details 
 #'   Overlap reflects similarity between sample-pairs. When overlap is 
@@ -129,7 +138,7 @@
 #' tse <- addDissimilarity(tse, method = "jsd")
 #' reducedDim(tse, "jsd")[1:6, 1:6]
 #' 
-#' # Multi Dimensional Scaling applied to JSD distance matrix
+#' # Multi Dimensional Scaling applied to JSD dissimilarity matrix
 #' tse <- runMDS(tse, FUN = getDissimilarity, method = "overlap", 
 #'               assay.type = "counts")
 #' reducedDim(tse, "MDS")[1:6, ]
@@ -156,12 +165,11 @@ setMethod(
     "addDissimilarity", signature = c(x = "SummarizedExperiment"),
     function(
           x, method, assay_name = "counts", assay.type = assay_name,
-          name = method, transposed = FALSE, tree_name = "phylo",
-          tree.name = tree_name, ...){
+          name = method, transposed = FALSE, ...){
     #
     res <- getDissimilarity(
-        x, method = method, assay.type = assay.type, transposed = transposed,
-        tree.name = tree.name, ...)
+        x, method = method, assay.type = assay.type, 
+        transposed = transposed, ...)
     # Add matrix to original SE
     x <- .add_values_to_reducedDims(
       x, values = as.matrix(res), name = name, assay.type = assay.type)
@@ -181,8 +189,7 @@ setMethod(
     "getDissimilarity", signature = c(x = "SummarizedExperiment"),
     function(
         x, method, exprs_values = "counts", assay_name = exprs_values, 
-        assay.type = assay_name, transposed = FALSE, tree_name = "phylo",
-        tree.name = tree_name, ...){
+        assay.type = assay_name, transposed = FALSE, ...){
     # Input checks
     .check_assay_present(assay.type, x)
     if( !.is_non_empty_string(method) ){
@@ -199,7 +206,7 @@ setMethod(
             is(x, "TreeSummarizedExperiment") ){
         args <- .get_tree_args(
             x,  method = method, assay.type = assay.type,
-            transposed = transposed, tree.name = tree.name, ...)
+            transposed = transposed, ...)
     } else{
       # For other methods, get only matrix and method for arguments.
         mat <- assay(x, assay.type)

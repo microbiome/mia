@@ -386,6 +386,10 @@
             "Therefore, it is converted to TreeSummarizedExperiment.",
             call. = FALSE)
     }
+    if( !identical(rownames(as.matrix(values)), colnames(x)) ){
+        stop("Samples of the dissimilarity matrix should be the same as the",
+             " samples in columns of the assay specified with 'assay.type'.",
+             " The result is not added to reducedDim.")
     # Throw warning if values of reducedDim are overwritten
     if( name %in% names(reducedDims(x)) ){
         warning(
@@ -394,15 +398,8 @@
             "'. Consider using the 'name' argument to specify alternative ",
             "names.", call. = FALSE)
     }
-    if( !identical(rownames(as.matrix(values)), 
-                  colnames(assay(x, assay.type))) ){
-        stop("Samples of the dissimilarity matrix should be the same as the",
-                " samples in columns of the assay specified with 'assay.type'.",
-                " The result is not added to reducedDim.")
-    }
-    else{
-        reducedDim(x, name) <- values
-        return(x)
+    reducedDim(x, name) <- values
+    return(x)
   }
 }
 
