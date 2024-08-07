@@ -74,9 +74,6 @@ calculation. (Default: \code{"counts"})}
 
 \item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{tree.name}{\code{Character scalar}. Specifies the name of the tree
-used in calculation. (Default: \code{"phylo"})}
-
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
 \item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an
