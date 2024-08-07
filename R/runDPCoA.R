@@ -38,6 +38,10 @@
 #'   
 #' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #' 
+#' @param tree.name \code{Character scalar}. Specifies the name of the
+#'   tree to be included in the phyloseq object that is created, 
+#'   (Default: \code{"phylo"})
+#'   
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
 #' @param ... Currently not used.
