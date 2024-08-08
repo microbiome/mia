@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.34</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.35</span>
       </span>
     </div>
 
@@ -69,7 +69,7 @@
             
             <h4 data-toc-skip class="date">2024-08-08</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/getDissimilarity/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/NMF_feature_loadings/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
 
     </div>
@@ -440,12 +440,13 @@ any other package using comparable inputs.</p>
 <span>                              assay.type <span class="op">=</span> <span class="st">"counts"</span>, </span>
 <span>                              keep_dist <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>JSD and UniFrac are implemented in <code>mia</code> as well.
-<code>getJSD</code> can be used as a drop-in replacement in the example
-above (omit the <code>method</code> argument as well) to calculate the
-JSD. For calculating the UniFrac distance via <code>getUniFrac</code>
-either a <code>TreeSummarizedExperiment</code> must be used or a tree
-supplied via the <code>tree</code> argument. For more details see
-<code>?getJSD</code>, <code>?getUnifrac</code> or
+<code>calculateJSD</code> can be used as a drop-in replacement in the
+example above (omit the <code>method</code> argument as well) to
+calculate the JSD. For calculating the UniFrac distance via
+<code>calculateUniFrac</code> either a
+<code>TreeSummarizedExperiment</code> must be used or a tree supplied
+via the <code>tree</code> argument. For more details see
+<code><a href="../reference/calculateJSD.html">?calculateJSD</a></code>, <code><a href="../reference/calculateUnifrac.html">?calculateUnifrac</a></code> or
 <code><a href="../reference/runDPCoA.html">?getDPCoA</a></code>.</p>
 <p><code>runMDS</code> performs the decomposition. Alternatively
 <code>addNMDS</code> can also be used.</p>
@@ -600,7 +601,7 @@ long format will be returned.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] phyloseq_1.49.0                 scater_1.33.4                  </span></span>
 <span><span class="co">##  [3] ggplot2_3.5.1                   scuttle_1.15.2                 </span></span>
-<span><span class="co">##  [5] mia_1.13.34                     MultiAssayExperiment_1.31.4    </span></span>
+<span><span class="co">##  [5] mia_1.13.35                     MultiAssayExperiment_1.31.4    </span></span>
 <span><span class="co">##  [7] TreeSummarizedExperiment_2.13.0 Biostrings_2.73.1              </span></span>
 <span><span class="co">##  [9] XVector_0.45.0                  SingleCellExperiment_1.27.2    </span></span>
 <span><span class="co">## [11] SummarizedExperiment_1.35.1     Biobase_2.65.0                 </span></span>
@@ -618,9 +619,9 @@ long format will be returned.</p>
 <span><span class="co">##  [11] multtest_2.61.0             memoise_2.0.1              </span></span>
 <span><span class="co">##  [13] minqa_1.2.7                 DelayedMatrixStats_1.27.2  </span></span>
 <span><span class="co">##  [15] base64enc_0.1-3             htmltools_0.5.8.1          </span></span>
-<span><span class="co">##  [17] S4Arrays_1.5.5              BiocNeighbors_1.23.0       </span></span>
+<span><span class="co">##  [17] S4Arrays_1.5.7              BiocNeighbors_1.23.0       </span></span>
 <span><span class="co">##  [19] Rhdf5lib_1.27.0             rhdf5_2.49.0               </span></span>
-<span><span class="co">##  [21] SparseArray_1.5.25          Formula_1.2-5              </span></span>
+<span><span class="co">##  [21] SparseArray_1.5.31          Formula_1.2-5              </span></span>
 <span><span class="co">##  [23] sass_0.4.9                  bslib_0.8.0                </span></span>
 <span><span class="co">##  [25] htmlwidgets_1.6.4           desc_1.4.3                 </span></span>
 <span><span class="co">##  [27] sandwich_3.1-0              plyr_1.8.9                 </span></span>
@@ -630,23 +631,23 @@ long format will be returned.</p>
 <span><span class="co">##  [35] pkgconfig_2.0.3             rsvd_1.0.5                 </span></span>
 <span><span class="co">##  [37] Matrix_1.7-0                R6_2.5.1                   </span></span>
 <span><span class="co">##  [39] fastmap_1.2.0               GenomeInfoDbData_1.2.12    </span></span>
-<span><span class="co">##  [41] digest_0.6.36               colorspace_2.1-0           </span></span>
+<span><span class="co">##  [41] digest_0.6.36               colorspace_2.1-1           </span></span>
 <span><span class="co">##  [43] irlba_2.3.5.1               textshaping_0.4.0          </span></span>
 <span><span class="co">##  [45] Hmisc_5.1-3                 vegan_2.6-6.1              </span></span>
-<span><span class="co">##  [47] beachmat_2.21.4             fansi_1.0.6                </span></span>
+<span><span class="co">##  [47] beachmat_2.21.5             fansi_1.0.6                </span></span>
 <span><span class="co">##  [49] mgcv_1.9-1                  httr_1.4.7                 </span></span>
 <span><span class="co">##  [51] abind_1.4-5                 compiler_4.4.1             </span></span>
 <span><span class="co">##  [53] withr_3.0.1                 htmlTable_2.4.3            </span></span>
 <span><span class="co">##  [55] backports_1.5.0             BiocParallel_1.39.0        </span></span>
 <span><span class="co">##  [57] viridis_0.6.5               DBI_1.2.3                  </span></span>
-<span><span class="co">##  [59] MASS_7.3-61                 DelayedArray_0.31.9        </span></span>
+<span><span class="co">##  [59] MASS_7.3-61                 DelayedArray_0.31.11       </span></span>
 <span><span class="co">##  [61] biomformat_1.33.0           bluster_1.15.0             </span></span>
 <span><span class="co">##  [63] permute_0.9-7               tools_4.4.1                </span></span>
 <span><span class="co">##  [65] vipor_0.4.7                 foreign_0.8-87             </span></span>
 <span><span class="co">##  [67] beeswarm_0.4.0              ape_5.8                    </span></span>
 <span><span class="co">##  [69] nnet_7.3-19                 glue_1.7.0                 </span></span>
 <span><span class="co">##  [71] rhdf5filters_1.17.0         nlme_3.1-165               </span></span>
-<span><span class="co">##  [73] grid_4.4.1                  checkmate_2.3.1            </span></span>
+<span><span class="co">##  [73] grid_4.4.1                  checkmate_2.3.2            </span></span>
 <span><span class="co">##  [75] ade4_1.7-22                 cluster_2.1.6              </span></span>
 <span><span class="co">##  [77] reshape2_1.4.4              lpSolve_5.6.20             </span></span>
 <span><span class="co">##  [79] generics_0.1.3              gtable_0.3.5               </span></span>
@@ -655,7 +656,7 @@ long format will be returned.</p>
 <span><span class="co">##  [85] ScaledMatrix_1.13.0         utf8_1.2.4                 </span></span>
 <span><span class="co">##  [87] foreach_1.5.2               ggrepel_0.9.5              </span></span>
 <span><span class="co">##  [89] pillar_1.9.0                stringr_1.5.1              </span></span>
-<span><span class="co">##  [91] yulab.utils_0.1.4           splines_4.4.1              </span></span>
+<span><span class="co">##  [91] yulab.utils_0.1.5           splines_4.4.1              </span></span>
 <span><span class="co">##  [93] dplyr_1.1.4                 treeio_1.29.0              </span></span>
 <span><span class="co">##  [95] lattice_0.22-6              survival_3.7-0             </span></span>
 <span><span class="co">##  [97] tidyselect_1.2.1            DirichletMultinomial_1.47.0</span></span>
@@ -663,7 +664,7 @@ long format will be returned.</p>
 <span><span class="co">## [101] bookdown_0.40               xfun_0.46                  </span></span>
 <span><span class="co">## [103] rbiom_1.0.3                 stringi_1.8.4              </span></span>
 <span><span class="co">## [105] UCSC.utils_1.1.0            lazyeval_0.2.2             </span></span>
-<span><span class="co">## [107] yaml_2.3.9                  boot_1.3-30                </span></span>
+<span><span class="co">## [107] yaml_2.3.10                 boot_1.3-30                </span></span>
 <span><span class="co">## [109] evaluate_0.24.0             codetools_0.2-20           </span></span>
 <span><span class="co">## [111] tibble_3.2.1                BiocManager_1.30.23        </span></span>
 <span><span class="co">## [113] cli_3.6.3                   RcppParallel_5.1.8         </span></span>
@@ -671,7 +672,7 @@ long format will be returned.</p>
 <span><span class="co">## [117] munsell_0.5.1               jquerylib_0.1.4            </span></span>
 <span><span class="co">## [119] Rcpp_1.0.13                 parallel_4.4.1             </span></span>
 <span><span class="co">## [121] pkgdown_2.1.0               sparseMatrixStats_1.17.2   </span></span>
-<span><span class="co">## [123] lme4_1.1-35.5               slam_0.1-51                </span></span>
+<span><span class="co">## [123] lme4_1.1-35.5               slam_0.1-52                </span></span>
 <span><span class="co">## [125] mvtnorm_1.2-5               decontam_1.25.0            </span></span>
 <span><span class="co">## [127] viridisLite_0.4.2           tidytree_0.4.6             </span></span>
 <span><span class="co">## [129] scales_1.3.0                purrr_1.0.2                </span></span>
