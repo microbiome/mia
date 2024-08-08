@@ -24,7 +24,7 @@ test_that("loading a BIOM file with more ranks than taxonomy columns generates a
 })
 
 test_that("loading a BIOM file with no 'type' will not err", {
-  expect_s4_class(importTaxpasta(system.file("extdata", "taxpasta_no_type.biom"), addHierarchyTree=FALSE), "TreeSummarizedExperiment")
+  expect_s4_class(importTaxpasta(system.file("extdata", "taxpasta_no_type.biom", package = "mia"), add.hierarchy.tree=FALSE), "TreeSummarizedExperiment")
 })
 
 result <- suppressWarnings({

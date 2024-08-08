@@ -11,6 +11,8 @@
 #'
 #' @param file \code{Character scalar}. Defines the file path to a
 #' BIOM file.
+#' @param add.hierarchy.tree \code{Logical scalar}. Specifies whether to calculate 
+#' and add hierarchy tree. (Default: \code{TRUE})
 #'
 #' @return A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
 #'
@@ -21,6 +23,8 @@
 #' file_path <- system.file("extdata", "complete.biom", package = "mia")
 #' # Import BIOM as TreeSE
 #' tse <- importTaxpasta(file_path)
+#' # Import BIOM as TreeSE without adding hierarchy tree
+#' tse <- importTaxpasta(file_path, FALSE)
 #' }
 #' 
 #' @seealso
@@ -34,20 +38,20 @@ NULL
 #' @export
 #'
 #' @importFrom SummarizedExperiment rowData
-importTaxpasta <- function(file, addHierarchyTree = TRUE) {
+importTaxpasta <- function(file, add.hierarchy.tree = TRUE) {
     # Check dependencies.
     .require_package("rhdf5")
     .require_package("biomformat")
     
     # Validate the input.
     if(!.is_non_empty_string(file) ){
-        stop("'filename' must be a single character value.", call. = FALSE)
+        stop("'filename' must be a single non-empty character value.", call. = FALSE)
     }
     if( !file.exists(file) ){
         stop("'", file, "' not found.", call. = FALSE)
     }
-    if (!addHierarchyTree %in% c(TRUE,FALSE)) {
-        stop("'addHierarchyTree' must be TRUE or FALSE.", call. = FALSE)
+    if (!.is_a_bool(add.hierarchy.tree)) {
+        stop("'add.hierarchy.tree' must be TRUE or FALSE.", call. = FALSE)
     }
     
     # We read our own HDF5 array to later be able to read observation group
@@ -64,7 +68,7 @@ importTaxpasta <- function(file, addHierarchyTree = TRUE) {
         # Create rowData and rowTree
         rowData(tse) <- .create_row_data(biom, ranks)
         .set_ranks_based_on_rowdata(tse, set.ranks = TRUE)
-	if (addHierarchyTree) tse <- addHierarchyTree(tse)
+	if (add.hierarchy.tree) tse <- addHierarchyTree(tse)
         # Agglomerate to all existing ranks
         tse <- agglomerateByRanks(tse, agglomerate.tree = TRUE)
     } else{
@@ -107,7 +111,8 @@ importTaxpasta <- function(file, addHierarchyTree = TRUE) {
     format <- sprintf("Biological Observation Matrix %s.%s", vs[1], vs[2])
     format_url <- attr(h5array, "format-url")
     type <- attr(h5array, "type")
-    type <- ifelse(type == "", 'OTU table', type)
+    # this bc biomformat does not allow empty 'type' field
+    type <- ifelse(type == "", "OTU table", type)
     generated_by <- attr(h5array, "generated-by")
     date <- attr(h5array, "creation-date")
     matrix_type <- "dense"
