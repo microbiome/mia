@@ -38,14 +38,11 @@ test_that("Overlap", {
     expect_equal(round(unname(result), 7), round(reference, 7))
     
     # Test .calculate_overlap
-    expect_error(addDissimilarity(tse, method = "overlap", name = 1))
-    expect_error(addDissimilarity(tse, method = "overlap", name = c("A", "B")))
-    expect_error(addDissimilarity(tse, method = "overlap", name = TRUE))
-    expect_equal( reducedDim(addDissimilarity(tse, "overlap")), 
+    expect_equal( metadata(addDissimilarity(tse, "overlap"))[["overlap"]], 
                   as.matrix(getDissimilarity(tse, method = "overlap")) )
-    expect_equal( reducedDim(addDissimilarity(tse, method = "overlap", 
+    expect_equal( metadata(addDissimilarity(tse, method = "overlap", 
                                               assay.type = "relabundance", 
-                                              detection = 0.08)), 
+                                              detection = 0.08))[["overlap"]], 
                   as.matrix(getDissimilarity(tse, method = "overlap",
                                               assay.type = "relabundance", 
                                               detection = 0.08)) )

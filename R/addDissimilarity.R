@@ -15,7 +15,7 @@
 #'   calculate.
 #' 
 #' @param name \code{Character scalar}. The name to be used to store the result 
-#'  in the reducedDims of the output. (Default: \code{method})
+#'  in metadata of the output. (Default: \code{method})
 #'
 #' @param assay.type \code{Character scalar}. Specifies which assay to use for 
 #'   calculation. (Default: \code{"counts"})
@@ -71,7 +71,7 @@
 #'   suitable for PCA, PCoA, MDS, NMDS, CCA, RDA, NMF.
 #' 
 #' \code{addDissimilarity} returns \code{x} that includes dissimilarity matrix 
-#'   in its reducedDims. 
+#'   in its metadata. 
 #'   
 #' @details 
 #'   Overlap reflects similarity between sample-pairs. When overlap is 
@@ -131,17 +131,17 @@
 #' ### Overlap dissimilarity
 #' 
 #' tse <- addDissimilarity(tse, method = "overlap", detection = 0.25)
-#' reducedDim(tse, "overlap")[1:6, 1:6]
+#' metadata(tse)["overlap"][1:6, 1:6]
 #' 
 #' ### JSD dissimilarity
 #' 
 #' tse <- addDissimilarity(tse, method = "jsd")
-#' reducedDim(tse, "jsd")[1:6, 1:6]
+#' metadata(tse)["jsd"][1:6, 1:6]
 #' 
 #' # Multi Dimensional Scaling applied to JSD dissimilarity matrix
 #' tse <- runMDS(tse, FUN = getDissimilarity, method = "overlap", 
 #'               assay.type = "counts")
-#' reducedDim(tse, "MDS")[1:6, ]
+#' metadata(tse)["MDS"][1:6, ]
 #'               
 #' ### Unifrac dissimilarity
 #' 
@@ -149,7 +149,7 @@
 #' dim(as.matrix((res)))
 #' 
 #' tse <- addDissimilarity(tse, method = "unifrac", weighted = TRUE)
-#' reducedDim(tse, "unifrac")[1:6, 1:6]
+#' metadata(tse)["unifrac"][1:6, 1:6]
 #' 
 NULL
 
@@ -171,8 +171,7 @@ setMethod(
         x, method = method, assay.type = assay.type, 
         transposed = transposed, ...)
     # Add matrix to original SE
-    x <- .add_values_to_reducedDims(
-      x, values = as.matrix(res), name = name, assay.type = assay.type)
+    x <- .add_values_to_metadata(x, names = name, value = as.matrix(res))
     return(x)
   }
 )

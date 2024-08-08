@@ -86,7 +86,7 @@ evaluating overlap between samples. (Default: \code{0})
 calculation. (Default: \code{"counts"})}
 
 \item{name}{\code{Character scalar}. The name to be used to store the result
-in the reducedDims of the output. (Default: \code{method})}
+in metadata of the output. (Default: \code{method})}
 
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with
 cells in rows. (Default: \code{FALSE})}
@@ -100,7 +100,7 @@ cells in rows. (Default: \code{FALSE})}
 suitable for PCA, PCoA, MDS, NMDS, CCA, RDA, NMF.
 
 \code{addDissimilarity} returns \code{x} that includes dissimilarity matrix
-in its reducedDims.
+in its metadata.
 }
 \description{
 These functions are designed to calculate dissimilarities on data stored
@@ -131,17 +131,17 @@ tse <- GlobalPatterns
 ### Overlap dissimilarity
 
 tse <- addDissimilarity(tse, method = "overlap", detection = 0.25)
-reducedDim(tse, "overlap")[1:6, 1:6]
+metadata(tse)["overlap"][1:6, 1:6]
 
 ### JSD dissimilarity
 
 tse <- addDissimilarity(tse, method = "jsd")
-reducedDim(tse, "jsd")[1:6, 1:6]
+metadata(tse)["jsd"][1:6, 1:6]
 
 # Multi Dimensional Scaling applied to JSD dissimilarity matrix
 tse <- runMDS(tse, FUN = getDissimilarity, method = "overlap", 
               assay.type = "counts")
-reducedDim(tse, "MDS")[1:6, ]
+metadata(tse)["MDS"][1:6, ]
               
 ### Unifrac dissimilarity
 
@@ -149,7 +149,7 @@ res <- getDissimilarity(tse, method = "unifrac", weighted = FALSE)
 dim(as.matrix((res)))
 
 tse <- addDissimilarity(tse, method = "unifrac", weighted = TRUE)
-reducedDim(tse, "unifrac")[1:6, 1:6]
+metadata(tse)["unifrac"][1:6, 1:6]
 
 }
 \references{
