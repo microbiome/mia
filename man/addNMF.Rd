@@ -34,11 +34,17 @@ object.}
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 NMF ordination. (Default: \code{"counts"})}
 
-\item{eval.metric}{\code{Character scalar}. Specifies evaluation metric that
-will be used to select the model with the best fit. Must be in
-\code{c("evar", "sparseness.basis", "sparseness.coef", "rss", "evar",
- "silhouette.coef", "silhouette.basis", "cophenetic", "dispersion")}.
-(Default: \code{"evar"})}
+\item{eval.metric}{\code{Character scalar}. Specifies the evaluation metric
+that will be used to select the model with the best fit. Must be one of the
+following options: \code{"evar"} (explained variance; maximized),
+\code{"sparseness.basis"} (degree of sparsity in the basis matrix;
+maximized), \code{"sparseness.coef"} (degree of sparsity in the coefficient
+matrix; maximized), \code{"rss"} (residual sum of squares; minimized),
+\code{"silhouette.coef"} (quality of clustering based on the coefficient
+matrix; maximized), \code{"silhouette.basis"} (quality of clustering based
+on the basis matrix; maximized), \code{"cophenetic"} (correlation between
+cophenetic distances and original distances; maximized), \code{"dispersion"}
+(spread of data points within clusters; minimized). (Default: \code{"evar"})}
 
 \item{name}{\code{Character scalar}. The name to be used to store the result
 in the reducedDims of the output. (Default: \code{"NMF"})}
@@ -47,12 +53,15 @@ in the reducedDims of the output. (Default: \code{"NMF"})}
 For \code{getNMF}, the ordination matrix with feature loadings matrix
 as attribute \code{"loadings"}.
 
-For \code{addNMF}, a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object is returned containing the ordination matrix in reducedDims(..., name)
-with the following attributes:
-"loadings" which is a matrix containing the feature loadings
-"NMF_output" which is the output of function \code{nmf::NMF}
-"best_fit" which is the result of the best fit if k is a vector of integers
+For \code{addNMF}, a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object is returned containing the ordination matrix in
+\code{reducedDims(x, name)} with the following attributes:
+\itemize{
+\item "loadings" which is a matrix containing the feature loadings
+\item "NMF_output" which is the output of function \code{nmf::NMF}
+\item "best_fit" which is the result of the best fit if k is a vector of integers
+}
 }
 \description{
 These functions perform Non-negative Matrix Factorization on data stored in a
@@ -75,15 +84,15 @@ tse <- GlobalPatterns
 # Reduce the number of features
 tse <- agglomerateByPrevalence(tse, rank = "Phylum")
 
-# Run NMF and add the result to reducedDim(tse, "NMF")
+# Run NMF and add the result to reducedDim(tse, "NMF").
 tse <- addNMF(tse, k = 2, name = "NMF")
 
 # Extract feature loadings
 loadings_NMF <- attr(reducedDim(tse, "NMF"), "loadings")
 head(loadings_NMF)
 
-# Estimate models with number of topics from 2 to 4
-tse <- addNMF(tse, k = c(2,3,4), name = "NMF_4")
+# Estimate models with number of topics from 2 to 4. Perform 2 runs.
+tse <- addNMF(tse, k = c(2, 3, 4), name = "NMF_4", nrun = 2)
 
 # Extract feature loadings
 loadings_NMF_4 <- attr(reducedDim(tse, "NMF_4"), "loadings")

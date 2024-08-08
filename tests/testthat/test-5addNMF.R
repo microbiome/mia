@@ -24,6 +24,10 @@ test_that("addNMF", {
   scores2 <- getNMF(tse)
   # Compare NMF::nmf and getNMF
   expect_equal(loadings, attr(scores2, "loadings"), tolerance = 10**-4)
+  # Test that additional parameters are passed
+  scores3 <- getNMF(tse, k = c(2, 3), nrun = 2)
+  nmf_model <- NMF::nmf(mat, c(2, 3), nrun = 2)
+  expect_equal(attr(scores3, "NMF_output"), nmf_model, tolerance = 10**-4)
   # ERRORs
   expect_error(
     addNMF(GlobalPatterns, k = "test", assay.type = "counts", name = "NMF")
