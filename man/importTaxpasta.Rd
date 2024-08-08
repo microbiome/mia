@@ -5,11 +5,14 @@
 \title{Import taxpasta-specific BIOM results to
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
 \usage{
-importTaxpasta(file)
+importTaxpasta(file, add.hierarchy.tree = TRUE)
 }
 \arguments{
 \item{file}{\code{Character scalar}. Defines the file path to a
 BIOM file.}
+
+\item{add.hierarchy.tree}{\code{Logical scalar}. Specifies whether to calculate
+and add hierarchy tree. (Default: \code{TRUE})}
 }
 \value{
 A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
@@ -31,6 +34,8 @@ taxpasta from
 file_path <- system.file("extdata", "complete.biom", package = "mia")
 # Import BIOM as TreeSE
 tse <- importTaxpasta(file_path)
+# Import BIOM as TreeSE without adding hierarchy tree
+tse <- importTaxpasta(file_path, FALSE)
 }
 
 }
