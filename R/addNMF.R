@@ -7,7 +7,7 @@
 #' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object.
 #'   
-#' @param k \code{Integer vector}. A number of latent vectors/topics. 
+#' @param k \code{numeric vector}. A number of latent vectors/topics. 
 #' (Default: \code{2})
 #' 
 #' @param name \code{Character scalar}. The name to be used to store the result 
