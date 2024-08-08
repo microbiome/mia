@@ -200,7 +200,7 @@ setMethod(
         stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    # If mrthod is unifrac, the object is TreeSE and tree was not provided by
+    # If method is unifrac, the object is TreeSE and tree was not provided by
     # user, get tree arguments from TreeSE in addition to matrix and method.
     if( method %in% c("unifrac") && !"tree" %in% names(list(...)) &&
             is(x, "TreeSummarizedExperiment") ){
@@ -268,6 +268,8 @@ setMethod(
     return(res)
 }
 
+# If user want to calculate unifrac dissimilarity and user wants to use tree
+# data from TreeSE, this function is used to retrieve the data.
 .get_tree_args <- function(
         x, method, assay.type = assay_name, assay_name = exprs_values, 
         exprs_values = "counts", tree.name = tree_name, 
@@ -287,15 +289,14 @@ setMethod(
     links <- links_FUN(x)
     present_in_tree <- links[, "whichTree"] == tree.name
     if( any(!present_in_tree) ){
-      warning(
-        "Not all ", margin_name, "s were present in the ", margin_name,
-        "Tree specified by 'tree.name'. 'x' is subsetted.",
-        call. = FALSE)
+        warning(
+            "Not all ", margin_name, "s were present in the ", margin_name,
+            "Tree specified by 'tree.name'. 'x' is subsetted.", call. = FALSE)
       # Subset the data
       if( transposed ){
-        x <- x[, present_in_tree]
+          x <- x[, present_in_tree]
       } else{
-        x <- x[present_in_tree, ]
+          x <- x[present_in_tree, ]
       }
     }
     # Get assay. By default, dissimilarity between samples is calculated. In
@@ -311,7 +312,6 @@ setMethod(
     links <- links_FUN(x)
     links <- links[ , "nodeLab" ]
     node.label <- links
-    
     # Create an arument list that includes matrix, and tree-related parameters.
     args <- list(x = mat, method = method, tree = tree, node.label = node.label)
     args <- c(args, list(...))
