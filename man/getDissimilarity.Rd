@@ -5,6 +5,7 @@
 \alias{addDissimilarity}
 \alias{addDissimilarity,SummarizedExperiment-method}
 \alias{getDissimilarity,SummarizedExperiment-method}
+\alias{getDissimilarity,TreeSummarizedExperiment-method}
 \alias{getDissimilarity,ANY-method}
 \title{Calculate dissimilarities}
 \usage{
@@ -13,8 +14,7 @@ addDissimilarity(x, method, ...)
 \S4method{addDissimilarity}{SummarizedExperiment}(
   x,
   method,
-  assay_name = "counts",
-  assay.type = assay_name,
+  assay.type = "counts",
   name = method,
   transposed = FALSE,
   ...
@@ -22,24 +22,19 @@ addDissimilarity(x, method, ...)
 
 getDissimilarity(x, method, ...)
 
-\S4method{getDissimilarity}{SummarizedExperiment}(
+\S4method{getDissimilarity}{SummarizedExperiment}(x, method, assay.type = "counts", transposed = FALSE, ...)
+
+\S4method{getDissimilarity}{TreeSummarizedExperiment}(
   x,
   method,
-  exprs_values = "counts",
-  assay_name = exprs_values,
-  assay.type = assay_name,
+  assay.type = "counts",
+  tree.name = "phylo",
   transposed = FALSE,
+  tree = NULL,
   ...
 )
 
-\S4method{getDissimilarity}{ANY}(
-  x,
-  method,
-  exprs_values = "counts",
-  assay_name = exprs_values,
-  assay.type = assay_name,
-  ...
-)
+\S4method{getDissimilarity}{ANY}(x, method, ...)
 }
 \arguments{
 \item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -52,7 +47,7 @@ calculate.}
 or the following arguments passed onto mia internal functions for overlap,
 unifrac and JSD dissimilarities:
 \itemize{
-\item \code{diss.fun}: \code{Character scalar}. Specifies the dissimilarity
+\item \code{dis.fun}: \code{Character scalar}. Specifies the dissimilarity
 function to be used.
 
 \item \code{weighted}: (Unifrac) \code{Logical scalar}. Should use
@@ -87,8 +82,6 @@ has abundance under threshold in either of samples, will be discarded when
 evaluating overlap between samples. (Default: \code{0})
 }}
 
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
 
@@ -97,6 +90,8 @@ in the reducedDims of the output. (Default: \code{method})}
 
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with
 cells in rows. (Default: \code{FALSE})}
+
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 }

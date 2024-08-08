@@ -31,7 +31,7 @@
 #'  or the following arguments passed onto mia internal functions for overlap,
 #'  unifrac and JSD dissimilarities:
 #' \itemize{
-#'   \item \code{diss.fun}: \code{Character scalar}. Specifies the dissimilarity
+#'   \item \code{dis.fun}: \code{Character scalar}. Specifies the dissimilarity
 #'   function to be used.
 #'   
 #'   \item \code{weighted}: (Unifrac) \code{Logical scalar}. Should use
@@ -164,8 +164,8 @@ setGeneric(
 setMethod(
     "addDissimilarity", signature = c(x = "SummarizedExperiment"),
     function(
-          x, method, assay_name = "counts", assay.type = assay_name,
-          name = method, transposed = FALSE, ...){
+        x, method, assay.type = "counts", name = method, transposed = FALSE,
+        ...){
     #
     res <- getDissimilarity(
         x, method = method, assay.type = assay.type, 
@@ -187,9 +187,7 @@ setGeneric(
 #' @export
 setMethod(
     "getDissimilarity", signature = c(x = "SummarizedExperiment"),
-    function(
-        x, method, exprs_values = "counts", assay_name = exprs_values, 
-        assay.type = assay_name, transposed = FALSE, ...){
+    function(x, method, assay.type = "counts", transposed = FALSE, ...){
     # Input checks
     .check_assay_present(assay.type, x)
     if( !.is_non_empty_string(method) ){
@@ -200,21 +198,12 @@ setMethod(
         stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    # If method is unifrac, the object is TreeSE and tree was not provided by
-    # user, get tree arguments from TreeSE in addition to matrix and method.
-    if( method %in% c("unifrac") && !"tree" %in% names(list(...)) &&
-            is(x, "TreeSummarizedExperiment") ){
-        args <- .get_tree_args(
-            x,  method = method, assay.type = assay.type,
-            transposed = transposed, ...)
-    } else{
-      # For other methods, get only matrix and method for arguments.
-        mat <- assay(x, assay.type)
-        if( !transposed ){
-            mat <- t(mat)
-        }
-        args <- c(list(x = mat, method = method), list(...))
+    # Get arguments
+    mat <- assay(x, assay.type)
+    if( !transposed ){
+        mat <- t(mat)
     }
+    args <- c(list(x = mat, method = method), list(...))
     # Calculate dissimilarity based on matrix
     mat <- do.call(getDissimilarity, args)
     return(mat)
@@ -224,10 +213,44 @@ setMethod(
 #' @rdname getDissimilarity
 #' @export
 setMethod(
-    "getDissimilarity", signature = c(x = "ANY"),
+    "getDissimilarity", signature = c(x = "TreeSummarizedExperiment"),
     function(
-        x, method, exprs_values = "counts", assay_name = exprs_values, 
-        assay.type = assay_name, ...){
+        x, method, assay.type = "counts", tree.name = "phylo",
+        transposed = FALSE, tree = NULL, ...){
+    # Input checks
+    .check_assay_present(assay.type, x)
+    if( !.is_non_empty_string(method) ){
+        stop("'method' must be a non-empty single character value",
+            call. = FALSE)
+    }
+    if( !.is_a_bool(transposed) ){
+      stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # Retrieve tree arguments from TreeSE object, if method is unifrac and
+    # user did not specify external tree
+    if( method %in% c("unifrac") && is.null(tree) ){
+        args <- .get_tree_args(
+            x,  method = method, assay.type = assay.type, tree.name = tree.name,
+            transposed = transposed, ...)
+    } else{
+        # For other cases, do not fetch tree data from TreeSE
+        mat <- assay(x, assay.type)
+        if( !transposed ){
+            mat <- t(mat)
+        }
+        args <- c(list(x = mat, method = method, tree = tree), list(...))
+    }
+    # Calculate dissimilarity
+    mat <- do.call(getDissimilarity, args)
+    return(mat)
+    }
+)
+
+#' @rdname getDissimilarity
+#' @export
+setMethod(
+    "getDissimilarity", signature = c(x = "ANY"), function(x, method, ...){
     # Input check
     if( !.is_a_string(method) ){
         stop("'method' must be a single character value.", call. = FALSE)
@@ -239,49 +262,45 @@ setMethod(
     }
 )
 
-.calculate_dissimilarity <- function(
-        mat, method, node.label = NULL, diss.fun = NULL, tree = NULL, ...){
+# This function chooses right method and calcuates dissimilarity matrix.
+.calculate_dissimilarity <- function(mat, method, dis.fun = NULL, ...){
     # input check
-    if( !(is.null(diss.fun) || is.function(diss.fun)) ){
-        stop("'diss.fun' must be NULL or a function.", call. = FALSE)
+    if( !(is.null(dis.fun) || is.function(dis.fun)) ){
+        stop("'dis.fun' must be NULL or a function.", call. = FALSE)
     }
     #
     args <- c(list(mat, method = method), list(...))
-    # If the dissimilarity functon is not specified, get default choice
-    if( is.null(diss.fun) ){
+    # If the dissimilarity function is not specified, get default choice
+    if( is.null(dis.fun) ){
         if( method %in% c("overlap") ){
-            diss.fun <- .get_overlap
+            dis.fun <- .get_overlap
         } else if( method %in% c("unifrac")  ){
-            args <- c(args, list(tree = tree, node.label = node.label))
-            diss.fun <- .get_unifrac
+            dis.fun <- .get_unifrac
         } else if( method %in% c("jsd")  ){
-            diss.fun <- .get_jsd
+            dis.fun <- .get_jsd
         } else if( requireNamespace("vegan") ){
-            diss.fun <- vegan::vegdist
+            dis.fun <- vegan::vegdist
         } else{
-            diss.fun <- stats::dist
-            message("'diss.fun' defaults to stats::dist.")
+            dis.fun <- stats::dist
+            message("'dis.fun' defaults to stats::dist.")
         }
     }
     # Calculate dissimilarity with specified function
-    res <- do.call(diss.fun, args)
+    res <- do.call(dis.fun, args)
     return(res)
 }
 
 # If user want to calculate unifrac dissimilarity and user wants to use tree
 # data from TreeSE, this function is used to retrieve the data.
 .get_tree_args <- function(
-        x, method, assay.type = assay_name, assay_name = exprs_values, 
-        exprs_values = "counts", tree.name = tree_name, 
-        tree_name = "phylo", transposed = FALSE, ...){
+        x, method, assay.type = "counts", tree.name = "phylo",
+        transposed = FALSE, ...){
     # Get functions and parameters based on direction
     tree_present_FUN <- if (transposed) .check_colTree_present
         else .check_rowTree_present
     tree_FUN <- if (transposed) colTree else rowTree
     links_FUN <- if (transposed) colLinks else rowLinks
     margin_name <- if (transposed) "col" else "row"
-    # Check assay.type
-    .check_assay_present(assay.type, x)
     # Check tree.name
     tree_present_FUN(tree.name, x)
     #
@@ -291,14 +310,21 @@ setMethod(
     if( any(!present_in_tree) ){
         warning(
             "Not all ", margin_name, "s were present in the ", margin_name,
-            "Tree specified by 'tree.name'. 'x' is subsetted.", call. = FALSE)
-      # Subset the data
-      if( transposed ){
-          x <- x[, present_in_tree]
-      } else{
-          x <- x[present_in_tree, ]
-      }
+            "Tree specified by 'tree.name'. 'x' is subsetted.",
+            call. = FALSE)
+        # Subset the data
+        if( transposed ){
+            x <- x[, present_in_tree]
+        } else{
+            x <- x[present_in_tree, ]
+        }
     }
+    # Get tree
+    tree <- tree_FUN(x, tree.name)
+    # Get links and take only nodeLabs
+    links <- links_FUN(x)
+    links <- links[ , "nodeLab"]
+    node.label <- links
     # Get assay. By default, dissimilarity between samples is calculated. In
     # dissimilarity functions, features must be in columns and samples in rows
     # in this case.
@@ -306,12 +332,6 @@ setMethod(
     if( !transposed ){
         mat <- t(mat)
     }
-    # Get tree
-    tree <- tree_FUN(x, tree.name)
-    # Get links and take only nodeLabs
-    links <- links_FUN(x)
-    links <- links[ , "nodeLab" ]
-    node.label <- links
     # Create an arument list that includes matrix, and tree-related parameters.
     args <- list(x = mat, method = method, tree = tree, node.label = node.label)
     args <- c(args, list(...))
