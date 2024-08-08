@@ -26,6 +26,12 @@
 #'   
 #' @param transposed \code{Logical scalar}. Specifies if x is transposed with
 #'   cells in rows. (Default: \code{FALSE})
+#'   
+#' @param tree.name \code{Character scalar}. Specifies the name of the
+#'   tree used to calculate the dissimilarity matrix. (Default: \code{"phylo"})
+#'   
+#' @param tree \code{Phylogenetic tree}. To be used to calculate the 
+#'   dissimilarity matrix. (Default: \code{NULL})
 #'
 #' @param ... other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}, 
 #'  or the following arguments passed onto mia internal functions for overlap,
@@ -131,17 +137,17 @@
 #' ### Overlap dissimilarity
 #' 
 #' tse <- addDissimilarity(tse, method = "overlap", detection = 0.25)
-#' metadata(tse)["overlap"][1:6, 1:6]
+#' metadata(tse)[["overlap"]][1:6, 1:6]
 #' 
 #' ### JSD dissimilarity
 #' 
 #' tse <- addDissimilarity(tse, method = "jsd")
-#' metadata(tse)["jsd"][1:6, 1:6]
+#' metadata(tse)[["jsd"]][1:6, 1:6]
 #' 
 #' # Multi Dimensional Scaling applied to JSD dissimilarity matrix
 #' tse <- runMDS(tse, FUN = getDissimilarity, method = "overlap", 
 #'               assay.type = "counts")
-#' metadata(tse)["MDS"][1:6, ]
+#' metadata(tse)[["MDS"]][1:6, ]
 #'               
 #' ### Unifrac dissimilarity
 #' 
@@ -149,7 +155,7 @@
 #' dim(as.matrix((res)))
 #' 
 #' tse <- addDissimilarity(tse, method = "unifrac", weighted = TRUE)
-#' metadata(tse)["unifrac"][1:6, 1:6]
+#' metadata(tse)[["unifrac"]][1:6, 1:6]
 #' 
 NULL
 
@@ -164,7 +170,8 @@ setGeneric(
 setMethod(
     "addDissimilarity", signature = c(x = "SummarizedExperiment"),
     function(
-        x, method, assay.type = "counts", name = method, transposed = FALSE,
+        x, method, assay.type = assay_name, assay_name = exprs_values, 
+        exprs_values = "counts", name = method, transposed = FALSE,
         ...){
     #
     res <- getDissimilarity(

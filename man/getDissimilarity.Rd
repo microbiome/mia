@@ -14,7 +14,9 @@ addDissimilarity(x, method, ...)
 \S4method{addDissimilarity}{SummarizedExperiment}(
   x,
   method,
-  assay.type = "counts",
+  assay.type = assay_name,
+  assay_name = exprs_values,
+  exprs_values = "counts",
   name = method,
   transposed = FALSE,
   ...
@@ -85,15 +87,21 @@ evaluating overlap between samples. (Default: \code{0})
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
 
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
+
+\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
+
 \item{name}{\code{Character scalar}. The name to be used to store the result
 in metadata of the output. (Default: \code{method})}
 
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with
 cells in rows. (Default: \code{FALSE})}
 
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
+\item{tree.name}{\code{Character scalar}. Specifies the name of the
+tree used to calculate the dissimilarity matrix. (Default: \code{"phylo"})}
 
-\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
+\item{tree}{\code{Phylogenetic tree}. To be used to calculate the
+dissimilarity matrix. (Default: \code{NULL})}
 }
 \value{
 \code{getDissimilarity} returns a sample-by-sample dissimilarity matrix,
@@ -131,17 +139,17 @@ tse <- GlobalPatterns
 ### Overlap dissimilarity
 
 tse <- addDissimilarity(tse, method = "overlap", detection = 0.25)
-metadata(tse)["overlap"][1:6, 1:6]
+metadata(tse)[["overlap"]][1:6, 1:6]
 
 ### JSD dissimilarity
 
 tse <- addDissimilarity(tse, method = "jsd")
-metadata(tse)["jsd"][1:6, 1:6]
+metadata(tse)[["jsd"]][1:6, 1:6]
 
 # Multi Dimensional Scaling applied to JSD dissimilarity matrix
 tse <- runMDS(tse, FUN = getDissimilarity, method = "overlap", 
               assay.type = "counts")
-metadata(tse)["MDS"][1:6, ]
+metadata(tse)[["MDS"]][1:6, ]
               
 ### Unifrac dissimilarity
 
@@ -149,7 +157,7 @@ res <- getDissimilarity(tse, method = "unifrac", weighted = FALSE)
 dim(as.matrix((res)))
 
 tse <- addDissimilarity(tse, method = "unifrac", weighted = TRUE)
-metadata(tse)["unifrac"][1:6, 1:6]
+metadata(tse)[["unifrac"]][1:6, 1:6]
 
 }
 \references{
