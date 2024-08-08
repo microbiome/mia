@@ -28,7 +28,7 @@ object.}
 
 \item{...}{optional arguments passed to \code{nmf::NMF}.}
 
-\item{k}{\code{Integer vector}. A number of latent vectors/topics.
+\item{k}{\code{numeric vector}. A number of latent vectors/topics.
 (Default: \code{2})}
 
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
