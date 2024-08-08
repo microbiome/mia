@@ -147,6 +147,7 @@
 \alias{runJSD,SummarizedExperiment-method}
 \alias{calculateUnifrac}
 \alias{calculateUnifrac,TreeSummarizedExperiment-method}
+\alias{runUnifrac}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -438,6 +439,8 @@ runJSD(x, ...)
 calculateUnifrac(x, ...)
 
 \S4method{calculateUnifrac}{TreeSummarizedExperiment}(x, ...)
+
+runUnifrac(mat, tree, ...)
 }
 \arguments{
 \item{x}{A
@@ -447,6 +450,10 @@ object.}
 \item{...}{Additional parameters. See dedicated function.}
 
 \item{value}{a matrix to store as the \sQuote{relabundance} assay}
+
+\item{mat}{An abundance matrix}
+
+\item{tree}{A phylogenetic tree}
 }
 \description{
 These functions will be deprecated. Please use other functions instead.

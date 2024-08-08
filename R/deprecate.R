@@ -4,6 +4,10 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #' @param value a matrix to store as the \sQuote{relabundance} assay
+#' 
+#' @param mat An abundance matrix
+#' 
+#' @param tree A phylogenetic tree
 #'    
 #' @param ... Additional parameters. See dedicated function.
 #' 
@@ -1265,3 +1269,12 @@ setMethod("calculateUnifrac", signature = c(x = "TreeSummarizedExperiment"),
             getDissimilarity(x, method = "unifrac", ...)
           }
 )
+
+#' @rdname deprecate
+#' @export
+runUnifrac <- function(mat, tree, ...){
+  .Deprecated(msg = paste0("'runUnifrac' is deprecated\n",
+                           "Use 'getDissimilarity' with parameter ",
+                           "method = 'unifrac' instead."))
+  getDissimilarity(t(mat), tree = tree, method = "unifrac", ...)
+}
