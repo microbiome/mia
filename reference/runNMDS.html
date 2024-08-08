@@ -18,7 +18,7 @@ data in a SingleCellExperiment object."><!-- mathjax --><script src="https://cdn
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.35</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.34</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ data in a SingleCellExperiment object."><!-- mathjax --><script src="https://cdn
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Perform non-metric MDS on sample-level data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/NMF_feature_loadings/R/runNMDS.R" class="external-link"><code>R/runNMDS.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/getDissimilarity/R/runNMDS.R" class="external-link"><code>R/runNMDS.R</code></a></small>
     <div class="hidden name"><code>runNMDS.Rd</code></div>
     </div>
 
@@ -109,8 +109,7 @@ data in a <code>SingleCellExperiment</code> object.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a numeric matrix with samples as rows or a
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
+<dd><p>a <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>
 object.</p></dd>
 
 
@@ -162,8 +161,8 @@ integer vector of row indices or a logical vector. (Default: <code>NULL</code>)<
 
 
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
-<dd><p><code>Logical scalar</code>. Is x transposed with samples in rows?
-(Default: <code>FALSE</code>)</p></dd>
+<dd><p><code>Logical scalar</code>. Specifies if x is transposed with
+cells in rows. (Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-keep-dist">keep.dist<a class="anchor" aria-label="anchor" href="#arg-keep-dist"></a></dt>
@@ -178,8 +177,8 @@ the matrix returned/stored by <code>getNMDS</code>/ <code>addNMDS</code>. (Defau
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-assay used in calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. Specifies which assay to use for
+calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>

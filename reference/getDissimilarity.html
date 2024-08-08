@@ -71,8 +71,9 @@ by default.</p>
 <span><span class="fu">addDissimilarity</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">method</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
+<span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
 <span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -81,25 +82,21 @@ by default.</p>
 <span><span class="fu">getDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
+<span><span class="fu">getDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, transposed <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">getDissimilarity</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">method</span>,</span>
-<span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
-<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  tree.name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
 <span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  tree <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'ANY'</span></span>
-<span><span class="fu">getDissimilarity</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  <span class="va">method</span>,</span>
-<span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
-<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">getDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -119,7 +116,7 @@ calculate.</p></dd>
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>other arguments passed onto <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code>,
 or the following arguments passed onto mia internal functions for overlap,
-unifrac and JSD dissimilarities:</p><ul><li><p><code>diss.fun</code>: <code>Character scalar</code>. Specifies the dissimilarity
+unifrac and JSD dissimilarities:</p><ul><li><p><code>dis.fun</code>: <code>Character scalar</code>. Specifies the dissimilarity
 function to be used.</p></li>
 <li><p><code>weighted</code>: (Unifrac) <code>Logical scalar</code>. Should use
 weighted-Unifrac calculation?
@@ -149,18 +146,22 @@ evaluating overlap between samples. (Default: <code>0</code>)</p></li>
 </ul></dd>
 
 
-<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
-
-
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
 <dd><p><code>Character scalar</code>. Specifies which assay to use for
 calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
+<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+
+
+<dt id="arg-exprs-values">exprs_values<a class="anchor" aria-label="anchor" href="#arg-exprs-values"></a></dt>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+
+
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
 <dd><p><code>Character scalar</code>. The name to be used to store the result
-in the reducedDims of the output. (Default: <code>method</code>)</p></dd>
+in metadata of the output. (Default: <code>method</code>)</p></dd>
 
 
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
@@ -168,8 +169,14 @@ in the reducedDims of the output. (Default: <code>method</code>)</p></dd>
 cells in rows. (Default: <code>FALSE</code>)</p></dd>
 
 
-<dt id="arg-exprs-values">exprs_values<a class="anchor" aria-label="anchor" href="#arg-exprs-values"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+<dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
+<dd><p><code>Character scalar</code>. Specifies the name of the
+tree used to calculate the dissimilarity matrix. (Default: <code>"phylo"</code>)</p></dd>
+
+
+<dt id="arg-tree">tree<a class="anchor" aria-label="anchor" href="#arg-tree"></a></dt>
+<dd><p><code>Phylogenetic tree</code>. To be used to calculate the
+dissimilarity matrix. (Default: <code>NULL</code>)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -177,7 +184,7 @@ cells in rows. (Default: <code>FALSE</code>)</p></dd>
     <p><code>getDissimilarity</code> returns a sample-by-sample dissimilarity matrix,
 suitable for PCA, PCoA, MDS, NMDS, CCA, RDA, NMF.</p>
 <p><code>addDissimilarity</code> returns <code>x</code> that includes dissimilarity matrix
-in its reducedDims.</p>
+in its metadata.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -234,7 +241,7 @@ Adapted for mia by Felix G.M. Ernst</p>
 <span class="r-in"><span><span class="co">### Overlap dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"overlap"</span>, detection <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"overlap"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"overlap"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               CL3       CC1     SV1 M31Fcsw M11Fcsw M31Plmr</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CL3           0.0  985499.5  692281  951745 1217896  466124</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CC1      985499.5       0.0  848128  975408 1253552  626083</span>
@@ -246,7 +253,7 @@ Adapted for mia by Felix G.M. Ernst</p>
 <span class="r-in"><span><span class="co">### JSD dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"jsd"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"jsd"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"jsd"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               CL3       CC1       SV1   M31Fcsw   M11Fcsw   M31Plmr</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CL3     0.0000000 0.2547080 0.5051481 0.6809263 0.6813418 0.6713074</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CC1     0.2547080 0.0000000 0.4378036 0.6863213 0.6869444 0.6620168</span>
@@ -258,14 +265,8 @@ Adapted for mia by Felix G.M. Ernst</p>
 <span class="r-in"><span><span class="co"># Multi Dimensional Scaling applied to JSD dissimilarity matrix</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runMDS.html" class="external-link">runMDS</a></span><span class="op">(</span><span class="va">tse</span>, FUN <span class="op">=</span> <span class="va">getDissimilarity</span>, method <span class="op">=</span> <span class="st">"overlap"</span>, </span></span>
 <span class="r-in"><span>              assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"MDS"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                [,1]      [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3      -43284.813 -45143.87</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       -4790.904 -40203.23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1       26147.150 -15952.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw -133864.366 -14824.29</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw  610755.430 803373.51</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  -78217.650   3434.70</span>
+<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"MDS"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span>              </span></span>
 <span class="r-in"><span><span class="co">### Unifrac dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
@@ -274,7 +275,7 @@ Adapted for mia by Felix G.M. Ernst</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 26 26</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"unifrac"</span>, weighted <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"unifrac"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"unifrac"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               CL3       CC1       SV1   M31Fcsw   M11Fcsw   M31Plmr</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CL3     0.0000000 0.2196313 0.3601371 0.8567702 0.8661073 0.5892417</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CC1     0.2196313 0.0000000 0.3145117 0.8543620 0.8633159 0.5846985</span>
