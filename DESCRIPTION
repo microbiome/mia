@@ -41,7 +41,8 @@ Authors@R:
       person(given = "Hervé", family = "Pagès", role=c("ctb")),
       person(given = "Rajesh", family = "Shigdel", role=c("ctb")),
       person(given = "Katariina", family = "Pärnänen", role=c("ctb")),
-      person(given = "Pande", family = "Erawijantari", role=c("ctb")))
+      person(given = "Pande", family = "Erawijantari", role=c("ctb")),
+      person(given = "Danielle", family = "Callan", role=c("ctb")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the 
