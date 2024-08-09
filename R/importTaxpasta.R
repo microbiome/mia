@@ -70,7 +70,7 @@ importTaxpasta <- function(file, add.tree = TRUE) {
         .set_ranks_based_on_rowdata(tse, set.ranks = TRUE)
 	if (add.tree) tse <- addHierarchyTree(tse)
         # Agglomerate to all existing ranks
-        tse <- agglomerateByRanks(tse, agglomerate.tree = TRUE)
+        tse <- agglomerateByRanks(tse, update.tree = TRUE)
     } else{
         # Without taxonomic information, we return a simple TreeSE.
         warning(
