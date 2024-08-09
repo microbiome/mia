@@ -19,6 +19,7 @@ getDissimilarity(x, method, ...)
   x,
   method,
   assay.type = "counts",
+  niter = NULL,
   transposed = FALSE,
   tree = NULL,
   ...
@@ -29,6 +30,7 @@ getDissimilarity(x, method, ...)
   method,
   assay.type = "counts",
   tree.name = "phylo",
+  niter = NULL,
   transposed = FALSE,
   tree = NULL,
   ...
@@ -86,6 +88,9 @@ in metadata of the output. (Default: \code{method})}
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
 
+\item{niter}{The number of iterations performed. If \code{NULL},
+rarefaction is disabled. (Default: \code{NULL})}
+
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with
 cells in rows. (Default: \code{FALSE})}
 
@@ -95,9 +100,6 @@ cells in rows. (Default: \code{FALSE})}
 \item{tree.name}{(Unifrac) \code{Character scalar}. Specifies the name of the
 tree from \code{rowTree(x)} that is used in calculation. Disabled when
 \code{tree} is specified. (Default: \code{"phylo"})}
-
-\item{niter}{The number of iterations performed. If \code{NULL},
-rarefaction is disabled. (Default: \code{NULL})}
 }
 \value{
 \code{getDissimilarity} returns a sample-by-sample dissimilarity matrix.

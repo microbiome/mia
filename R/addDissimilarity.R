@@ -189,8 +189,8 @@ setGeneric(
 setMethod(
     "getDissimilarity", signature = c(x = "SummarizedExperiment"),
     function(
-        x, method, assay.type = "counts", transposed = FALSE, tree = NULL,
-        ...){
+        x, method, assay.type = "counts", niter = NULL, transposed = FALSE,
+        tree = NULL, ...){
     # Input checks
     .check_assay_present(assay.type, x)
     if( !.is_non_empty_string(method) ){
@@ -209,7 +209,9 @@ setMethod(
     if( !transposed ){
         mat <- t(mat)
     }
-    args <- c(list(x = mat, method = method, tree = tree, ), list(...))
+    args <- c(
+        list(x = mat, method = method, tree = tree, niter = niter),
+        list(...))
     # Calculate dissimilarity based on matrix
     mat <- do.call(getDissimilarity, args)
     return(mat)
@@ -221,7 +223,7 @@ setMethod(
 setMethod(
     "getDissimilarity", signature = c(x = "TreeSummarizedExperiment"),
     function(
-        x, method, assay.type = "counts", tree.name = "phylo",
+        x, method, assay.type = "counts", tree.name = "phylo", niter = NULL,
         transposed = FALSE, tree = NULL, ...){
     # Input checks
     .check_assay_present(assay.type, x)
@@ -248,7 +250,9 @@ setMethod(
         if( !transposed ){
             mat <- t(mat)
         }
-        args <- c(list(x = mat, method = method, tree = tree), list(...))
+        args <- c(
+            list(x = mat, method = method, tree = tree, niter = niter),
+            list(...))
     }
     # Calculate dissimilarity
     mat <- do.call(getDissimilarity, args)
