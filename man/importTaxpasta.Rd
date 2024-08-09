@@ -5,14 +5,14 @@
 \title{Import taxpasta-specific BIOM results to
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
 \usage{
-importTaxpasta(file, add.hierarchy.tree = TRUE)
+importTaxpasta(file, add.tree = TRUE)
 }
 \arguments{
 \item{file}{\code{Character scalar}. Defines the file path to a
 BIOM file.}
 
-\item{add.hierarchy.tree}{\code{Logical scalar}. Specifies whether to calculate
-and add hierarchy tree. (Default: \code{TRUE})}
+\item{add.tree}{\code{Logical scalar}. Specifies whether to calculate
+and add hierarchy tree using \code{\link{addHierarchyTree}}. (Default: \code{TRUE})}
 }
 \value{
 A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
