@@ -5,14 +5,21 @@
 \title{Import taxpasta-specific BIOM results to
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
 \usage{
-importTaxpasta(file, add.tree = TRUE)
+importTaxpasta(file, add.tree = TRUE, ...)
 }
 \arguments{
 \item{file}{\code{Character scalar}. Defines the file path to a
 BIOM file.}
 
 \item{add.tree}{\code{Logical scalar}. Specifies whether to calculate
-and add hierarchy tree using \code{\link{addHierarchyTree}}. (Default: \code{TRUE})}
+and add hierarchy tree using \code{\link{addHierarchyTree}}.
+(Default: \code{TRUE})}
+
+\item{...}{additional arguments
+\itemize{
+\item \code{set.ranks}: \code{Logical scalar}. Should column names of
+taxonomy table be treated as taxonomy ranks? (Default: \code{FALSE})
+}}
 }
 \value{
 A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
@@ -32,10 +39,10 @@ taxpasta from
 \dontrun{
 # File path to BIOM file
 file_path <- system.file("extdata", "complete.biom", package = "mia")
-# Import BIOM as TreeSE
-tse <- importTaxpasta(file_path)
+# Import BIOM as TreeSE, and set ranks.
+tse <- importTaxpasta(file_path, set.ranks = TRUE)
 # Import BIOM as TreeSE without adding hierarchy tree
-tse <- importTaxpasta(file_path, FALSE)
+tse <- importTaxpasta(file_path, add.tree = FALSE)
 }
 
 }

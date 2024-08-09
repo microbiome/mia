@@ -12,7 +12,14 @@
 #' @param file \code{Character scalar}. Defines the file path to a
 #' BIOM file.
 #' @param add.tree \code{Logical scalar}. Specifies whether to calculate 
-#' and add hierarchy tree using \code{\link{addHierarchyTree}}. (Default: \code{TRUE})
+#' and add hierarchy tree using \code{\link{addHierarchyTree}}.
+#' (Default: \code{TRUE})
+#' 
+#' @param ... additional arguments
+#' \itemize{
+#'   \item \code{set.ranks}: \code{Logical scalar}. Should column names of
+#'   taxonomy table be treated as taxonomy ranks? (Default: \code{FALSE})
+#' }
 #'
 #' @return A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
 #'
@@ -21,10 +28,10 @@
 #' \dontrun{
 #' # File path to BIOM file
 #' file_path <- system.file("extdata", "complete.biom", package = "mia")
-#' # Import BIOM as TreeSE
-#' tse <- importTaxpasta(file_path)
+#' # Import BIOM as TreeSE, and set ranks.
+#' tse <- importTaxpasta(file_path, set.ranks = TRUE)
 #' # Import BIOM as TreeSE without adding hierarchy tree
-#' tse <- importTaxpasta(file_path, FALSE)
+#' tse <- importTaxpasta(file_path, add.tree = FALSE)
 #' }
 #' 
 #' @seealso
@@ -38,7 +45,7 @@ NULL
 #' @export
 #'
 #' @importFrom SummarizedExperiment rowData
-importTaxpasta <- function(file, add.tree = TRUE) {
+importTaxpasta <- function(file, add.tree = TRUE, ...) {
     # Check dependencies.
     .require_package("rhdf5")
     .require_package("biomformat")
@@ -67,7 +74,7 @@ importTaxpasta <- function(file, add.tree = TRUE) {
         ranks <- .get_ranks(raw)
         # Create rowData and rowTree
         rowData(tse) <- .create_row_data(biom, ranks)
-        .set_ranks_based_on_rowdata(tse, set.ranks = TRUE)
+        .set_ranks_based_on_rowdata(tse, ...)
 	if (add.tree) tse <- addHierarchyTree(tse)
         # Agglomerate to all existing ranks
         tse <- agglomerateByRanks(tse, update.tree = TRUE)

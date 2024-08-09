@@ -28,7 +28,20 @@ test_that("loading a BIOM file with no 'type' will not err", {
 })
 
 result <- suppressWarnings({
-  importTaxpasta(system.file("extdata", "complete.biom", package = "mia", mustWork = TRUE))
+  importTaxpasta(system.file("extdata", "complete.biom", package = "mia", mustWork = TRUE), add.tree = FALSE)
+})
+
+test_that("No tree was added", {
+  tree <- rowTree(result)
+  expect_true(is.null(tree))
+})
+
+test_that("Default ranks were used", {
+  expect_identical(taxonomyRanks(result), c("Superkingdom", "Class", "Order", "Family"))
+})
+
+result <- suppressWarnings({
+  importTaxpasta(system.file("extdata", "complete.biom", package = "mia", mustWork = TRUE), set.ranks = TRUE)
 })
 
 test_that("loading a taxpasta BIOM file returns a TreeSummarizedExperiment", {
