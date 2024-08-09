@@ -3,8 +3,8 @@
 #' Perform non-metric multi-dimensional scaling (nMDS) on samples, based on the
 #' data in a \code{SingleCellExperiment} object.
 #'
-#' @inheritParams runDPCoA
 #' @inheritParams getDominant
+#' @inheritParams runDPCoA
 #' 
 #' @details
 #'   For \code{addNMDS} a \linkS4class{SingleCellExperiment}
@@ -25,6 +25,9 @@
 #'   \code{\link[vegan:monoMDS]{vegan::monoMDS}}
 #'   
 #' @param nmdsFUN Deprecated. Use \code{nmds.fun} instead.
+#' 
+#' @param name \code{Character scalar}. A name for the column of the 
+#' \code{colData} where results will be stored. (Default: \code{"NMDS"})
 #'
 #' @param ... additional arguments to pass to \code{FUN} and
 #'   \code{nmds.fun}.

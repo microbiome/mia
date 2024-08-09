@@ -5,6 +5,8 @@
 #'
 #' @inheritParams getDissimilarity
 #' 
+#' @param x \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.
+#' 
 #' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'
 #' @param detection \code{Numeric scalar}. Detection threshold for absence/presence. 

@@ -4,8 +4,8 @@
 #' \code{ade4} package in typical fashion. Results are stored in the
 #' \code{reducedDims} and are available for all the expected functions.
 #'
-#' @inheritParams getDissimilarity
 #' @inheritParams getDominant
+#' @inheritParams getDissimilarity
 #'
 #' @details
 #'   For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the

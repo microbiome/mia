@@ -8,8 +8,8 @@
 #' types of dissimilarities, they rely on \code{\link[vegan:vegdist]{vegdist}}
 #' by default.
 #'
-#' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#' object.
+#' @param x \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' or \code{matrix}.
 #'
 #' @param method \code{Character scalar}. Specifies which dissimilarity to 
 #' calculate.

@@ -35,8 +35,7 @@ unsplitOn(x, ...)
 )
 }
 \arguments{
-\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
 \item{...}{Arguments passed to \code{agglomerateByVariable} function for
 \code{SummarizedExperiment} objects and other functions.

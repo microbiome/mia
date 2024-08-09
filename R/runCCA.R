@@ -3,8 +3,8 @@
 #' These functions perform Canonical Correspondence Analysis on data stored
 #' in a \code{SummarizedExperiment}.
 #'
-#' @inheritParams getDissimilarity
 #' @inheritParams getDominant
+#' @inheritParams getDissimilarity
 #'
 #' @details
 #'   For \code{run*} a

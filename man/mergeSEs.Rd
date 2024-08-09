@@ -29,8 +29,7 @@ mergeSEs(x, ...)
 \S4method{mergeSEs}{list}(x, ...)
 }
 \arguments{
-\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
 \item{...}{optional arguments (not used).}
 

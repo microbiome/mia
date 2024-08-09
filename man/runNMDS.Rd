@@ -56,8 +56,7 @@ addNMDS(x, ..., altexp = NULL, name = "NMDS")
 runNMDS(x, ...)
 }
 \arguments{
-\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
 \item{...}{additional arguments to pass to \code{FUN} and
 \code{nmds.fun}.}
@@ -117,7 +116,7 @@ dimred is specified.}
 alternative experiment containing the input data. (Default: \code{NULL})}
 
 \item{name}{\code{Character scalar}. A name for the column of the
-\code{colData} where results will be stored. (Default: \code{"DPCoA"})}
+\code{colData} where results will be stored. (Default: \code{"NMDS"})}
 }
 \value{
 For \code{getNMDS}, a matrix is returned containing the MDS

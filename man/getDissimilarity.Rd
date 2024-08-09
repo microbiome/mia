@@ -37,8 +37,8 @@ getDissimilarity(x, method, ...)
 \S4method{getDissimilarity}{ANY}(x, method, niter = NULL, tree = NULL, ...)
 }
 \arguments{
-\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+or \code{matrix}.}
 
 \item{method}{\code{Character scalar}. Specifies which dissimilarity to
 calculate.}
