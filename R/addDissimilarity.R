@@ -3,40 +3,43 @@
 #' These functions are designed to calculate dissimilarities on data stored 
 #' within a 
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'  object. For overlap, Unifrac, and Jensen-Shannon Divergence (JSD) 
-#'  dissimilarities, the functions use mia internal functions, while for other 
-#'  types of dissimilarities, they rely on \code{\link[vegan:vegdist]{vegdist}}
-#'  by default.
+#' object. For overlap, Unifrac, and Jensen-Shannon Divergence (JSD) 
+#' dissimilarities, the functions use mia internal functions, while for other 
+#' types of dissimilarities, they rely on \code{\link[vegan:vegdist]{vegdist}}
+#' by default.
 #'
 #' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   object.
+#' object.
 #'
 #' @param method \code{Character scalar}. Specifies which dissimilarity to 
-#'   calculate.
+#' calculate.
 #' 
 #' @param name \code{Character scalar}. The name to be used to store the result 
-#'  in metadata of the output. (Default: \code{method})
+#' in metadata of the output. (Default: \code{method})
 #'
 #' @param assay.type \code{Character scalar}. Specifies which assay to use for 
-#'   calculation. (Default: \code{"counts"})
-#'
-#' @param assay_name Deprecated. Use \code{assay.type} instead.
-#'   
-#' @param exprs_values Deprecated. Use \code{assay.type} instead.
+#' calculation. (Default: \code{"counts"})
+#' 
+#' @param niter The number of iterations performed. If \code{NULL},
+#' rarefaction is disabled. (Default: \code{NULL})
 #'   
 #' @param transposed \code{Logical scalar}. Specifies if x is transposed with
-#'   cells in rows. (Default: \code{FALSE})
+#' cells in rows. (Default: \code{FALSE})
 #'   
-#' @param tree.name \code{Character scalar}. Specifies the name of the
-#'   tree used to calculate the dissimilarity matrix. (Default: \code{"phylo"})
+#' @param tree.name (Unifrac) \code{Character scalar}. Specifies the name of the
+#' tree from \code{rowTree(x)} that is used in calculation. Disabled when
+#' \code{tree} is specified. (Default: \code{"phylo"})
 #'   
-#' @param tree \code{Phylogenetic tree}. To be used to calculate the 
-#'   dissimilarity matrix. (Default: \code{NULL})
+#' @param tree (Unifrac) \code{phylo}. A phylogenetic tree used in calculation.
+#' (Default: \code{NULL})
 #'
-#' @param ... other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}, 
-#'  or the following arguments passed onto mia internal functions for overlap,
-#'  unifrac and JSD dissimilarities:
+#' @param ... other arguments passed onto \code{\link[vegan:avgdist]{avgdist}},
+#' \code{\link[vegan:vegdist]{vegdist}}, or onto mia internal functions:
+#' 
 #' \itemize{
+#'   \item \code{sample}: The sampling depth in rarefaction.
+#'   (Default: \code{min(rowSums2(x))})
+#'   
 #'   \item \code{dis.fun}: \code{Character scalar}. Specifies the dissimilarity
 #'   function to be used.
 #'   
@@ -47,11 +50,6 @@
 #'   considers presence/absence. Default is \code{FALSE}, meaning the
 #'   unweighted-Unifrac dissimilarity is calculated for all pairs of samples.
 #'   (Default: \code{FALSE})
-#'   
-#'   \item \code{tree}: (Unifrac) 
-#'   \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object. Used only if 
-#'   \code{x} is a matrix. The phylo object and the columns should relate to the
-#'   same type of features (aka. microorganisms).
 #'   
 #'   \item \code{node.label} (Unifrac) \code{character vector}. Used only if
 #'   \code{x} is a matrix. Specifies links between rows/columns and tips of 
@@ -73,20 +71,22 @@
 #' }
 #'
 #' @return 
-#' \code{getDissimilarity} returns a sample-by-sample dissimilarity matrix, 
-#'   suitable for PCA, PCoA, MDS, NMDS, CCA, RDA, NMF.
+#' \code{getDissimilarity} returns a sample-by-sample dissimilarity matrix.
 #' 
 #' \code{addDissimilarity} returns \code{x} that includes dissimilarity matrix 
-#'   in its metadata. 
+#' in its metadata. 
 #'   
 #' @details 
-#'   Overlap reflects similarity between sample-pairs. When overlap is 
-#'   calculated using relative abundances, the higher the value the higher the 
-#'   similarity is. When using relative abundances, overlap value 1 means that 
-#'   all the abundances of features are equal between two samples, and 0 means 
-#'   that samples have completely different relative abundances. 
+#' Overlap reflects similarity between sample-pairs. When overlap is 
+#' calculated using relative abundances, the higher the value the higher the 
+#' similarity is. When using relative abundances, overlap value 1 means that 
+#' all the abundances of features are equal between two samples, and 0 means 
+#' that samples have completely different relative abundances. 
 #'   
-#'   Unifrac is calculated with \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
+#' Unifrac is calculated with \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
+#' 
+#' If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
+#' utilized.
 #'   
 #' @name getDissimilarity
 #' 
@@ -169,14 +169,9 @@ setGeneric(
 #' @export
 setMethod(
     "addDissimilarity", signature = c(x = "SummarizedExperiment"),
-    function(
-        x, method, assay.type = assay_name, assay_name = exprs_values, 
-        exprs_values = "counts", name = method, transposed = FALSE,
-        ...){
+    function(x, method, name = method, ...){
     #
-    res <- getDissimilarity(
-        x, method = method, assay.type = assay.type, 
-        transposed = transposed, ...)
+    res <- getDissimilarity(x, method = method, ...)
     # Add matrix to original SE
     x <- .add_values_to_metadata(x, names = name, value = as.matrix(res))
     return(x)
@@ -193,7 +188,9 @@ setGeneric(
 #' @export
 setMethod(
     "getDissimilarity", signature = c(x = "SummarizedExperiment"),
-    function(x, method, assay.type = "counts", transposed = FALSE, ...){
+    function(
+        x, method, assay.type = "counts", transposed = FALSE, tree = NULL,
+        ...){
     # Input checks
     .check_assay_present(assay.type, x)
     if( !.is_non_empty_string(method) ){
@@ -203,13 +200,16 @@ setMethod(
     if( !.is_a_bool(transposed) ){
         stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
     }
+    if( !(is.null(tree) || is(tree, "phylo")) ){
+        stop("'tree' must be NULL or phylo.", call. = FALSE)
+    }
     #
     # Get arguments
     mat <- assay(x, assay.type)
     if( !transposed ){
         mat <- t(mat)
     }
-    args <- c(list(x = mat, method = method), list(...))
+    args <- c(list(x = mat, method = method, tree = tree, ), list(...))
     # Calculate dissimilarity based on matrix
     mat <- do.call(getDissimilarity, args)
     return(mat)
@@ -230,7 +230,10 @@ setMethod(
             call. = FALSE)
     }
     if( !.is_a_bool(transposed) ){
-      stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+        stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !(is.null(tree) || is(tree, "phylo")) ){
+        stop("'tree' must be NULL or phylo.", call. = FALSE)
     }
     #
     # Retrieve tree arguments from TreeSE object, if method is unifrac and
@@ -256,26 +259,39 @@ setMethod(
 #' @rdname getDissimilarity
 #' @export
 setMethod(
-    "getDissimilarity", signature = c(x = "ANY"), function(x, method, ...){
+    "getDissimilarity", signature = c(x = "ANY"), function(
+        x, method, niter = NULL, tree = NULL, ...){
     # Input check
     if( !.is_a_string(method) ){
         stop("'method' must be a single character value.", call. = FALSE)
     }
+    if( !(is.null(tree) || is(tree, "phylo")) ){
+        stop("'tree' must be NULL or phylo.", call. = FALSE)
+    }
     #
     # Calculate dissimilarity
-    mat <- .calculate_dissimilarity(mat = x, method = method, ...)
+    mat <- .calculate_dissimilarity(
+        mat = x, method = method, niter = niter, tree = tree, ...)
     return(mat)
     }
 )
 
-# This function chooses right method and calcuates dissimilarity matrix.
-.calculate_dissimilarity <- function(mat, method, dis.fun = NULL, ...){
+# This function chooses right method and calculates dissimilarity matrix.
+#' @importFrom vegan vegdist avgdist
+.calculate_dissimilarity <- function(
+        mat, method, niter, dis.fun = NULL, sample = min(rowSums2(mat)),
+        ...){
     # input check
     if( !(is.null(dis.fun) || is.function(dis.fun)) ){
         stop("'dis.fun' must be NULL or a function.", call. = FALSE)
     }
+    if( !(is.null(niter) || .is_an_integer(niter)) ){
+        stop("'niter' must be NULL or an integer.", call. = FALSE)
+    }
+    if( !.is_an_integer(sample) ){
+        stop("'sample' must be an integer.", call. = FALSE)
+    }
     #
-    args <- c(list(mat, method = method), list(...))
     # If the dissimilarity function is not specified, get default choice
     if( is.null(dis.fun) ){
         if( method %in% c("overlap") ){
@@ -284,15 +300,26 @@ setMethod(
             dis.fun <- .get_unifrac
         } else if( method %in% c("jsd")  ){
             dis.fun <- .get_jsd
-        } else if( requireNamespace("vegan") ){
-            dis.fun <- vegan::vegdist
         } else{
-            dis.fun <- stats::dist
-            message("'dis.fun' defaults to stats::dist.")
+            dis.fun <- vegdist
         }
     }
-    # Calculate dissimilarity with specified function
-    res <- do.call(dis.fun, args)
+    # Initialize an argument list
+    args <- c(list(mat), list(...))
+    # If rarefaction is specified, calculate dissimilarity with vegan::avgdist
+    # function that utilizes the specified dissimilarity function. Otherwise,
+    # call the specified function directly.
+    if( !is.null(niter) ){
+        args <- c(args, list(
+            dmethod = method, iterations = niter, sample = sample,
+            distfun = dis.fun))
+        res <- do.call(avgdist, args)
+    } else{
+        args <- c(args, list(method = method))
+        res <- do.call(dis.fun, args)
+    }
+    # Ensure that the result is in distance matrix format
+    res <- dist(res)
     return(res)
 }
 

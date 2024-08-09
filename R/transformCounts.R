@@ -4,6 +4,7 @@
 #' See details for options.
 #'
 #' @inheritParams getDissimilarity
+#' @inheritParams getDominant
 #'   
 #' @param method \code{Character scalar}. Specifies the transformation
 #'   method.

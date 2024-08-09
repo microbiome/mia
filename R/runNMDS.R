@@ -4,7 +4,8 @@
 #' data in a \code{SingleCellExperiment} object.
 #'
 #' @inheritParams runDPCoA
-#'
+#' @inheritParams getDominant
+#' 
 #' @details
 #'   For \code{addNMDS} a \linkS4class{SingleCellExperiment}
 #'

@@ -5,6 +5,7 @@
 #' \code{reducedDims} and are available for all the expected functions.
 #'
 #' @inheritParams getDissimilarity
+#' @inheritParams getDominant
 #'
 #' @details
 #'   For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the

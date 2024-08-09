@@ -11,20 +11,18 @@
 \usage{
 addDissimilarity(x, method, ...)
 
-\S4method{addDissimilarity}{SummarizedExperiment}(
-  x,
-  method,
-  assay.type = assay_name,
-  assay_name = exprs_values,
-  exprs_values = "counts",
-  name = method,
-  transposed = FALSE,
-  ...
-)
+\S4method{addDissimilarity}{SummarizedExperiment}(x, method, name = method, ...)
 
 getDissimilarity(x, method, ...)
 
-\S4method{getDissimilarity}{SummarizedExperiment}(x, method, assay.type = "counts", transposed = FALSE, ...)
+\S4method{getDissimilarity}{SummarizedExperiment}(
+  x,
+  method,
+  assay.type = "counts",
+  transposed = FALSE,
+  tree = NULL,
+  ...
+)
 
 \S4method{getDissimilarity}{TreeSummarizedExperiment}(
   x,
@@ -36,7 +34,7 @@ getDissimilarity(x, method, ...)
   ...
 )
 
-\S4method{getDissimilarity}{ANY}(x, method, ...)
+\S4method{getDissimilarity}{ANY}(x, method, niter = NULL, tree = NULL, ...)
 }
 \arguments{
 \item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -45,10 +43,13 @@ object.}
 \item{method}{\code{Character scalar}. Specifies which dissimilarity to
 calculate.}
 
-\item{...}{other arguments passed onto \code{\link[vegan:vegdist]{vegdist}},
-or the following arguments passed onto mia internal functions for overlap,
-unifrac and JSD dissimilarities:
+\item{...}{other arguments passed onto \code{\link[vegan:avgdist]{avgdist}},
+\code{\link[vegan:vegdist]{vegdist}}, or onto mia internal functions:
+
 \itemize{
+\item \code{sample}: The sampling depth in rarefaction.
+(Default: \code{min(rowSums2(x))})
+
 \item \code{dis.fun}: \code{Character scalar}. Specifies the dissimilarity
 function to be used.
 
@@ -59,11 +60,6 @@ species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is \code{FALSE}, meaning the
 unweighted-Unifrac dissimilarity is calculated for all pairs of samples.
 (Default: \code{FALSE})
-
-\item \code{tree}: (Unifrac)
-\code{\link[TreeSummarizedExperiment:phylo]{phylo}} object. Used only if
-\code{x} is a matrix. The phylo object and the columns should relate to the
-same type of features (aka. microorganisms).
 
 \item \code{node.label} (Unifrac) \code{character vector}. Used only if
 \code{x} is a matrix. Specifies links between rows/columns and tips of
@@ -84,28 +80,27 @@ has abundance under threshold in either of samples, will be discarded when
 evaluating overlap between samples. (Default: \code{0})
 }}
 
-\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Default: \code{"counts"})}
-
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
-\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
-
 \item{name}{\code{Character scalar}. The name to be used to store the result
 in metadata of the output. (Default: \code{method})}
+
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
 
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with
 cells in rows. (Default: \code{FALSE})}
 
-\item{tree.name}{\code{Character scalar}. Specifies the name of the
-tree used to calculate the dissimilarity matrix. (Default: \code{"phylo"})}
+\item{tree}{(Unifrac) \code{phylo}. A phylogenetic tree used in calculation.
+(Default: \code{NULL})}
 
-\item{tree}{\code{Phylogenetic tree}. To be used to calculate the
-dissimilarity matrix. (Default: \code{NULL})}
+\item{tree.name}{(Unifrac) \code{Character scalar}. Specifies the name of the
+tree from \code{rowTree(x)} that is used in calculation. Disabled when
+\code{tree} is specified. (Default: \code{"phylo"})}
+
+\item{niter}{The number of iterations performed. If \code{NULL},
+rarefaction is disabled. (Default: \code{NULL})}
 }
 \value{
-\code{getDissimilarity} returns a sample-by-sample dissimilarity matrix,
-suitable for PCA, PCoA, MDS, NMDS, CCA, RDA, NMF.
+\code{getDissimilarity} returns a sample-by-sample dissimilarity matrix.
 
 \code{addDissimilarity} returns \code{x} that includes dissimilarity matrix
 in its metadata.
@@ -127,6 +122,9 @@ all the abundances of features are equal between two samples, and 0 means
 that samples have completely different relative abundances.
 
 Unifrac is calculated with \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
+
+If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
+utilized.
 }
 \examples{
 library(mia)

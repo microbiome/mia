@@ -7,7 +7,7 @@
 #' @inheritParams getPrevalence
 #'
 #' @param name \code{Character scalar}. A name for the column of the 
-#'   \code{colData} where results will be stored. (Default: \code{"dominant_taxa"})
+#' \code{colData} where results will be stored. (Default: \code{"dominant_taxa"})
 #'   
 #' @param other.name \code{Character scalar}. A name for features that are not 
 #' included in n the most frequent dominant features in the data. (Default: \code{"Other"})

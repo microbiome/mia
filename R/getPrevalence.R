@@ -4,6 +4,8 @@
 #' \code{\link{SummarizedExperiment-class}} object.
 #'
 #' @inheritParams getDissimilarity
+#' 
+#' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'
 #' @param detection \code{Numeric scalar}. Detection threshold for absence/presence. 
 #'    If \code{as_relative = FALSE},

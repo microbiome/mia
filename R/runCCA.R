@@ -4,6 +4,7 @@
 #' in a \code{SummarizedExperiment}.
 #'
 #' @inheritParams getDissimilarity
+#' @inheritParams getDominant
 #'
 #' @details
 #'   For \code{run*} a

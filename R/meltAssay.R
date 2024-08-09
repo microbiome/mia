@@ -12,7 +12,8 @@
 #' names are set.
 #' 
 #' @inheritParams getDissimilarity
-#'
+#' @inheritParams getDominant
+#' 
 #' @param add.col \code{Logical scalar}. \code{NULL} ,or \code{character vector}. Used to
 #'   select information from the \code{colData} to add to the molten assay data.
 #'   If \code{add.col = NULL} no data will be added, if
