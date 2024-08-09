@@ -74,29 +74,26 @@ setGeneric("getDominant",signature = c("x"),
 #' @export
 setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
-             rank = NULL, other.name = "Other", n = NULL, complete = TRUE, by = NULL, f = NULL, ...){
+             rank = NULL, other.name = "Other", n = NULL, complete = TRUE, ...){
         # Input check
         # Check assay.type
         .check_assay_present(assay.type, x)
         # rank check
-        if(!is.null(rank)){
-            if(!.is_a_string(rank)){
-                stop("'rank' must be an single character value.",
-                     call. = FALSE)
-            }
-            .check_taxonomic_rank(rank, x)
-        }
+        if(!.is_a_string(rank)){
+            stop("'rank' must be an single character value.",
+                 call. = FALSE)
+        }    
         # If "rank" is not NULL, species are aggregated according to the
         # taxonomic rank that is specified by user.
-        if(!is.null(rank)){
+        if (!is.null(rank) && rank %in% taxonomyRanks(x)) {
             x <- agglomerateByRank(x, rank, ...)
             mat <- assay(x, assay.type)
         # or factor that is specified by user
-        } else if (!is.null(f)) {
-            x <- agglomerateByVariable(x, f, by = "rows", ...)
+        } else if (!is.null(rank)) {
+            x <- agglomerateByVariable(x, "rows", rank, ...)
             mat <- assay(x, assay.type)
         }
-        # Otherwise, if "rank" or "factor"  is NULL, abundances are stored 
+        # Otherwise, if "rank" is NULL, abundances are stored 
         # without ranking
         else {
             mat <- assay(x, assay.type)
