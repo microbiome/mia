@@ -23,7 +23,8 @@ addNMF(x, ...)
 )
 }
 \arguments{
-\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+\item{x}{a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
 \item{...}{optional arguments passed to \code{nmf::NMF}.}
@@ -60,7 +61,8 @@ object is returned containing the ordination matrix in
 \itemize{
 \item "loadings" which is a matrix containing the feature loadings
 \item "NMF_output" which is the output of function \code{nmf::NMF}
-\item "best_fit" which is the result of the best fit if k is a vector of integers
+\item "best_fit" which is the result of the best fit if k is a vector of
+integers
 }
 }
 \description{

@@ -1,10 +1,11 @@
 #' Non-negative Matrix Factorization
 #'
-#' These functions perform Non-negative Matrix Factorization on data stored in a 
+#' These functions perform Non-negative Matrix Factorization on data stored in a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object.
 #' 
-#' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' @param x a
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object.
 #'   
 #' @param k \code{numeric vector}. A number of latent vectors/topics. 
@@ -41,7 +42,8 @@
 #' \itemize{
 #'   \item "loadings" which is a matrix containing the feature loadings
 #'   \item "NMF_output" which is the output of function \code{nmf::NMF} 
-#'   \item "best_fit" which is the result of the best fit if k is a vector of integers
+#'   \item "best_fit" which is the result of the best fit if k is a vector of
+#'   integers
 #' }
 #' 
 #' @details 
@@ -109,9 +111,9 @@ setMethod("getNMF", "SummarizedExperiment",
     # If it includes multiple, get the best fit based on certain evaluation
     # metric.
     if( is(res, "NMF.rank") ){
-      best_fit <- .get_best_nmf_fit(res, eval.metric)
+        best_fit <- .get_best_nmf_fit(res, eval.metric)
     } else{
-      best_fit <- res
+        best_fit <- res
     }
     # Get scores and loadings, add loadings and NMF output to attributes of
     # scores
@@ -121,7 +123,7 @@ setMethod("getNMF", "SummarizedExperiment",
     attr(scores, "NMF_output") <- res
     # Add best fit if multiple k values
     if( is(res, "NMF.rank") ){
-      attr(scores, "best_fit") <- best_fit
+        attr(scores, "best_fit") <- best_fit
     }
     # The NMF package is unloaded
     detach("package:NMF", unload = TRUE)
@@ -163,17 +165,17 @@ setMethod("addNMF", "SummarizedExperiment",
         "cophenetic" = TRUE,
         "dispersion" = FALSE
         )
-  maximize <- maximize[ eval.metric ]
-  if( maximize ){
-      FUN <- which.max
-  } else{
-      FUN <- which.min
-  }
-  # Get the index of best fit
-  measures <- res[["measures"]]
-  values <- measures[[eval.metric]]
-  ind <- FUN(values)
-  # Get the model of best fit
-  model <- res[["fit"]][[ind]]
-  return(model)
+    maximize <- maximize[ eval.metric ]
+    if( maximize ){
+        FUN <- which.max
+    } else{
+        FUN <- which.min
+    }
+    # Get the index of best fit
+    measures <- res[["measures"]]
+    values <- measures[[eval.metric]]
+    ind <- FUN(values)
+    # Get the model of best fit
+    model <- res[["fit"]][[ind]]
+    return(model)
 }
