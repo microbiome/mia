@@ -265,7 +265,6 @@ setMethod(
 setMethod(
     "getDissimilarity", signature = c(x = "ANY"), function(
         x, method, niter = NULL, tree = NULL, ...){
-    browser()
     # Input check
     if( !.is_a_string(method) ){
         stop("'method' must be a single character value.", call. = FALSE)
@@ -287,7 +286,6 @@ setMethod(
         mat, method, niter, dis.fun = NULL, sample = min(rowSums2(mat)),
         ...){
     # input check
-    browser()
     if( !(is.null(dis.fun) || is.function(dis.fun)) ){
         stop("'dis.fun' must be NULL or a function.", call. = FALSE)
     }
