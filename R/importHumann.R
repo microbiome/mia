@@ -12,7 +12,7 @@
 #' 
 #' @param ... additional arguments:
 #' \itemize{
-#'   \item \code{assay.type}:  \code{Character scalar}. Specifes the name of the assy
+#'   \item \code{assay.type}:  \code{Character scalar}. Specifies the name of the assy
 #'   used in calculation.
 #'   (Default: \code{"counts"})
 #'   \item \code{prefix.rm}:  \code{Logical scalar}. Should
