@@ -79,10 +79,12 @@ setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
         # Check assay.type
         .check_assay_present(assay.type, x)
         # rank check
-        if(!.is_a_string(rank)){
-            stop("'rank' must be an single character value.",
-                 call. = FALSE)
-        }    
+        if(!is.null(rank)){
+            if(!.is_a_string(rank)){
+                stop("'rank' must be an single character value.",
+                     call. = FALSE)
+            }
+        } 
         # If "rank" is not NULL, species are aggregated according to the
         # taxonomic rank that is specified by user.
         if (!is.null(rank) && rank %in% taxonomyRanks(x)) {

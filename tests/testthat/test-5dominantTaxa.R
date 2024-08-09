@@ -57,7 +57,7 @@ test_that("getDominant", {
         names(exp.vals.three) <- exp.names.one
         test <- tse
         rowData(test)$group <- rowData(tse)$Genus
-        expect_equal(colData(addDominant(test, f = "group", na.rm = TRUE,
+        expect_equal(colData(addDominant(test, rank = "group", na.rm = TRUE,
                                          name="dominant"))$dominant[1:15],
                      exp.vals.three)
         
