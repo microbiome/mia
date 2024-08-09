@@ -16,7 +16,8 @@ addLDA(x, ...)
 \S4method{addLDA}{SummarizedExperiment}(x, k = 2, assay.type = "counts", name = "LDA", ...)
 }
 \arguments{
-\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+\item{x}{a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
 \item{...}{optional arguments passed to \code{\link[topicmodels:LDA]{LDA}}}
@@ -40,9 +41,11 @@ in the reducedDims of the output. (Default: \code{"LDA"})}
 For \code{getLDA}, the ordination matrix with feature loadings matrix
 as attribute \code{"loadings"}.
 
-For \code{addLDA}, a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object is returned containing the ordination matrix in reducedDims(..., name)
-with feature loadings matrix as attribute \code{"loadings"}.
+For \code{addLDA}, a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object is returned containing the ordination matrix in
+\code{reducedDim(..., name)} with feature loadings matrix as attribute
+\code{"loadings"}.
 }
 \description{
 These functions perform Latent Dirichlet Allocation on data stored in a

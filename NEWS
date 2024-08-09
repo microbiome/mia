@@ -148,4 +148,7 @@ convertToPhyloseq
 + Changes in default taxonomy ranks; more ranks supported
 + Added Tito2024QMP dataset
 + Added convertToBIOM
-+ new methods getLDA and addLDA for LDA ordination with feature loadings computation
++ new methods getLDA and addLDA for LDA ordination with feature loadings
+computation
++ new methods getNMF and addNMF for NMF ordination with feature loadings
+computation
