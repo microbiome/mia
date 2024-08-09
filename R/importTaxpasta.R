@@ -11,8 +11,8 @@
 #'
 #' @param file \code{Character scalar}. Defines the file path to a
 #' BIOM file.
-#' @param add.hierarchy.tree \code{Logical scalar}. Specifies whether to calculate 
-#' and add hierarchy tree. (Default: \code{TRUE})
+#' @param add.tree \code{Logical scalar}. Specifies whether to calculate 
+#' and add hierarchy tree using \code{\link{addHierarchyTree}}. (Default: \code{TRUE})
 #'
 #' @return A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
 #'
@@ -38,7 +38,7 @@ NULL
 #' @export
 #'
 #' @importFrom SummarizedExperiment rowData
-importTaxpasta <- function(file, add.hierarchy.tree = TRUE) {
+importTaxpasta <- function(file, add.tree = TRUE) {
     # Check dependencies.
     .require_package("rhdf5")
     .require_package("biomformat")
@@ -50,8 +50,8 @@ importTaxpasta <- function(file, add.hierarchy.tree = TRUE) {
     if( !file.exists(file) ){
         stop("'", file, "' not found.", call. = FALSE)
     }
-    if (!.is_a_bool(add.hierarchy.tree)) {
-        stop("'add.hierarchy.tree' must be TRUE or FALSE.", call. = FALSE)
+    if (!.is_a_bool(add.tree)) {
+        stop("'add.tree' must be TRUE or FALSE.", call. = FALSE)
     }
     
     # We read our own HDF5 array to later be able to read observation group
@@ -68,7 +68,7 @@ importTaxpasta <- function(file, add.hierarchy.tree = TRUE) {
         # Create rowData and rowTree
         rowData(tse) <- .create_row_data(biom, ranks)
         .set_ranks_based_on_rowdata(tse, set.ranks = TRUE)
-	if (add.hierarchy.tree) tse <- addHierarchyTree(tse)
+	if (add.tree) tse <- addHierarchyTree(tse)
         # Agglomerate to all existing ranks
         tse <- agglomerateByRanks(tse, agglomerate.tree = TRUE)
     } else{
