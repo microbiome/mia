@@ -175,7 +175,6 @@ setGeneric("addRDA", signature = c("x"),
 
 #' @importFrom stats as.formula
 .calculate_cca <- function(x, formula, variables, scores,  scale = TRUE, ...){
-    .require_package("vegan")
     # input check
     if(!.is_a_bool(scale)){
         stop("'scale' must be TRUE or FALSE.", call. = FALSE)
@@ -323,7 +322,6 @@ runCCA <- function(x,...){
 #' @importFrom vegan sppscores<-
 .calculate_rda <- function(
         x, formula, variables, scores, method = distance, distance = "euclidean", ...){
-    .require_package("vegan")
     #
     # Transpose and ensure that the table is in matrix format
     x <- as.matrix(t(x))

@@ -262,7 +262,6 @@ NULL
     # Check assay and check that vegan package is available since it is
     # required in some of the diversity calculations.
     .check_assay_present(assay.type, x)
-    .require_package("vegan")
     #
     # Calculate specified diversity indices
     dvrsts <- BiocParallel::bplapply(
