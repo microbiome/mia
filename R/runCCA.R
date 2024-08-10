@@ -170,8 +170,9 @@ setGeneric("addRDA", signature = c("x"),
     return(dep_var)
 }
 
-#' @importFrom stats as.formula
-.calculate_cca <- function(x, formula, variables, scores,  scale = TRUE, ...){
+#' @importFrom stats as.formula na.fail
+.calculate_cca <- function(x, formula, variables, scores,
+                           scale = TRUE, na.action = na.fail, ...){
     .require_package("vegan")
     # input check
     if(!.is_a_bool(scale)){
@@ -180,19 +181,27 @@ setGeneric("addRDA", signature = c("x"),
     #
     x <- as.matrix(t(x))
     variables <- as.data.frame(variables)
+    
+    if( any(is.na(variables)) && isTRUE(all.equal(na.action, na.fail)) ){
+      stop("Variables contain missing values. Set na.action to na.exclude",
+           " to remove samples with missing values.", call. = FALSE)
+    }
+    
     if(ncol(variables) > 0L && !missing(formula)){
         dep_var_name <- .get_dependent_var_name(formula)
         assign(dep_var_name, x)
         # recast formula in current environment
         form <- as.formula(paste(as.character(formula)[c(2,1,3)],
                                  collapse = " "))
-        cca <- vegan::cca(form, data = variables, scale = scale, ...)
+        cca <- vegan::cca(form, data = variables, scale = scale,
+                          na.action = na.action, ...)
         X <- cca$CCA
     } else if(ncol(variables) > 0L) {
-        cca <- vegan::cca(X = x, Y = variables, scale = scale, ...)
+        cca <- vegan::cca(X = x, Y = variables, scale = scale,
+                          na.action = na.action, ...)
         X <- cca$CCA
     } else {
-        cca <- vegan::cca(X = x, scale = scale, ...)
+        cca <- vegan::cca(X = x, scale = scale, na.action = na.action, ...)
         X <- cca$CA
     }
     # Create the matrix to be returned
@@ -318,8 +327,10 @@ runCCA <- function(x,...){
 }
 
 #' @importFrom vegan sppscores<-
+#' @importFrom stats na.fail
 .calculate_rda <- function(
-        x, formula, variables, scores, method = distance, distance = "euclidean", ...){
+        x, formula, variables, scores, method = distance,
+        distance = "euclidean", na.action = na.fail, ...){
     .require_package("vegan")
     #
     # Transpose and ensure that the table is in matrix format
@@ -340,11 +351,19 @@ runCCA <- function(x,...){
     if( !missing(variables) ){
         # Convert into data.frame
         variables <- as.data.frame(variables)
+        
+        if( any(is.na(variables)) && isTRUE(all.equal(na.action, na.fail)) ){
+            stop("Variables contain missing values. Set na.action to na.exclude",
+                  " to remove samples with missing values.", call. = FALSE)
+        }
+        
         # Calculate RDA with variables
-        rda <- vegan::dbrda(formula = form, data = variables, distance = method, ...)
+        rda <- vegan::dbrda(formula = form, data = variables, distance = method,
+                            na.action = na.action, ...)
     } else{
         # Otherwise calculate RDA without variables
-        rda <- vegan::dbrda(formula = form, distance = method, ...)
+        rda <- vegan::dbrda(formula = form, distance = method,
+                            na.action = na.action, ...)
     }
     # Get CCA
     if( !is.null(rda$CCA) ){
