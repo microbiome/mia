@@ -69,6 +69,7 @@ reference:
   - runCCA
   - runDPCoA
   - addLDA
+  - addNMF
 
 - title: Package
 - contents:

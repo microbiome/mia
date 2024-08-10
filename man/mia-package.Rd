@@ -52,6 +52,7 @@ Other contributors:
   \item Rajesh Shigdel [contributor]
   \item Katariina Pärnänen [contributor]
   \item Pande Erawijantari [contributor]
+  \item Danielle Callan [contributor]
 }
 
 }
