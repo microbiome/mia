@@ -112,7 +112,7 @@ of experiment 2. If col.var2 is used, assay.type2 is disabled.
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}
 
-\item{MARGIN}{Deperecated. Use \code{by} instead.}
+\item{MARGIN}{Deprecated. Use \code{by} instead.}
 
 \item{method}{\code{Character scalar}. Defines the association method
 ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
@@ -125,7 +125,7 @@ Available formats are  'table' and 'matrix'.  (Default: \code{"table"})}
 p-values. Passed to \code{p.adjust} function.
 (Default: \code{"fdr"})}
 
-\item{p_adj_method}{Deprecated. Use \code{p.adj.method} isntead.}
+\item{p_adj_method}{Deprecated. Use \code{p.adj.method} instead.}
 
 \item{p.adj.threshold}{\code{Numeric scalar}. From \code{0 to 1}, specifies
 adjusted p-value threshold for filtering.
