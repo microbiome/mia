@@ -204,7 +204,7 @@
     # Check that MARGIN is correct
     MARGIN <- .check_MARGIN(MARGIN)
     #
-    # If trasnpose.MARGIN is TRUE, transpose MARGIN, i.e. 1 --> 2, and 2 --> 1.
+    # If transpose.MARGIN is TRUE, transpose MARGIN, i.e. 1 --> 2, and 2 --> 1.
     # In certain functions, values calculated by rows (MARGIN=1) are stored to
     # colData (MARGIN=2) and vice versa.
     if( transpose.MARGIN ){

@@ -109,7 +109,7 @@ setMethod("calculateUnifrac",
                     tree = "missing"),
     function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
             tree.name = tree_name, tree_name = "phylo", transposed = FALSE, ...){
-        # Chcek transposed
+        # Check transposed
         if( !.is_a_bool(transposed) ){
             stop("'transposed' must be TRUE or FALSE.", call. = FALSE)
         }

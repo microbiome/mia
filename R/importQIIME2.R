@@ -39,7 +39,7 @@
 #' @param tree.file \code{Character scalar}. Defines the file path of
 #'   the phylogenetic tree. (Default: \code{NULL}).
 #' 
-#' @param phyTreeFile Deprecated. Use \code{tree.file} isntead.
+#' @param phyTreeFile Deprecated. Use \code{tree.file} instead.
 #'
 #' @param ... additional arguments:
 #' \itemize{
@@ -189,7 +189,7 @@ importQIIME2 <- function(assay.file = featureTableFile,
 #' @param temp.dir character, a temporary directory in which the qza file will be
 #'   decompressed to, default `tempdir()`.
 #' 
-#' @param temp Deprecated. Use \code{temp.dir} isntead.
+#' @param temp Deprecated. Use \code{temp.dir} instead.
 #' 
 #' @return `matrix` object for feature table, `DataFrame` for taxonomic table,
 #'   [`ape::phylo`] object for phylogenetic tree,
