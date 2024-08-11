@@ -57,7 +57,7 @@ the reference sequences for each feature. (Default: \code{NULL}).}
 \item{tree.file}{\code{Character scalar}. Defines the file path of
 the phylogenetic tree. (Default: \code{NULL}).}
 
-\item{phyTreeFile}{Deprecated. Use \code{tree.file} isntead.}
+\item{phyTreeFile}{Deprecated. Use \code{tree.file} instead.}
 
 \item{...}{additional arguments:
 \itemize{
@@ -77,7 +77,7 @@ right now.}
 \item{temp.dir}{character, a temporary directory in which the qza file will be
 decompressed to, default \code{tempdir()}.}
 
-\item{temp}{Deprecated. Use \code{temp.dir} isntead.}
+\item{temp}{Deprecated. Use \code{temp.dir} instead.}
 }
 \value{
 A

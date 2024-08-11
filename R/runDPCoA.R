@@ -27,7 +27,7 @@
 #' 
 #' @param subset_row Deprecated. Use \code{subset.row} instead.
 #'
-#' @param scale \code{Logical scalar}. Sshould the expression values be standardized?
+#' @param scale \code{Logical scalar}. Should the expression values be standardized?
 #' (Default: \code{FALSE})
 #' 
 #' @param name \code{Character scalar}. A name for the column of the 
