@@ -88,7 +88,7 @@
 #' abundance of the core species and \eqn{N_{tot}} is the sum of absolute
 #' abundances of all species.
 #' 
-#' \item 'gini':  Gini index is probably best-known from socio-economic
+#' \item 'gini':  Gini index is probably best-known from socioeconomic
 #' contexts (Gini 1921). In economics, it is used to measure, for example, how
 #' unevenly income is distributed among population. Here, Gini index is used
 #' similarly, but income is replaced with abundance. 

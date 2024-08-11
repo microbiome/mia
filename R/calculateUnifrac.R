@@ -1,4 +1,3 @@
-
 #' @importFrom ape drop.tip
 #' @importFrom rbiom unifrac
 .get_unifrac <- function(

@@ -84,7 +84,7 @@ integer vector of row indices or a logical vector. (Default: \code{NULL})}
 
 \item{subset_row}{Deprecated. Use \code{subset.row} instead.}
 
-\item{scale}{\code{Logical scalar}. Sshould the expression values be standardized?
+\item{scale}{\code{Logical scalar}. Should the expression values be standardized?
 (Default: \code{FALSE})}
 
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with

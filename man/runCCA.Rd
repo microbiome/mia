@@ -186,7 +186,7 @@ tse <- addRDA(
 # Plot
 plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 # A common choice along with PERMANOVA is ANOVA when statistical significance
-# of homogeneity of groups is analysed. Moreover, full signficance test results
+# of homogeneity of groups is analysed. Moreover, full significance test results
 # can be returned.
  tse <- addRDA(
      tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)

@@ -30,7 +30,7 @@ documentation. (Default: \code{NULL}).}
 \item{designFile}{Deprecated. Use \code{col.file} instead.}
 
 \item{col.file}{\code{Character scalar}. Defines file path of
-the sample metadata to be imported. The File has to be in \code{desing
+the sample metadata to be imported. The File has to be in \code{design
   file} format as defined in Mothur documentation. (Default: \code{NULL}).}
 }
 \value{

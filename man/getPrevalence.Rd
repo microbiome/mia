@@ -205,7 +205,7 @@ prevalence.frequency <- getPrevalence(tse,
                                       sort = TRUE)
 head(prevalence.frequency)
 
-# Get prevalence estimates for phylums
+# Get prevalence estimates for phyla
 # - the getPrevalence function itself always returns population frequencies
 prevalence.frequency <- getPrevalence(tse,
                                       rank = "Phylum",

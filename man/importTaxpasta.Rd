@@ -29,8 +29,8 @@ Import taxpasta-specific BIOM results to
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 }
 \details{
-\code{importTaxpasta} imports data that is returned from TAXonomic Profile
-Aggregation and STAndardisation (taxpasta) pipeline. See more information on
+\code{importTaxpasta} imports data that is returned from Taxonomic Profile
+Aggregation and Standardization (taxpasta) pipeline. See more information on
 taxpasta from
 \href{https://taxpasta.readthedocs.io/en/latest/}{taxpasta documentation}.
 }
