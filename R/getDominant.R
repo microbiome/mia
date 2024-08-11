@@ -89,17 +89,12 @@ setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
         # taxonomic rank that is specified by user.
         if (!is.null(rank) && rank %in% taxonomyRanks(x)) {
             x <- agglomerateByRank(x, rank, ...)
-            mat <- assay(x, assay.type)
         # or factor that is specified by user
         } else if (!is.null(rank)) {
-            x <- agglomerateByVariable(x, "rows", rank, ...)
-            mat <- assay(x, assay.type)
+            x <- agglomerateByVariable(x, by = "rows", f = rank, ...)
         }
-        # Otherwise, if "rank" is NULL, abundances are stored 
-        # without ranking
-        else {
-            mat <- assay(x, assay.type)
-        }
+        # Get assay
+        mat <- assay(x, assay.type)
         # apply() function finds the indices of taxa's that has the highest
         # abundance.
         # rownames() returns the names of taxa that are the most abundant.
