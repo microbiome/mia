@@ -36,7 +36,7 @@
 #'   rowTree will be used to calculate faith index. 
 #'   (By default: \code{tree.name = "phylo"})
 #' 
-#' @param tree_name Deprecated. Use \code{tree.name} isntead.
+#' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'   
 #' @param node.label NULL or a character vector specifying the links between rows and 
 #'   node labels of \code{tree}. If a certain row is not linked with the tree, missing 
@@ -488,13 +488,13 @@ NULL
 .calc_skewness <- function(x) {
     # Transposes the table
     x <- t(x)
-    # Each value is substracted by sample-wise mean, which is raised to the
+    # Each value is subtracted by sample-wise mean, which is raised to the
     # power of 3.
     # Then the sample-wise sum is taken from these values. 
     numerator <- rowSums2((x - rowMeans2(x))^3)
     # Sample-wise sum is divided by number of taxa that are not NA.
     numerator <- numerator/rowSums2(!is.na(x))
-    # Each value is substracted by sample-wise mean, which is raises to the
+    # Each value is subtracted by sample-wise mean, which is raises to the
     # power of 2.
     # Then the sample-wise sum is taken from these values. 
     denominator <- rowSums2((x - rowMeans2(x))^2)

@@ -52,7 +52,7 @@
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}. 
 #' 
-#' @param MARGIN Deperecated. Use \code{by} instead.
+#' @param MARGIN Deprecated. Use \code{by} instead.
 #'   
 #' @param method \code{Character scalar}. Defines the association method 
 #'    ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
@@ -65,7 +65,7 @@
 #'    p-values. Passed to \code{p.adjust} function. 
 #'    (Default: \code{"fdr"})
 #' 
-#' @param p_adj_method Deprecated. Use \code{p.adj.method} isntead.
+#' @param p_adj_method Deprecated. Use \code{p.adj.method} instead.
 #' 
 #' @param p.adj.threshold \code{Numeric scalar}. From \code{0 to 1}, specifies
 #'    adjusted p-value threshold for filtering. 
@@ -554,7 +554,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
             # Get levels
             levels1 <- unique( colnames(assay1)[ as.numeric(levels(result$Var1)) ] )
             levels2 <- unique( colnames(assay2)[ as.numeric(levels(result$Var2)) ] )
-            # Unfactor so that factors do not affect when neames are adjusted
+            # Unfactor so that factors do not affect when names are adjusted
             result$Var1 <- unfactor(result$Var1)
             result$Var2 <- unfactor(result$Var2)
         }

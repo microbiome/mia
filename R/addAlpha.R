@@ -537,7 +537,7 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
     temp[["FUN"]] <- ".estimate_dominance"
     temp[["non_neg"]] <- c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
     supported[["dominance"]] <- temp
-    # Supported eveness indices
+    # Supported evenness indices
     temp <- c(
         "camargo", "pielou", "simpson", "evar", "bulla")
     temp <- data.frame(index = temp)

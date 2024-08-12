@@ -53,8 +53,10 @@ transformation is applied sample (column) or feature (row) wise.
 \item{name}{\code{Character scalar}. A name for the column of the
 \code{colData} where results will be stored. (Default: \code{"method"})}
 
-\item{pseudocount}{\code{Logical scalar} or \code{numeric scalar}. When TRUE,
-automatically adds half of the minimum positive value of \code{assay.type}.
+\item{pseudocount}{\code{Logical scalar} or \code{numeric scalar}.
+When \code{TRUE}, automatically adds half of the minimum positive
+value of \code{assay.type} (missing values ignored by default:
+\code{na.rm = TRUE}).
 When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.
 (Default: \code{FALSE}).}
