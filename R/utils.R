@@ -385,6 +385,10 @@
             "Therefore, it is converted to TreeSummarizedExperiment.",
             call. = FALSE)
     }
+    if( !identical(rownames(as.matrix(values)), colnames(x)) ){
+        stop("Rownames of the matrix should match with colnames(x).",
+             " The result is not added to reducedDims.")
+    }
     # Throw warning if values of reducedDim are overwritten
     if( name %in% names(reducedDims(x)) ){
         warning(

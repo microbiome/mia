@@ -1,6 +1,7 @@
 #' Merge SE objects into single SE object.
 #' 
 #' @inheritParams rarefyAssay
+#' @inheritParams getDominant
 #' 
 #' @param y a \code{\link{SummarizedExperiment}} object when \code{x} is a
 #' \code{\link{SummarizedExperiment}} object. Disabled when \code{x} is a list.
