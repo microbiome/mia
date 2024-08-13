@@ -18,9 +18,6 @@
 <url><loc>/reference/agglomerate-methods.html</loc></url>
 <url><loc>/reference/agglomerateByPrevalence.html</loc></url>
 <url><loc>/reference/calculateDMN.html</loc></url>
-<url><loc>/reference/calculateJSD.html</loc></url>
-<url><loc>/reference/calculateOverlap.html</loc></url>
-<url><loc>/reference/calculateUnifrac.html</loc></url>
 <url><loc>/reference/convertFromDADA2.html</loc></url>
 <url><loc>/reference/convertFromPhyloseq.html</loc></url>
 <url><loc>/reference/deprecate.html</loc></url>
@@ -28,6 +25,7 @@
 <url><loc>/reference/enterotype.html</loc></url>
 <url><loc>/reference/esophagus.html</loc></url>
 <url><loc>/reference/getCrossAssociation.html</loc></url>
+<url><loc>/reference/getDissimilarity.html</loc></url>
 <url><loc>/reference/getDominant.html</loc></url>
 <url><loc>/reference/getMediation.html</loc></url>
 <url><loc>/reference/getPrevalence.html</loc></url>

@@ -23,7 +23,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.35</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.36</span>
       </span>
     </div>
 
@@ -68,21 +68,20 @@ by default.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">addDissimilarity</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  <span class="va">method</span>,</span>
-<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
-<span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  name <span class="op">=</span> <span class="va">method</span>,</span>
-<span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, name <span class="op">=</span> <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">getDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, transposed <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">getDissimilarity</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">method</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  niter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  tree <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">getDissimilarity</span><span class="op">(</span></span>
@@ -90,13 +89,14 @@ by default.</p>
 <span>  <span class="va">method</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  tree.name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
+<span>  niter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  tree <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'ANY'</span></span>
-<span><span class="fu">getDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">getDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, niter <span class="op">=</span> <span class="cn">NULL</span>, tree <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -104,8 +104,8 @@ by default.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>
-object.</p></dd>
+<dd><p><code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>
+or <code>matrix</code>.</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
@@ -114,9 +114,11 @@ calculate.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>other arguments passed onto <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code>,
-or the following arguments passed onto mia internal functions for overlap,
-unifrac and JSD dissimilarities:</p><ul><li><p><code>dis.fun</code>: <code>Character scalar</code>. Specifies the dissimilarity
+<dd><p>other arguments passed onto <code><a href="https://rdrr.io/pkg/vegan/man/avgdist.html" class="external-link">avgdist</a></code>,
+<code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code>, or onto mia internal functions:</p>
+<ul><li><p><code>sample</code>: The sampling depth in rarefaction.
+(Default: <code>min(rowSums2(x))</code>)</p></li>
+<li><p><code>dis.fun</code>: <code>Character scalar</code>. Specifies the dissimilarity
 function to be used.</p></li>
 <li><p><code>weighted</code>: (Unifrac) <code>Logical scalar</code>. Should use
 weighted-Unifrac calculation?
@@ -125,10 +127,6 @@ species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is <code>FALSE</code>, meaning the
 unweighted-Unifrac dissimilarity is calculated for all pairs of samples.
 (Default: <code>FALSE</code>)</p></li>
-<li><p><code>tree</code>: (Unifrac)
-<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/phylo.html" class="external-link">phylo</a></code> object. Used only if
-<code>x</code> is a matrix. The phylo object and the columns should relate to the
-same type of features (aka. microorganisms).</p></li>
 <li><p><code>node.label</code> (Unifrac) <code>character vector</code>. Used only if
 <code>x</code> is a matrix. Specifies links between rows/columns and tips of
 <code>tree</code>. The length must equal the number of rows/columns of <code>x</code>.
@@ -137,7 +135,7 @@ Furthermore, all the node labs must be present in <code>tree</code>.</p></li>
 data  send to the individual worker. Only has an effect, if <code>BPPARAM</code>
 defines more than one worker. (Default: <code>nrow(x)</code>)</p></li>
 <li><p><code>BPPARAM</code>: (JSD)
-<code><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallelParam</a> object</code>.
+<code><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallelParam</a></code>.
 Specifies whether the calculation should be parallelized.</p></li>
 <li><p><code>detection</code>: (Overlap) <code>Numeric scalar</code>.
 Defines detection threshold for absence/presence of features. Feature that
@@ -146,22 +144,19 @@ evaluating overlap between samples. (Default: <code>0</code>)</p></li>
 </ul></dd>
 
 
+<dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
+<dd><p><code>Character scalar</code>. The name to be used to store the result
+in metadata of the output. (Default: <code>method</code>)</p></dd>
+
+
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
 <dd><p><code>Character scalar</code>. Specifies which assay to use for
 calculation. (Default: <code>"counts"</code>)</p></dd>
 
 
-<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
-
-
-<dt id="arg-exprs-values">exprs_values<a class="anchor" aria-label="anchor" href="#arg-exprs-values"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
-
-
-<dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p><code>Character scalar</code>. The name to be used to store the result
-in metadata of the output. (Default: <code>method</code>)</p></dd>
+<dt id="arg-niter">niter<a class="anchor" aria-label="anchor" href="#arg-niter"></a></dt>
+<dd><p>The number of iterations performed. If <code>NULL</code>,
+rarefaction is disabled. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
@@ -169,20 +164,20 @@ in metadata of the output. (Default: <code>method</code>)</p></dd>
 cells in rows. (Default: <code>FALSE</code>)</p></dd>
 
 
-<dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-tree used to calculate the dissimilarity matrix. (Default: <code>"phylo"</code>)</p></dd>
-
-
 <dt id="arg-tree">tree<a class="anchor" aria-label="anchor" href="#arg-tree"></a></dt>
-<dd><p><code>Phylogenetic tree</code>. To be used to calculate the
-dissimilarity matrix. (Default: <code>NULL</code>)</p></dd>
+<dd><p>(Unifrac) <code>phylo</code>. A phylogenetic tree used in calculation.
+(Default: <code>NULL</code>)</p></dd>
+
+
+<dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
+<dd><p>(Unifrac) <code>Character scalar</code>. Specifies the name of the
+tree from <code>rowTree(x)</code> that is used in calculation. Disabled when
+<code>tree</code> is specified. (Default: <code>"phylo"</code>)</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>getDissimilarity</code> returns a sample-by-sample dissimilarity matrix,
-suitable for PCA, PCoA, MDS, NMDS, CCA, RDA, NMF.</p>
+    <p><code>getDissimilarity</code> returns a sample-by-sample dissimilarity matrix.</p>
 <p><code>addDissimilarity</code> returns <code>x</code> that includes dissimilarity matrix
 in its metadata.</p>
     </div>
@@ -194,6 +189,8 @@ similarity is. When using relative abundances, overlap value 1 means that
 all the abundances of features are equal between two samples, and 0 means
 that samples have completely different relative abundances.</p>
 <p>Unifrac is calculated with <code><a href="https://rdrr.io/pkg/rbiom/man/unifrac.html" class="external-link">rbiom:unifrac()</a></code>.</p>
+<p>If rarefaction is enabled, <code><a href="https://rdrr.io/pkg/vegan/man/avgdist.html" class="external-link">vegan:avgdist()</a></code> is
+utilized.</p>
     </div>
     <div id="references">
     <h2>References</h2>
