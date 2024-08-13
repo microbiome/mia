@@ -22,7 +22,7 @@ test_that("Dissimilarity calculation", {
   }
   set.seed(123)
   res1 <- vegan::avgdist(t(mat), distfun = vegdist, dmethod = "euclidean",
-                         sample = as.integer(min(colSums2(mat))), 
+                         sample = min(colSums2(mat)), 
                          iterations = 10, transf = clr)
   set.seed(123)
   res2 <- getDissimilarity(tse_sub, method = "euclidean", niter = 10, 
