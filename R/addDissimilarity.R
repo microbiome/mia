@@ -326,8 +326,6 @@ setMethod(
         args <- c(args, list(method = method))
         res <- do.call(dis.fun, args)
     }
-    # Ensure that the result is in distance matrix format
-    res <- dist(res)
     return(res)
 }
 
