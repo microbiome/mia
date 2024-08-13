@@ -73,7 +73,7 @@ data  send to the individual worker. Only has an effect, if \code{BPPARAM}
 defines more than one worker. (Default: \code{nrow(x)})
 
 \item \code{BPPARAM}: (JSD)
-\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam} object}.
+\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}.
 Specifies whether the calculation should be parallelized.
 
 \item \code{detection}: (Overlap) \code{Numeric scalar}.

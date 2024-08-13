@@ -61,7 +61,7 @@
 #'   defines more than one worker. (Default: \code{nrow(x)})
 #'   
 #'   \item \code{BPPARAM}: (JSD)
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam} object}.
+#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}.
 #'   Specifies whether the calculation should be parallelized.
 #'   
 #'   \item \code{detection}: (Overlap) \code{Numeric scalar}.
@@ -162,7 +162,7 @@ NULL
 #' @rdname getDissimilarity
 #' @export
 setGeneric(
-  "addDissimilarity", signature = c("x"), function(x, method, ...)
+    "addDissimilarity", signature = c("x"), function(x, method, ...)
     standardGeneric("addDissimilarity"))
 
 #' @rdname getDissimilarity
@@ -175,7 +175,7 @@ setMethod(
     # Add matrix to original SE
     x <- .add_values_to_metadata(x, names = name, value = as.matrix(res))
     return(x)
-  }
+    }
 )
 
 #' @rdname getDissimilarity
@@ -292,7 +292,8 @@ setMethod(
     if( !(is.null(niter) || .is_an_integer(niter)) ){
         stop("'niter' must be NULL or an integer.", call. = FALSE)
     }
-    if( !.is_an_integer(sample) ){
+    # sample is only used when niter is specified
+    if( !is.null(niter) && !.is_an_integer(sample) ){
         stop("'sample' must be an integer.", call. = FALSE)
     }
     #
