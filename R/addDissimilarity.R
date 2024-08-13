@@ -283,8 +283,8 @@ setMethod(
 # This function chooses right method and calculates dissimilarity matrix.
 #' @importFrom vegan vegdist avgdist
 .calculate_dissimilarity <- function(
-        mat, method, niter, dis.fun = NULL, sample = min(rowSums2(mat)),
-        ...){
+        mat, method, niter, dis.fun = distfun, distfun = NULL,
+        sample = min(rowSums2(mat)), ...){
     # input check
     if( !(is.null(dis.fun) || is.function(dis.fun)) ){
         stop("'dis.fun' must be NULL or a function.", call. = FALSE)
@@ -315,7 +315,7 @@ setMethod(
     # call the specified function directly.
     if( !is.null(niter) ){
         # Remove arguments that will overlap with arguments added below
-        args <- args[ !names(args) %in% c("dmethod", "distfun", "iterations") ]
+        args <- args[ !names(args) %in% c("dmethod", "iterations") ]
         # Add arguments specific for avgdist
         args <- c(args, list(
             dmethod = method, iterations = niter, sample = sample,
