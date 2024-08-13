@@ -314,9 +314,13 @@ setMethod(
     # function that utilizes the specified dissimilarity function. Otherwise,
     # call the specified function directly.
     if( !is.null(niter) ){
+        # Remove arguments that will overlap with arguments added below
+        args <- args[ !names(args) %in% c("dmethod", "distfun", "iterations") ]
+        # Add arguments specific for avgdist
         args <- c(args, list(
             dmethod = method, iterations = niter, sample = sample,
             distfun = dis.fun))
+        # Calculate dissimilarities
         res <- do.call(avgdist, args)
     } else{
         args <- c(args, list(method = method))
