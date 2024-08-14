@@ -170,8 +170,6 @@
 #' @name .estimate_dominance
 #' @noRd
 #'
-#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-#'
 #' @examples
 #' data(esophagus)
 #'

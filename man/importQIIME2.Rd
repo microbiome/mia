@@ -153,6 +153,3 @@ microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
 \code{\link[=convertFromDADA2]{convertFromDADA2}}
 \code{\link[=importMothur]{importMothur}}
 }
-\author{
-Yang Cao
-}

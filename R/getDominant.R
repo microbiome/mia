@@ -46,8 +46,6 @@
 #' @name getDominant
 #' @export
 #'
-#' @author Leo Lahti, Tuomas Borman and Sudarshan A. Shetty.
-#'
 #' @examples
 #' data(GlobalPatterns)
 #' x <- GlobalPatterns

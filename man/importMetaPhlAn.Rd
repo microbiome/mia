@@ -91,6 +91,3 @@ and strain-level profiling of diverse microbial communities with bioBakery 3.
 \code{\link[=importQIIME2]{importQIIME2}}
 \code{\link[=importMothur]{importMothur}}
 }
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-}

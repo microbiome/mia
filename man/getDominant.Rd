@@ -105,6 +105,3 @@ sim.dom <- getDominant(x, rank="Genus")
 x <- addDominant(x, rank = "Genus", name="dominant_genera")
 colData(x)
 }
-\author{
-Leo Lahti, Tuomas Borman and Sudarshan A. Shetty.
-}

@@ -173,7 +173,6 @@
 #'
 #' @name .estimate_diversity
 #' @noRd
-#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #' 
 #' @examples
 #' data(GlobalPatterns)
