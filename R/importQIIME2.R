@@ -69,6 +69,8 @@
 #' \code{\link[=importMothur]{importMothur}}
 #'
 #' @export
+#' 
+#' @author Yang Cao
 #'
 #' @references
 #' Bolyen E et al. 2019: Reproducible, interactive, scalable and extensible

@@ -127,6 +127,11 @@ Unifrac is calculated with \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
 
 If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
 utilized.
+
+For JSD implementation:
+Susan Holmes \email{susan@stat.stanford.edu}.
+Adapted for phyloseq by Paul J. McMurdie.
+Adapted for mia by Felix G.M. Ernst
 }
 \examples{
 library(mia)
