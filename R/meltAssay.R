@@ -10,9 +10,10 @@
 #' \code{rowData} contains a column \dQuote{FeatureID}, they will be renamed to
 #' \dQuote{SampleID_col} and \dQuote{FeatureID_row}, if row names or column
 #' names are set.
-#' 
-#' @inheritParams calculateJSD
 #'
+#' @inheritParams getDominant 
+#' @inheritParams getDissimilarity
+#' 
 #' @param add.col \code{Logical scalar}. \code{NULL} ,or \code{character vector}. Used to
 #'   select information from the \code{colData} to add to the molten assay data.
 #'   If \code{add.col = NULL} no data will be added, if

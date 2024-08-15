@@ -249,12 +249,12 @@ altExp(tse,"Genus") <- runMDS(altExp(tse,"Genus"),
                               keep_dist = TRUE)
 ```
 
-JSD and UniFrac are implemented in `mia` as well. `calculateJSD` can be used
+JSD and UniFrac are implemented in `mia` as well. `getJSD` can be used
 as a drop-in replacement in the example above (omit the `method` argument as 
 well) to calculate the JSD. For calculating the UniFrac distance via
-`calculateUniFrac` either a `TreeSummarizedExperiment` must be used or a tree
-supplied via the `tree` argument. For more details see `?calculateJSD`,
-`?calculateUnifrac` or `?getDPCoA`.
+`getUniFrac` either a `TreeSummarizedExperiment` must be used or a tree
+supplied via the `tree` argument. For more details see `?getJSD`,
+`?getUnifrac` or `?getDPCoA`.
 
 `runMDS` performs the decomposition. Alternatively `addNMDS` can also be used.
 

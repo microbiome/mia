@@ -3,7 +3,11 @@
 #' These functions calculate the population prevalence for taxonomic ranks in a
 #' \code{\link{SummarizedExperiment-class}} object.
 #'
-#' @inheritParams calculateJSD
+#' @inheritParams getDissimilarity
+#' 
+#' @param x \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.
+#' 
+#' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'
 #' @param detection \code{Numeric scalar}. Detection threshold for absence/presence. 
 #'    If \code{as_relative = FALSE},

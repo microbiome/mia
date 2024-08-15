@@ -42,9 +42,7 @@ summarizeDominance(x, group = NULL, name = "dominant_taxa", ...)
 \S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
 }
 \arguments{
-\item{x}{a numeric matrix with samples as rows or a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
 \item{top}{\code{Numeric scalar}. Determines how many top taxa to return. Default is
 to return top five taxa. (Default: \code{5})}

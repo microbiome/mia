@@ -137,6 +137,17 @@
 \alias{relabundance<-}
 \alias{relabundance,SummarizedExperiment-method}
 \alias{relabundance<-,SummarizedExperiment-method}
+\alias{runOverlap}
+\alias{runOverlap,SummarizedExperiment-method}
+\alias{calculateOverlap}
+\alias{calculateOverlap,SummarizedExperiment-method}
+\alias{calculateJSD}
+\alias{calculateJSD,SummarizedExperiment-method}
+\alias{runJSD}
+\alias{runJSD,SummarizedExperiment-method}
+\alias{calculateUnifrac}
+\alias{calculateUnifrac,TreeSummarizedExperiment-method}
+\alias{runUnifrac}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -408,6 +419,28 @@ relabundance(x) <- value
 \S4method{relabundance}{SummarizedExperiment}(x)
 
 \S4method{relabundance}{SummarizedExperiment}(x) <- value
+
+runOverlap(x, ...)
+
+\S4method{runOverlap}{SummarizedExperiment}(x, ...)
+
+calculateOverlap(x, ...)
+
+\S4method{calculateOverlap}{SummarizedExperiment}(x, ...)
+
+calculateJSD(x, ...)
+
+\S4method{calculateJSD}{SummarizedExperiment}(x, ...)
+
+runJSD(x, ...)
+
+\S4method{runJSD}{SummarizedExperiment}(x, ...)
+
+calculateUnifrac(x, ...)
+
+\S4method{calculateUnifrac}{TreeSummarizedExperiment}(x, ...)
+
+runUnifrac(mat, tree, ...)
 }
 \arguments{
 \item{x}{A
@@ -417,6 +450,10 @@ object.}
 \item{...}{Additional parameters. See dedicated function.}
 
 \item{value}{a matrix to store as the \sQuote{relabundance} assay}
+
+\item{mat}{An abundance matrix}
+
+\item{tree}{A phylogenetic tree}
 }
 \description{
 These functions will be deprecated. Please use other functions instead.
