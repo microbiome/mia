@@ -67,9 +67,9 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 data-toc-skip class="date">2024-08-14</h4>
+            <h4 data-toc-skip class="date">2024-08-15</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/authors.rm/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/wangru/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
 
     </div>
@@ -373,7 +373,7 @@ rarefying.</p>
 TreeSE within a MultiAssayExperiment object.</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://waldronlab.io/MultiAssayExperiment/" class="external-link">MultiAssayExperiment</a></span><span class="op">)</span></span>
-<span><span class="va">mae</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://waldronlab.io/MultiAssayExperiment/reference/MultiAssayExperiment.html" class="external-link">MultiAssayExperiment</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"originalTreeSE"</span> <span class="op">=</span> <span class="va">GlobalPatterns</span>,</span>
+<span><span class="va">mae</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://github.com/waldronlab/MultiAssayExperiment/reference/MultiAssayExperiment.html" class="external-link">MultiAssayExperiment</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"originalTreeSE"</span> <span class="op">=</span> <span class="va">GlobalPatterns</span>,</span>
 <span>                              <span class="st">"subsampledTreeSE"</span> <span class="op">=</span> <span class="va">tse.subsampled</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">mae</span></span></code></pre></div>
 <pre><code><span><span class="co">## A MultiAssayExperiment object of 2 listed</span></span>
@@ -391,7 +391,7 @@ TreeSE within a MultiAssayExperiment object.</p>
 <span><span class="co">##  exportClass() - save data to flat files</span></span></code></pre>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># To extract specifically the subsampled TreeSE</span></span>
-<span><span class="fu"><a href="http://waldronlab.io/MultiAssayExperiment/reference/MultiAssayExperiment-methods.html" class="external-link">experiments</a></span><span class="op">(</span><span class="va">mae</span><span class="op">)</span><span class="op">$</span><span class="va">subsampledTreeSE</span></span></code></pre></div>
+<span><span class="fu"><a href="https://github.com/waldronlab/MultiAssayExperiment/reference/MultiAssayExperiment-methods.html" class="external-link">experiments</a></span><span class="op">(</span><span class="va">mae</span><span class="op">)</span><span class="op">$</span><span class="va">subsampledTreeSE</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
 <span><span class="co">## dim: 12474 25 </span></span>
 <span><span class="co">## metadata(1): rarefyAssay_sample</span></span>
