@@ -53,8 +53,6 @@
 #' 
 #' @return \code{rarefyAssay} return \code{x} with subsampled data.
 #' 
-#' @author Sudarshan A. Shetty and Felix G.M. Ernst
-#' 
 #' @name rarefyAssay
 #'  
 #' @examples

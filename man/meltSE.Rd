@@ -107,6 +107,3 @@ molten_tse <- meltSE(GlobalPatterns,
                         )
 molten_tse
 }
-\author{
-Sudarshan A. Shetty
-}

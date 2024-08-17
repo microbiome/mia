@@ -163,6 +163,3 @@ tse_temp <- mergeSEs(tse, tse1, assay.type = assayNames(tse))
 \item{\code{\link[dplyr:right_join]{right_join}}}
 }
 }
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-}

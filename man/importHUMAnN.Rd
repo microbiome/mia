@@ -73,6 +73,3 @@ microbial communities with bioBakery 3. \emph{eLife}. 10:e65088.
 \code{\link[=importQIIME2]{importQIIME2}}
 \code{\link[=importMothur]{importMothur}}
 }
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-}

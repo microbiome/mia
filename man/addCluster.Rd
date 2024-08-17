@@ -96,6 +96,3 @@ tse <- addCluster(tse,
 colData(tse)$clusters
 
 }
-\author{
-Basil Courbayre
-}
