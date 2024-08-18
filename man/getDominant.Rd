@@ -41,12 +41,10 @@ addDominant(x, name = "dominant_taxa", other.name = "Other", n = NULL, ...)
 )
 }
 \arguments{
-\item{x}{a numeric matrix with samples as rows or a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
-\item{assay.type}{\code{Character scalar}. Specifies the name of the
-assay used in calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -106,7 +104,4 @@ sim.dom <- getDominant(x, rank="Genus")
 # Add information to colData
 x <- addDominant(x, rank = "Genus", name="dominant_genera")
 colData(x)
-}
-\author{
-Leo Lahti, Tuomas Borman and Sudarshan A. Shetty.
 }

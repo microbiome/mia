@@ -20,7 +20,8 @@
 #' before implement this function.
 #'
 #' @inheritParams transformAssay
-#'   
+#' @inheritParams getDominant
+#' 
 #' @param sample \code{Integer scalar}. Indicates the number of counts being 
 #'   simulated i.e. rarefying depth. This can equal to lowest number of total
 #'   counts found in a sample or a user specified number.
@@ -51,8 +52,6 @@
 #' Microbiome. 2017 Dec;5(1):1-8.
 #' 
 #' @return \code{rarefyAssay} return \code{x} with subsampled data.
-#' 
-#' @author Sudarshan A. Shetty and Felix G.M. Ernst
 #' 
 #' @name rarefyAssay
 #'  

@@ -173,7 +173,6 @@
 #'
 #' @name .estimate_diversity
 #' @noRd
-#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #' 
 #' @examples
 #' data(GlobalPatterns)
@@ -262,7 +261,6 @@ NULL
     # Check assay and check that vegan package is available since it is
     # required in some of the diversity calculations.
     .check_assay_present(assay.type, x)
-    .require_package("vegan")
     #
     # Calculate specified diversity indices
     dvrsts <- BiocParallel::bplapply(

@@ -3,7 +3,8 @@
 #' Variety of transformations for abundance data, stored in \code{assay}.
 #' See details for options.
 #'
-#' @inheritParams calculateJSD
+#' @inheritParams getDominant
+#' @inheritParams getDissimilarity
 #'   
 #' @param method \code{Character scalar}. Specifies the transformation
 #'   method.
@@ -73,8 +74,6 @@
 #'
 #' @name transformAssay
 #' @export
-#'
-#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
 #' data(esophagus, package="mia")
