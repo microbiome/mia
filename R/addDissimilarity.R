@@ -87,17 +87,13 @@
 #' 
 #' If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
 #' utilized.
-#'   
-#' @name getDissimilarity
-#' 
-#' @author
-#' For overlap implementation: 
-#' Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #' 
 #' For JSD implementation:
 #' Susan Holmes \email{susan@@stat.stanford.edu}.
 #' Adapted for phyloseq by Paul J. McMurdie.
 #' Adapted for mia by Felix G.M. Ernst
+#'   
+#' @name getDissimilarity
 #' 
 #' @seealso
 #' \url{http://en.wikipedia.org/wiki/Jensen-Shannon_divergence}

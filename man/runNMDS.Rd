@@ -158,6 +158,3 @@ for NMDS component calculation.
 \code{\link[scater:plotReducedDim]{plotMDS}}, to quickly visualize the
 results.
 }
-\author{
-Felix Ernst
-}

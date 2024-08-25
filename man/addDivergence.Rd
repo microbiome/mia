@@ -103,6 +103,3 @@ colData(tse)
 \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
 }
 }
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-}

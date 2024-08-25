@@ -76,6 +76,3 @@ tse
 \code{\link[=convertFromDADA2]{convertFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
 }
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-}
