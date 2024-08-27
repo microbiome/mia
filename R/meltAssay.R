@@ -58,8 +58,6 @@
 #'
 #' @name meltSE
 
-#' @author
-#' Sudarshan A. Shetty
 #'
 #' @examples
 #' data(GlobalPatterns)

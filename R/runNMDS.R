@@ -61,9 +61,6 @@
 #' \code{\link[scater:plotReducedDim]{plotMDS}}, to quickly visualize the
 #' results.
 #'
-#' @author
-#' Felix Ernst
-#'
 #' @examples
 #' # generate some example data
 #' mat <- matrix(1:60, nrow = 6)

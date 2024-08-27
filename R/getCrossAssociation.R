@@ -143,8 +143,6 @@
 #' @name getCrossAssociation
 #' @export
 #'
-#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-#'
 #' @examples
 #' data(HintikkaXOData)
 #' mae <- HintikkaXOData
