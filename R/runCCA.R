@@ -3,7 +3,8 @@
 #' These functions perform Canonical Correspondence Analysis on data stored
 #' in a \code{SummarizedExperiment}.
 #'
-#' @inheritParams calculateJSD
+#' @inheritParams getDominant
+#' @inheritParams getDissimilarity
 #'
 #' @details
 #'   For \code{run*} a
@@ -42,6 +43,8 @@
 #' 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
 #' v with weights Xbar, but the multiplying effect of eigenvalues removed) or
 #' 'u' ((weighted) orthonormal site scores). (Default: \code{'wa'})
+#' 
+#' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #'
 #' @param ... additional arguments passed to vegan::cca or vegan::dbrda and
 #' other internal functions.
@@ -118,7 +121,7 @@
 #' # Plot
 #' plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 #' # A common choice along with PERMANOVA is ANOVA when statistical significance
-#' # of homogeneity of groups is analysed. Moreover, full signficance test results
+#' # of homogeneity of groups is analysed. Moreover, full significance test results
 #' # can be returned.
 #'  tse <- addRDA(
 #'      tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
@@ -172,7 +175,6 @@ setGeneric("addRDA", signature = c("x"),
 
 #' @importFrom stats as.formula
 .calculate_cca <- function(x, formula, variables, scores,  scale = TRUE, ...){
-    .require_package("vegan")
     # input check
     if(!.is_a_bool(scale)){
         stop("'scale' must be TRUE or FALSE.", call. = FALSE)
@@ -320,7 +322,6 @@ runCCA <- function(x,...){
 #' @importFrom vegan sppscores<-
 .calculate_rda <- function(
         x, formula, variables, scores, method = distance, distance = "euclidean", ...){
-    .require_package("vegan")
     #
     # Transpose and ensure that the table is in matrix format
     x <- as.matrix(t(x))
@@ -406,7 +407,7 @@ runCCA <- function(x,...){
         attr <- c(attributes(rda), attr)
         attributes(rda) <- attr
     }
-    # Add object to recucedDIm
+    # Add object to reducedDIm
     reducedDim(tse, name) <- rda
     return(tse)
 }

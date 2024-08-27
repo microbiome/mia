@@ -4,13 +4,22 @@
 #' @name importTaxpasta
 #' 
 #' @details
-#' \code{importTaxpasta} imports data that is returned from TAXonomic Profile
-#' Aggregation and STAndardisation (taxpasta) pipeline. See more information on
+#' \code{importTaxpasta} imports data that is returned from Taxonomic Profile
+#' Aggregation and Standardization (taxpasta) pipeline. See more information on
 #' taxpasta from
 #' \href{https://taxpasta.readthedocs.io/en/latest/}{taxpasta documentation}.
 #'
 #' @param file \code{Character scalar}. Defines the file path to a
 #' BIOM file.
+#' @param add.tree \code{Logical scalar}. Specifies whether to calculate 
+#' and add hierarchy tree using \code{\link{addHierarchyTree}}.
+#' (Default: \code{TRUE})
+#' 
+#' @param ... additional arguments
+#' \itemize{
+#'   \item \code{set.ranks}: \code{Logical scalar}. Should column names of
+#'   taxonomy table be treated as taxonomy ranks? (Default: \code{FALSE})
+#' }
 #'
 #' @return A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
 #'
@@ -19,8 +28,10 @@
 #' \dontrun{
 #' # File path to BIOM file
 #' file_path <- system.file("extdata", "complete.biom", package = "mia")
-#' # Import BIOM as TreeSE
-#' tse <- importTaxpasta(file_path)
+#' # Import BIOM as TreeSE, and set ranks.
+#' tse <- importTaxpasta(file_path, set.ranks = TRUE)
+#' # Import BIOM as TreeSE without adding hierarchy tree
+#' tse <- importTaxpasta(file_path, add.tree = FALSE)
 #' }
 #' 
 #' @seealso
@@ -34,17 +45,20 @@ NULL
 #' @export
 #'
 #' @importFrom SummarizedExperiment rowData
-importTaxpasta <- function(file) {
+importTaxpasta <- function(file, add.tree = TRUE, ...) {
     # Check dependencies.
     .require_package("rhdf5")
     .require_package("biomformat")
     
     # Validate the input.
     if(!.is_non_empty_string(file) ){
-        stop("'filename' must be a single character value.", call. = FALSE)
+        stop("'filename' must be a single non-empty character value.", call. = FALSE)
     }
     if( !file.exists(file) ){
         stop("'", file, "' not found.", call. = FALSE)
+    }
+    if (!.is_a_bool(add.tree)) {
+        stop("'add.tree' must be TRUE or FALSE.", call. = FALSE)
     }
     
     # We read our own HDF5 array to later be able to read observation group
@@ -60,10 +74,10 @@ importTaxpasta <- function(file) {
         ranks <- .get_ranks(raw)
         # Create rowData and rowTree
         rowData(tse) <- .create_row_data(biom, ranks)
-        .set_ranks_based_on_rowdata(tse, set.ranks = TRUE)
-        tse <- addHierarchyTree(tse)
+        .set_ranks_based_on_rowdata(tse, ...)
+	if (add.tree) tse <- addHierarchyTree(tse)
         # Agglomerate to all existing ranks
-        tse <- agglomerateByRanks(tse, agglomerate.tree = TRUE)
+        tse <- agglomerateByRanks(tse, update.tree = TRUE)
     } else{
         # Without taxonomic information, we return a simple TreeSE.
         warning(
@@ -104,6 +118,8 @@ importTaxpasta <- function(file) {
     format <- sprintf("Biological Observation Matrix %s.%s", vs[1], vs[2])
     format_url <- attr(h5array, "format-url")
     type <- attr(h5array, "type")
+    # this bc biomformat does not allow empty 'type' field
+    type <- ifelse(type == "", "OTU table", type)
     generated_by <- attr(h5array, "generated-by")
     date <- attr(h5array, "creation-date")
     matrix_type <- "dense"

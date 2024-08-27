@@ -4,6 +4,10 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #' @param value a matrix to store as the \sQuote{relabundance} assay
+#' 
+#' @param mat An abundance matrix
+#' 
+#' @param tree A phylogenetic tree
 #'    
 #' @param ... Additional parameters. See dedicated function.
 #' 
@@ -1179,3 +1183,98 @@ setReplaceMethod("relabundance", signature = c(x = "SummarizedExperiment"),
         x
     }
 )
+
+#' @rdname deprecate
+#' @export
+setGeneric("runOverlap", signature = c("x"),
+          function(x, ...)
+            standardGeneric("runOverlap"))
+
+#' @rdname deprecate
+#' @export
+setMethod("runOverlap", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(msg = paste0("'runOverlap' is deprecated\n",
+                               "Use 'addDissimilarity' with parameter ",
+                               "method = 'overlap' instead."))
+        addDissimilarity(x, method = "overlap", ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("calculateOverlap", signature = c("x"),
+           function(x, ...)
+             standardGeneric("calculateOverlap"))
+
+#' @rdname deprecate
+#' @export
+setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
+          function(x, ...){
+            .Deprecated(msg = paste0("'calculateOverlap' is deprecated\n",
+                                     "Use 'getDissimilarity' with parameter ",
+                                     "method = 'overlap' instead."))
+            getDissimilarity(x, method = "overlap", ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("calculateJSD", signature = c("x"),
+           function(x, ...)
+             standardGeneric("calculateJSD"))
+
+#' @rdname deprecate
+#' @export
+setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
+          function(x, ...){
+            .Deprecated(msg = paste0("'calculateJSD' is deprecated\n",
+                                     "Use 'getDissimilarity' with parameter ",
+                                     "method = 'jsd' instead."))
+            getDissimilarity(x, method = "jsd", ...)
+          }
+          
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("runJSD", signature = c("x"),
+           function(x, ...)
+             standardGeneric("runJSD"))
+
+#' @rdname deprecate
+#' @export
+setMethod("runJSD", signature = c(x = "SummarizedExperiment"),
+          function(x, ...){
+            .Deprecated(msg = paste0("'runJSD' is deprecated\n",
+                                     "Use 'getDissimilarity' with parameter ",
+                                     "method = 'jsd' instead."))
+            getDissimilarity(x, method = "jsd", ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("calculateUnifrac", signature = c("x"),
+           function(x, ...)
+             standardGeneric("calculateUnifrac"))
+
+#' @rdname deprecate
+#' @export
+setMethod("calculateUnifrac", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, ...){
+            .Deprecated(msg = paste0("'calculateUnifrac' is deprecated\n",
+                                     "Use 'getDissimilarity' with parameter ",
+                                     "method = 'unifrac' instead."))
+            getDissimilarity(x, method = "unifrac", ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+runUnifrac <- function(mat, tree, ...){
+  .Deprecated(msg = paste0("'runUnifrac' is deprecated\n",
+                           "Use 'getDissimilarity' with parameter ",
+                           "method = 'unifrac' instead."))
+  getDissimilarity(t(mat), tree = tree, method = "unifrac", ...)
+}

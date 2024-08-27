@@ -56,9 +56,7 @@ addNMDS(x, ..., altexp = NULL, name = "NMDS")
 runNMDS(x, ...)
 }
 \arguments{
-\item{x}{a numeric matrix with samples as rows or a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
 \item{...}{additional arguments to pass to \code{FUN} and
 \code{nmds.fun}.}
@@ -86,11 +84,11 @@ integer vector of row indices or a logical vector. (Default: \code{NULL})}
 
 \item{subset_row}{Deprecated. Use \code{subset.row} instead.}
 
-\item{scale}{\code{Logical scalar}. Sshould the expression values be standardized?
+\item{scale}{\code{Logical scalar}. Should the expression values be standardized?
 (Default: \code{FALSE})}
 
-\item{transposed}{\code{Logical scalar}. Is x transposed with samples in rows?
-(Default: \code{FALSE})}
+\item{transposed}{\code{Logical scalar}. Specifies if x is transposed with
+cells in rows. (Default: \code{FALSE})}
 
 \item{keep.dist}{\code{Logical scalar}. Indicates whether the \code{dist} object
 calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
@@ -99,8 +97,8 @@ the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}. (Default:
 
 \item{keep_dist}{Deprecated. Use \code{keep.dist} instead.}
 
-\item{assay.type}{\code{Character scalar}. Specifies the name of the
-assay used in calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -118,7 +116,7 @@ dimred is specified.}
 alternative experiment containing the input data. (Default: \code{NULL})}
 
 \item{name}{\code{Character scalar}. A name for the column of the
-\code{colData} where results will be stored. (Default: \code{"DPCoA"})}
+\code{colData} where results will be stored. (Default: \code{"NMDS"})}
 }
 \value{
 For \code{getNMDS}, a matrix is returned containing the MDS
@@ -159,7 +157,4 @@ for NMDS component calculation.
 
 \code{\link[scater:plotReducedDim]{plotMDS}}, to quickly visualize the
 results.
-}
-\author{
-Felix Ernst
 }

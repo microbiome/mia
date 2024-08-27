@@ -29,14 +29,12 @@ mergeSEs(x, ...)
 \S4method{mergeSEs}{list}(x, ...)
 }
 \arguments{
-\item{x}{a numeric matrix with samples as rows or a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
 \item{...}{optional arguments (not used).}
 
-\item{assay.type}{\code{Character scalar}. Specifies the name of the
-assay used in calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -164,7 +162,4 @@ tse_temp <- mergeSEs(tse, tse1, assay.type = assayNames(tse))
 \item{\code{\link[dplyr:left_join]{left_join}}}
 \item{\code{\link[dplyr:right_join]{right_join}}}
 }
-}
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 }

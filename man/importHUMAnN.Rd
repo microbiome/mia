@@ -16,7 +16,7 @@ path of the sample metadata file. The file must be in \code{tsv} format
 
 \item{...}{additional arguments:
 \itemize{
-\item \code{assay.type}:  \code{Character scalar}. Specifes the name of the assy
+\item \code{assay.type}:  \code{Character scalar}. Specifies the name of the assy
 used in calculation.
 (Default: \code{"counts"})
 \item \code{prefix.rm}:  \code{Logical scalar}. Should
@@ -72,7 +72,4 @@ microbial communities with bioBakery 3. \emph{eLife}. 10:e65088.
 \code{\link[=convertFromDADA2]{convertFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
 \code{\link[=importMothur]{importMothur}}
-}
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 }

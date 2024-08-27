@@ -4,7 +4,8 @@
 #' \code{ade4} package in typical fashion. Results are stored in the
 #' \code{reducedDims} and are available for all the expected functions.
 #'
-#' @inheritParams calculateUnifrac
+#' @inheritParams getDominant
+#' @inheritParams getDissimilarity
 #'
 #' @details
 #'   For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
@@ -27,7 +28,7 @@
 #' 
 #' @param subset_row Deprecated. Use \code{subset.row} instead.
 #'
-#' @param scale \code{Logical scalar}. Sshould the expression values be standardized?
+#' @param scale \code{Logical scalar}. Should the expression values be standardized?
 #' (Default: \code{FALSE})
 #' 
 #' @param name \code{Character scalar}. A name for the column of the 
@@ -35,6 +36,14 @@
 #' 
 #' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an 
 #'   alternative experiment containing the input data. (Default: \code{NULL})
+#'   
+#' @param exprs_values Deprecated. Use \code{assay.type} instead.
+#' 
+#' @param tree.name \code{Character scalar}. Specifies the name of the
+#'   tree to be included in the phyloseq object that is created, 
+#'   (Default: \code{"phylo"})
+#'   
+#' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
 #' @param ... Currently not used.
 #'

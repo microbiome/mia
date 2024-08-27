@@ -204,7 +204,7 @@
     # Check that MARGIN is correct
     MARGIN <- .check_MARGIN(MARGIN)
     #
-    # If trasnpose.MARGIN is TRUE, transpose MARGIN, i.e. 1 --> 2, and 2 --> 1.
+    # If transpose.MARGIN is TRUE, transpose MARGIN, i.e. 1 --> 2, and 2 --> 1.
     # In certain functions, values calculated by rows (MARGIN=1) are stored to
     # colData (MARGIN=2) and vice versa.
     if( transpose.MARGIN ){
@@ -384,6 +384,10 @@
             "SummarizedExperiment does not have reducedDims slot. ",
             "Therefore, it is converted to TreeSummarizedExperiment.",
             call. = FALSE)
+    }
+    if( !identical(rownames(as.matrix(values)), colnames(x)) ){
+        stop("Rownames of the matrix should match with colnames(x).",
+             " The result is not added to reducedDims.")
     }
     # Throw warning if values of reducedDim are overwritten
     if( name %in% names(reducedDims(x)) ){

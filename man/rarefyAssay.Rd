@@ -30,12 +30,10 @@ rarefyAssay(
 )
 }
 \arguments{
-\item{x}{a numeric matrix with samples as rows or a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
-\item{assay.type}{\code{Character scalar}. Specifies the name of the
-assay used in calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -106,7 +104,4 @@ Weiss S, Xu ZZ, Peddada S, Amir A, Bittinger K, Gonzalez A, Lozupone C,
 Zaneveld JR, Vázquez-Baeza Y, Birmingham A, Hyde ER. Normalization and
 microbial differential abundance strategies depend upon data characteristics.
 Microbiome. 2017 Dec;5(1):1-8.
-}
-\author{
-Sudarshan A. Shetty and Felix G.M. Ernst
 }

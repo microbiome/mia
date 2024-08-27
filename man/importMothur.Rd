@@ -30,7 +30,7 @@ documentation. (Default: \code{NULL}).}
 \item{designFile}{Deprecated. Use \code{col.file} instead.}
 
 \item{col.file}{\code{Character scalar}. Defines file path of
-the sample metadata to be imported. The File has to be in \code{desing
+the sample metadata to be imported. The File has to be in \code{design
   file} format as defined in Mothur documentation. (Default: \code{NULL}).}
 }
 \value{
@@ -75,7 +75,4 @@ tse
 \code{\link[=convertFromBIOM]{convertFromBIOM}}
 \code{\link[=convertFromDADA2]{convertFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
-}
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 }

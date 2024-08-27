@@ -40,9 +40,7 @@ addDPCoA(x, ..., altexp = NULL, name = "DPCoA")
 runDPCoA(x, ...)
 }
 \arguments{
-\item{x}{a numeric matrix with samples as rows or a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
 \item{y}{a \code{dist} or a symmetric \code{matrix} compatible with
 \code{ade4:dpcoa}}
@@ -62,21 +60,22 @@ integer vector of row indices or a logical vector. (Default: \code{NULL})}
 
 \item{subset_row}{Deprecated. Use \code{subset.row} instead.}
 
-\item{scale}{\code{Logical scalar}. Sshould the expression values be standardized?
+\item{scale}{\code{Logical scalar}. Should the expression values be standardized?
 (Default: \code{FALSE})}
 
-\item{transposed}{\code{Logical scalar}. Is x transposed with samples in rows?
-(Default: \code{FALSE})}
+\item{transposed}{\code{Logical scalar}. Specifies if x is transposed with
+cells in rows. (Default: \code{FALSE})}
 
-\item{assay.type}{\code{Character scalar}. Specifies the name of the
-assay used in calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
 \item{tree.name}{\code{Character scalar}. Specifies the name of the
-tree used in calculation. (Default: \code{"phylo"})}
+tree to be included in the phyloseq object that is created,
+(Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 

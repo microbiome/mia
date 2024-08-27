@@ -1,11 +1,12 @@
 #' Latent Dirichlet Allocation
 #'
 #' These functions perform Latent Dirichlet Allocation on data stored in a 
-#'  \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'  object.
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' object.
 #' 
-#' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'  object.
+#' @param x a
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' object.
 #'   
 #' @param k \code{Integer vector}. A number of latent vectors/topics. 
 #'  (Default: \code{2})
@@ -26,16 +27,18 @@
 #' 
 #' @return 
 #' For \code{getLDA}, the ordination matrix with feature loadings matrix
-#'  as attribute \code{"loadings"}.
+#' as attribute \code{"loadings"}.
 #'  
-#' For \code{addLDA}, a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'  object is returned containing the ordination matrix in reducedDims(..., name)
-#'  with feature loadings matrix as attribute \code{"loadings"}.
+#' For \code{addLDA}, a
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' object is returned containing the ordination matrix in
+#' \code{reducedDim(..., name)} with feature loadings matrix as attribute
+#' \code{"loadings"}.
 #'  
 #' @details 
 #' The functions \code{getLDA} and \code{addLDA} internally use 
-#'  \code{\link[topicmodels:LDA]{LDA}} to compute the ordination matrix and 
-#'  feature loadings.
+#' \code{\link[topicmodels:LDA]{LDA}} to compute the ordination matrix and 
+#' feature loadings.
 #'  
 #' @name addLDA
 #' 
@@ -63,15 +66,13 @@ NULL
 
 #' @rdname addLDA
 #' @export
-setGeneric("getLDA", signature = c("x"),
-           function(x, ...)
-             standardGeneric("getLDA"))
+setGeneric(
+    "getLDA", signature = c("x"), function(x, ...) standardGeneric("getLDA"))
 
 #' @rdname addLDA
 #' @export
-setGeneric("addLDA", signature = c("x"),
-           function(x, ...)
-             standardGeneric("addLDA"))
+setGeneric(
+    "addLDA", signature = c("x"), function(x, ...) standardGeneric("addLDA"))
 
 #' @export
 #' @rdname addLDA

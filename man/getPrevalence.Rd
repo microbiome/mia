@@ -102,9 +102,7 @@ getPrevalentAbundance(
 \S4method{getPrevalentAbundance}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts", ...)
 }
 \arguments{
-\item{x}{a numeric matrix with samples as rows or a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
 \item{...}{additional arguments
 \itemize{
@@ -139,8 +137,8 @@ detection and prevalence cutoffs be included? (Default: \code{FALSE})}
 \item{na.rm}{\code{Logical scalar}. Should NA values be omitted when calculating
 prevalence? (Default: \code{TRUE})}
 
-\item{assay.type}{\code{Character scalar}. Specifies the name of the
-assay used in calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -207,7 +205,7 @@ prevalence.frequency <- getPrevalence(tse,
                                       sort = TRUE)
 head(prevalence.frequency)
 
-# Get prevalence estimates for phylums
+# Get prevalence estimates for phyla
 # - the getPrevalence function itself always returns population frequencies
 prevalence.frequency <- getPrevalence(tse,
                                       rank = "Phylum",
@@ -276,9 +274,4 @@ To cite the R package, see citation('mia')
 \seealso{
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
 \code{\link[=getTop]{getTop}}
-}
-\author{
-Leo Lahti
-For \code{getPrevalentAbundance}: Leo Lahti and Tuomas Borman.
-Contact: \url{microbiome.github.io}
 }

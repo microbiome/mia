@@ -135,8 +135,6 @@
 #' @name .estimate_richness
 #' @noRd
 #'
-#' @author Leo Lahti. Contact: \url{microbiome.github.io}
-#'
 #' @examples
 #' data(esophagus)
 #'

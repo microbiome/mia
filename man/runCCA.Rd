@@ -66,9 +66,7 @@ calculateRDA(x, ...)
 runRDA(x, ...)
 }
 \arguments{
-\item{x}{a numeric matrix with samples as rows or a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
 \item{...}{additional arguments passed to vegan::cca or vegan::dbrda and
 other internal functions.
@@ -112,8 +110,8 @@ into a CA analysis and dbRDA into PCoA/MDS.}
 multivariate homogeneity of group dispersions be performed.
 (Default: \code{TRUE})}
 
-\item{assay.type}{\code{Character scalar}. Specifies the name of the
-assay used in calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -188,7 +186,7 @@ tse <- addRDA(
 # Plot
 plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 # A common choice along with PERMANOVA is ANOVA when statistical significance
-# of homogeneity of groups is analysed. Moreover, full signficance test results
+# of homogeneity of groups is analysed. Moreover, full significance test results
 # can be returned.
  tse <- addRDA(
      tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
