@@ -10,7 +10,3 @@
 docs/
 .DS_Store
 mia.BiocCheck/
-renv/
-renv.lock
-.Rprofile
-.idea

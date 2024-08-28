@@ -9,7 +9,7 @@ transformAssay(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "css", "css_fast", "frequency", "hellinger",
+  method = c("alr", "chi.square", "clr", "css", "css.fast", "frequency", "hellinger",
     "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr",
     "relabundance", "rrank", "standardize", "total", "z"),
   MARGIN = "samples",
@@ -22,7 +22,7 @@ transformAssay(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "css", "css_fast", "frequency", "hellinger",
+  method = c("alr", "chi.square", "clr", "css", "css.fast", "frequency", "hellinger",
     "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr",
     "relabundance", "rrank", "standardize", "total", "z"),
   MARGIN = "samples",
@@ -57,12 +57,22 @@ When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.
 (Default: \code{FALSE}).}
 
-\item{...}{additional arguments passed on to \code{vegan:decostand}:
+\item{...}{additional arguments.
 \itemize{
-\item \code{reference}: \code{Character scalar}. use to
+\item \code{reference}: \code{Character scalar}. Used to
 to fill reference sample's column in returned assay when calculating alr.
 (Default: \code{NA})
 \item \code{ref_vals} Deprecated. Use \code{reference} instead.
+\item \code{css.percentile}: \code{Numeric scalar}.  Used to set the
+percentile value that calculates the scaling factors in the css normalization.
+(Default: \code{"0.5"})
+\item \code{scaling}: \code{Integer scalar}. Adjusts the normalization scale
+by dividing the calculated scaling factors, effectively changing
+the magnitude of the normalized counts. (Default: \code{"1000"}).
+\item \code{rel}: \code{Numeric scalar}. Specifies relative difference
+threshold and determines the first point where the relative change in
+differences between consecutive quantiles exceeds this threshold.
+(Default: \code{"0.1"}).
 }}
 }
 \value{
@@ -86,39 +96,23 @@ The available transformation methods include:
 
 \itemize{
 
-\item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log', 'normalize', 'pa', 'rank', 'rclr'
+\item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
+'normalize', 'pa', 'rank', 'rclr'
 'relabundance', 'rrank', 'standardize', 'total': please refer to
 \code{\link[vegan:decostand]{decostand}} for details.
 
 \item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data
-by accounting for differences in library sizes. \link{Paulson et al. (2013) Differential abundance analysis for microbial marker-gene surveys}
-(https://doi.org/10.1038/nmeth.2658) outlines this in more detail.
+by accounting for differences in library sizes. It's important to note that we used
+\code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}
+for the css implementation.
 
-Also, please note, the \code{css_percentile} additional argument is used to set
-the percentile value that calculates the scaling factors in the css normalization.
-(default 0.5). Furthermore, the \code{scaling_constant} argument adjusts the
-normalization scale by dividing the calculated scaling factors, effectively changing
-the magnitude of the normalized counts. (default 1000).
-
-It's also important to note that we used the \link{\pkg{metagenomeSeq}}
-(https://www.bioconductor.org/packages/release/bioc/html/metagenomeSeq.html)
-source code to help with the css implementation.
-
-\item 'css_fast': This method implements the \link{\pkg{metagenomeSeq}}
-(https://www.bioconductor.org/packages/release/bioc/html/metagenomeSeq.html)
-\code{cumNormStatFast} approach for determining the normalization percentile for
-summing and scaling counts. It utilizes row means for reference, allowing for
-faster computation compared to the traditional method.
-
-It is essentially a fast variant of CSS, as it determines a more optimal
-percentile for CSS normalization, using row means for quick computation. This
-then yields better normalization results.
-
-Just as with the base css method, \code{scaling_constant} is an optional
-additional arg. Also, \code{rel} is another additional arg just for the
-\code{css_fast} method. It represents a relative difference threshold and
-determines the first point where the relative change in differences between
-consecutive quantiles exceeds this threshold. (default 0.1).
+\item 'css.fast': This method implements the
+\code{\link[metagenomeSeq:cumNormStatFast]{cumNormStatFast}}
+approach for determining the normalization percentile for summing and scaling
+counts. It utilizes row means for reference, allowing for faster computation
+compared to the traditional method. It is essentially a fast variant of CSS,
+as it determines a more optimal percentile for CSS normalization, using row
+means for quick computation. This then yields better normalization results.
 
 \item 'log10': log10 transformation can be used for reducing the skewness
 of the data.
@@ -157,8 +151,8 @@ tse <- transformAssay(tse, method = "css")
 head(assay(tse, "css"))
 
 # Perform CSS fast variant normalization.
-tse <- transformAssay(tse, method = "css_fast")
-head(assay(tse, "css_fast"))
+tse <- transformAssay(tse, method = "css.fast")
+head(assay(tse, "css.fast"))
 
 # With MARGIN, you can specify the if transformation is done for samples or
 # for features. Here Z-transformation is done feature-wise.
@@ -181,4 +175,10 @@ head(assay(tse, "rank"))
 assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(
     assay(tse, "counts"), ties.method = "average", preserveShape = TRUE)  
 
+}
+\references{
+Paulson, J., Stine, O., Bravo, H. et al. (2013)
+Differential abundance analysis for microbial marker-gene surveys
+\emph{Nature Methods} 10, 1200–1202.
+doi:10.1038/nmeth.2658
 }

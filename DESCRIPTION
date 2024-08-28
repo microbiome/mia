@@ -86,7 +86,6 @@ Imports:
     bluster,
     MatrixGenerics,
     mediation,
-    metagenomeSeq,
     rbiom
 Suggests:
     testthat,
@@ -105,7 +104,8 @@ Suggests:
     rhdf5,
     topicmodels,
     topicdoc,
-    NMF
+    NMF,
+    metagenomeSeq
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
