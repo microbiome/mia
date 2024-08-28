@@ -2,10 +2,25 @@
 % Please edit documentation in R/transformCounts.R
 \name{transformAssay}
 \alias{transformAssay}
+\alias{transformAssay,SingleCellExperiment-method}
 \alias{transformAssay,SummarizedExperiment-method}
 \title{Transform assay}
 \usage{
 transformAssay(
+  x,
+  assay.type = "counts",
+  assay_name = NULL,
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
+    "standardize", "total", "z"),
+  MARGIN = "samples",
+  name = method,
+  pseudocount = FALSE,
+  altexp = NULL,
+  ...
+)
+
+\S4method{transformAssay}{SingleCellExperiment}(
   x,
   assay.type = "counts",
   assay_name = NULL,
