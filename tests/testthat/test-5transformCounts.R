@@ -72,8 +72,7 @@ test_that("transformAssay", {
         
         ############################ CSS ######################################
         # Check dependency
-        .require_package("rhdf5")
-        library(metagenomeSeq)
+        skip_if_not(require("metagenomeSeq", quietly = TRUE))
         # Define counts matrix for the css and css.fast testing
         counts_matrix <- as.matrix(assay(tse, "counts"))
         
