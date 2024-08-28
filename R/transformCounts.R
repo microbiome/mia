@@ -405,7 +405,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     }
     # Calculate quantiles. Take into account only positive, found features
     quantiles <- colQuantiles(
-        mat, prob = seq(0, 1, length.out = max(found_features)), na.rm = TRUE)
+        mat, probs = seq(0, 1, length.out = max(found_features)), na.rm = TRUE)
     quantiles <- t(quantiles)
     # Sort the columns based on abundance
     mat <- apply(mat, 2, function(col){
