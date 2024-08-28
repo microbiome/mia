@@ -1,5 +1,4 @@
 context("transformAssay")
-library(metagenomeSeq)
 
 test_that("transformAssay", {
     testTransformations <- function(tse){
@@ -72,6 +71,9 @@ test_that("transformAssay", {
                      }), check.attributes = FALSE)
         
         ############################ CSS ######################################
+        # Check dependency
+        .require_package("rhdf5")
+        library(metagenomeSeq)
         # Define counts matrix for the css and css.fast testing
         counts_matrix <- as.matrix(assay(tse, "counts"))
         
@@ -452,4 +454,3 @@ test_that("transformAssay", {
     assay(tse,"counts") <- DelayedArray(assay(tse,"counts"))
     testTransformations(tse)
 })
-

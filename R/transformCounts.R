@@ -410,6 +410,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     # Sort the columns based on abundance
     mat <- apply(mat, 2, function(col){
         col[ is.na(col) ] <- 0
+        col <- as.array(col)
         col <- sort(col)
         return(col)
     })
