@@ -105,7 +105,6 @@ Suggests:
     topicmodels,
     topicdoc,
     NMF,
-    metagenomeSeq
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
