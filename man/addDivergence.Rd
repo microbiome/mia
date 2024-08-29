@@ -3,32 +3,39 @@
 \name{addDivergence}
 \alias{addDivergence}
 \alias{addDivergence,SummarizedExperiment-method}
+\alias{getDivergence}
+\alias{getDivergence,SummarizedExperiment-method}
 \title{Estimate divergence}
 \usage{
-addDivergence(
+addDivergence(x, name = "divergence", ...)
+
+\S4method{addDivergence}{SummarizedExperiment}(x, name = "divergence", ...)
+
+getDivergence(
   x,
   assay.type = assay_name,
   assay_name = "counts",
-  name = "divergence",
   reference = "median",
-  FUN = vegan::vegdist,
   method = "bray",
   ...
 )
 
-\S4method{addDivergence}{SummarizedExperiment}(
+\S4method{getDivergence}{SummarizedExperiment}(
   x,
   assay.type = assay_name,
   assay_name = "counts",
-  name = "divergence",
   reference = "median",
-  FUN = vegan::vegdist,
   method = "bray",
   ...
 )
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
+
+\item{name}{a name for the column of the colData the results should be
+stored in. By default, \code{name} is \code{"divergence"}.}
+
+\item{...}{optional arguments}
 
 \item{assay.type}{the name of the assay used for calculation of the
 sample-wise estimates.}
@@ -38,24 +45,19 @@ assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{name}{a name for the column of the colData the results should be
-stored in. By default, \code{name} is \code{"divergence"}.}
-
 \item{reference}{a numeric vector that has length equal to number of
 features, or a non-empty character value; either 'median' or 'mean'.
 \code{reference} specifies the reference that is used to calculate
 \code{divergence}. by default, \code{reference} is  \code{"median"}.}
 
-\item{FUN}{a \code{function} for distance calculation. The function must
-expect the input matrix as its first argument. With rows as samples
-and columns as features. By default, \code{FUN} is
-\code{vegan::vegdist}.}
-
 \item{method}{a method that is used to calculate the distance. Method is
 passed to the function that is specified by \code{FUN}. By default,
 \code{method} is \code{"bray"}.}
 
-\item{...}{optional arguments}
+\item{FUN}{a \code{function} for distance calculation. The function must
+expect the input matrix as its first argument. With rows as samples
+and columns as features. By default, \code{FUN} is
+\code{vegan::vegdist}.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named \code{*name*}

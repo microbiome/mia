@@ -76,5 +76,28 @@ test_that("divergence estimates", {
                        FUN = vegan::vegdist,
                        method = "chao"))$divergence, 6)),
     round(c(0.00000000, 0.10115766, 0.08239422)),6)
-
+  
+  # Check different input types for reference
+  sample <- sample(colnames(tse), 1)
+  tse[["ref_name"]] <- rep(sample, ncol(tse))
+  in_coldata <- getDivergence(tse, reference = "ref_name")
+  single_sample <- getDivergence(tse, reference = sample)
+  as_num_vector <- getDivergence(tse, reference = assay(tse)[, sample])
+  as_char_vector <- getDivergence(tse, reference = rep(sample, ncol(tse)))
+  expect_equal(in_coldata, single_sample)
+  expect_equal(single_sample, as_num_vector)
+  expect_equal(as_num_vector, as_char_vector)
+  
+  # Check that divergence is calculated correctly if we have different reference
+  # samples for each sample.
+  # Assign reference randomly
+  references <- sample(colnames(tse), ncol(tse), replace = TRUE)
+  test_values <-getDivergence(tse, reference = references)
+  # Get reference values
+  ref_values <- sapply(seq_len(ncol(tse)), function(i){
+    ref <- references[[i]]
+    val <- getDivergence(tse, reference = ref)[[i]]
+    return(val)
+  })
+  expect_equal(test_values, ref_values)
 })
