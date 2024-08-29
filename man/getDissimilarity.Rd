@@ -11,13 +11,13 @@
 \usage{
 addDissimilarity(x, method, ...)
 
-\S4method{addDissimilarity}{SummarizedExperiment}(x, method, name = method, ...)
+\S4method{addDissimilarity}{SummarizedExperiment}(x, method = "bray", name = method, ...)
 
 getDissimilarity(x, method, ...)
 
 \S4method{getDissimilarity}{SummarizedExperiment}(
   x,
-  method,
+  method = "bray",
   assay.type = "counts",
   niter = NULL,
   transposed = FALSE,
@@ -26,21 +26,21 @@ getDissimilarity(x, method, ...)
 
 \S4method{getDissimilarity}{TreeSummarizedExperiment}(
   x,
-  method,
+  method = "bray",
   assay.type = "counts",
   niter = NULL,
   transposed = FALSE,
   ...
 )
 
-\S4method{getDissimilarity}{ANY}(x, method, niter = NULL, ...)
+\S4method{getDissimilarity}{ANY}(x, method = "bray", niter = NULL, ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 or \code{matrix}.}
 
 \item{method}{\code{Character scalar}. Specifies which dissimilarity to
-calculate.}
+calculate. (Default: \code{"bray"})}
 
 \item{...}{other arguments passed onto \code{\link[vegan:avgdist]{avgdist}},
 \code{\link[vegan:vegdist]{vegdist}}, or onto mia internal functions:

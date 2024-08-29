@@ -209,6 +209,7 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
 }
 
 # For each sample-pair, this function calculates dissimilarity.
+#' @importFrom dplyr mutate
 .calc_divergence <- function(mat, reference, method, ...){
     # Create sample-pair data.frame
     reference <- data.frame(sample = colnames(mat), reference = reference)

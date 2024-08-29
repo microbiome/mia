@@ -45,10 +45,9 @@ assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{reference}{a numeric vector that has length equal to number of
-features, or a non-empty character value; either 'median' or 'mean'.
-\code{reference} specifies the reference that is used to calculate
-\code{divergence}. by default, \code{reference} is  \code{"median"}.}
+\item{reference}{\code{Character scalar}. A column name from
+\code{colData(x)} or either \code{"mean"} or \code{"median"}.
+(Default: \code{"median"})}
 
 \item{method}{a method that is used to calculate the distance. Method is
 passed to the function that is specified by \code{FUN}. By default,
@@ -84,10 +83,13 @@ tse <- addDivergence(tse)
 
 # The method that are used to calculate distance in divergence and 
 # reference can be specified. Here, euclidean distance and dist function from 
-# stats package are used. Reference is the first sample.
-tse <- addDivergence(tse, name = "divergence_first_sample", 
-                          reference = assays(tse)$counts[,1], 
-                          FUN = stats::dist, method = "euclidean")
+# stats package are used. Reference is the first sample. It is recommended
+# to add reference to colData.
+tse[["reference"]] <- rep(colnames(tse)[[1]], ncol(tse))
+tse <- addDivergence(
+    tse, name = "divergence_first_sample", 
+    reference = "reference",
+    method = "euclidean")
 
 # Reference can also be median or mean of all samples. 
 # By default, divergence is calculated by using median. Here, mean is used.
