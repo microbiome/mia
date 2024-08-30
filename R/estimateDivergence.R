@@ -2,31 +2,15 @@
 #'
 #' Estimate divergence against a given reference sample.
 #' 
+#' @inheritParams addDissimilarity
+#' 
 #' @param x a \code{\link{SummarizedExperiment}} object.
-#'
-#' @param assay.type the name of the assay used for calculation of the
-#'   sample-wise estimates.
 #'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'
-#' @param name a name for the column of the colData the results should be
-#'   stored in. By default, \code{name} is \code{"divergence"}.
-#'   
 #' @param reference \code{Character scalar}. A column name from
 #' \code{colData(x)} or either \code{"mean"} or \code{"median"}.
 #' (Default: \code{"median"})
-#'   
-#' @param FUN a \code{function} for distance calculation. The function must
-#'   expect the input matrix as its first argument. With rows as samples 
-#'   and columns as features. By default, \code{FUN} is
-#'   \code{vegan::vegdist}.
-#'   
-#' @param method a method that is used to calculate the distance. Method is
-#'   passed to the function that is specified by \code{FUN}. By default,
-#'   \code{method} is \code{"bray"}.
 #'
 #' @param ... optional arguments
 #' 

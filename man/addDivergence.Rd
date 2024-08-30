@@ -32,31 +32,22 @@ getDivergence(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
 
-\item{name}{a name for the column of the colData the results should be
-stored in. By default, \code{name} is \code{"divergence"}.}
+\item{name}{\code{Character scalar}. The name to be used to store the result
+in metadata of the output. (Default: \code{method})}
 
 \item{...}{optional arguments}
 
-\item{assay.type}{the name of the assay used for calculation of the
-sample-wise estimates.}
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{reference}{\code{Character scalar}. A column name from
 \code{colData(x)} or either \code{"mean"} or \code{"median"}.
 (Default: \code{"median"})}
 
-\item{method}{a method that is used to calculate the distance. Method is
-passed to the function that is specified by \code{FUN}. By default,
-\code{method} is \code{"bray"}.}
-
-\item{FUN}{a \code{function} for distance calculation. The function must
-expect the input matrix as its first argument. With rows as samples
-and columns as features. By default, \code{FUN} is
-\code{vegan::vegdist}.}
+\item{method}{\code{Character scalar}. Specifies which dissimilarity to
+calculate. (Default: \code{"bray"})}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named \code{*name*}

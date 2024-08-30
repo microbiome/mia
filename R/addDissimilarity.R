@@ -281,7 +281,7 @@ setMethod(
     # sample is only used when niter is specified
     if( !is.null(niter) && !.is_an_integer(sample) ){
         stop("'sample' must be an integer.", call. = FALSE)
-    }
+    } 
     #
     # If the dissimilarity function is not specified, get default choice
     if( is.null(dis.fun) ){
@@ -324,29 +324,22 @@ setMethod(
     if( !(is.null(tree) || is(tree, "phylo")) ){
         stop("'tree' must be NULL or phylo.", call. = FALSE)
     }
-    #
-    # Get assay. By default, dissimilarity between samples is calculated. In
-    # dissimilarity functions, features must be in columns and samples in rows
-    # in this case.
-    mat <- assay(x, assay.type)
-    if( !transposed ){
-        mat <- t(mat)
-    }
     # Create an arument list that includes matrix, and tree-related parameters.
-    args <- list(x = mat, method = method)
+    args <- list(method = method)
     args <- c(args, list(...))
     # Either add tree that was provided by user, or get tree from TreeSE
     if( !is.null(tree) ){
         tree_args <- list(tree = tree)
     } else{
-        tree_args <- .get_tree_args_from_TreeSE(x, transposed, ...)
+        tree_args <- .get_tree_args_from_TreeSE(x, transposed = transposed, 
+            assay.type = assay.type, ...)
     }
     args <- c(args, tree_args)
     return(args)
 }
 
 # This function fetches tree arguments fro TreeSE slots.
-.get_tree_args_from_TreeSE <- function(x, transposed, tree.name = "phylo", ...){
+.get_tree_args_from_TreeSE <- function(x, transposed, tree.name = "phylo", assay.type, ...){
     # Get functions and parameters based on direction
     tree_present_FUN <- if (transposed) .check_colTree_present
     else .check_rowTree_present
@@ -377,7 +370,14 @@ setMethod(
     links <- links_FUN(x)
     links <- links[ , "nodeLab"]
     node.label <- links
+    # Get assay. By default, dissimilarity between samples is calculated. In
+    # dissimilarity functions, features must be in columns and samples in rows
+    # in this case.
+    mat <- assay(x, assay.type)
+    if( !transposed ){
+        mat <- t(mat)
+    }
     # Return a list of tree arguments
-    args <- list(tree = tree, node.label = node.label)
+    args <- list(x = mat, tree = tree, node.label = node.label)
     return(args)
 }
