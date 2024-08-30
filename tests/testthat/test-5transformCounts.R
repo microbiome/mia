@@ -71,7 +71,6 @@ test_that("transformAssay", {
                      }), check.attributes = FALSE)
         
         ############################ CSS ######################################
-        # Check dependency
         skip_if_not(require("metagenomeSeq", quietly = TRUE))
         # Define counts matrix for the css and css.fast testing
         counts_matrix <- as.matrix(assay(tse, "counts"))
@@ -113,14 +112,14 @@ test_that("transformAssay", {
         
         ## Check internal CSS equals CSS from metagenomeSeq package
         # First create the `MRexperiment` object
-        MRexperiment_obj <- newMRexperiment(counts = assay(tse, "counts"), 
+        MRexperiment_obj <- metagenomeSeq::newMRexperiment(counts = assay(tse, "counts"), 
                                             phenoData = AnnotatedDataFrame(as.data.frame(colData(tse))))
         
         # Then perform the CSS normalization using metagenomeSeq's method with p = 0.5
-        MRexperiment_obj <- cumNorm(MRexperiment_obj, p = 0.5)
+        MRexperiment_obj <- metagenomeSeq::cumNorm(MRexperiment_obj, p = 0.5)
         
         # Extract the normalized counts
-        normalized_counts <- MRcounts(MRexperiment_obj, norm = TRUE)
+        normalized_counts <- metagenomeSeq::MRcounts(MRexperiment_obj, norm = TRUE)
         
         # Test for equality of your CSS normalization with metagenomeSeq normalization
         expect_true(all.equal(as.matrix(ass), normalized_counts, check.attributes = FALSE))
@@ -164,15 +163,15 @@ test_that("transformAssay", {
         
         ## Check internal CSS fast equals CSS fast from metagenomeSeq package 
         # First create the `MRexperiment` object
-        MRexperiment_obj <- newMRexperiment(counts = assay(tse, "counts"), 
+        MRexperiment_obj <- metagenomeSeq::newMRexperiment(counts = assay(tse, "counts"), 
                                             phenoData = AnnotatedDataFrame(as.data.frame(colData(tse))))
         
         # Then perform the CSS fast normalization using metagenomeSeq 
         # (will default to fast normalization with no p parameter input)
-        MRexperiment_obj <- cumNorm(MRexperiment_obj)
+        MRexperiment_obj <- metagenomeSeq::cumNorm(MRexperiment_obj)
         
         # Extract the normalized counts
-        normalized_counts_fast <- MRcounts(MRexperiment_obj, norm = TRUE)
+        normalized_counts_fast <- metagenomeSeq::MRcounts(MRexperiment_obj, norm = TRUE)
         
         # Test for equality of your CSS fast normalization with metagenomeSeq normalization
         expect_true(all.equal(as.matrix(ass_fast), normalized_counts_fast, check.attributes = FALSE))
