@@ -324,12 +324,19 @@ setMethod(
     if( !(is.null(tree) || is(tree, "phylo")) ){
         stop("'tree' must be NULL or phylo.", call. = FALSE)
     }
-    # Create an arument list that includes matrix, and tree-related parameters.
+    # Get assay. By default, dissimilarity between samples is calculated. In
+    # dissimilarity functions, features must be in columns and samples in rows
+    # in this case.
+    mat <- assay(x, assay.type)
+    if( !transposed ){
+        mat <- t(mat)
+    }
+    # Create an argument list that includes matrix, and tree-related parameters.
     args <- list(method = method)
     args <- c(args, list(...))
     # Either add tree that was provided by user, or get tree from TreeSE
     if( !is.null(tree) ){
-        tree_args <- list(tree = tree)
+        tree_args <- list(x = mat, tree = tree)
     } else{
         tree_args <- .get_tree_args_from_TreeSE(x, transposed = transposed, 
             assay.type = assay.type, ...)
@@ -370,6 +377,7 @@ setMethod(
     links <- links_FUN(x)
     links <- links[ , "nodeLab"]
     node.label <- links
+    
     # Get assay. By default, dissimilarity between samples is calculated. In
     # dissimilarity functions, features must be in columns and samples in rows
     # in this case.
