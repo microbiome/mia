@@ -169,7 +169,7 @@ setMethod(
     #
     res <- getDissimilarity(x, method = method, ...)
     # Add matrix to original SE
-    x <- .add_values_to_metadata(x, names = name, value = as.matrix(res))
+    x <- .add_values_to_metadata(x, names = name, values = as.matrix(res))
     return(x)
     }
 )
