@@ -1209,7 +1209,7 @@ setGeneric("calculateOverlap", signature = c("x"),
 
 #' @rdname deprecate
 #' @export
-setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
+setMethod("calculateOverlap", signature = c(x = "ANY"),
           function(x, ...){
             .Deprecated(msg = paste0("'calculateOverlap' is deprecated\n",
                                      "Use 'getDissimilarity' with parameter ",
@@ -1226,7 +1226,7 @@ setGeneric("calculateJSD", signature = c("x"),
 
 #' @rdname deprecate
 #' @export
-setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
+setMethod("calculateJSD", signature = c(x = "ANY"),
           function(x, ...){
             .Deprecated(msg = paste0("'calculateJSD' is deprecated\n",
                                      "Use 'getDissimilarity' with parameter ",
@@ -1261,7 +1261,7 @@ setGeneric("calculateUnifrac", signature = c("x"),
 
 #' @rdname deprecate
 #' @export
-setMethod("calculateUnifrac", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("calculateUnifrac", signature = c(x = "ANY"),
           function(x, ...){
             .Deprecated(msg = paste0("'calculateUnifrac' is deprecated\n",
                                      "Use 'getDissimilarity' with parameter ",
