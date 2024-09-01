@@ -144,6 +144,3 @@ assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(
     assay(tse, "counts"), ties.method = "average", preserveShape = TRUE)  
 
 }
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-}

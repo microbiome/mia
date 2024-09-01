@@ -97,11 +97,6 @@
 #' 18(S4):16 20, 2012.
 #' To cite the R package, see citation('mia')
 #'
-#' @author
-#' Leo Lahti
-#' For \code{getPrevalentAbundance}: Leo Lahti and Tuomas Borman.
-#' Contact: \url{microbiome.github.io}
-#'
 #' @export
 #'
 #' @examples

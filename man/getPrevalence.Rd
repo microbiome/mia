@@ -275,8 +275,3 @@ To cite the R package, see citation('mia')
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
 \code{\link[=getTop]{getTop}}
 }
-\author{
-Leo Lahti
-For \code{getPrevalentAbundance}: Leo Lahti and Tuomas Borman.
-Contact: \url{microbiome.github.io}
-}

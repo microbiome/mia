@@ -160,6 +160,3 @@ getUnique(GlobalPatterns, "Phylum", sort = TRUE)
 \code{\link[scuttle:addPerFeatureQC]{addPerFeatureQC}},
 \code{\link[scuttle:quickPerCellQC]{quickPerCellQC}}
 }
-\author{
-Leo Lahti, Tuomas Borman and Sudarshan A. Shetty
-}

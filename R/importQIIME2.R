@@ -69,6 +69,7 @@
 #' \code{\link[=importMothur]{importMothur}}
 #'
 #' @export
+#' 
 #' @author Yang Cao
 #'
 #' @references
