@@ -363,7 +363,6 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     }
     # Call .calc_scaling_factors method to calculate scaling factors
     scaling_factors <- .calc_scaling_factors(mat, css.percentile)
-    
     # Normalize the count data by dividing by the scaling factor
     normalized_data <- sweep(mat, 2, scaling_factors / scaling, "/")
     return(normalized_data)
@@ -384,10 +383,10 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 }
 
 #################################.calc_css_percentile######################
-#' @importFrom DelayedMatrixStats colSums2 colQuantiles rowMeans2 rowMedians
 
 # Calculates the cumulative sum scaling (css) scaling percentiles from the given 
 # data
+#' @importFrom DelayedMatrixStats colSums2 colQuantiles rowMeans2 rowMedians
 .calc_css_percentile <- function(mat, rel = 0.1, ...) {
     # Input check
     if( !is.numeric(rel) ){
@@ -437,19 +436,20 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     return(res)
 }
 
-#################################.calc_scaling_factors#############################
-#' @importFrom DelayedMatrixStats colQuantiles
+################################.calc_scaling_factors###########################
 
 # Calculates the cumulative sum scaling (css) scaling factors.
+#' @importFrom DelayedMatrixStats colQuantiles
 .calc_scaling_factors <- function(mat, css.percentile) {
     # Replace zero values with NA
     mat_tmp <- mat
     mat_tmp[mat_tmp == 0] <- NA
-    
     # Calculate quantiles for each column
     quantiles <- colQuantiles(mat_tmp, probs = css.percentile, na.rm = TRUE)
-    
-    # Find the scaling factor for each sample
+    # Find the scaling factor for each sample. For each sample, take sum of
+    # those values that are lower than the respective quantile value.
+    # Improve precision by subsracting the  smallest positive floating-point
+    # number.
     scaling_factors <- vapply(seq_len(ncol(mat_tmp)), function(i) {
         col_values <- mat[, i] - .Machine$double.eps
         sum(col_values[col_values <= quantiles[i]], na.rm = TRUE)
