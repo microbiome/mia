@@ -355,10 +355,10 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 # This function applies cumulative sum scaling (CSS) to the abundance table.
 .calc_css <- function(mat, percentile = 0.5, scaling = 1000, ...) {
     # Input check
-    if( !.is_integer(scaling) ){
+    if( !.is_an_integer(scaling) ){
         stop("'scaling' must be an integer value.", call. = FALSE)
     }
-    if( !is.numeric(percentile) ){
+    if( !(is.numeric(percentile) && length(percentile) == 1 ) ){
         stop("'percentile' must be a numeric value.", call. = FALSE)
     }
     # Call .calc_scaling_factors method to calculate scaling factors
