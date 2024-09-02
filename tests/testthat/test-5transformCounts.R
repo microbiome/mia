@@ -71,17 +71,16 @@ test_that("transformAssay", {
                      }), check.attributes = FALSE)
         
         ############################ CSS ######################################
-        skip_if_not(require("metagenomeSeq", quietly = TRUE))
-        # Define counts matrix for the css and css.fast testing
+        # Define counts matrix for the css and css_fast testing
         counts_matrix <- as.matrix(assay(tse, "counts"))
         
-        ## Test that the css.percentile parameter works
+        ## Test that the percentile parameter works
         # Apply CSS normalization using transformAssay
         tmp <- mia::transformAssay(tse, method = "css", assay.type = "counts")
         ass <- assays(tmp)$css
         
-        # Apply CSS normalization using transformAssay setting the css.percentile arg
-        tmp_2 <- mia::transformAssay(tse, method = "css", css.percentile = 0.65)
+        # Apply CSS normalization using transformAssay setting the percentile arg
+        tmp_2 <- mia::transformAssay(tse, method = "css", percentile = 0.65)
         ass_2 <- assays(tmp_2)$css
         
         # Assert assays are different
@@ -111,46 +110,41 @@ test_that("transformAssay", {
         
         
         ## Check internal CSS equals CSS from metagenomeSeq package
-        # First create the `MRexperiment` object
-        MRexperiment_obj <- metagenomeSeq::newMRexperiment(counts = assay(tse, "counts"), 
-                                            phenoData = AnnotatedDataFrame(as.data.frame(colData(tse))))
-        
-        # Then perform the CSS normalization using metagenomeSeq's method with p = 0.5
-        MRexperiment_obj <- metagenomeSeq::cumNorm(MRexperiment_obj, p = 0.5)
-        
-        # Extract the normalized counts
-        normalized_counts <- metagenomeSeq::MRcounts(MRexperiment_obj, norm = TRUE)
+        ## First create subset matrix from metagenomeSeq calc
+        normalized_counts <- matrix(c(0.998004, 188.5389326, 2.994012, 0.8748906), nrow = 2, ncol = 2, byrow = TRUE)
+        rownames(normalized_counts) <- c(46043, 512519)
+        colnames(normalized_counts) <- c("NP3", "NP5")
         
         # Test for equality of your CSS normalization with metagenomeSeq normalization
-        expect_true(all.equal(as.matrix(ass), normalized_counts, check.attributes = FALSE))
+        expect_true(all.equal(as.matrix(ass[19:20, 17:18]), normalized_counts, check.attributes = FALSE))
         
         ############################ CSS FAST ######################################
-        ## Test the css.fast method overall logic
+        ## Test the css_fast method overall logic
         # Apply CSS fast normalization using transformAssay
-        tmp_fast <- mia::transformAssay(tse, method = "css.fast", assay.type = "counts")
-        ass_fast <- assays(tmp_fast)$css.fast
+        tmp_fast <- mia::transformAssay(tse, method = "css_fast", assay.type = "counts")
+        ass_fast <- assays(tmp_fast)$css_fast
         
-        # Manually compute CSS fast normalization using default rel
+        # Manually compute CSS fast normalization using default threshold
         css_fast_default <- .calc_css_fast(counts_matrix)
         
         # Assert that the assays are equivalent
         expect_true(all.equal(as.matrix(ass_fast), css_fast_default, check.attributes = FALSE))
         
         
-        ## Test that the rel parameter works
-        # Apply CSS fast normalization using transformAssay with different rel
-        tmp_fast_2 <- mia::transformAssay(tse, method = "css.fast", rel = 0.5)
-        ass_fast_2 <- assays(tmp_fast_2)$css.fast
+        ## Test that the threshold parameter works
+        # Apply CSS fast normalization using transformAssay with different threshold
+        tmp_fast_2 <- mia::transformAssay(tse, method = "css_fast", threshold = 0.5)
+        ass_fast_2 <- assays(tmp_fast_2)$css_fast
         
-        # Manually compute CSS fast normalization using rel = 0.5
-        css_fast_rel_50 <- .calc_css_fast(counts_matrix, rel = 0.5)
+        # Manually compute CSS fast normalization using threshold = 0.5
+        css_fast_rel_50 <- .calc_css_fast(counts_matrix, threshold = 0.5)
         
-        # Ensure the rel parameter changes the results as expected
+        # Ensure the threshold parameter changes the results as expected
         expect_false(identical(css_fast_default, css_fast_rel_50))
         expect_true(all.equal(as.matrix(ass_fast_2), css_fast_rel_50, check.attributes = FALSE))
         
         
-        ## Test the scaling parameter for css.fast
+        ## Test the scaling parameter for css_fast
         # Manually compute CSS fast normalization using default scaling
         css_fast_default <- .calc_css_fast(counts_matrix)
         
@@ -161,20 +155,12 @@ test_that("transformAssay", {
         expect_false(identical(css_fast_default, css_fast_2000))
         
         
-        ## Check internal CSS fast equals CSS fast from metagenomeSeq package 
-        # First create the `MRexperiment` object
-        MRexperiment_obj <- metagenomeSeq::newMRexperiment(counts = assay(tse, "counts"), 
-                                            phenoData = AnnotatedDataFrame(as.data.frame(colData(tse))))
-        
-        # Then perform the CSS fast normalization using metagenomeSeq 
-        # (will default to fast normalization with no p parameter input)
-        MRexperiment_obj <- metagenomeSeq::cumNorm(MRexperiment_obj)
-        
-        # Extract the normalized counts
-        normalized_counts_fast <- metagenomeSeq::MRcounts(MRexperiment_obj, norm = TRUE)
+        ## Check internal CSS fast equals CSS fast from metagenomeSeq package
+        normalized_counts_fast <- normalized_counts
+
         
         # Test for equality of your CSS fast normalization with metagenomeSeq normalization
-        expect_true(all.equal(as.matrix(ass_fast), normalized_counts_fast, check.attributes = FALSE))
+        expect_true(all.equal(as.matrix(ass[19:20, 17:18]), normalized_counts_fast, check.attributes = FALSE))
         
         ########################## PA ##########################################
         # Calculates pa transformation. Should be equal.

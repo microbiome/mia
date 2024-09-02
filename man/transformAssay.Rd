@@ -9,7 +9,7 @@ transformAssay(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "css", "css.fast", "frequency", "hellinger",
+  method = c("alr", "chi.square", "clr", "css", "css_fast", "frequency", "hellinger",
     "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr",
     "relabundance", "rrank", "standardize", "total", "z"),
   MARGIN = "samples",
@@ -22,7 +22,7 @@ transformAssay(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "css", "css.fast", "frequency", "hellinger",
+  method = c("alr", "chi.square", "clr", "css", "css_fast", "frequency", "hellinger",
     "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr",
     "relabundance", "rrank", "standardize", "total", "z"),
   MARGIN = "samples",
@@ -63,13 +63,13 @@ Alternatively, a user-specified numeric value can be added as pseudocount.
 to fill reference sample's column in returned assay when calculating alr.
 (Default: \code{NA})
 \item \code{ref_vals} Deprecated. Use \code{reference} instead.
-\item \code{css.percentile}: \code{Numeric scalar}.  Used to set the
+\item \code{percentile}: \code{Numeric scalar}.  Used to set the
 percentile value that calculates the scaling factors in the css normalization.
 (Default: \code{"0.5"})
 \item \code{scaling}: \code{Integer scalar}. Adjusts the normalization scale
 by dividing the calculated scaling factors, effectively changing
 the magnitude of the normalized counts. (Default: \code{"1000"}).
-\item \code{rel}: \code{Numeric scalar}. Specifies relative difference
+\item \code{threshold}: \code{Numeric scalar}. Specifies relative difference
 threshold and determines the first point where the relative change in
 differences between consecutive quantiles exceeds this threshold.
 (Default: \code{"0.1"}).
@@ -106,7 +106,7 @@ by accounting for differences in library sizes. It's important to note that we u
 \code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}
 for the css implementation.
 
-\item 'css.fast': This method implements the
+\item 'css_fast': This method implements the
 \code{\link[metagenomeSeq:cumNormStatFast]{cumNormStatFast}}
 approach for determining the normalization percentile for summing and scaling
 counts. It utilizes row means for reference, allowing for faster computation
@@ -151,8 +151,8 @@ tse <- transformAssay(tse, method = "css")
 head(assay(tse, "css"))
 
 # Perform CSS fast variant normalization.
-tse <- transformAssay(tse, method = "css.fast")
-head(assay(tse, "css.fast"))
+tse <- transformAssay(tse, method = "css_fast")
+head(assay(tse, "css_fast"))
 
 # With MARGIN, you can specify the if transformation is done for samples or
 # for features. Here Z-transformation is done feature-wise.

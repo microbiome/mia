@@ -30,13 +30,13 @@
 #'   to fill reference sample's column in returned assay when calculating alr. 
 #'   (Default: \code{NA})
 #'   \item \code{ref_vals} Deprecated. Use \code{reference} instead.
-#'   \item \code{css.percentile}: \code{Numeric scalar}.  Used to set the 
+#'   \item \code{percentile}: \code{Numeric scalar}.  Used to set the 
 #'   percentile value that calculates the scaling factors in the css normalization.
 #'   (Default: \code{"0.5"})
 #'   \item \code{scaling}: \code{Integer scalar}. Adjusts the normalization scale 
 #'   by dividing the calculated scaling factors, effectively changing 
 #'   the magnitude of the normalized counts. (Default: \code{"1000"}).
-#'   \item \code{rel}: \code{Numeric scalar}. Specifies relative difference 
+#'   \item \code{threshold}: \code{Numeric scalar}. Specifies relative difference 
 #'   threshold and determines the first point where the relative change in 
 #'   differences between consecutive quantiles exceeds this threshold. 
 #'   (Default: \code{"0.1"}).
@@ -65,7 +65,7 @@
 #' \code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}
 #' for the css implementation. 
 #' 
-#' \item 'css.fast': This method implements the 
+#' \item 'css_fast': This method implements the 
 #' \code{\link[metagenomeSeq:cumNormStatFast]{cumNormStatFast}}
 #' approach for determining the normalization percentile for summing and scaling 
 #' counts. It utilizes row means for reference, allowing for faster computation 
@@ -124,8 +124,8 @@
 #' head(assay(tse, "css"))
 #' 
 #' # Perform CSS fast variant normalization.
-#' tse <- transformAssay(tse, method = "css.fast")
-#' head(assay(tse, "css.fast"))
+#' tse <- transformAssay(tse, method = "css_fast")
+#' head(assay(tse, "css_fast"))
 #' 
 #' # With MARGIN, you can specify the if transformation is done for samples or
 #' # for features. Here Z-transformation is done feature-wise.
@@ -155,7 +155,7 @@ NULL
 setGeneric("transformAssay", signature = c("x"),
            function(x,
                     assay.type = "counts", assay_name = NULL,
-                    method = c("alr", "chi.square", "clr", "css", "css.fast", 
+                    method = c("alr", "chi.square", "clr", "css", "css_fast", 
                                "frequency", "hellinger", "log", "log10", "log2", 
                                "max", "normalize", "pa", "range", "rank", "rclr",
                                "relabundance", "rrank", "standardize", "total",
@@ -171,7 +171,7 @@ setGeneric("transformAssay", signature = c("x"),
 setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     function(x,
         assay.type = "counts", assay_name = NULL,
-        method = c("alr", "chi.square", "clr", "css", "css.fast", "frequency", 
+        method = c("alr", "chi.square", "clr", "css", "css_fast", "frequency", 
                   "hellinger", "log", "log10", "log2", "max", "normalize", 
                   "pa", "range", "rank", "rclr", "relabundance", "rrank",
                   "standardize", "total", "z"),
@@ -228,7 +228,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         
         # Calls help function that does the transformation
         # Help function is different for mia and vegan transformations
-        if( method %in% c("log10", "log2", "css", "css.fast") ){
+        if( method %in% c("log10", "log2", "css", "css_fast") ){
             transformed_table <- .apply_transformation(
                 assay, method, MARGIN, ...)
         } else {
@@ -261,7 +261,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
                       log10 = .calc_log,
                       log2 = .calc_log,
                       css = .calc_css,
-                      css.fast = .calc_css_fast
+                      css_fast = .calc_css_fast
     )
 
     # Get transformed table
@@ -353,16 +353,16 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 
 ####################################.calc_css###################################
 # This function applies cumulative sum scaling (CSS) to the abundance table.
-.calc_css <- function(mat, css.percentile = 0.5, scaling = 1000, ...) {
+.calc_css <- function(mat, percentile = 0.5, scaling = 1000, ...) {
     # Input check
     if( !.is_integer(scaling) ){
         stop("'scaling' must be an integer value.", call. = FALSE)
     }
-    if( !is.numeric(css.percentile) ){
-        stop("'css.percentile' must be a numeric value.", call. = FALSE)
+    if( !is.numeric(percentile) ){
+        stop("'percentile' must be a numeric value.", call. = FALSE)
     }
     # Call .calc_scaling_factors method to calculate scaling factors
-    scaling_factors <- .calc_scaling_factors(mat, css.percentile)
+    scaling_factors <- .calc_scaling_factors(mat, percentile)
     # Normalize the count data by dividing by the scaling factor
     normalized_data <- sweep(mat, 2, scaling_factors / scaling, "/")
     return(normalized_data)
@@ -371,14 +371,14 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 ####################################.calc_css_fast##############################
 # This function applies cumulative sum scaling (CSS) to the abundance table 
 # using the fast variant method.
-.calc_css_fast <- function(mat, css.percentile = NULL, ...) {
+.calc_css_fast <- function(mat, percentile = NULL, ...) {
     # Calculate the percentile using .calc_css_percentile
-    if(is.null(css.percentile)) {
-        css.percentile <- .calc_css_percentile(mat, ...)
+    if(is.null(percentile)) {
+        percentile <- .calc_css_percentile(mat, ...)
     }
-    message("css.percentile value used (", css.percentile, ").")
+    message("percentile value used (", percentile, ").")
     # Call .calc_css with the calculated percentile
-    normalized_data <- .calc_css(mat, css.percentile, ...)
+    normalized_data <- .calc_css(mat, percentile, ...)
     return(normalized_data)
 }
 
@@ -387,10 +387,10 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 # Calculates the cumulative sum scaling (css) scaling percentiles from the given 
 # data
 #' @importFrom DelayedMatrixStats colSums2 colQuantiles rowMeans2 rowMedians
-.calc_css_percentile <- function(mat, rel = 0.1, ...) {
+.calc_css_percentile <- function(mat, threshold = 0.1, ...) {
     # Input check
-    if( !is.numeric(rel) ){
-        stop("'rel' must be a numeric value.", call. = FALSE)
+    if( !is.numeric(threshold) ){
+        stop("'threshold' must be a numeric value.", call. = FALSE)
     }
     # Replace zero values to NA, i.e. not detected
     mat[ mat == 0 ] <- NA
@@ -423,15 +423,15 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     difference <- rowMedians(abs(difference))
     # Find the first point where the relative change exceeds the threshold
     res <- abs(diff(difference)) / difference[-1]
-    res <- which(res > rel)
+    res <- which(res > threshold)
     res <- res[[1]] / max(found_features)
     # If the calculated percentile is less than or equal to 0.50, use 0.50 as
     # the default value
     if( res < 0.50 ){
         res <- 0.50
-        message("Default rel value used (", res, ").")
+        message("Default threshold value used (", res, ").")
     } else {
-        message("rel value used (", res, ").")
+        message("threshold value used (", res, ").")
     }
     return(res)
 }
@@ -440,12 +440,12 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 
 # Calculates the cumulative sum scaling (css) scaling factors.
 #' @importFrom DelayedMatrixStats colQuantiles
-.calc_scaling_factors <- function(mat, css.percentile) {
+.calc_scaling_factors <- function(mat, percentile) {
     # Replace zero values with NA
     mat_tmp <- mat
     mat_tmp[mat_tmp == 0] <- NA
     # Calculate quantiles for each column
-    quantiles <- colQuantiles(mat_tmp, probs = css.percentile, na.rm = TRUE)
+    quantiles <- colQuantiles(mat_tmp, probs = percentile, na.rm = TRUE)
     # Find the scaling factor for each sample. For each sample, take sum of
     # those values that are lower than the respective quantile value.
     # Improve precision by subsracting the  smallest positive floating-point
