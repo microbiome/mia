@@ -368,7 +368,7 @@ runCCA <- function(x,...){
     sppscores(rda) <- species_scores
     # Create the matrix to be returned
     ans <- X[[scores]]
-    attr(ans, "rotation") <- X$v
+    attr(ans, "rotation") <- rda$CCA$v
     attr(ans, "eigen") <- X$eig
     attr(ans, "rda") <- rda
     ans
