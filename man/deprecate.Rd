@@ -140,13 +140,13 @@
 \alias{runOverlap}
 \alias{runOverlap,SummarizedExperiment-method}
 \alias{calculateOverlap}
-\alias{calculateOverlap,SummarizedExperiment-method}
+\alias{calculateOverlap,ANY-method}
 \alias{calculateJSD}
-\alias{calculateJSD,SummarizedExperiment-method}
+\alias{calculateJSD,ANY-method}
 \alias{runJSD}
 \alias{runJSD,SummarizedExperiment-method}
 \alias{calculateUnifrac}
-\alias{calculateUnifrac,TreeSummarizedExperiment-method}
+\alias{calculateUnifrac,ANY-method}
 \alias{runUnifrac}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
@@ -426,11 +426,11 @@ runOverlap(x, ...)
 
 calculateOverlap(x, ...)
 
-\S4method{calculateOverlap}{SummarizedExperiment}(x, ...)
+\S4method{calculateOverlap}{ANY}(x, ...)
 
 calculateJSD(x, ...)
 
-\S4method{calculateJSD}{SummarizedExperiment}(x, ...)
+\S4method{calculateJSD}{ANY}(x, ...)
 
 runJSD(x, ...)
 
@@ -438,7 +438,7 @@ runJSD(x, ...)
 
 calculateUnifrac(x, ...)
 
-\S4method{calculateUnifrac}{TreeSummarizedExperiment}(x, ...)
+\S4method{calculateUnifrac}{ANY}(x, ...)
 
 runUnifrac(mat, tree, ...)
 }
