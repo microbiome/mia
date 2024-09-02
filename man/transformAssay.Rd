@@ -63,16 +63,16 @@ Alternatively, a user-specified numeric value can be added as pseudocount.
 to fill reference sample's column in returned assay when calculating alr.
 (Default: \code{NA})
 \item \code{ref_vals} Deprecated. Use \code{reference} instead.
-\item \code{percentile}: \code{Numeric scalar}.  Used to set the
+\item \code{percentile}: \code{Numeric scalar} (css).  Used to set the
 percentile value that calculates the scaling factors in the css normalization.
-(Default: \code{"0.5"})
+(Default: \code{0.5})
 \item \code{scaling}: \code{Integer scalar}. Adjusts the normalization scale
 by dividing the calculated scaling factors, effectively changing
-the magnitude of the normalized counts. (Default: \code{"1000"}).
+the magnitude of the normalized counts. (Default: \code{1000}).
 \item \code{threshold}: \code{Numeric scalar}. Specifies relative difference
 threshold and determines the first point where the relative change in
 differences between consecutive quantiles exceeds this threshold.
-(Default: \code{"0.1"}).
+(Default: \code{0.1}).
 }}
 }
 \value{
