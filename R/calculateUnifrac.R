@@ -9,6 +9,10 @@
     if( !is.matrix(as.matrix(x)) ){
         stop("'x' must be a matrix", call. = FALSE)
     }
+    # Check tree
+    if( is.null(tree) ){
+        stop("Please provide 'tree'.", call. = FALSE)
+    }
     # input check
     if(!.is_a_bool(weighted)){
         stop("'weighted' must be TRUE or FALSE.", call. = FALSE)
@@ -20,7 +24,7 @@
     # rows and tree labels
     if( !(is.null(node.label) ||
             (is.character(node.label) && length(node.label) == nrow(x) &&
-            all(node.label[ !is.na(node.label) ] %in% c(tree$tip.label)))) ){
+            all(node.label[ !is.na(node.label) ] %in% tree$tip.label))) ){
         stop(
             "'node.label' must be NULL or character specifying links between ",
             "abundance table and tree labels.", call. = FALSE)
