@@ -2,54 +2,37 @@
 % Please edit documentation in R/transformCounts.R
 \name{transformAssay}
 \alias{transformAssay}
-\alias{transformAssay,SingleCellExperiment-method}
 \alias{transformAssay,SummarizedExperiment-method}
+\alias{transformAssay,SingleCellExperiment-method}
 \title{Transform assay}
 \usage{
-transformAssay(
-  x,
-  assay.type = "counts",
-  assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
-    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
-    "standardize", "total", "z"),
-  MARGIN = "samples",
-  name = method,
-  pseudocount = FALSE,
-  altexp = NULL,
-  ...
-)
-
-\S4method{transformAssay}{SingleCellExperiment}(
-  x,
-  assay.type = "counts",
-  assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
-    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
-    "standardize", "total", "z"),
-  MARGIN = "samples",
-  name = method,
-  pseudocount = FALSE,
-  altexp = NULL,
-  ...
-)
+transformAssay(x, ...)
 
 \S4method{transformAssay}{SummarizedExperiment}(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
-    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
-    "standardize", "total", "z"),
+  method = c("alr", "chi.square", "clr", "css", "css.fast", "frequency", "hellinger",
+    "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr",
+    "relabundance", "rrank", "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
-  altexp = NULL,
   ...
 )
+
+\S4method{transformAssay}{SingleCellExperiment}(x, altexp = altExpNames(x), ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
+
+\item{...}{additional arguments passed on to \code{vegan:decostand}:
+\itemize{
+\item \code{reference}: \code{Character scalar}. use to
+to fill reference sample's column in returned assay when calculating alr.
+(Default: \code{NA})
+\item \code{ref_vals} Deprecated. Use \code{reference} instead.
+}}
 
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
@@ -78,14 +61,6 @@ Alternatively, a user-specified numeric value can be added as pseudocount.
 of alternative experiments to which the transformation should also be
 applied. If \code{NULL}, the transformation is only applied to the main
 experiment. (Default: \code{NULL}).}
-
-\item{...}{additional arguments passed on to \code{vegan:decostand}:
-\itemize{
-\item \code{reference}: \code{Character scalar}. use to
-to fill reference sample's column in returned assay when calculating alr.
-(Default: \code{NA})
-\item \code{ref_vals} Deprecated. Use \code{reference} instead.
-}}
 }
 \value{
 \code{transformAssay} returns the input object \code{x}, with a new
@@ -168,7 +143,7 @@ assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(
 #using altexp parameter
 data("GlobalPatterns", package="mia")
 tse <- GlobalPatterns
-tse <- transformAssay(tse, method = "relabundance", altexp = c("phylum", "genus"))
-tse
+altExp(tse,"species") <- transformAssay(tse, method = "relabundance",rank = "species", na.rm = FALSE)
+altExp(tse,"species")
 
 }
