@@ -99,9 +99,9 @@ test_that("CCA", {
     # Test that data is subsetted correctly
     data("enterotype", package = "mia")
     variable_names <- c("ClinicalStatus", "Gender", "Age")
-    res <- addRDA(enterotype, variables = variable_names, na.action = na.exclude)
+    res <- addRDA(enterotype, variables = variable_names, na.action = na.exclude, subset.result = FALSE)
     expect_equal(colnames(res), colnames(enterotype))
-    res <- addRDA(enterotype, variables = variable_names, na.action = na.exclude, subset_result = TRUE)
+    res <- addRDA(enterotype, variables = variable_names, na.action = na.exclude)
     enterotype <- enterotype[, complete.cases(colData(enterotype)[, variable_names])]
     expect_equal(colnames(res), colnames(enterotype))
     #
@@ -120,7 +120,7 @@ test_that("CCA", {
     res <- vegan::rda(t(assay(sce)))$CA$eig
     expect_equal(unname(test), unname(res))
     data(GlobalPatterns, package="mia")
-    GlobalPatterns <- estimateDiversity(GlobalPatterns, index = "shannon")
+    GlobalPatterns <- addAlpha(GlobalPatterns, index = "shannon")
     expect_error(getRDA(GlobalPatterns, variables = c("Primer", "test")))
     res1 <- getRDA(GlobalPatterns, variables = c("shannon", "SampleType"))
     res1 <- attr(res1, "rda")$CCA
@@ -128,3 +128,4 @@ test_that("CCA", {
     res2 <- attr(res2, "rda")$CCA
     expect_equal(res1, res2)
 })
+
