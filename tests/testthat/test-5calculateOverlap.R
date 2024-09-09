@@ -1,19 +1,20 @@
 
-context("calculateOverlap")
+context("Overlap")
 
-test_that("calculateOverlap", {
+test_that("Overlap", {
     
     # Get data
     data(esophagus, package="mia")
     tse <- esophagus
     # Test input
-    expect_error(calculateOverlap(tse, assay.type = "relabundance", detection = 0.15))
-    expect_error(calculateOverlap(tse, detection = "TEST"))
-    expect_error(calculateOverlap(tse, detection = TRUE))
+    expect_error(
+        getDissimilarity(tse, method = "overlap", assay.type = "relabundance", detection = 0.15))
+    expect_error(getDissimilarity(tse, method = "overlap", detection = "TEST"))
+    expect_error(getDissimilarity(tse, method = "overlap", detection = TRUE))
     
     # Calculate overlap
     tse <- transformAssay(tse, method = "relabundance")
-    result <- calculateOverlap(tse, assay.type = "relabundance", detection = 0.15)
+    result <- getDissimilarity(tse, method = "overlap", assay.type = "relabundance", detection = 0.15)
 
     # Test output
     expect_true(class(result) == "dist")
@@ -25,7 +26,7 @@ test_that("calculateOverlap", {
                           0.3634972, 0.4111838, 0.3634972, 0.0000000), nrow=3)
     expect_equal(round(unname(result), 7), round(reference), 7)
     # Test with different detection threshold
-    result <- calculateOverlap(tse, assay.type = "relabundance", detection = 0)
+    result <- getDissimilarity(tse, method = "overlap", assay.type = "relabundance", detection = 0)
     result <- as.matrix(result)
     
     # Reference
@@ -33,12 +34,10 @@ test_that("calculateOverlap", {
                           0.8390008, 0.9038734, 0.8390008, 0.00000000), nrow=3)
     expect_equal(round(unname(result), 7), round(reference, 7))
     
-    # Test runOverlap
-    expect_error(runOverlap(tse, name = 1))
-    expect_error(runOverlap(tse, name = c("A", "B")))
-    expect_error(runOverlap(tse, name = TRUE))
-    expect_equal( reducedDim(runOverlap(tse)), as.matrix(calculateOverlap(tse)) )
-    expect_equal( reducedDim(runOverlap(tse, assay.type = "relabundance", detection = 0.08)), 
-                  as.matrix(calculateOverlap(tse, assay.type = "relabundance", detection = 0.08)) )
+    # Test .calculate_overlap
+    expect_equal( metadata(addDissimilarity(tse, "overlap"))[["overlap"]], 
+                  as.matrix(getDissimilarity(tse, method = "overlap")) )
+    expect_equal( metadata(addDissimilarity(tse, method = "overlap", assay.type = "relabundance", detection = 0.08))[["overlap"]], 
+                  as.matrix(getDissimilarity(tse, method = "overlap", assay.type = "relabundance", detection = 0.08)) )
 })
 

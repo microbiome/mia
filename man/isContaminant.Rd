@@ -47,8 +47,8 @@ addNotContaminantQC(x, name = "isNotContaminant", ...)
 \arguments{
 \item{seqtab, x}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
 
-\item{assay.type}{\code{Character scalar}. Specifies the name of the
-assay used in calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 

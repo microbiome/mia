@@ -40,9 +40,6 @@
 #'
 #' @name summaries
 #'
-#' @author
-#' Leo Lahti, Tuomas Borman and Sudarshan A. Shetty
-#'
 #' @examples
 #' data(GlobalPatterns)
 #' top_taxa <- getTop(GlobalPatterns,

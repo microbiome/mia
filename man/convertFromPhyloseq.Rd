@@ -86,6 +86,3 @@ phy2 <- convertToPhyloseq(tse, assay.type = "relabundance")
 phy2
 
 }
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-}

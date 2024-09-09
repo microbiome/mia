@@ -40,8 +40,6 @@
 #'
 #' @name addCluster
 #' @export
-#' 
-#' @author Basil Courbayre
 #'
 #' @examples
 #' library(bluster)

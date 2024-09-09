@@ -3,7 +3,8 @@
 #' These functions perform Canonical Correspondence Analysis on data stored
 #' in a \code{SummarizedExperiment}.
 #'
-#' @inheritParams calculateJSD
+#' @inheritParams getDominant
+#' @inheritParams getDissimilarity
 #'
 #' @details
 #'   For \code{run*} a
@@ -42,6 +43,8 @@
 #' 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
 #' v with weights Xbar, but the multiplying effect of eigenvalues removed) or
 #' 'u' ((weighted) orthonormal site scores). (Default: \code{'wa'})
+#' 
+#' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #'
 #' @param ... additional arguments passed to vegan::cca or vegan::dbrda and
 #' other internal functions.
@@ -196,9 +199,9 @@ setGeneric("addRDA", signature = c("x"),
 }
 
 #' @importFrom stats as.formula na.fail
-.calculate_cca <- function(x, formula, variables, scores,
-                           scale = TRUE, na.action = na.fail, ...){
-    .require_package("vegan")
+.calculate_cca <- function(
+        x, formula, variables, scores, scale = TRUE, na.action = na.fail,
+        ...){
     # input check
     if(!.is_a_bool(scale)){
         stop("'scale' must be TRUE or FALSE.", call. = FALSE)
@@ -206,10 +209,11 @@ setGeneric("addRDA", signature = c("x"),
     #
     x <- as.matrix(t(x))
     variables <- as.data.frame(variables)
-    
+    # Check if there are missing values and na.action should fail
+    # with NA values.
     if( any(is.na(variables)) && isTRUE(all.equal(na.action, na.fail)) ){
-      stop("Variables contain missing values. Set na.action to na.exclude",
-           " to remove samples with missing values.", call. = FALSE)
+        stop("Variables contain missing values. Set na.action to na.exclude",
+             " to remove samples with missing values.", call. = FALSE)
     }
     
     if(ncol(variables) > 0L && !missing(formula)){
@@ -356,7 +360,6 @@ runCCA <- function(x,...){
 .calculate_rda <- function(
         x, formula, variables, scores, method = distance,
         distance = "euclidean", na.action = na.fail, ...){
-    .require_package("vegan")
     #
     # Transpose and ensure that the table is in matrix format
     x <- as.matrix(t(x))

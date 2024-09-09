@@ -61,7 +61,6 @@
 #' \code{\link[=importMothur]{importMothur}}
 #'
 #' @export
-#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #' 
 #' @references
 #' Beghini F, McIver LJ, Blanco-Míguez A, Dubois L, Asnicar F, Maharjan S, Mailyan A, 
