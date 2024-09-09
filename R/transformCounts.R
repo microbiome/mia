@@ -119,10 +119,6 @@
 #' tse <- transformAssay(tse, method = "css")
 #' head(assay(tse, "css"))
 #' 
-#' # Perform CSS fast variant normalization.
-#' tse <- transformAssay(tse, method = "css_fast")
-#' head(assay(tse, "css_fast"))
-#' 
 #' # With MARGIN, you can specify the if transformation is done for samples or
 #' # for features. Here Z-transformation is done feature-wise.
 #' tse <- transformAssay(tse, method = "standardize", MARGIN = "features")
