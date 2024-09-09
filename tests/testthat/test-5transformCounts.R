@@ -195,8 +195,10 @@ test_that("transformAssay", {
         test3 <- tmp
         assay(test3, "na_values") <- assay(test3, "counts")
         assay(test3, "na_values")[4, 5] <- NA
+        expect_warning(
         actual <- transformAssay(test3, method = "relabundance",
                                 assay.type = "na_values", pseudocount = TRUE)
+        )
         value <- attr(assay(actual, "relabundance"), "parameters")[["pseudocount"]]
         ref <- assay(actual, "na_values")
         ref <- min(ref[ref > 0], na.rm = TRUE)/2
@@ -337,7 +339,6 @@ test_that("transformAssay", {
                                     MARGIN = 2)
         compare <- t(compare)
         expect_equal(na.omit(actual), na.omit(compare))
-
     }
 
     # TSE object

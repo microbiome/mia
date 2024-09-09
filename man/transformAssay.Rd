@@ -60,7 +60,7 @@ Alternatively, a user-specified numeric value can be added as pseudocount.
 \item{altexp}{\code{Character vector} or \code{NULL}. Specifies the names
 of alternative experiments to which the transformation should also be
 applied. If \code{NULL}, the transformation is only applied to the main
-experiment. (Default: \code{NULL}).}
+experiment. (Default: \code{altExpNames(x)}).}
 }
 \value{
 \code{transformAssay} returns the input object \code{x}, with a new
@@ -102,8 +102,8 @@ where \eqn{x} is a single value of data.
 }
 }
 \examples{
-data(esophagus, package="mia")
-tse <- esophagus
+data(GlobalPatterns)
+tse <- GlobalPatterns
 
 # By specifying 'method', it is possible to apply different transformations, 
 # e.g. compositional transformation.
@@ -140,10 +140,12 @@ head(assay(tse, "rank"))
 assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(
     assay(tse, "counts"), ties.method = "average", preserveShape = TRUE)  
 
-#using altexp parameter
-data("GlobalPatterns", package="mia")
+# Using altexp parameter. First agglomerate the data and then apply
+# transformation.
 tse <- GlobalPatterns
-altExp(tse,"species") <- transformAssay(tse, method = "relabundance",rank = "species", na.rm = FALSE)
-altExp(tse,"species")
+tse <- agglomerateByRanks(tse)
+tse <- transformAssay(tse, method = "relabundance")
+# The transformation is applied to all altternative experiments
+altExp(tse, "Species")
 
 }
