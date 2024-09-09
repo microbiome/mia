@@ -197,12 +197,20 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
 .calc_divergence <- function(mat, reference, method, ...){
     # Create sample-pair data.frame
     reference <- data.frame(sample = colnames(mat), reference = reference)
-    # Calculate dissimilarity between samples
+    # For dissimilarity calculation, the samples must be in rows
     mat <- t(mat)
-    mat <- getDissimilarity(mat, method, ...)
-    mat <- as.matrix(mat)
-    # Assign values to reference table
-    reference <- reference |>
-        mutate(value = mat[cbind(sample, reference)])
+    # Loop through sample-pairs
+    temp <- t(reference) |> as.data.frame()
+    temp <- lapply(temp, function(sample_pair){
+        # Calculate dissimilarity between a sample pair
+        temp <- mat[ sample_pair, ]
+        temp <- getDissimilarity(temp, method, ...)
+        # Get only the value
+        temp <- temp[[1]]
+        return(temp)
+    })
+    # Add values to data.frame that holds sample pairs 
+    temp <- unlist(temp)
+    reference[["value"]] <- temp
     return(reference)
 }
