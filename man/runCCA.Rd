@@ -76,9 +76,9 @@ possible following homogeneity test. (By default: \code{method="euclidean"})}
 \item{\code{scale}: \code{Logical scalar}. Should the expression values be
 standardized? \code{scale} is disabled when using \code{*RDA} functions.
 Please scale before performing RDA. (Default: \code{TRUE})}
-\item{\code{na.action}: Action to take when missing values for any of the
-variables in \code{formula} are encountered. (By default:
-\code{na.action=na.fail})}
+\item{\code{na.action}: \code{function}. Action to take when missing
+values for any of the variables in \code{formula} are encountered.
+(Default: \code{na.fail})}
 \item{\code{full} \code{Logical scalar}. should all the results from the
 significance calculations be returned. When \code{full=FALSE}, only
 summary tables are returned. (Default: \code{FALSE})}
@@ -206,14 +206,15 @@ plotRDA(tse, "rda_scaled",
         colour_by = "ClinicalStatus")
 
 # A common choice along with PERMANOVA is ANOVA when statistical significance
-# of homogeneity of groups is analysed. Moreover, full significance test results
-# can be returned.
+# of homogeneity of groups is analysed. Moreover, full significance test
+# results can be returned.
 tse <- addRDA(tse,
               formula = data ~ ClinicalStatus,
               homogeneity.test = "anova",
               full = TRUE)
 
-# Example showing how to pass extra parameters, such as 'permutations', to anova.cca
+# Example showing how to pass extra parameters, such as 'permutations',
+# to anova.cca
 tse <- addRDA(tse,
               formula = data ~ ClinicalStatus,
               permutations = 500)

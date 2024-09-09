@@ -54,9 +54,9 @@
 #'   \item{\code{scale}: \code{Logical scalar}. Should the expression values be
 #'   standardized? \code{scale} is disabled when using \code{*RDA} functions.
 #'   Please scale before performing RDA. (Default: \code{TRUE})}
-#'   \item{\code{na.action}: Action to take when missing values for any of the
-#'   variables in \code{formula} are encountered. (By default:
-#'   \code{na.action=na.fail})}
+#'   \item{\code{na.action}: \code{function}. Action to take when missing
+#'   values for any of the variables in \code{formula} are encountered.
+#'   (Default: \code{na.fail})}
 #'   \item{\code{full} \code{Logical scalar}. should all the results from the
 #'   significance calculations be returned. When \code{full=FALSE}, only
 #'   summary tables are returned. (Default: \code{FALSE})}
@@ -141,14 +141,15 @@
 #'         colour_by = "ClinicalStatus")
 #'
 #' # A common choice along with PERMANOVA is ANOVA when statistical significance
-#' # of homogeneity of groups is analysed. Moreover, full significance test results
-#' # can be returned.
+#' # of homogeneity of groups is analysed. Moreover, full significance test
+#' # results can be returned.
 #' tse <- addRDA(tse,
 #'               formula = data ~ ClinicalStatus,
 #'               homogeneity.test = "anova",
 #'               full = TRUE)
 #'
-#' # Example showing how to pass extra parameters, such as 'permutations', to anova.cca
+#' # Example showing how to pass extra parameters, such as 'permutations',
+#' # to anova.cca
 #' tse <- addRDA(tse,
 #'               formula = data ~ ClinicalStatus,
 #'               permutations = 500)
@@ -200,8 +201,7 @@ setGeneric("addRDA", signature = c("x"),
 
 #' @importFrom stats as.formula na.fail
 .calculate_cca <- function(
-        x, formula, variables, scores, scale = TRUE, na.action = na.fail,
-        ...){
+        x, formula, variables, scores, scale = TRUE, na.action = na.fail, ...){
     # input check
     if(!.is_a_bool(scale)){
         stop("'scale' must be TRUE or FALSE.", call. = FALSE)
@@ -209,8 +209,8 @@ setGeneric("addRDA", signature = c("x"),
     #
     x <- as.matrix(t(x))
     variables <- as.data.frame(variables)
-    # Check if there are missing values and na.action should fail
-    # with NA values.
+    # Instead of letting na.action pass through, give informative error
+    # about missing values.
     if( any(is.na(variables)) && isTRUE(all.equal(na.action, na.fail)) ){
         stop("Variables contain missing values. Set na.action to na.exclude",
              " to remove samples with missing values.", call. = FALSE)
@@ -379,10 +379,12 @@ runCCA <- function(x,...){
     if( !missing(variables) ){
         # Convert into data.frame
         variables <- as.data.frame(variables)
-        
+        # Instead of letting na.action pass through, give informative error
+        # about missing values.
         if( any(is.na(variables)) && isTRUE(all.equal(na.action, na.fail)) ){
-            stop("Variables contain missing values. Set na.action to na.exclude",
-                  " to remove samples with missing values.", call. = FALSE)
+            stop("Variables contain missing values. Set na.action to ",
+                "na.exclude to remove samples with missing values.",
+                call. = FALSE)
         }
         
         # Calculate RDA with variables
@@ -434,8 +436,9 @@ runCCA <- function(x,...){
         # Take a subset
         tse <- tse[ , rownames(rda) ]
         # Give a message
-        message("Certain samples are removed from the result because they did ",
-                "not include sufficient metadata.")
+        warning(
+            "Certain samples are removed from the result because they did ",
+            "not include sufficient metadata.", call. = FALSE)
     } else if( !all(colnames(tse) %in% rownames(rda)) && !subset.result ){
         # If user do not want to subset the data
         # Save attributes from the object
