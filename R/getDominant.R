@@ -34,10 +34,14 @@
 #' object, and stores the information in the \code{colData}. It is a wrapper for
 #' \code{getDominant}.
 #'
-#' With \code{rank} parameter, it is possible to agglomerate taxa based on taxonomic
-#' ranks. E.g. if 'Genus' rank is used, all abundances of same Genus are added
-#' together, and those families are returned. See \code{agglomerateByRank()} for
-#' additional arguments to deal with missing values or special characters.
+#' With \code{rank} parameter, it is possible to agglomerate taxa based on
+#' taxonomic ranks. E.g. if 'Genus' rank is used, all abundances of same Genus
+#' are added together, and those families are returned.
+#' See \code{agglomerateByRank()} for additional arguments to deal with
+#' missing values or special characters.
+#' If the \code{rank} is not specifying a taxonomy rank from
+#' \code{taxonomyRanks(x)}, the function
+#' agglomerates rows with \code{agglomerateByVariable()}.
 #'
 #' @return \code{getDominant} returns a named character vector \code{x}
 #' while \code{addDominant} returns
