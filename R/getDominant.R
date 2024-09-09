@@ -4,6 +4,7 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
 #' 
+#' @inheritParams agglomerateByVariable
 #' @inheritParams getPrevalence
 #'
 #' @param name \code{Character scalar}. A name for the column of the 
@@ -33,10 +34,14 @@
 #' object, and stores the information in the \code{colData}. It is a wrapper for
 #' \code{getDominant}.
 #'
-#' With \code{rank} parameter, it is possible to agglomerate taxa based on taxonomic
-#' ranks. E.g. if 'Genus' rank is used, all abundances of same Genus are added
-#' together, and those families are returned. See \code{agglomerateByRank()} for
-#' additional arguments to deal with missing values or special characters.
+#' With \code{rank} parameter, it is possible to agglomerate taxa based on
+#' taxonomic ranks. E.g. if 'Genus' rank is used, all abundances of same Genus
+#' are added together, and those families are returned.
+#' See \code{agglomerateByRank()} for additional arguments to deal with
+#' missing values or special characters.
+#' If the \code{rank} is not specifying a taxonomy rank from
+#' \code{taxonomyRanks(x)}, the function
+#' agglomerates rows with \code{agglomerateByVariable()}.
 #'
 #' @return \code{getDominant} returns a named character vector \code{x}
 #' while \code{addDominant} returns
@@ -81,17 +86,17 @@ setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
                 stop("'rank' must be an single character value.",
                      call. = FALSE)
             }
-            .check_taxonomic_rank(rank, x)
-        }
+        } 
         # If "rank" is not NULL, species are aggregated according to the
         # taxonomic rank that is specified by user.
-        if(!is.null(rank)){
+        if (!is.null(rank) && rank %in% taxonomyRanks(x)) {
             x <- agglomerateByRank(x, rank, ...)
-            mat <- assay(x, assay.type)
-        } # Otherwise, if "rank" is NULL, abundances are stored without ranking
-        else {
-            mat <- assay(x, assay.type)
+        # or factor that is specified by user
+        } else if (!is.null(rank)) {
+            x <- agglomerateByVariable(x, by = "rows", f = rank, ...)
         }
+        # Get assay
+        mat <- assay(x, assay.type)
         # apply() function finds the indices of taxa's that has the highest
         # abundance.
         # rownames() returns the names of taxa that are the most abundant.
