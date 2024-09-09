@@ -9,9 +9,9 @@ transformAssay(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "css", "css_fast", "frequency", "hellinger",
-    "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr",
-    "relabundance", "rrank", "standardize", "total", "z"),
+  method = c("alr", "chi.square", "clr", "css", "frequency", "hellinger", "log", "log10",
+    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
+    "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
@@ -22,9 +22,9 @@ transformAssay(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "css", "css_fast", "frequency", "hellinger",
-    "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr",
-    "relabundance", "rrank", "standardize", "total", "z"),
+  method = c("alr", "chi.square", "clr", "css", "frequency", "hellinger", "log", "log10",
+    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
+    "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
@@ -57,22 +57,24 @@ When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.
 (Default: \code{FALSE}).}
 
-\item{...}{additional arguments.
+\item{...}{additional arguments passed e.g. on to \code{vegan:decostand}.
 \itemize{
 \item \code{reference}: \code{Character scalar}. Used to
 to fill reference sample's column in returned assay when calculating alr.
 (Default: \code{NA})
 \item \code{ref_vals} Deprecated. Use \code{reference} instead.
-\item \code{percentile}: \code{Numeric scalar} (css).  Used to set the
-percentile value that calculates the scaling factors in the css normalization.
-(Default: \code{0.5})
-\item \code{scaling}: \code{Integer scalar}. Adjusts the normalization scale
-by dividing the calculated scaling factors, effectively changing
+\item \code{percentile}: \code{Numeric scalar} or \code{NULL} (css). Used
+to set the  percentile value that calculates the scaling factors in the css
+normalization. If \code{NULL}, percentile is estimated from the data by
+calculating the portion of samples that exceed the \code{threshold}.
+(Default: \code{NULL})
+\item \code{scaling}: \code{Numeric scalar}. Adjusts the normalization
+scale  by dividing the calculated scaling factors, effectively changing
 the magnitude of the normalized counts. (Default: \code{1000}).
-\item \code{threshold}: \code{Numeric scalar}. Specifies relative difference
-threshold and determines the first point where the relative change in
-differences between consecutive quantiles exceeds this threshold.
-(Default: \code{0.1}).
+\item \code{threshold}: \code{Numeric scalar}. Specifies relative
+difference threshold and determines the first point where the relative
+change in  differences between consecutive quantiles exceeds this
+threshold. (Default: \code{0.1}).
 }}
 }
 \value{
@@ -102,17 +104,11 @@ The available transformation methods include:
 \code{\link[vegan:decostand]{decostand}} for details.
 
 \item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data
-by accounting for differences in library sizes. It's important to note that we used
-\code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}
-for the css implementation.
-
-\item 'css_fast': This method implements the
-\code{\link[metagenomeSeq:cumNormStatFast]{cumNormStatFast}}
-approach for determining the normalization percentile for summing and scaling
-counts. It utilizes row means for reference, allowing for faster computation
-compared to the traditional method. It is essentially a fast variant of CSS,
-as it determines a more optimal percentile for CSS normalization, using row
-means for quick computation. This then yields better normalization results.
+by accounting for differences in library sizes. By default, the function
+determines the normalization percentile for summing and scaling
+counts. If you want to specify the percentile value, good default value
+might be \code{0.5}.The method is inspired by
+\code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}.
 
 \item 'log10': log10 transformation can be used for reducing the skewness
 of the data.

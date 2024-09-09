@@ -24,22 +24,24 @@
 #' @param name \code{Character scalar}. A name for the column of the 
 #'   \code{colData} where results will be stored. (Default: \code{"method"})
 #'
-#' @param ... additional arguments.
+#' @param ... additional arguments passed e.g. on to \code{vegan:decostand}.
 #' \itemize{
 #'   \item \code{reference}: \code{Character scalar}. Used to
 #'   to fill reference sample's column in returned assay when calculating alr. 
 #'   (Default: \code{NA})
 #'   \item \code{ref_vals} Deprecated. Use \code{reference} instead.
-#'   \item \code{percentile}: \code{Numeric scalar} (css).  Used to set the 
-#'   percentile value that calculates the scaling factors in the css normalization.
-#'   (Default: \code{0.5})
-#'   \item \code{scaling}: \code{Integer scalar}. Adjusts the normalization scale 
-#'   by dividing the calculated scaling factors, effectively changing 
+#'   \item \code{percentile}: \code{Numeric scalar} or \code{NULL} (css). Used
+#'   to set the  percentile value that calculates the scaling factors in the css
+#'   normalization. If \code{NULL}, percentile is estimated from the data by
+#'   calculating the portion of samples that exceed the \code{threshold}.
+#'   (Default: \code{NULL})
+#'   \item \code{scaling}: \code{Numeric scalar}. Adjusts the normalization
+#'   scale  by dividing the calculated scaling factors, effectively changing 
 #'   the magnitude of the normalized counts. (Default: \code{1000}).
-#'   \item \code{threshold}: \code{Numeric scalar}. Specifies relative difference 
-#'   threshold and determines the first point where the relative change in 
-#'   differences between consecutive quantiles exceeds this threshold. 
-#'   (Default: \code{0.1}).
+#'   \item \code{threshold}: \code{Numeric scalar}. Specifies relative
+#'   difference threshold and determines the first point where the relative
+#'   change in  differences between consecutive quantiles exceeds this
+#'   threshold. (Default: \code{0.1}).
 #' }
 #' @details
 #'
@@ -61,17 +63,11 @@
 #' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
 #' \item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data 
-#' by accounting for differences in library sizes. It's important to note that we used
-#' \code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}
-#' for the css implementation. 
-#' 
-#' \item 'css_fast': This method implements the 
-#' \code{\link[metagenomeSeq:cumNormStatFast]{cumNormStatFast}}
-#' approach for determining the normalization percentile for summing and scaling 
-#' counts. It utilizes row means for reference, allowing for faster computation 
-#' compared to the traditional method. It is essentially a fast variant of CSS, 
-#' as it determines a more optimal percentile for CSS normalization, using row 
-#' means for quick computation. This then yields better normalization results. 
+#' by accounting for differences in library sizes. By default, the function
+#' determines the normalization percentile for summing and scaling 
+#' counts. If you want to specify the percentile value, good default value
+#' might be \code{0.5}.The method is inspired by
+#' \code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}.
 #' 
 #' \item 'log10': log10 transformation can be used for reducing the skewness
 #' of the data.
@@ -155,7 +151,7 @@ NULL
 setGeneric("transformAssay", signature = c("x"),
            function(x,
                     assay.type = "counts", assay_name = NULL,
-                    method = c("alr", "chi.square", "clr", "css", "css_fast", 
+                    method = c("alr", "chi.square", "clr", "css", 
                                "frequency", "hellinger", "log", "log10", "log2", 
                                "max", "normalize", "pa", "range", "rank", "rclr",
                                "relabundance", "rrank", "standardize", "total",
@@ -171,7 +167,7 @@ setGeneric("transformAssay", signature = c("x"),
 setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     function(x,
         assay.type = "counts", assay_name = NULL,
-        method = c("alr", "chi.square", "clr", "css", "css_fast", "frequency", 
+        method = c("alr", "chi.square", "clr", "css", "frequency", 
                   "hellinger", "log", "log10", "log2", "max", "normalize", 
                   "pa", "range", "rank", "rclr", "relabundance", "rrank",
                   "standardize", "total", "z"),
@@ -228,7 +224,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         
         # Calls help function that does the transformation
         # Help function is different for mia and vegan transformations
-        if( method %in% c("log10", "log2", "css", "css_fast") ){
+        if( method %in% c("log10", "log2", "css") ){
             transformed_table <- .apply_transformation(
                 assay, method, MARGIN, ...)
         } else {
@@ -257,11 +253,11 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     }
 
     # Function is selected based on the "method" variable
-    FUN <- switch(method,
-                      log10 = .calc_log,
-                      log2 = .calc_log,
-                      css = .calc_css,
-                      css_fast = .calc_css_fast
+    FUN <- switch(
+        method,
+        log10 = .calc_log,
+        log2 = .calc_log,
+        css = .calc_css
     )
 
     # Get transformed table
@@ -283,8 +279,8 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 # Help function for transformAssay, takes abundance
 # table as input and returns transformed table. This function utilizes vegan's
 # transformation functions.
-.apply_transformation_from_vegan <- function(mat, method, MARGIN, reference = ref_vals,
-                                            ref_vals = NA, ...){
+.apply_transformation_from_vegan <- function(
+        mat, method, MARGIN, reference = ref_vals, ref_vals = NA, ...){
     # Input check
     # Check reference
     if( length(reference) != 1 ){
@@ -333,12 +329,12 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     # it is not possible to calculate log from zeros. Otherwise, calculates log.
     if ( any(mat < 0, na.rm = TRUE) ){
         stop("The assay contains negative values and ", method,
-             " transformation is being applied without pseudocount.",
+            " transformation is being applied without pseudocount.",
             "`pseudocount` must be specified manually.", call. = FALSE)
     } else if ( any(mat == 0, na.rm = TRUE) ){
         stop("The assay contains zeroes and ", method,
-             " transformation is being applied without pseudocount.",
-             "`pseudocount` must be set to TRUE.", call. = FALSE)
+            " transformation is being applied without pseudocount.",
+            "`pseudocount` must be set to TRUE.", call. = FALSE)
     }
     # Calculate log2 or log10 abundances
     if(method == "log2"){
@@ -353,108 +349,138 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 
 ####################################.calc_css###################################
 # This function applies cumulative sum scaling (CSS) to the abundance table.
-.calc_css <- function(mat, percentile = 0.5, scaling = 1000, ...) {
+.calc_css <- function(mat, percentile = NULL, scaling = 1000, ...) {
     # Input check
-    if( !.is_an_integer(scaling) ){
+    if( !(is.null(percentile) || .is_a_numeric(percentile)) ){
+        stop("'percentile' must be a numeric value or NULL.", call. = FALSE)
+    }
+    if( !.is_a_numeric(scaling) ){
         stop("'scaling' must be an integer value.", call. = FALSE)
     }
-    if( !(is.numeric(percentile) && length(percentile) == 1 ) ){
-        stop("'percentile' must be a numeric value.", call. = FALSE)
-    }
-    # Call .calc_scaling_factors method to calculate scaling factors
-    scaling_factors <- .calc_scaling_factors(mat, percentile)
-    # Normalize the count data by dividing by the scaling factor
-    normalized_data <- sweep(mat, 2, scaling_factors / scaling, "/")
-    return(normalized_data)
-}
-
-####################################.calc_css_fast##############################
-# This function applies cumulative sum scaling (CSS) to the abundance table 
-# using the fast variant method.
-.calc_css_fast <- function(mat, percentile = NULL, ...) {
-    # Calculate the percentile using .calc_css_percentile
-    if(is.null(percentile)) {
+    #
+    # Calculate the percentile if the user has not specified it.
+    # The function determines the percentile by identifying the point where
+    # sample abundances start to show significant deviation compared to other
+    # samples.
+    if( is.null(percentile) ){
         percentile <- .calc_css_percentile(mat, ...)
+        message("'percentile' set to ", percentile, ".")
     }
-    message("percentile value used (", percentile, ").")
-    # Call .calc_css with the calculated percentile
-    normalized_data <- .calc_css(mat, percentile, ...)
+    # Calculate scaling factors. Scaling factors tells the number of values in
+    # each sample that are below the percentile.
+    scaling_factors <- .calc_scaling_factors(mat, percentile)
+    # Normalize the count data by dividing each column by the corresponding
+    # scaling factor. The scaling factors are derived from the sum of values
+    # below a specific threshold for each sample. This adjustment ensures that
+    # counts are scaled relative to the distribution of low-abundance features,
+    # making them comparable across samples by removing the effect of varying
+    # distributions of low counts.
+    scaled_factors <- scaling_factors / scaling
+    normalized_data <- sweep(mat, 2, scaled_factors, "/")
+    # Add information on used parameters to normalized matrix
+    attr(normalized_data, "parameters") <- list(
+        percentile = percentile,
+        scaling_factors = scaling_factors,
+        scaling = scaling
+        )
     return(normalized_data)
 }
 
-#################################.calc_css_percentile######################
-
+############################# .calc_css_percentile #############################
 # Calculates the cumulative sum scaling (css) scaling percentiles from the given 
 # data
 #' @importFrom DelayedMatrixStats colSums2 colQuantiles rowMeans2 rowMedians
 .calc_css_percentile <- function(mat, threshold = 0.1, ...) {
     # Input check
-    if( !is.numeric(threshold) ){
-        stop("'threshold' must be a numeric value.", call. = FALSE)
+    if( !(.is_a_numeric(threshold) && threshold > 0 && threshold < 1)  ){
+        stop("'threshold' must be a numeric value between 0 and 1.",
+            call. = FALSE)
     }
+    #
     # Replace zero values to NA, i.e. not detected
     mat[ mat == 0 ] <- NA
     # Calculate number of features detected
     found_features <- colSums2(!is.na(mat))
-    # Stop if there are columsn with only 1 or 0 found features
+    # Stop if there are columns with only 1 or 0 found features. The percentile
+    # estimation is not reliable with so few features.
     if( any(found_features <= 1) ){
         stop(
             "There are samples that contain 1 or less found features.",
-            "'fast CSS' method cannot be applied.", call. = FALSE)
+            "'percentile' cannot be estimated from the data. Specify it ",
+            "manually.", call. = FALSE)
     }
-    # Calculate quantiles. Take into account only positive, found features
+    # Calculate quantiles for the features present in each sample.
+    # Use a 'probs' sequence from 0 to 1, with increments based on the maximum
+    # number of features found.
+    # This allows quantile calculation for every feature increment.
+    # The quantiles indicate how counts accumulate in each sample, showing,
+    # e.g., whether most counts are small or large.
     quantiles <- colQuantiles(
         mat, probs = seq(0, 1, length.out = max(found_features)), na.rm = TRUE)
     quantiles <- t(quantiles)
-    # Sort the columns based on abundance
+    # Sort the columns based on abundance. This means that each sample is sorted
+    # so that smallest values come first. Ultimately, this means that values
+    # should increase from first to row to last. Rows do not represent single
+    # taxa anymore but abundance level.
     mat <- apply(mat, 2, function(col){
         col[ is.na(col) ] <- 0
-        col <- as.array(col)
         col <- sort(col)
         return(col)
     })
-    # Compute the row means of sorted matrix to create a reference profile
+    # Compute the row means of sorted matrix to create a reference profile. This
+    # profile illustrates the average abundance levels in this dataset; what
+    # abundance levels we can find from a sample in average.
     ref <- rowMeans2(mat)
     ref <- ref[ ref > 0 ]
     # Calculate the differences between the reference profile and each
-    # column's quantiles
+    # column's quantiles. This means that we compare this average abundance
+    # levels to each samples abundance levels.
     difference <- ref - quantiles
-    # Compute the row medians of absolute differences
+    # Compute the row medians of absolute differences. This means that we
+    # calculate how much the samples abundance accumulation differs from average
+    # abundance profile / accumulation in average.
     difference <- rowMedians(abs(difference))
-    # Find the first point where the relative change exceeds the threshold
+    # Compute the relative change in absolute differences between the reference
+    # profile and each sample's quantiles. Identify the first index where this
+    # relative change exceeds the specified threshold. This index represents
+    # the count value at which the deviation between sample abundance levels and
+    # the reference profile becomes significant, highlighting a notable
+    # difference in abundance between samples
     res <- abs(diff(difference)) / difference[-1]
     res <- which(res > threshold)
-    res <- res[[1]] / max(found_features)
-    # If the calculated percentile is less than or equal to 0.50, use 0.50 as
-    # the default value
-    if( res < 0.50 ){
-        res <- 0.50
-        message("Default threshold value used (", res, ").")
-    } else {
-        message("threshold value used (", res, ").")
-    }
+    res <- res[[1]]
+    # Convert the count value to a relative proportion by dividing by the
+    # maximum number of features. This scales the count to a proportion of the
+    # total feature count, normalizing it against the library size.
+    res <- res/max(found_features)
+    # # If the calculated percentile is less than or equal to 0.50, use 0.50 as
+    # # the default value
+    # if( res < 0.50 ){
+    #     res <- 0.50
+    # }
     return(res)
 }
 
-################################.calc_scaling_factors###########################
-
+############################### .calc_scaling_factors ##########################
 # Calculates the cumulative sum scaling (css) scaling factors.
 #' @importFrom DelayedMatrixStats colQuantiles
 .calc_scaling_factors <- function(mat, percentile) {
-    # Replace zero values with NA
+    # Replace zero values in the matrix with NA to indicate missing or not
+    # detected values.
     mat_tmp <- mat
     mat_tmp[mat_tmp == 0] <- NA
-    # Calculate quantiles for each column
+    # Calculate the count value for the specified percentile in each sample.
+    # This shows the value below which the specified proportion of feature
+    # counts fall in each sample.
     quantiles <- colQuantiles(mat_tmp, probs = percentile, na.rm = TRUE)
-    # Find the scaling factor for each sample. For each sample, take sum of
-    # those values that are lower than the respective quantile value.
-    # Improve precision by subsracting the  smallest positive floating-point
-    # number.
-    scaling_factors <- vapply(seq_len(ncol(mat_tmp)), function(i) {
+    # Compute the scaling factor for each sample by summing the number of values
+    # in the sample that are below the respective quantile. Improve precision by
+    # subtracting the smallest positive floating-point number from each value
+    # before comparison.
+    scaling_factors <- vapply(seq_len(ncol(mat_tmp)), function(i){
         col_values <- mat[, i] - .Machine$double.eps
         sum(col_values[col_values <= quantiles[i]], na.rm = TRUE)
     }, numeric(1))
-    
     # Give scaling_factors names corresponding to the original matrix cols
     names(scaling_factors) <- colnames(mat)
     return(scaling_factors)
