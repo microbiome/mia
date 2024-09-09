@@ -101,7 +101,10 @@ test_that("CCA", {
     variable_names <- c("ClinicalStatus", "Gender", "Age")
     res <- addRDA(enterotype, variables = variable_names, na.action = na.exclude, subset.result = FALSE)
     expect_equal(colnames(res), colnames(enterotype))
-    res <- addRDA(enterotype, variables = variable_names, na.action = na.exclude)
+    expect_warning(
+        res <- addRDA(
+            enterotype, variables = variable_names, na.action = na.exclude)
+    )
     enterotype <- enterotype[, complete.cases(colData(enterotype)[, variable_names])]
     expect_equal(colnames(res), colnames(enterotype))
     #
