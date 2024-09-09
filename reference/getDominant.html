@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.36</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.37</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get dominant taxa</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/update_divergence/R/getDominant.R" class="external-link"><code>R/getDominant.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/wangru/R/getDominant.R" class="external-link"><code>R/getDominant.R</code></a></small>
     <div class="hidden name"><code>getDominant.Rd</code></div>
     </div>
 
@@ -159,10 +159,14 @@ with additional column in <code><a href="https://rdrr.io/pkg/SummarizedExperimen
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object, and stores the information in the <code>colData</code>. It is a wrapper for
 <code>getDominant</code>.</p>
-<p>With <code>rank</code> parameter, it is possible to agglomerate taxa based on taxonomic
-ranks. E.g. if 'Genus' rank is used, all abundances of same Genus are added
-together, and those families are returned. See <code><a href="agglomerate-methods.html">agglomerateByRank()</a></code> for
-additional arguments to deal with missing values or special characters.</p>
+<p>With <code>rank</code> parameter, it is possible to agglomerate taxa based on
+taxonomic ranks. E.g. if 'Genus' rank is used, all abundances of same Genus
+are added together, and those families are returned.
+See <code><a href="agglomerate-methods.html">agglomerateByRank()</a></code> for additional arguments to deal with
+missing values or special characters.
+If the <code>rank</code> is not specifying a taxonomy rank from
+<code>taxonomyRanks(x)</code>, the function
+agglomerates rows with <code><a href="agglomerate-methods.html">agglomerateByVariable()</a></code>.</p>
     </div>
 
     <div id="ref-examples">
