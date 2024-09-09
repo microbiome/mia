@@ -114,13 +114,13 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
                 "'reference' must be a column from colData or either 'mean' ",
                 "or 'median'.", call. = FALSE)
         }
-        # If there are no colnmaes, add them. They are not added to returned
+        # If there are no colnames, add them. They are not added to returned
         # vaues.
         if( is.null(colnames(x)) ){
             colnames(x) <- paste0("sample_", seq_len(ncol(x)))
         }
         ################# Input check end #############
-        # Get assay and referencess
+        # Get assay and references
         mat <- .get_matrix_and_reference(x, assay.type, reference, ref_type)
         reference <- mat[[2]]
         mat <- mat[[1]]
@@ -133,7 +133,7 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
 )
 ############################## HELP FUNCTIONS ##############################
 
-# This function returns reference typr.
+# This function returns reference type.
 # reference must be a column from colData, or either "median" or "mean".
 # We also support providing a numeric vector or single sample name, but
 # those those are not recommended.
