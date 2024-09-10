@@ -47,6 +47,21 @@ test_that("getDominant", {
                                             name="dominant"))$dominant[1:15],
                      exp.vals.two)
         
+        # Check if DominantTaxa is added when factor is passed
+        exp.vals.three <- c(
+            "CandidatusSolibacter", "MC18", "CandidatusNitrososphaera", "Bacteroides",
+            "Bacteroides", "Streptococcus", "Corynebacterium", "Streptococcus",
+            "Neisseria", "Veillonella", "Dolichospermum", "Prochlorococcus",
+            "Luteolibacter", "Crenothrix", "Crenothrix"
+        )
+        names(exp.vals.three) <- exp.names.one
+        test <- tse
+        rowData(test)$group <- rowData(tse)$Genus
+        expect_equal(colData(addDominant(test, rank = "group", na.rm = TRUE,
+                                         name="dominant"))$dominant[1:15],
+                     exp.vals.three)
+        
+        
         tse1 <- tse
         # Now data contains 2 dominant taxa in one sample
         assay(tse1)[1, 1] <- max(assay(tse1)[, 1])
