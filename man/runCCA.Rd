@@ -76,6 +76,9 @@ possible following homogeneity test. (By default: \code{method="euclidean"})}
 \item{\code{scale}: \code{Logical scalar}. Should the expression values be
 standardized? \code{scale} is disabled when using \code{*RDA} functions.
 Please scale before performing RDA. (Default: \code{TRUE})}
+\item{\code{na.action}: \code{function}. Action to take when missing
+values for any of the variables in \code{formula} are encountered.
+(Default: \code{na.fail})}
 \item{\code{full} \code{Logical scalar}. should all the results from the
 significance calculations be returned. When \code{full=FALSE}, only
 summary tables are returned. (Default: \code{FALSE})}
@@ -146,7 +149,8 @@ For \code{run*} a
 or a derived object.
 
 *CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
-By default dbRDA is done with euclidean distances which equals to RDA.
+By default, dbRDA is done with euclidean distances, which is equivalent to
+RDA.
 
 Significance tests are done with \code{vegan:anova.cca} (PERMANOVA). Group
 dispersion, i.e., homogeneity within groups is analyzed with
@@ -155,43 +159,65 @@ and statistical significance of homogeneity is tested with a test
 specified by \code{homogeneity.test} parameter.
 }
 \examples{
-library(scater)
-data(GlobalPatterns)
-GlobalPatterns <- addCCA(GlobalPatterns, data ~ SampleType)
-plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
+library(miaViz)
+data("enterotype", package = "mia")
+tse <- enterotype
+
+# Perform CCA and exclude any sample with missing ClinicalStatus
+tse <- addCCA(tse,
+              formula = data ~ ClinicalStatus,
+              na.action = na.exclude)
+
+# Plot CCA
+plotCCA(tse, "CCA",
+        colour_by = "ClinicalStatus")
 
 # Fetch significance results
-attr(reducedDim(GlobalPatterns, "CCA"), "significance")
+attr(reducedDim(tse, "CCA"), "significance")
 
-GlobalPatterns <- addRDA(GlobalPatterns, data ~ SampleType)
-plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
+tse <- transformAssay(tse, method = "relabundance")
 
 # Specify dissimilarity measure
-GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
-GlobalPatterns <- addRDA(
-    GlobalPatterns, data ~ SampleType, assay.type = "relabundance",
-    method = "bray")
+tse <- addRDA(tse,
+              formula = data ~ ClinicalStatus,
+              assay.type = "relabundance",
+              method = "bray",
+              name = "RDA_bray")
 
 # To scale values when using *RDA functions, use
 # transformAssay(MARGIN = "features", ...) 
-tse <- GlobalPatterns
-tse <- transformAssay(tse, MARGIN = "features", method = "standardize")
+tse <- transformAssay(tse,
+                      method = "standardize",
+                      MARGIN = "features")
+
 # Data might include taxa that do not vary. Remove those because after
 # z-transform their value is NA
-tse <- tse[ rowSums( is.na( assay(tse, "standardize") ) ) == 0, ]
+tse <- tse[rowSums(is.na(assay(tse, "standardize"))) == 0, ]
+
 # Calculate RDA
-tse <- addRDA(
-    tse, formula = data ~ SampleType, assay.type = "standardize",
-    name = "rda_scaled", na.action = na.omit)
-# Plot
-plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
+tse <- addRDA(tse,
+              formula = data ~ ClinicalStatus,
+              assay.type = "standardize",
+              name = "rda_scaled",
+              na.action = na.omit)
+
+# Plot RDA
+plotRDA(tse, "rda_scaled",
+        colour_by = "ClinicalStatus")
+
 # A common choice along with PERMANOVA is ANOVA when statistical significance
-# of homogeneity of groups is analysed. Moreover, full significance test results
-# can be returned.
- tse <- addRDA(
-     tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
-# Example showing how to pass extra parameters, such as 'permutations', to anova.cca
-tse <- addRDA(tse, data ~ SampleType, permutations = 500)
+# of homogeneity of groups is analysed. Moreover, full significance test
+# results can be returned.
+tse <- addRDA(tse,
+              formula = data ~ ClinicalStatus,
+              homogeneity.test = "anova",
+              full = TRUE)
+
+# Example showing how to pass extra parameters, such as 'permutations',
+# to anova.cca
+tse <- addRDA(tse,
+              formula = data ~ ClinicalStatus,
+              permutations = 500)
 
 }
 \seealso{
