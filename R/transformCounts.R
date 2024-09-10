@@ -418,6 +418,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     # so that smallest values come first. Ultimately, this means that values
     # should increase from first to row to last. Rows do not represent single
     # taxa anymore but abundance level.
+    mat <- as.matrix(mat)
     mat <- apply(mat, 2, function(col){
         col[ is.na(col) ] <- 0
         col <- sort(col)

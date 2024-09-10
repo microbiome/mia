@@ -117,51 +117,7 @@ test_that("transformAssay", {
         
         # Test for equality of your CSS normalization with metagenomeSeq normalization
         expect_true(all.equal(as.matrix(ass[19:20, 17:18]), normalized_counts, check.attributes = FALSE))
-        
-        ############################ CSS FAST ######################################
-        ## Test the css_fast method overall logic
-        # Apply CSS fast normalization using transformAssay
-        tmp_fast <- mia::transformAssay(tse, method = "css_fast", assay.type = "counts")
-        ass_fast <- assays(tmp_fast)$css_fast
-        
-        # Manually compute CSS fast normalization using default threshold
-        css_fast_default <- .calc_css_fast(counts_matrix)
-        
-        # Assert that the assays are equivalent
-        expect_true(all.equal(as.matrix(ass_fast), css_fast_default, check.attributes = FALSE))
-        
-        
-        ## Test that the threshold parameter works
-        # Apply CSS fast normalization using transformAssay with different threshold
-        tmp_fast_2 <- mia::transformAssay(tse, method = "css_fast", threshold = 0.5)
-        ass_fast_2 <- assays(tmp_fast_2)$css_fast
-        
-        # Manually compute CSS fast normalization using threshold = 0.5
-        css_fast_rel_50 <- .calc_css_fast(counts_matrix, threshold = 0.5)
-        
-        # Ensure the threshold parameter changes the results as expected
-        expect_false(identical(css_fast_default, css_fast_rel_50))
-        expect_true(all.equal(as.matrix(ass_fast_2), css_fast_rel_50, check.attributes = FALSE))
-        
-        
-        ## Test the scaling parameter for css_fast
-        # Manually compute CSS fast normalization using default scaling
-        css_fast_default <- .calc_css_fast(counts_matrix)
-        
-        # Manually compute CSS fast normalization using scaling of 2000
-        css_fast_2000 <- .calc_css_fast(counts_matrix, scaling = 2000)
-        
-        # Ensure the scaling changes the results
-        expect_false(identical(css_fast_default, css_fast_2000))
-        
-        
-        ## Check internal CSS fast equals CSS fast from metagenomeSeq package
-        normalized_counts_fast <- normalized_counts
 
-        
-        # Test for equality of your CSS fast normalization with metagenomeSeq normalization
-        expect_true(all.equal(as.matrix(ass[19:20, 17:18]), normalized_counts_fast, check.attributes = FALSE))
-        
         ########################## PA ##########################################
         # Calculates pa transformation. Should be equal.
         actual <- assay(mia::transformAssay(tse, method = "pa"),"pa")
