@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.37</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.38</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Canonical Correspondence Analysis and Redundancy Analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/dbRDA/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
     <div class="hidden name"><code>runCCA.Rd</code></div>
     </div>
 
@@ -125,6 +125,9 @@ possible following homogeneity test. (By default: <code>method="euclidean"</code
 <li><p><code>scale</code>: <code>Logical scalar</code>. Should the expression values be
 standardized? <code>scale</code> is disabled when using <code>*RDA</code> functions.
 Please scale before performing RDA. (Default: <code>TRUE</code>)</p></li>
+<li><p><code>na.action</code>: <code>function</code>. Action to take when missing
+values for any of the variables in <code>formula</code> are encountered.
+(Default: <code>na.fail</code>)</p></li>
 <li><p><code>full</code> <code>Logical scalar</code>. should all the results from the
 significance calculations be returned. When <code>full=FALSE</code>, only
 summary tables are returned. (Default: <code>FALSE</code>)</p></li>
@@ -207,7 +210,8 @@ significance analysis results.</p>
 <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></code>
 or a derived object.</p>
 <p>*CCA functions utilize <code>vegan:cca</code> and *RDA functions <code>vegan:dbRDA</code>.
-By default dbRDA is done with euclidean distances which equals to RDA.</p>
+By default, dbRDA is done with euclidean distances, which is equivalent to
+RDA.</p>
 <p>Significance tests are done with <code>vegan:anova.cca</code> (PERMANOVA). Group
 dispersion, i.e., homogeneity within groups is analyzed with
 <code>vegan:betadisper</code> (multivariate homogeneity of groups dispersions (variances))
@@ -222,60 +226,92 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/dbrda.html" class="external-lin
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu">addCCA</span><span class="op">(</span><span class="va">GlobalPatterns</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"CCA"</span>, colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">miaViz</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: ggraph</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘miaViz’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:mia’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     plotNMDS</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"enterotype"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">enterotype</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Perform CCA and exclude any sample with missing ClinicalStatus</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addCCA</span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span>              formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
+<span class="r-in"><span>              na.action <span class="op">=</span> <span class="va">na.exclude</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Certain samples are removed from the result because they did not include sufficient metadata.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Plot CCA</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/miaViz/man/plotCCA.html" class="external-link">plotCCA</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"CCA"</span>,</span></span>
+<span class="r-in"><span>        colour_by <span class="op">=</span> <span class="st">"ClinicalStatus"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
 <span class="r-plt img"><img src="runCCA-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fetch significance results</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, <span class="st">"CCA"</span><span class="op">)</span>, <span class="st">"significance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"CCA"</span><span class="op">)</span>, <span class="st">"significance"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $permanova</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            Df ChiSquare        F Pr(&gt;F) Total variance Explained variance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model       8  6.829675 3.130011  0.001       11.46642          0.5956241</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SampleType  8  6.829675 3.130011  0.001       11.46642          0.5956241</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Residual   17  4.636744       NA     NA       11.46642          0.4043759</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                Df ChiSquare         F Pr(&gt;F) Total variance Explained variance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Model           4  0.150386 0.7379888  0.676         1.8825         0.07988631</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ClinicalStatus  4  0.150386 0.7379888  0.651         1.8825         0.07988631</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Residual       34  1.732114        NA     NA         1.8825         0.92011369</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $homogeneity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            Df       Sum Sq     Mean Sq        F N.Perm Pr(&gt;F) Total variance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SampleType  8 517998722243 64749840280 6.262765    999  0.001   693759304679</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            Explained variance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SampleType          0.7466548</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                Df    Sum Sq    Mean Sq        F N.Perm Pr(&gt;F) Total variance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ClinicalStatus  4 0.2184213 0.05460533 1.757098    999  0.152       1.275039</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                Explained variance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ClinicalStatus          0.1713056</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span><span class="va">GlobalPatterns</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"CCA"</span>, colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="runCCA-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Specify dissimilarity measure</span></span></span>
-<span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">GlobalPatterns</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
-<span class="r-in"><span>    method <span class="op">=</span> <span class="st">"bray"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span>              formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
+<span class="r-in"><span>              assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
+<span class="r-in"><span>              method <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
+<span class="r-in"><span>              name <span class="op">=</span> <span class="st">"RDA_bray"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># To scale values when using *RDA functions, use</span></span></span>
 <span class="r-in"><span><span class="co"># transformAssay(MARGIN = "features", ...) </span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, MARGIN <span class="op">=</span> <span class="st">"features"</span>, method <span class="op">=</span> <span class="st">"standardize"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span>                      method <span class="op">=</span> <span class="st">"standardize"</span>,</span></span>
+<span class="r-in"><span>                      MARGIN <span class="op">=</span> <span class="st">"features"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>result contains NaN, perhaps due to impossible mathematical</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>                  operation</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Data might include taxa that do not vary. Remove those because after</span></span></span>
 <span class="r-in"><span><span class="co"># z-transform their value is NA</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">tse</span><span class="op">[</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"standardize"</span><span class="op">)</span> <span class="op">)</span> <span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">tse</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"standardize"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate RDA</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>, formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>, assay.type <span class="op">=</span> <span class="st">"standardize"</span>,</span></span>
-<span class="r-in"><span>    name <span class="op">=</span> <span class="st">"rda_scaled"</span>, na.action <span class="op">=</span> <span class="va">na.omit</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Plot</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"rda_scaled"</span>, colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="runCCA-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span>              formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
+<span class="r-in"><span>              assay.type <span class="op">=</span> <span class="st">"standardize"</span>,</span></span>
+<span class="r-in"><span>              name <span class="op">=</span> <span class="st">"rda_scaled"</span>,</span></span>
+<span class="r-in"><span>              na.action <span class="op">=</span> <span class="va">na.omit</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Plot RDA</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/miaViz/man/plotCCA.html" class="external-link">plotRDA</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rda_scaled"</span>,</span></span>
+<span class="r-in"><span>        colour_by <span class="op">=</span> <span class="st">"ClinicalStatus"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
+<span class="r-plt img"><img src="runCCA-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># A common choice along with PERMANOVA is ANOVA when statistical significance</span></span></span>
-<span class="r-in"><span><span class="co"># of homogeneity of groups is analysed. Moreover, full significance test results</span></span></span>
-<span class="r-in"><span><span class="co"># can be returned.</span></span></span>
-<span class="r-in"><span> <span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span></span></span>
-<span class="r-in"><span>     <span class="va">tse</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>, homogeneity.test <span class="op">=</span> <span class="st">"anova"</span>, full <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Example showing how to pass extra parameters, such as 'permutations', to anova.cca</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>, permutations <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># of homogeneity of groups is analysed. Moreover, full significance test</span></span></span>
+<span class="r-in"><span><span class="co"># results can be returned.</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span>              formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
+<span class="r-in"><span>              homogeneity.test <span class="op">=</span> <span class="st">"anova"</span>,</span></span>
+<span class="r-in"><span>              full <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example showing how to pass extra parameters, such as 'permutations',</span></span></span>
+<span class="r-in"><span><span class="co"># to anova.cca</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span>              formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
+<span class="r-in"><span>              permutations <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
