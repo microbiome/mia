@@ -19,6 +19,9 @@
 #'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis 
 #'   into a CA analysis and dbRDA into PCoA/MDS.
 #'
+#' @param data \code{data.frame} or coarcible to one. The covariance table
+#' including covariates defined by \code{formula}.
+#'
 #' @param variables \code{Character scalar}. When \code{x} is a \code{SummarizedExperiment},
 #'   \code{variables} can be used to specify variables from \code{colData}. 
 #'   
@@ -38,11 +41,6 @@
 #' 
 #' @param name \code{Character scalar}. A name for the column of the 
 #'   \code{colData} where results will be stored. (Default: \code{"CCA"})
-#' 
-#' @param scores \code{Character scalar}. Specifies scores to be returned. Must be
-#' 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
-#' v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-#' 'u' ((weighted) orthonormal site scores). (Default: \code{'wa'})
 #' 
 #' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #'
@@ -179,7 +177,7 @@ setGeneric("addRDA", signature = c("x"), function(x, ...)
 #' @rdname runCCA
 #' @aliases getCCA
 calculateCCA <- function(x, ...){
-    getCCA(x,...)
+    getCCA(x, ...)
 }
 
 #' @export
@@ -191,71 +189,96 @@ runCCA <- function(x, ...){
 
 #' @export
 #' @rdname runCCA
-setMethod("getCCA", "ANY", function(x, ...){
-    .calculate_cca(x, ...)
-})
+setMethod("getCCA", "ANY", function(x, formula, data, ...){
+    if( !is.matrix(x) ){
+        stop("'x' must be matrix.", call. = FALSE)
+    }
+    if( !is(formula, "formula") ){
+        stop("'formula' must be formula or NULL.", call. = FALSE)
+    }
+    if( !(is.data.frame(data) || is.matrix(data) || is(data, "DFrame")) ){
+        stop("'data' must be data.frame or coarcible to one.", call. = FALSE)
+    }
+    if( ncol(x) != nrow(data) ){
+        stop("Number of columns in 'x' should match with number of rows in ",
+            "'data'.", call. = FALSE)
+    }
+    #
+    res <- .calculate_rda(
+        x, formula = formula, data = data, ord.method = "CCA", ...)
+    return(res)
+    })
 
 #' @export
 #' @rdname runCCA
 setMethod("getCCA", "SummarizedExperiment",
     function(
-        x, formula, variables, test.signif = TRUE,
-        assay.type = assay_name, assay_name = exprs_values,
-        exprs_values = "counts",
-        scores = "wa", ...){
-    # Check assay.type and get assay
-    .check_assay_present(assay.type, x)
-    mat <- assay(x, assay.type)
-    # Check test.signif
-    if( !.is_a_bool(test.signif) ){
-        stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
-    }
-    if( !(.is_a_string(scores) && scores %in% c("wa", "u")) ){
-        stop("'scores' must be 'wa' or 'u'.",
-            call. = FALSE)
-    }
-    
-    # If formula is missing but variables are not
-    if( !missing(variables) && missing(formula) ){
-      # Create a formula based on variables
-      formula <- .get_formula_from_data_and_variables(x, variables)
-      # Get the data from colData
-      variables <- colData(x)[ , variables, drop = FALSE]
-    } else{
-      # Otherwise if formula is provided, get variables based on formula
-      # (If formula is not provided variables is just empty data.frame)
-      variables <- .get_variables_from_data_and_formula(x, formula)
-    } 
-    cca <- .calculate_cca(mat, formula, variables, scores, ...)
-    
-    # Test significance if specified
-    if( test.signif ){
-      res <- .test_rda(mat, attr(cca, "cca"), variables, ...)
-      attr(cca, "significance") <- res
-    }
-    return(cca)
-  }
-)
-
+        x, formula = NULL, col.var = variables, variables = NULL,
+        test.signif = TRUE, assay.type = assay_name, assay_name = exprs_values,
+        exprs_values = "counts", ...){
+        ############################# Input check ##############################
+        if( !(is.null(formula) || is(formula, "formula")) ){
+            stop("'formula' must be formula or NULL.", call. = FALSE)
+        }
+        if( !(is.null(col.var) ||
+                (is.character(col.var) &&
+                     all(col.var %in% colnames(colData(x))))) ){
+            stop("'col.var' must specify column from colData(x) or be NULL.",
+                call. = FALSE)
+        }
+        if( !is.null(formula) && !is.null(col.var) ){
+            stop("Specify either 'formula' or 'col.var'.", call. = FALSE)
+        }
+        .check_assay_present(assay.type, x)
+        if( !.is_a_bool(test.signif) ){
+            stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
+        }
+        ########################### Input check end ############################
+        # Get assay
+        mat <- assay(x, assay.type)
+        # Get formula and variables
+        temp <- .get_formula_and_covariates(x, formula, col.var)
+        formula <- temp[["formula"]]
+        covariates <- temp[["variables"]]
+        # Calculate CCA
+        cca <- getCCA(mat, formula = formula, data = covariates, ...)
+        # Test significance if specified
+        if( test.signif ){
+            res <- .test_rda(mat, attr(cca, "obj"), covariates, ...)
+            attr(cca, "significance") <- res
+        }
+        return(cca)
+        }
+    )
 
 #' @export
 #' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
 setMethod("addCCA", "SingleCellExperiment",
-    function(x, formula, variables, altexp = NULL, name = "CCA", ...){
-    # Get TreeSE from altexp if specified.
-    if( !is.null(altexp) ){
-        y <- altExp(x, altexp)
-    } else {
-        y <- x
-    }
-    # Calculate CCA
-    cca <- getCCA(y, formula, variables, ...)
-    # Add object to reducedDim
-    x <- .add_object_to_reduceddim(x, cca, name = name, ...)
-    return(x)
-    }
-)
+    function(x, altexp = NULL, name = "CCA", ...){
+        ############################# Input check ##############################
+        if( !(is.null(altexp) ||
+            (length(altexp) == 1L && is.character(altexp) &&
+                 all(altexp %in% altExpNames(x))) ||
+            (.is_an_integer(altexp) && altexp > 0 &&
+                 altexp <= length(altExps(x))) ) ){
+            stop("'altexp' must specify an alternative experiment from ",
+                "altExp(x).", call. = FALSE)
+        }
+        ########################### Input check end ############################
+        # Get TreeSE from altexp if specified.
+        if( !is.null(altexp) ){
+            y <- altExp(x, altexp)
+        } else {
+            y <- x
+        }
+        # Calculate CCA
+        cca <- getCCA(y, ...)
+        # Add object to reducedDim
+        x <- .add_object_to_reduceddim(x, cca, name = name, ...)
+        return(x)
+        }
+    )
 
 ############################# Exported RDA methods #############################
 
@@ -263,294 +286,269 @@ setMethod("addCCA", "SingleCellExperiment",
 #' @rdname runCCA
 #' @aliases getRDA
 calculateRDA <- function(x, ...){
-    getRDA(x,...)
+    getRDA(x, ...)
 }
 
 #' @export
 #' @rdname runCCA
 #' @aliases addRDA
 runRDA <- function(x, ...){
-    addRDA(x,...)
+    addRDA(x, ...)
 }
+
 #' @export
 #' @rdname runCCA
-setMethod("getRDA", "ANY",function(x, ...){
-    .calculate_rda(x, ...)
-})
+setMethod("getRDA", "ANY", function(x, formula, data, ...){
+    if( !is.matrix(x) ){
+        stop("'x' must be matrix.", call. = FALSE)
+    }
+    if( !is(formula, "formula") ){
+        stop("'formula' must be formula or NULL.", call. = FALSE)
+    }
+    if( !(is.data.frame(data) || is.matrix(data) || is(data, "DFrame")) ){
+        stop("'data' must be data.frame or coarcible to one.", call. = FALSE)
+    }
+    if( ncol(x) != nrow(data) ){
+        stop("Number of columns in 'x' should match with number of rows in ",
+            "'data'.", call. = FALSE)
+    }
+    #
+    res <- .calculate_rda(
+      x, formula = formula, data = data, ord.method = "RDA", ...)
+    return(res)
+    })
 
 #' @export
 #' @rdname runCCA
 setMethod("getRDA", "SummarizedExperiment",
     function(
-        x, formula, variables, test.signif = TRUE,
-        assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
-        scores = "wa", ...){
-    # Check assay.type and get assay
-    .check_assay_present(assay.type, x)
-    mat <- assay(x, assay.type)
-    # Check test.signif
-    if( !.is_a_bool(test.signif) ){
-      stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
-    }
-    if( !(.is_a_string(scores) && scores %in% c("wa", "u", "v")) ){
-      stop("'scores' must be 'wa', 'u', or 'v'.",
-           call. = FALSE)
-    }
-    
-    # If formula is missing but variables are not
-    if( !missing(variables) && missing(formula) ){
-      # Create a formula based on variables
-      formula <- .get_formula_from_data_and_variables(x, variables)
-      # Get the data from colData
-      variables <- colData(x)[ , variables, drop = FALSE]
-    } else{
-      # Otherwise if formula is provided, get variables based on formula
-      # (If formula is not provided variables is just empty data.frame)
-      variables <- .get_variables_from_data_and_formula(x, formula)
-    } 
-    # Calculate RDA
-    rda <- .calculate_rda(mat, formula, variables, scores, ...)
-    
-    # Test significance if specified
-    if( test.signif ){
-      res <- .test_rda(mat, attr(rda, "rda"), variables, ...)
-      attr(rda, "significance") <- res
-    }
-    return(rda)
-    }
-)
-
-
+        x, formula = NULL, col.var = variables, variables = NULL,
+        test.signif = TRUE, assay.type = assay_name, assay_name = exprs_values,
+        exprs_values = "counts", ...){
+        ############################# Input check ##############################
+        if( !(is.null(formula) || is(formula, "formula")) ){
+            stop("'formula' must be formula or NULL.", call. = FALSE)
+        }
+        if( !(is.null(col.var) ||
+                (is.character(col.var) &&
+                     all(col.var %in% colnames(colData(x))))) ){
+            stop("'col.var' must specify column from colData(x) or be NULL.",
+                call. = FALSE)
+        }
+        if( !is.null(formula) && !is.null(col.var) ){
+            stop("Specify either 'formula' or 'col.var'.", call. = FALSE)
+        }
+        .check_assay_present(assay.type, x)
+        if( !.is_a_bool(test.signif) ){
+            stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
+        }
+        ########################### Input check end ############################
+        # Get assay
+        mat <- assay(x, assay.type)
+        # Get formula and variables
+        temp <- .get_formula_and_covariates(x, formula, col.var)
+        formula <- temp[["formula"]]
+        covariates <- temp[["variables"]]
+        # Calculate CCA
+        rda <- getRDA(mat, formula = formula, data = covariates, ...)
+        # Test significance if specified
+        if( test.signif ){
+            res <- .test_rda(mat, attr(rda, "obj"), covariates, ...)
+            attr(rda, "significance") <- res
+        }
+        return(rda)
+        }
+    )
 
 #' @export
 #' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
 setMethod("addRDA", "SingleCellExperiment",
-    function(x, formula, variables, altexp = NULL, name = "RDA", ...){
-        if (!is.null(altexp)) {
-          y <- altExp(x, altexp)
+    function(x, altexp = NULL, name = "RDA", ...){
+        ############################# Input check ##############################
+        if( !(is.null(altexp) ||
+            (length(altexp) == 1L && is.character(altexp) &&
+                all(altexp %in% altExpNames(x))) ||
+            (.is_an_integer(altexp) && altexp > 0 &&
+                altexp <= length(altExps(x))) ) ){
+            stop("'altexp' must specify an alternative experiment from ",
+                "altExp(x).", call. = FALSE)
+        }
+        ########################### Input check end ############################
+        # Get TreeSE from altexp if specified.
+        if( !is.null(altexp) ){
+            y <- altExp(x, altexp)
         } else {
-          y <- x
+            y <- x
         }
         # Calculate RDA
-        rda <- getRDA(y, formula, variables, ...)
+        rda <- getRDA(y, ...)
         # Add object to reducedDim
         x <- .add_object_to_reduceddim(x, rda, name = name, ...)
         return(x)
-      }
-)
+        }
+    )
 
+################################ HELP FUNCTIONS ################################
 
-#########################################################################
+# THis function creates a formula and covariate table that can be then
+# forwarded to subsequent functions. The formula/variables are created based
+# on usr-specified formual or variables. If neither is specified, the function
+# returns empty table with corresponding formula.
+.get_formula_and_covariates <- function(x, formula, col.var){
+    # If formula is missing but variables are not
+    if( !is.null(col.var) && is.null(formula) ){
+        # Create a formula based on variables
+        formula <- as.formula(
+            paste0("mat ~ ", paste(col.var, collapse = " + ")))
+        # Get the data from colData
+        variables <- colData(x)[ , col.var, drop = FALSE]
+    } else{
+        # Otherwise if formula is provided, get variables based on formula
+        # (If formula is not provided variables is just empty data.frame)
+        variables <- .get_variables_from_data_and_formula(x, formula)
+        # Create a formula. If there are no covariates, do not add them to
+        # model. If there are covariates, add them all.
+        if( ncol(variables) == 0L ){
+            formula <- mat ~ 1
+        } else{
+            formula <- mat ~ .
+        }
+    }
+    # Return a list that holds both formula and covariates
+    res <- list(formula = formula, variables = variables)
+    return(res)
+}
 
+# This function fetch variables from colData based on formula. If formula
+# was not specified, te functio returns an emtpy table.
+#' @importFrom stats terms
+#' @importFrom SummarizedExperiment colData
+.get_variables_from_data_and_formula <- function(x, formula){
+    if( !is.null(formula) ){
+        # Get variables from formula
+        terms <- rownames(attr(terms(formula),"factors"))
+        terms <- terms[terms != as.character(formula)[2L]]
+        terms <- .remove_special_functions_from_terms(terms)
+        # Check that all variables specify a column from colData
+        if( !all(terms %in% colnames(colData(x))) ){
+            stop("All variables on the right hand side of 'formula' must be ",
+                "present in colData(x).", call. = FALSE)
+        }
+        # Get the variables from colData
+        df <- colData(x)[, terms, drop=FALSE]
+    } else{
+        # Return empty df
+        df <- colData(x)[ , 0]
+    }
+    return(df)
+}
+
+# This function parses right-hand side formula so that it now includes only
+# the covariates.
 .remove_special_functions_from_terms <- function(terms){
     names(terms) <- terms
     m <- regexec("^Condition\\(([^\\(\\)]*)\\)$|^([^\\(\\)]*)$", terms)
     m <- regmatches(terms, m)
-    terms <- vapply(m,
-                    function(n){
-                        n <- n[seq.int(2L,length(n))]
-                        n[n != ""]
-                    },
-                    character(1))
-    terms
+    terms <- vapply(m, function(n){
+        n <- n[seq.int(2L,length(n))]
+        n <- n[n != ""]
+        return(n)
+        }, character(1))
+    return(terms)
 }
 
-.get_dependent_var_name <- function(formula){
-    # Get dependent variable from factors
-    dep_var <- rownames(attr(terms(formula), "factors"))[1]
-    # If it is NULL, get it from the formula
-    if( is.null(dep_var) ){
-        dep_var <- as.character(formula)[2]
-    }
-    return(dep_var)
-}
-
+# This function performs dbRDA or CCA. It returns side scores with other
+# information scores in attributes.
 #' @importFrom stats as.formula na.fail
-.calculate_cca <- function(
-        x, formula, variables, scores, scale = TRUE, na.action = na.fail, ...){
+#' @importFrom vegan cca dbrda sppscores<- eigenvals scores
+.calculate_rda <- function(
+    x, formula, data, scores, scale = TRUE, na.action = na.fail,
+     method = distance, distance = "euclidean", ord.method = "CCA", ...){
     # input check
     if(!.is_a_bool(scale)){
         stop("'scale' must be TRUE or FALSE.", call. = FALSE)
     }
+    if( !.is_a_string(method) ){
+        stop("'method' must be a single string value.", call. = FALSE)
+    }
+    if( !(.is_a_string(ord.method) && ord.method %in% c("CCA", "RDA")) ){
+      stop("'ord.method' must be 'CCA' or 'RDA'.", call. = FALSE)
+    }
     #
+    # Get data in correct orientation. Samples should be in rows in abundance
+    # table.
     x <- as.matrix(t(x))
-    variables <- as.data.frame(variables)
+    data <- as.data.frame(data)
     # Instead of letting na.action pass through, give informative error
     # about missing values.
-    if( any(is.na(variables)) && isTRUE(all.equal(na.action, na.fail)) ){
+    if( any(is.na(data)) && isTRUE(all.equal(na.action, na.fail)) ){
         stop("Variables contain missing values. Set na.action to na.exclude",
-             " to remove samples with missing values.", call. = FALSE)
+            " to remove samples with missing values.", call. = FALSE)
+    }
+    # Ensure that the left hand side of the formula points to abundance matrix
+    formula <- as.character(formula)
+    formula[[2]] <- "x"
+    # Create a formula from string
+    formula <- as.formula(
+        paste(as.character(formula)[c(2,1,3)], collapse = " "))
+    
+    # Initialize an argument list with common arguments
+    args <- c(
+        list(formula = formula, data = data, na.action = na.action), list(...))
+    # vegan::cca function has a scale parameter that is not in dbrda
+    if( ord.method == "CCA" ){
+        args <- c(args, list(scale = scale))
+    }
+    # vegan::dbRDA has additional distance parameter that specifies
+    # dissimilarity metric
+    if( ord.method == "RDA" ){
+        args <- c(args, list(distance = method))
+    }
+    # Perform CCA or RDA
+    ord_FUN <- if (ord.method == "CCA") cca else dbrda
+    res_obj <- do.call(ord_FUN, args)
+    # The function stores the call. However, as we use do.call(), the function
+    # sores the call incorrectly (e.g., it prints whole abundance table). That
+    # is why we modify the call to have only necessary information.
+    na_action_name <- deparse(substitute(na.action))
+    na_action_name <- paste(na_action_name, collapse = " ")
+    na_action_name <- sub('.*UseMethod\\("([^"]+)"\\).*', '\\1', na_action_name)
+    res_obj$call <- paste0(
+        res_obj$method, "(formula = ", deparse(formula),
+        ifelse(ord.method == "CCA", paste0(", scale = ", scale), ""),
+        ifelse(ord.method == "RDA", paste0(", distance = ", method), ""),
+        ", na.action = ", na_action_name,  ", ...)")
+    # Add species scores to rda object since they are missing
+    # (in cca they are included). If we used na.action, some samples might be
+    # removed. That is why we have to subset the abundance table first by
+    # filtering missing values.
+    if( ord.method == "RDA" ){
+        if( !is.null(res_obj$na.action) ){
+            x <- x[-res_obj$na.action, ]
+        }
+        sppscores(res_obj) <- x
     }
     
-    if(ncol(variables) > 0L && !missing(formula)){
-        dep_var_name <- .get_dependent_var_name(formula)
-        assign(dep_var_name, x)
-        # recast formula in current environment
-        form <- as.formula(paste(as.character(formula)[c(2,1,3)],
-                                 collapse = " "))
-        cca <- vegan::cca(form, data = variables, scale = scale,
-                          na.action = na.action, ...)
-        X <- cca$CCA
-    } else if(ncol(variables) > 0L) {
-        cca <- vegan::cca(X = x, Y = variables, scale = scale,
-                          na.action = na.action, ...)
-        X <- cca$CCA
-    } else {
-        cca <- vegan::cca(X = x, scale = scale, na.action = na.action, ...)
-        X <- cca$CA
-    }
-    # Create the matrix to be returned
-    ans <- X[[scores]]
-    attr(ans, "rotation") <- X$v
-    attr(ans, "eigen") <- X$eig
-    attr(ans, "cca") <- cca
-    ans
+    # Get eigenvalues from the object
+    eig <- eigenvals(res_obj)
+    # Get total number of coordinates. There might be imaginry axes, exclude
+    # them because otherwise error occurs in scores() call.
+    tot_num_coord <- sum(eig >= 0)
+    # Now we know how many coordinates there are. We use that info to get
+    # scores for all coordinates.
+    res_values <- vegan::scores(res_obj, seq_len(tot_num_coord))
+    # Get the site scores. They represent samples' coordinates in ordinated
+    # space.
+    res_mat <- res_values[["sites"]]
+    # Add other values as attributes
+    res_values <- c(res_values, list(eig = eig))
+    attributes(res_mat) <- c(
+        attributes(res_mat), list(obj = res_obj), res_values)
+    return(res_mat)
 }
 
-
-#' @importFrom stats terms
-#' @importFrom SummarizedExperiment colData
-.get_variables_from_data_and_formula <- function(x, formula){
-    if(missing(formula)){
-        return(NULL)
-    }
-    terms <- rownames(attr(terms(formula),"factors"))
-    terms <- terms[terms != as.character(formula)[2L]]
-    terms <- .remove_special_functions_from_terms(terms)
-    if(!all(terms %in% colnames(colData(x)))){
-        stop("All variables on the right hand side of 'formula' must be ",
-             "present in colData(x).", call. = FALSE)
-    }
-    colData(x)[,terms,drop=FALSE]
-}
-
-.get_formula_from_data_and_variables <- function(x, variables){
-    # Check that variables specify columns from colData
-    if( all(!is.character(variables)) ){
-        stop("'variables' should be a character specifying variables from ",
-             "colData(x).", 
-             call. = FALSE)
-    }
-    if(!all(variables %in% colnames(colData(x)))){
-        stop("All variables must be ",
-             "present in colData(x).", call. = FALSE)
-    }
-    # Create a formula based on variables
-    formula <- as.formula(paste0("x ~ ", 
-                                 paste(variables, collapse = " + ")))
-    formula
-}
-
-
-
-#' @importFrom vegan sppscores<-
-#' @importFrom stats na.fail
-.calculate_rda <- function(
-        x, formula, variables, scores, method = distance,
-        distance = "euclidean", na.action = na.fail, ...){
-    #
-    # Transpose and ensure that the table is in matrix format
-    x <- as.matrix(t(x))
-    # If formula is missing (vegan:dbrda requires formula)
-    if( missing(formula) ){
-        formula <- x ~ 1  
-    }
-    # Get the dependent variable
-    dep_var_name <- .get_dependent_var_name(formula)
-    # Dependent variable is the assay x. It does not matter what is the left-side
-    # of the formula; it is always the assay
-    assign(dep_var_name, x)
-    # recast formula in current environment
-    form <- as.formula(paste(as.character(formula)[c(2,1,3)],
-                             collapse = " "))
-    # If variables are provided
-    if( !missing(variables) ){
-        # Convert into data.frame
-        variables <- as.data.frame(variables)
-        # Instead of letting na.action pass through, give informative error
-        # about missing values.
-        if( any(is.na(variables)) && isTRUE(all.equal(na.action, na.fail)) ){
-            stop("Variables contain missing values. Set na.action to ",
-                "na.exclude to remove samples with missing values.",
-                call. = FALSE)
-        }
-        
-        # Calculate RDA with variables
-        rda <- vegan::dbrda(formula = form, data = variables, distance = method,
-                            na.action = na.action, ...)
-    } else{
-        # Otherwise calculate RDA without variables
-        rda <- vegan::dbrda(formula = form, distance = method,
-                            na.action = na.action, ...)
-    }
-    # Get CCA
-    if( !is.null(rda$CCA) ){
-        X <- rda$CCA
-        # Get species scores. Get only those samples that are included in rda
-        # object (some might missing due missing metadata)
-        species_scores <- x[ rownames(X[[scores]]),  ]
-    } else{
-        # If variable(s) do not explain inertia at all, CCA is NULL. Then take CA
-        X <- rda$CA
-        # Get species scores (whole data since metadata was not in input)
-        species_scores <- x
-        # If scores is "wa", but they are not available
-        if( scores == "wa" ){
-            warning("'wa' scores are not available. Defaults to 'u'.", call. = FALSE)
-            scores <- "u"
-        }
-    }
-    # Add species scores since they are missing from dbrda object (in cca they are included)
-    sppscores(rda) <- species_scores
-    # Create the matrix to be returned
-    ans <- X[[scores]]
-    attr(ans, "rotation") <- X$v
-    attr(ans, "eigen") <- X$eig
-    attr(ans, "rda") <- rda
-    ans
-}
-
-# Add RDA/CCA to reducedDim
-.add_object_to_reduceddim <- function(
-        tse, rda, name, subset.result = TRUE, ...){
-    # Test subset
-    if( !.is_a_bool(subset.result) ){
-        stop("'subset.result' must be TRUE or FALSE.", call. = FALSE)
-    }
-    #
-    # If samples do not match / there were samples without appropriate metadata
-    # and they are now removed
-    if( !all(colnames(tse) %in% rownames(rda)) && subset.result ){
-        # Take a subset
-        tse <- tse[ , rownames(rda) ]
-        # Give a message
-        warning(
-            "Certain samples are removed from the result because they did ",
-            "not include sufficient metadata.", call. = FALSE)
-    } else if( !all(colnames(tse) %in% rownames(rda)) && !subset.result ){
-        # If user do not want to subset the data
-        # Save attributes from the object
-        attr <- attributes(rda)
-        attr <- attr[ !names(attr) %in% c("dim", "dimnames")]
-        # Find samples that are removed
-        samples_not_found <- setdiff(colnames(tse), rownames(rda))
-        # Create an empty matrix
-        mat <- matrix(nrow = length(samples_not_found), ncol=ncol(rda))
-        rownames(mat) <- samples_not_found
-        # Combine the data and order it in correct order
-        rda <- rbind(rda, mat)
-        rda <- rda[colnames(tse), ]
-        # Add attributes
-        attr <- c(attributes(rda), attr)
-        attributes(rda) <- attr
-    }
-    # Add object to reducedDIm
-    reducedDim(tse, name) <- rda
-    return(tse)
-}
-
-# Perform PERMANOVA and homogeneity analysis to RDA object
+# Perform PERMANOVA and homogeneity analysis to RDA/CCA object
 #' @importFrom vegan anova.cca betadisper
 #' @importFrom stats anova
 .test_rda <- function(mat, rda, variables, ...){
@@ -566,20 +564,21 @@ setMethod("addRDA", "SingleCellExperiment",
 }
 
 # Test association of variables to ordination
+#' @importFrom vegan anova.cca vegdist betadisper
 .test_rda_vars <- function(
         mat, rda, variables, permanova_model, by = "margin", full = FALSE,
-        homogeneity.test = "permanova", method = distance, distance = "euclidean",
-        ...){
+        homogeneity.test = "permanova", method = distance,
+        distance = "euclidean", ...){
     # Check full parameter
     if( !.is_a_bool(full) ){
         stop("'full' must be TRUE or FALSE.", call. = FALSE)
     }
     # Check homogeneity.test
     if( !(is.character(homogeneity.test) &&
-          length(homogeneity.test) == 1 &&
-          homogeneity.test %in% c("permanova", "anova", "tukeyhsd")) ){
+            length(homogeneity.test) == 1 &&
+            homogeneity.test %in% c("permanova", "anova", "tukeyhsd")) ){
         stop("'homogeneity.test' must be 'permanova', 'anova', or 'tukeyhsd'.",
-             call. = FALSE)
+            call. = FALSE)
     }
     #
     # Perform PERMANOVA
@@ -591,9 +590,11 @@ setMethod("addRDA", "SingleCellExperiment",
     # Take only model results
     permanova_tab <- rbind(table_model[1, ], permanova_tab)
     # Add info about total variance
-    permanova_tab[ , "Total variance"] <- permanova_tab["Model", 2] + permanova_tab["Residual", 2]
+    permanova_tab[ , "Total variance"] <- permanova_tab["Model", 2] +
+        permanova_tab["Residual", 2]
     # Add info about explained variance
-    permanova_tab[ , "Explained variance"] <- permanova_tab[ , 2] / permanova_tab[ , "Total variance"]
+    permanova_tab[ , "Explained variance"] <- permanova_tab[ , 2] /
+        permanova_tab[ , "Total variance"]
 
     # Perform homogeneity analysis
     mat <- t(mat)
@@ -610,15 +611,17 @@ setMethod("addRDA", "SingleCellExperiment",
         # Get variable values
         var <- variables[[x]]
         # Run betadisper.
-        # Suppress possible warnings: "some squared distances are negative and changed to zero"
-        # Suppress possible messages: "missing observations due to 'group' removed"
+        # Suppress possible warnings: "some squared distances are negative and
+        # changed to zero" Suppress possible messages:
+        # "missing observations due to 'group' removed"
         suppressWarnings(
         suppressMessages(
         betadisper_res <- betadisper(dist_mat, group = var)
         )
         )
         # Run significance test
-        significance <- .homogeneity_significance(betadisper_res, homogeneity.test, ...)
+        significance <- .homogeneity_significance(
+            betadisper_res, homogeneity.test, ...)
         # Return the results as a list
         models <- list(betadisper_res, significance[["obj"]])
         names(models) <- c("betadisper", homogeneity.test)
@@ -657,14 +660,16 @@ setMethod("addRDA", "SingleCellExperiment",
 }
 
 # Perform statistical test for group homogeneity results
+#' @importFrom stats anova TukeyHSD
+#' @importFrom vegan permutest
 .homogeneity_significance <- function(betadisper_res, homogeneity.test, ...){
     # Run specified significance test
     if( homogeneity.test == "anova" ){
-        res <- stats::anova(betadisper_res, ...)
+        res <- anova(betadisper_res, ...)
     } else if ( homogeneity.test == "tukeyhsd" ){
-        res <- stats::TukeyHSD(betadisper_res, ...)
+        res <- TukeyHSD(betadisper_res, ...)
     } else{
-        res <- vegan::permutest(betadisper_res, ...)
+        res <- permutest(betadisper_res, ...)
     }
 
     # Get summary table from the results
@@ -679,9 +684,11 @@ setMethod("addRDA", "SingleCellExperiment",
     # Modify permanova/anova table
     if( homogeneity.test != "tukeyhsd" ){
         # Add info about total variance
-        tab[ , "Total variance"] <- tab["Groups", "Sum Sq"] + tab["Residuals", "Sum Sq"]
+        tab[ , "Total variance"] <- tab["Groups", "Sum Sq"] +
+            tab["Residuals", "Sum Sq"]
         # Add info about explained variance
-        tab[ , "Explained variance"] <- tab[ , "Sum Sq"] / tab[ , "Total variance"]
+        tab[ , "Explained variance"] <- tab[ , "Sum Sq"] /
+            tab[ , "Total variance"]
         # Get only groups row (drop residuals row)
         tab <- tab[1, ]
     }
@@ -692,4 +699,43 @@ setMethod("addRDA", "SingleCellExperiment",
         table = tab
     )
     return(res)
+}
+
+# Add RDA/CCA to reducedDim
+.add_object_to_reduceddim <- function(
+        tse, rda, name, subset.result = TRUE, ...){
+    # Test subset
+    if( !.is_a_bool(subset.result) ){
+        stop("'subset.result' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # If samples do not match / there were samples without appropriate metadata
+    # and they are now removed
+    if( !all(colnames(tse) %in% rownames(rda)) && subset.result ){
+        # Take a subset
+        tse <- tse[ , rownames(rda) ]
+        # Give a message
+        warning(
+          "Certain samples are removed from the result because they did ",
+          "not include sufficient metadata.", call. = FALSE)
+    } else if( !all(colnames(tse) %in% rownames(rda)) && !subset.result ){
+        # If user do not want to subset the data
+        # Save attributes from the object
+        attr <- attributes(rda)
+        attr <- attr[ !names(attr) %in% c("dim", "dimnames")]
+        # Find samples that are removed
+        samples_not_found <- setdiff(colnames(tse), rownames(rda))
+        # Create an empty matrix
+        mat <- matrix(nrow = length(samples_not_found), ncol=ncol(rda))
+        rownames(mat) <- samples_not_found
+        # Combine the data and order it in correct order
+        rda <- rbind(rda, mat)
+        rda <- rda[colnames(tse), ]
+        # Add attributes
+        attr <- c(attributes(rda), attr)
+        attributes(rda) <- attr
+    }
+    # Add object to reducedDIm
+    reducedDim(tse, name) <- rda
+    return(tse)
 }
