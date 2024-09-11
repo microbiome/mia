@@ -13,6 +13,11 @@
 #' @param other.name \code{Character scalar}. A name for features that are not 
 #' included in n the most frequent dominant features in the data. (Default: \code{"Other"})
 #' 
+#' @param group \code{Character scalar}. Defines a group. Must be a value of
+#'   \code{taxonomyRanks()} or rowData(x) function.
+#' 
+#' @param rank Deprecated. Use \code{group} instead.
+#' 
 #' @param n \code{Numeric scalar}. The number of features that are the most frequent 
 #' dominant features. Default is NULL, which defaults that each sample is assigned 
 #' a dominant taxon. (Default: \code{NULL})
