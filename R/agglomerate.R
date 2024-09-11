@@ -56,10 +56,10 @@
 #'        from
 #'        \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
 #'        is returned. (Default: \code{FALSE})
-#'        \item \code{archetype} Of each level of \code{f}, which element should
+#'        \item \code{archetype} Of each level of \code{group}, which element should
 #'        be regarded as the archetype and metadata in the columns or rows kept,
 #'        while merging? This can be single integer value or an integer vector
-#'        of the same length as \code{levels(f)}. (Default:
+#'        of the same length as \code{levels(group)}. (Default:
 #'        \code{1L}, which means the first element encountered per
 #'        factor level will be kept)
 #'    }
@@ -78,10 +78,12 @@
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}.
 #'
-#' @param f A factor for merging. Must be the same length as
+#' @param group A factor for merging. Must be the same length as
 #'   \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
-#'   merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
+#'   merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
 #'   returned unchanged.
+#'  
+#' @param f Deprecated. Use \code{group} instead.
 #'
 #' @param update.tree \code{Logical scalar}. Should
 #'   \code{rowTree()} also be merged? (Default: \code{FALSE})
@@ -193,9 +195,9 @@
 #' esophagus
 #' plot(rowTree(esophagus))
 #' # get a factor for merging
-#' f <- factor(regmatches(rownames(esophagus),
+#' group <- factor(regmatches(rownames(esophagus),
 #'                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-#' merged <- agglomerateByVariable(esophagus, by = "rows", f,
+#' merged <- agglomerateByVariable(esophagus, by = "rows", group,
 #'                                 update.tree = TRUE)
 #' plot(rowTree(merged))
 #' #
@@ -275,7 +277,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 
         # merge taxa
         x <- agglomerateByVariable(
-            x, by = "rows", f = tax_factors, na.rm = TRUE, ...)
+            x, by = "rows", group = tax_factors, na.rm = TRUE, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){
@@ -303,10 +305,10 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @aliases agglomerateByVariable
 #' @export
 setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
-            function(x, by, f, ...){
+            function(x, by, group = f, f, ...){
                 by <- .check_MARGIN(by)
                 FUN <- switch(by, .merge_rows, .merge_cols)
-                x <- FUN(x, f, ...)
+                x <- FUN(x, group, ...)
                 return(x)
             }
 )
@@ -316,13 +318,13 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable",
             signature = c(x = "TreeSummarizedExperiment"),
-            function(x, by, f, update.tree = mergeTree, mergeTree = FALSE, ...){
+            function(x, by, group = f, f,  update.tree = mergeTree, mergeTree = FALSE, ...){
                 # Check by
                 by <- .check_MARGIN(by)
                 # Get function based on by
                 FUN <- switch(by, .merge_rows_TSE, .merge_cols_TSE)
                 # Agglomerate
-                x <- FUN(x, f, update.tree = update.tree, ...)
+                x <- FUN(x, group, update.tree = update.tree, ...)
                 return(x)
             }
 )
@@ -379,9 +381,9 @@ setMethod(
     function(x, column, empty.fields = c(NA,""," ","\t","-","_"))
         {
         tax <- as.character(rowData(x)[,column])
-        f <- !(tax %in% empty.fields)
-        if(any(!f)){
-            x <- x[f, , drop=FALSE]
+        group <- !(tax %in% empty.fields)
+        if(any(!group)){
+            x <- x[group, , drop=FALSE]
         }
         x
     }

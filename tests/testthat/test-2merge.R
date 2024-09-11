@@ -2,47 +2,47 @@ context("merge")
 test_that("merge", {
     # .check_f
     expect_error(mia:::.norm_f(),
-                 'argument "f" is missing')
+                 'argument "group" is missing')
     expect_error(mia:::.norm_f(6),
-                 'argument "f" is missing')
+                 'argument "group" is missing')
     expect_error(mia:::.norm_f(6,5),
-                 "'f' must be a factor or character vector")
-    f <- factor(c(rep("a",3),rep("b",3)))
-    expect_true(is.factor(mia:::.norm_f(6,f)))
+                 "'group' must be a factor or character vector")
+    group <- factor(c(rep("a",3),rep("b",3)))
+    expect_true(is.factor(mia:::.norm_f(6,group)))
     # .check_archetype
     expect_error(mia:::.norm_archetype(),
                  'argument "archetype" is missing')
-    expect_error(mia:::.norm_archetype(f),
+    expect_error(mia:::.norm_archetype(group),
                  'argument "archetype" is missing')
-    expect_error(mia:::.norm_archetype(f),
+    expect_error(mia:::.norm_archetype(group),
                  'argument "archetype" is missing')
-    expect_equal(mia:::.norm_archetype(f, 1),c(1,1))
-    expect_equal(mia:::.norm_archetype(f, c(1,2)),c(1,2))
-    expect_error(mia:::.norm_archetype(f, c(1,2,3)),
+    expect_equal(mia:::.norm_archetype(group, 1),c(1,1))
+    expect_equal(mia:::.norm_archetype(group, c(1,2)),c(1,2))
+    expect_error(mia:::.norm_archetype(group, c(1,2,3)),
                  "length of 'archetype' must have the same length as levels")
-    expect_error(mia:::.norm_archetype(f, c(5)),
-                 "'archetype' out of bounds for some levels of 'f'")
+    expect_error(mia:::.norm_archetype(group, c(5)),
+                 "'archetype' out of bounds for some levels of 'group'")
     # .norm_archetype
     expect_error(mia:::.norm_archetype(),
                  'argument "archetype" is missing')
-    expect_error(mia:::.norm_archetype(f),
+    expect_error(mia:::.norm_archetype(group),
                  'argument "archetype" is missing')
-    actual <- mia:::.norm_archetype(f, c(1,2))
+    actual <- mia:::.norm_archetype(group, c(1,2))
     expect_equal(actual, c(1,2))
-    actual <- mia:::.norm_archetype(f, c(1))
+    actual <- mia:::.norm_archetype(group, c(1))
     expect_equal(actual, c(1,1))
 
     # .get_element_pos
     expect_error(mia:::.get_element_pos(),
                  'argument "archetype" is missing')
-    expect_error(mia:::.get_element_pos(f),
+    expect_error(mia:::.get_element_pos(group),
                  'argument "archetype" is missing')
 
-    actual <- mia:::.get_element_pos(f, archetype = mia:::.norm_archetype(f, 1))
+    actual <- mia:::.get_element_pos(group, archetype = mia:::.norm_archetype(group, 1))
     expect_equal(actual,c(a = 1, b = 4))
-    actual <- mia:::.get_element_pos(f, archetype = mia:::.norm_archetype(f, 2))
+    actual <- mia:::.get_element_pos(group, archetype = mia:::.norm_archetype(group, 2))
     expect_equal(actual,c(a = 2, b = 5))
-    actual <- mia:::.get_element_pos(f, archetype = c(2,1))
+    actual <- mia:::.get_element_pos(group, archetype = c(2,1))
     expect_equal(actual,c(a = 2, b = 4))
 
     # .merge_rows
@@ -52,23 +52,23 @@ test_that("merge", {
     mcols(gr) <- df
     grl <- splitAsList(gr,1:6)
     expect_error(mia:::.merge_rows(),
-                 'argument "f" is missing')
+                 'argument "group" is missing')
     x <- SummarizedExperiment(assays = list(mat = mat))
     xr <- SummarizedExperiment(assays = list(mat = mat),
                                rowRanges = gr)
     xrl <- SummarizedExperiment(assays = list(mat = mat),
                                 rowRanges = unname(grl))
     expect_error(mia:::.merge_rows(x),
-                 'argument "f" is missing')
+                 'argument "group" is missing')
     FUN_check_x <- function(x,archetype=1){
-        actual <- agglomerateByVariable(x, by = "rows", f, archetype)
+        actual <- agglomerateByVariable(x, by = "rows", group, archetype)
         expect_s4_class(actual,class(x))
         expect_equal(dim(actual),c(2,10))
     }
     lapply(list(x,xr,xrl),FUN_check_x)
     lapply(list(x,xr,xrl),FUN_check_x,archetype=2)
     #
-    f <- factor(c(rep("a",3),rep("b",3)))
+    group <- factor(c(rep("a",3),rep("b",3)))
     mat <- matrix(1:60, nrow = 6)
     gr <- GRanges("chr1",rep("1-6",6))
     df <- DataFrame(n = c(1:6))
@@ -77,7 +77,7 @@ test_that("merge", {
     xtse <- TreeSummarizedExperiment(assays = list(mat = mat),
                                      rowRanges = unname(grl))
     FUN_check_x <- function(x,archetype=1){
-        actual <- agglomerateByVariable(x, by = "rows", f, archetype, 
+        actual <- agglomerateByVariable(x, by = "rows", group, archetype, 
             update.tree = FALSE)
         expect_s4_class(actual,class(x))
         expect_equal(dim(actual),c(2,10))
@@ -101,31 +101,31 @@ test_that("merge", {
     tse <- tse[c(rownames(esophagus), rownames(GlobalPatterns)), ]
     # Only esophagus has these groups --> the merge should contain only esophagus
     merged  <- agglomerateByVariable(tse, by = "rows",
-                                    f = rowData(tse)$group2, update.tree=TRUE)
+                                    group = rowData(tse)$group2, update.tree=TRUE)
     merged2 <- agglomerateByVariable(tse, by = "rows",
-                                    f = rowData(tse)$group2, update.tree = FALSE)
+                                    group = rowData(tse)$group2, update.tree = FALSE)
     merged3 <- agglomerateByVariable(esophagus, by = "rows",
-                                    f = rowData(esophagus)$group2,
+                                    group = rowData(esophagus)$group2,
                                     update.tree = TRUE)
     merged4 <- .merge_features(tse, merge.by = rowData(tse)$group2,
                                     update.tree = TRUE)
     merged5 <- agglomerateByVariable(tse, by = "rows",
-                                    f = rowData(tse)$group2, update.tree = TRUE)
+                                    group = rowData(tse)$group2, update.tree = TRUE)
     expect_equal( rowLinks(merged)$whichTree,
                   rowLinks(merged2)$whichTree )
     expect_false( all(rowLinks(merged) == rowLinks(merged2)) )
     expect_equal(rowTree(tse), rowTree(merged2))
     expect_equal(merged4, merged5)
     expect_equal(agglomerateByVariable(tse, by = "rows",
-                                        f=rowData(tse)$group2),
+                                        group=rowData(tse)$group2),
                 agglomerateByVariable(tse, by = "rows",
-                                        f=rowData(tse)$group2))
+                                        group=rowData(tse)$group2))
 
     # Both datasets have group variable
     merged <- agglomerateByVariable(tse, by = "rows",
-                                    f = rowData(tse)$group, update.tree = TRUE)
+                                    group = rowData(tse)$group, update.tree = TRUE)
     merged2 <- agglomerateByVariable(tse, by = "rows",
-                                    f = rowData(tse)$group, update.tree = FALSE)
+                                    group = rowData(tse)$group, update.tree = FALSE)
     expect_equal( rowLinks(merged)$whichTree,
                   rowLinks(merged2)$whichTree )
     expect_false( all(rowLinks(merged) == rowLinks(merged2)) )

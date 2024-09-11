@@ -66,7 +66,7 @@ NULL
 #' @rdname getDominant
 #' @export
 setGeneric("getDominant",signature = c("x"),
-           function(x, assay.type = assay_name, assay_name = "counts", 
+           function(x, assay.type = assay_name, assay_name = "counts", group = rank,
                     rank = NULL, other.name = "Other", n = NULL, 
                     complete = TRUE, ...)
                standardGeneric("getDominant"))
@@ -75,25 +75,25 @@ setGeneric("getDominant",signature = c("x"),
 #' @importFrom IRanges relist
 #' @export
 setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", 
+    function(x, assay.type = assay_name, assay_name = "counts", group = rank,
              rank = NULL, other.name = "Other", n = NULL, complete = TRUE, ...){
         # Input check
         # Check assay.type
         .check_assay_present(assay.type, x)
-        # rank check
-        if(!is.null(rank)){
-            if(!.is_a_string(rank)){
-                stop("'rank' must be an single character value.",
+        # group check
+        if(!is.null(group)){
+            if(!.is_a_string(group)){
+                stop("'group' must be an single character value.",
                      call. = FALSE)
             }
         } 
-        # If "rank" is not NULL, species are aggregated according to the
+        # If "group" is not NULL, species are aggregated according to the
         # taxonomic rank that is specified by user.
-        if (!is.null(rank) && rank %in% taxonomyRanks(x)) {
-            x <- agglomerateByRank(x, rank, ...)
+        if (!is.null(group) && group %in% taxonomyRanks(x)) {
+            x <- agglomerateByRank(x, rank = group, ...)
         # or factor that is specified by user
-        } else if (!is.null(rank)) {
-            x <- agglomerateByVariable(x, by = "rows", f = rank, ...)
+        } else if (!is.null(group)) {
+            x <- agglomerateByVariable(x, by = "rows", group = group, ...)
         }
         # Get assay
         mat <- assay(x, assay.type)

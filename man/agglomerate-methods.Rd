@@ -31,11 +31,12 @@ agglomerateByVariable(x, ...)
   ...
 )
 
-\S4method{agglomerateByVariable}{SummarizedExperiment}(x, by, f, ...)
+\S4method{agglomerateByVariable}{SummarizedExperiment}(x, by, group = f, f, ...)
 
 \S4method{agglomerateByVariable}{TreeSummarizedExperiment}(
   x,
   by,
+  group = f,
   f,
   update.tree = mergeTree,
   mergeTree = FALSE,
@@ -125,10 +126,12 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}
 
-\item{f}{A factor for merging. Must be the same length as
+\item{group}{A factor for merging. Must be the same length as
 \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
-merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
+merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
 returned unchanged.}
+
+\item{f}{Deprecated. Use \code{group} instead.}
 
 \item{update.tree}{\code{Logical scalar}. Should
 \code{rowTree()} also be merged? (Default: \code{FALSE})}
@@ -310,9 +313,9 @@ data(esophagus)
 esophagus
 plot(rowTree(esophagus))
 # get a factor for merging
-f <- factor(regmatches(rownames(esophagus),
+group <- factor(regmatches(rownames(esophagus),
                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-merged <- agglomerateByVariable(esophagus, by = "rows", f,
+merged <- agglomerateByVariable(esophagus, by = "rows", group,
                                 update.tree = TRUE)
 plot(rowTree(merged))
 #

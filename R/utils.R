@@ -236,19 +236,19 @@
     }
     
     # check for duplicated values
-    f <- colnames(cd) %in% colnames(values)
+    group <- colnames(cd) %in% colnames(values)
     FUN_name <- switch(MARGIN, "rowData", "colData")
-    if(any(f)) {
+    if(any(group)) {
         warning(
             "The following values are already present in `", FUN_name,
             "` and will be overwritten: '",
-            paste(colnames(cd)[f], collapse = "', '"),
+            paste(colnames(cd)[group], collapse = "', '"),
             "'. Consider using the '", colname,
             "' argument to specify alternative names.",
             call. = FALSE)
     }
     # Keep only unique values
-    cd <- cbind( (cd)[!f], values )
+    cd <- cbind( (cd)[!group], values )
     
     # Replace colData with new one
     x <- .add_to_coldata(x, cd, altexp = altexp, MARGIN = MARGIN)
@@ -300,17 +300,17 @@
         old_metadata <- metadata(x)
     }
     # Check if names match with elements that are already present
-    f <- names(old_metadata) %in% names(add_metadata)
-    if( any(f) ){
+    group <- names(old_metadata) %in% names(add_metadata)
+    if( any(group) ){
         warning(
             "The following values are already present in `metadata` and will ",
             "be overwritten: '",
-            paste(names(old_metadata)[f], collapse = "', '"),
+            paste(names(old_metadata)[group], collapse = "', '"),
             "'. Consider using the '", metadata.name,
             "' argument to specify alternative ", "names.", call. = FALSE)
     }
     # keep only unique values
-    add_metadata <- c( old_metadata[!f], add_metadata )
+    add_metadata <- c( old_metadata[!group], add_metadata )
     # Add metadata to altExp or directly to x
     if( !is.null(altexp) ){
         metadata( altExp(x, altexp) ) <- add_metadata
@@ -350,17 +350,17 @@
     # Get altExps
     old_altexp <- altExps(x)
     # Check if names match with elements that are already present
-    f <- names(old_altexp) %in% names(values)
-    if( any(f) ){
+    group <- names(old_altexp) %in% names(values)
+    if( any(group) ){
         warning(
           "The following values are already present in `altExps` and will ",
           "be overwritten: '",
-          paste(names(old_altexp)[f], collapse = "', '"),
+          paste(names(old_altexp)[group], collapse = "', '"),
           "'. Consider using the 'name' argument to specify alternative ",
           "names.", call. = FALSE)
     }
     # Keep only unique values
-    values <- c( old_altexp[!f], values )
+    values <- c( old_altexp[!group], values )
     # Add to altExps
     altExps(x) <- values
     return(x)
@@ -526,7 +526,7 @@
         x <- agglomerateByRank(x, rank = merge.by, ...)
     } else {
         # Merge using agglomerateByVariable
-        x <- agglomerateByVariable(x, by = "rows", f = merge.by, ...)
+        x <- agglomerateByVariable(x, by = "rows", group = merge.by, ...)
     }
     return(x)
 }

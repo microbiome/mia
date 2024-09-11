@@ -2,12 +2,14 @@
 #'
 #' @inheritParams agglomerate-methods
 #'
-#' @param f \code{Character vector}. Specifies the grouping variable
+#' @param group \code{Character vector}. Specifies the grouping variable
 #'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 
-#'   with the same length as one of the dimensions. If \code{f} matches with both
+#'   with the same length as one of the dimensions. If \code{group} matches with both
 #'   dimensions, \code{by} must be specified. 
 #'   Split by cols is not encouraged, since this is not compatible with 
 #'   storing the results in \code{altExps}. (Default: \code{NULL})
+#'   
+#' @param f Deprecated. Use \code{group} instead.
 #' 
 #' @param update_rowTree Deprecated. Use \code{update.tree } instead.
 #'   
@@ -55,7 +57,7 @@
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' # Split data based on SampleType. 
-#' se_list <- splitOn(tse, f = "SampleType")
+#' se_list <- splitOn(tse, group = "SampleType")
 #' 
 #' # List of SE objects is returned. 
 #' se_list
@@ -68,7 +70,7 @@
 #' # Each element is named based on their group name. If you don't want to name
 #' # elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
 #' # you must use `by`.
-#' se_list <- splitOn(tse, f = "group", use.names = FALSE, by = 1)
+#' se_list <- splitOn(tse, group = "group", use.names = FALSE, by = 1)
 #' 
 #' # When column names are shared between elements, you can store the list to altExps
 #' altExps(tse) <- se_list
@@ -76,7 +78,7 @@
 #' altExps(tse)
 #' 
 #' # If you want to split on columns and update rowTree, you can do
-#' se_list <- splitOn(tse, f = colData(tse)$group, update.tree = TRUE)
+#' se_list <- splitOn(tse, group = colData(tse)$group, update.tree = TRUE)
 #' 
 #' # If you want to combine groups back together, you can use unsplitBy
 #' unsplitOn(se_list)
@@ -90,15 +92,15 @@ setGeneric("splitOn",
             function(x, ...)
                 standardGeneric("splitOn"))
 
-# This function collects f (grouping variable), by, and 
+# This function collects group (grouping variable), by, and 
 # use.names and returns them as a list.
 .norm_args_for_split_by <- function(
-        x, f, by = MARGIN, MARGIN = NULL, use.names = use_names,
+        x, group = f, f, by = MARGIN, MARGIN = NULL, use.names = use_names,
         use_names = TRUE, ...){
     # input check
-    # Check f
-    if(is.null(f)){
-        stop("'f' must either be a single non-empty character value or",
+    # Check group
+    if(is.null(group)){
+        stop("'group' must either be a single non-empty character value or",
             " vector coercible to factor alongside the one of the dimensions of 'x'",
             call. = FALSE)
     }
@@ -106,33 +108,33 @@ setGeneric("splitOn",
     if( !is.null(by) ){
         by <- .check_MARGIN(by)
     }
-    # If f is a vector containing levels
-    if( !.is_non_empty_string(f) ){
+    # If group is a vector containing levels
+    if( !.is_non_empty_string(group) ){
         # Convert into factors
-        f <- factor(f, unique(f))
-        # Check if the length of f matches with one of the dimensions
-        if(!length(f) %in% dim(x)){
-            stop("'f' must either be a single non-empty character value or",
+        group <- factor(group, unique(group))
+        # Check if the length of group matches with one of the dimensions
+        if(!length(group) %in% dim(x)){
+            stop("'group' must either be a single non-empty character value or",
                 " vector coercible to factor alongside the on of the ",
                 "dimensions of 'x'.",
                 call. = FALSE)
         # If it matches with both dimensions, give error if by is not specified
-        } else if( is.null(by) && all(length(f) == dim(x)) ){
-            stop("The length of 'f' matches with nrow and ncol. ",
+        } else if( is.null(by) && all(length(group) == dim(x)) ){
+            stop("The length of 'group' matches with nrow and ncol. ",
                 "Please specify 'by'.", call. = FALSE)
-        # If by is specified but it does not match with length of f
-        } else if( !is.null(by) && (length(f) !=  dim(x)[[by]]) ){
-            stop("'f' does not match with ", 
+        # If by is specified but it does not match with length of group
+        } else if( !is.null(by) && (length(group) !=  dim(x)[[by]]) ){
+            stop("'group' does not match with ", 
                 ifelse(by==1, "nrow", "ncol"), ". Please check 'by'.",
                 call. = FALSE)
-        # IF f matches with nrow
-        } else if(length(f) == dim(x)[[1]] && is.null(by)  ){
+        # IF group matches with nrow
+        } else if(length(group) == dim(x)[[1]] && is.null(by)  ){
             by <- 1L
-        # If f matches with ncol
+        # If group matches with ncol
         } else if( is.null(by) ){
             by <- 2L
         }
-    # Else if f is a character specifying column from rowData or colData  
+    # Else if group is a character specifying column from rowData or colData  
     } else {
         # If by is specified
         if( !is.null(by) ){
@@ -145,54 +147,54 @@ setGeneric("splitOn",
                                 "1" = retrieveFeatureInfo,
                                 "2" = retrieveCellInfo)
             # Try to get information
-            tmp <- try({dim_FUN(x, f, search = dim_name)},
+            tmp <- try({dim_FUN(x, group, search = dim_name)},
                         silent = TRUE)
             # Give error if it cannot be found
             if(is(tmp,"try-error")){
-                stop("'f' is not found. ",
-                    "Please check that 'f' specifies a column from ", dim_name, ".", 
+                stop("'group' is not found. ",
+                    "Please check that 'group' specifies a column from ", dim_name, ".", 
                     call. = FALSE)
             }
             # Get values
-            f <- tmp$value
+            group <- tmp$value
         # Else if by is not specified
         } else{
             # Try to get information from rowData
-            tmp_row <- try({retrieveFeatureInfo(x, f, search = "rowData")},
+            tmp_row <- try({retrieveFeatureInfo(x, group, search = "rowData")},
                             silent = TRUE)
             # Try to get information from colData
-            tmp_col <- try({retrieveCellInfo(x, f, search = "colData")}, 
+            tmp_col <- try({retrieveCellInfo(x, group, search = "colData")}, 
                             silent = TRUE)
             
             # If it was not found 
             if( is(tmp_row, "try-error") && is(tmp_col, "try-error") ){
-                stop("'f' is not found. ",
-                    "Please check that 'f' specifies a column from ",
+                stop("'group' is not found. ",
+                    "Please check that 'group' specifies a column from ",
                     "rowData or colData.", 
                     call. = FALSE)
-                # If f was found from both
+                # If group was found from both
             } else if( !is(tmp_row, "try-error") && !is(tmp_col, "try-error") ){
-                stop("'f' can be found from both rowData and colData. ",
+                stop("'group' can be found from both rowData and colData. ",
                     "Please specify 'by'.",
                     call. = FALSE)
                 # If it was found from rowData
             } else if( !is(tmp_row, "try-error") ){
                 by <- 1L
                 # Get values
-                f <- tmp_row$value
+                group <- tmp_row$value
                 # Otherwise, it was found from colData
             } else{
                 by <- 2L
                 # Get values
-                f <- tmp_col$value
+                group <- tmp_col$value
             }
         }
         # Convert values into factors
-        f <- factor(f, unique(f))
+        group <- factor(group, unique(group))
         
         # If there are NAs, add NA as level
-        if( any(is.na(f)) ){
-            f <- addNA(f)
+        if( any(is.na(group)) ){
+            group <- addNA(group)
         }
     }
     # Check use.names
@@ -201,7 +203,7 @@ setGeneric("splitOn",
             call. = FALSE)
     }
     # Create a list from arguments
-    list(f = f,
+    list(group = group,
         by = by,
         use.names = use.names)
 }
@@ -209,7 +211,7 @@ setGeneric("splitOn",
 # PErform the split
 .split_on <- function(x, args, ...){
     # Get grouping variable and its values
-    f <- args[["f"]]
+    group <- args[["group"]]
     # Choose nrow or ncol based on by
     dim_FUN <- switch(args[["by"]],
                         "1" = nrow,
@@ -217,7 +219,7 @@ setGeneric("splitOn",
     # Get indices from 1 to nrow/ncol
     idx <- seq_len(dim_FUN(x))
     # Split indices into groups based on grouping variable
-    idxs <- split(idx, f)
+    idxs <- split(idx, group)
     # Subset function takes SE and list of groups which have indices
     # It divides the data into groups
     subset_FUN <- function(x, i = TRUE, j = TRUE){
@@ -242,9 +244,9 @@ setGeneric("splitOn",
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "SummarizedExperiment"),
-    function(x, f = NULL,  ...){
+    function(x, group = NULL,  ...){
         # Get arguments
-        args <- .norm_args_for_split_by(x, f = f, ...)
+        args <- .norm_args_for_split_by(x, group = group, ...)
         # Split data
         .split_on(x, args, ...)
     }
@@ -253,9 +255,9 @@ setMethod("splitOn", signature = c(x = "SummarizedExperiment"),
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
-    function(x, f = NULL, ...){
+    function(x, group = NULL, ...){
         # Get arguments
-        args <- .norm_args_for_split_by(x, f = f, ...)
+        args <- .norm_args_for_split_by(x, group = group, ...)
         # Should alternative experiment be removed? --> yes
         args[["altexp.rm"]] <- TRUE
         # Split data
@@ -266,7 +268,7 @@ setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, f = NULL, update.tree = update_rowTree, update_rowTree = FALSE,
+    function(x, group = f, f = NULL, update.tree = update_rowTree, update_rowTree = FALSE,
             ...){
         # Input check
         # Check update.tree

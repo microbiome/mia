@@ -13,11 +13,18 @@
 \usage{
 splitOn(x, ...)
 
-\S4method{splitOn}{SummarizedExperiment}(x, f = NULL, ...)
+\S4method{splitOn}{SummarizedExperiment}(x, group = NULL, ...)
 
-\S4method{splitOn}{SingleCellExperiment}(x, f = NULL, ...)
+\S4method{splitOn}{SingleCellExperiment}(x, group = NULL, ...)
 
-\S4method{splitOn}{TreeSummarizedExperiment}(x, f = NULL, update.tree = update_rowTree, update_rowTree = FALSE, ...)
+\S4method{splitOn}{TreeSummarizedExperiment}(
+  x,
+  group = f,
+  f = NULL,
+  update.tree = update_rowTree,
+  update_rowTree = FALSE,
+  ...
+)
 
 unsplitOn(x, ...)
 
@@ -46,12 +53,14 @@ details.
 list by their group names. (Default: \code{TRUE})
 }}
 
-\item{f}{\code{Character vector}. Specifies the grouping variable
+\item{group}{\code{Character vector}. Specifies the grouping variable
 from \code{rowData} or \code{colData} or a \code{factor} or \code{vector}
-with the same length as one of the dimensions. If \code{f} matches with both
+with the same length as one of the dimensions. If \code{group} matches with both
 dimensions, \code{by} must be specified.
 Split by cols is not encouraged, since this is not compatible with
 storing the results in \code{altExps}. (Default: \code{NULL})}
+
+\item{f}{Deprecated. Use \code{group} instead.}
 
 \item{update.tree}{\code{Logical scalar}. Should
 \code{rowTree()} also be merged? (Default: \code{FALSE})}
@@ -91,7 +100,7 @@ group.
 data(GlobalPatterns)
 tse <- GlobalPatterns
 # Split data based on SampleType. 
-se_list <- splitOn(tse, f = "SampleType")
+se_list <- splitOn(tse, group = "SampleType")
 
 # List of SE objects is returned. 
 se_list
@@ -104,7 +113,7 @@ colData(tse)$group <- sample(1:3, ncol(tse), replace = TRUE)
 # Each element is named based on their group name. If you don't want to name
 # elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
 # you must use `by`.
-se_list <- splitOn(tse, f = "group", use.names = FALSE, by = 1)
+se_list <- splitOn(tse, group = "group", use.names = FALSE, by = 1)
 
 # When column names are shared between elements, you can store the list to altExps
 altExps(tse) <- se_list
@@ -112,7 +121,7 @@ altExps(tse) <- se_list
 altExps(tse)
 
 # If you want to split on columns and update rowTree, you can do
-se_list <- splitOn(tse, f = colData(tse)$group, update.tree = TRUE)
+se_list <- splitOn(tse, group = colData(tse)$group, update.tree = TRUE)
 
 # If you want to combine groups back together, you can use unsplitBy
 unsplitOn(se_list)
