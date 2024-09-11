@@ -157,24 +157,191 @@
 NULL
 
 #' @rdname runCCA
-setGeneric("getCCA", signature = c("x"),
-           function(x, ...)
-               standardGeneric("getCCA"))
+setGeneric("getCCA", signature = c("x"), function(x, ...)
+    standardGeneric("getCCA"))
 
 #' @rdname runCCA
-setGeneric("addCCA", signature = c("x"),
-           function(x, ...)
-               standardGeneric("addCCA"))
+setGeneric("addCCA", signature = c("x"), function(x, ...)
+    standardGeneric("addCCA"))
 
 #' @rdname runCCA
-setGeneric("getRDA", signature = c("x"),
-           function(x, ...)
-               standardGeneric("getRDA"))
+setGeneric("getRDA", signature = c("x"), function(x, ...)
+    standardGeneric("getRDA"))
 
 #' @rdname runCCA
-setGeneric("addRDA", signature = c("x"),
-           function(x, ...)
-               standardGeneric("addRDA"))
+setGeneric("addRDA", signature = c("x"), function(x, ...)
+    standardGeneric("addRDA"))
+
+
+############################# Exported CCA methods #############################
+
+#' @export
+#' @rdname runCCA
+#' @aliases getCCA
+calculateCCA <- function(x, ...){
+    getCCA(x,...)
+}
+
+#' @export
+#' @rdname runCCA
+#' @aliases addCCA
+runCCA <- function(x, ...){
+    addCCA(x, ...)
+}
+
+#' @export
+#' @rdname runCCA
+setMethod("getCCA", "ANY", function(x, ...){
+    .calculate_cca(x, ...)
+})
+
+#' @export
+#' @rdname runCCA
+setMethod("getCCA", "SummarizedExperiment",
+    function(
+        x, formula, variables, test.signif = TRUE,
+        assay.type = assay_name, assay_name = exprs_values,
+        exprs_values = "counts",
+        scores = "wa", ...){
+    # Check assay.type and get assay
+    .check_assay_present(assay.type, x)
+    mat <- assay(x, assay.type)
+    # Check test.signif
+    if( !.is_a_bool(test.signif) ){
+        stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !(.is_a_string(scores) && scores %in% c("wa", "u")) ){
+        stop("'scores' must be 'wa' or 'u'.",
+            call. = FALSE)
+    }
+    
+    # If formula is missing but variables are not
+    if( !missing(variables) && missing(formula) ){
+      # Create a formula based on variables
+      formula <- .get_formula_from_data_and_variables(x, variables)
+      # Get the data from colData
+      variables <- colData(x)[ , variables, drop = FALSE]
+    } else{
+      # Otherwise if formula is provided, get variables based on formula
+      # (If formula is not provided variables is just empty data.frame)
+      variables <- .get_variables_from_data_and_formula(x, formula)
+    } 
+    cca <- .calculate_cca(mat, formula, variables, scores, ...)
+    
+    # Test significance if specified
+    if( test.signif ){
+      res <- .test_rda(mat, attr(cca, "cca"), variables, ...)
+      attr(cca, "significance") <- res
+    }
+    return(cca)
+  }
+)
+
+
+#' @export
+#' @rdname runCCA
+#' @importFrom SingleCellExperiment reducedDim<-
+setMethod("addCCA", "SingleCellExperiment",
+    function(x, formula, variables, altexp = NULL, name = "CCA", ...){
+    # Get TreeSE from altexp if specified.
+    if( !is.null(altexp) ){
+        y <- altExp(x, altexp)
+    } else {
+        y <- x
+    }
+    # Calculate CCA
+    cca <- getCCA(y, formula, variables, ...)
+    # Add object to reducedDim
+    x <- .add_object_to_reduceddim(x, cca, name = name, ...)
+    return(x)
+    }
+)
+
+############################# Exported RDA methods #############################
+
+#' @export
+#' @rdname runCCA
+#' @aliases getRDA
+calculateRDA <- function(x, ...){
+    getRDA(x,...)
+}
+
+#' @export
+#' @rdname runCCA
+#' @aliases addRDA
+runRDA <- function(x, ...){
+    addRDA(x,...)
+}
+#' @export
+#' @rdname runCCA
+setMethod("getRDA", "ANY",function(x, ...){
+    .calculate_rda(x, ...)
+})
+
+#' @export
+#' @rdname runCCA
+setMethod("getRDA", "SummarizedExperiment",
+    function(
+        x, formula, variables, test.signif = TRUE,
+        assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
+        scores = "wa", ...){
+    # Check assay.type and get assay
+    .check_assay_present(assay.type, x)
+    mat <- assay(x, assay.type)
+    # Check test.signif
+    if( !.is_a_bool(test.signif) ){
+      stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !(.is_a_string(scores) && scores %in% c("wa", "u", "v")) ){
+      stop("'scores' must be 'wa', 'u', or 'v'.",
+           call. = FALSE)
+    }
+    
+    # If formula is missing but variables are not
+    if( !missing(variables) && missing(formula) ){
+      # Create a formula based on variables
+      formula <- .get_formula_from_data_and_variables(x, variables)
+      # Get the data from colData
+      variables <- colData(x)[ , variables, drop = FALSE]
+    } else{
+      # Otherwise if formula is provided, get variables based on formula
+      # (If formula is not provided variables is just empty data.frame)
+      variables <- .get_variables_from_data_and_formula(x, formula)
+    } 
+    # Calculate RDA
+    rda <- .calculate_rda(mat, formula, variables, scores, ...)
+    
+    # Test significance if specified
+    if( test.signif ){
+      res <- .test_rda(mat, attr(rda, "rda"), variables, ...)
+      attr(rda, "significance") <- res
+    }
+    return(rda)
+    }
+)
+
+
+
+#' @export
+#' @rdname runCCA
+#' @importFrom SingleCellExperiment reducedDim<-
+setMethod("addRDA", "SingleCellExperiment",
+    function(x, formula, variables, altexp = NULL, name = "RDA", ...){
+        if (!is.null(altexp)) {
+          y <- altExp(x, altexp)
+        } else {
+          y <- x
+        }
+        # Calculate RDA
+        rda <- getRDA(y, formula, variables, ...)
+        # Add object to reducedDim
+        x <- .add_object_to_reduceddim(x, rda, name = name, ...)
+        return(x)
+      }
+)
+
+
+#########################################################################
 
 .remove_special_functions_from_terms <- function(terms){
     names(terms) <- terms
@@ -241,12 +408,6 @@ setGeneric("addRDA", signature = c("x"),
     ans
 }
 
-#' @export
-#' @rdname runCCA
-setMethod("getCCA", "ANY",
-      function(x, ...){
-          .calculate_cca(x, ...)
-      })
 
 #' @importFrom stats terms
 #' @importFrom SummarizedExperiment colData
@@ -281,79 +442,7 @@ setMethod("getCCA", "ANY",
     formula
 }
 
-#' @export
-#' @rdname runCCA
-setMethod("getCCA", "SummarizedExperiment",
-    function(x, formula, variables, test.signif = TRUE,
-             assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
-             scores = "wa", ...)
-    {
-        # Check assay.type and get assay
-        .check_assay_present(assay.type, x)
-        mat <- assay(x, assay.type)
-        # Check test.signif
-        if( !.is_a_bool(test.signif) ){
-            stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
-        }
-        if( !(.is_a_string(scores) && scores %in% c("wa", "u")) ){
-            stop("'scores' must be 'wa' or 'u'.",
-                 call. = FALSE)
-        }
 
-        # If formula is missing but variables are not
-        if( !missing(variables) && missing(formula) ){
-            # Create a formula based on variables
-            formula <- .get_formula_from_data_and_variables(x, variables)
-            # Get the data from colData
-            variables <- colData(x)[ , variables, drop = FALSE]
-        } else{
-            # Otherwise if formula is provided, get variables based on formula
-            # (If formula is not provided variables is just empty data.frame)
-            variables <- .get_variables_from_data_and_formula(x, formula)
-        } 
-        cca <- .calculate_cca(mat, formula, variables, scores, ...)
-        
-        # Test significance if specified
-        if( test.signif ){
-            res <- .test_rda(mat, attr(cca, "cca"), variables, ...)
-            attr(cca, "significance") <- res
-        }
-        return(cca)
-    }
-)
-
-#' @export
-#' @rdname runCCA
-#' @aliases getCCA
-calculateCCA <- function(x,...){
-    getCCA(x,...)
-}
-
-#' @export
-#' @rdname runCCA
-#' @importFrom SingleCellExperiment reducedDim<-
-setMethod("addCCA", "SingleCellExperiment",
-    function(x, formula, variables, altexp = NULL, name = "CCA", ...)
-    {
-        if (!is.null(altexp)) {
-          y <- altExp(x, altexp)
-        } else {
-          y <- x
-        }
-        # Calculate CCA
-        cca <- getCCA(y, formula, variables, ...)
-        # Add object to reducedDim
-        x <- .add_object_to_reduceddim(x, cca, name = name, ...)
-        return(x)
-    }
-)
-
-#' @export
-#' @rdname runCCA
-#' @aliases addCCA
-runCCA <- function(x,...){
-    addCCA(x,...)
-}
 
 #' @importFrom vegan sppscores<-
 #' @importFrom stats na.fail
@@ -603,86 +692,4 @@ runCCA <- function(x,...){
         table = tab
     )
     return(res)
-}
-
-#' @export
-#' @rdname runCCA
-setMethod("getRDA", "ANY",
-      function(x, ...){
-          .calculate_rda(x, ...)
-      })
-
-#' @export
-#' @rdname runCCA
-setMethod("getRDA", "SummarizedExperiment",
-    function(x, formula, variables, test.signif = TRUE,
-             assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
-             scores = "wa", ...)
-    {
-        # Check assay.type and get assay
-        .check_assay_present(assay.type, x)
-        mat <- assay(x, assay.type)
-        # Check test.signif
-        if( !.is_a_bool(test.signif) ){
-            stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
-        }
-        if( !(.is_a_string(scores) && scores %in% c("wa", "u", "v")) ){
-            stop("'scores' must be 'wa', 'u', or 'v'.",
-                 call. = FALSE)
-        }
-        
-        # If formula is missing but variables are not
-        if( !missing(variables) && missing(formula) ){
-            # Create a formula based on variables
-            formula <- .get_formula_from_data_and_variables(x, variables)
-            # Get the data from colData
-            variables <- colData(x)[ , variables, drop = FALSE]
-        } else{
-            # Otherwise if formula is provided, get variables based on formula
-            # (If formula is not provided variables is just empty data.frame)
-            variables <- .get_variables_from_data_and_formula(x, formula)
-        } 
-        # Calculate RDA
-        rda <- .calculate_rda(mat, formula, variables, scores, ...)
-        
-        # Test significance if specified
-        if( test.signif ){
-            res <- .test_rda(mat, attr(rda, "rda"), variables, ...)
-            attr(rda, "significance") <- res
-        }
-        return(rda)
-    }
-)
-
-#' @export
-#' @rdname runCCA
-#' @aliases getRDA
-calculateRDA <- function(x,...){
-    getRDA(x,...)
-}
-
-#' @export
-#' @rdname runCCA
-#' @importFrom SingleCellExperiment reducedDim<-
-setMethod("addRDA", "SingleCellExperiment",
-    function(x, formula, variables, altexp = NULL, name = "RDA", ...)
-    {
-        if (!is.null(altexp)) {
-          y <- altExp(x, altexp)
-        } else {
-          y <- x
-        }
-        # Calculate RDA
-        rda <- getRDA(y, formula, variables, ...)
-        # Add object to reducedDim
-        x <- .add_object_to_reduceddim(x, rda, name = name, ...)
-        return(x)
-    }
-)
-
-#' @export
-#' @rdname runCCA
-#' @aliases addRDA
-runRDA <- function(x,...){
-    addRDA(x,...)
 }
