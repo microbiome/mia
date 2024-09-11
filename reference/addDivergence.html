@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Estimate divergence</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/update_divergence/R/estimateDivergence.R" class="external-link"><code>R/estimateDivergence.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fgroup/R/estimateDivergence.R" class="external-link"><code>R/estimateDivergence.R</code></a></small>
     <div class="hidden name"><code>addDivergence.Rd</code></div>
     </div>
 
@@ -53,26 +53,25 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">addDivergence</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"divergence"</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">addDivergence</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"divergence"</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">getDivergence</span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">addDivergence</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  name <span class="op">=</span> <span class="st">"divergence"</span>,</span>
 <span>  reference <span class="op">=</span> <span class="st">"median"</span>,</span>
+<span>  FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"bray"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">getDivergence</span><span class="op">(</span></span>
+<span><span class="fu">addDivergence</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  name <span class="op">=</span> <span class="st">"divergence"</span>,</span>
 <span>  reference <span class="op">=</span> <span class="st">"median"</span>,</span>
+<span>  FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"bray"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -86,33 +85,45 @@
 <dd><p>a <code>SummarizedExperiment</code> object.</p></dd>
 
 
+<dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
+<dd><p>the name of the assay used for calculation of the
+sample-wise estimates.</p></dd>
+
+
+<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
+will be disabled.)</p></dd>
+
+
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p><code>Character scalar</code>. The name to be used to store the result
-in metadata of the output. (Default: <code>method</code>)</p></dd>
+<dd><p>a name for the column of the colData the results should be
+stored in. By default, <code>name</code> is <code>"divergence"</code>.</p></dd>
+
+
+<dt id="arg-reference">reference<a class="anchor" aria-label="anchor" href="#arg-reference"></a></dt>
+<dd><p>a numeric vector that has length equal to number of
+features, or a non-empty character value; either 'median' or 'mean'.
+<code>reference</code> specifies the reference that is used to calculate
+<code>divergence</code>. by default, <code>reference</code> is  <code>"median"</code>.</p></dd>
+
+
+<dt id="arg-fun">FUN<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
+<dd><p>a <code>function</code> for distance calculation. The function must
+expect the input matrix as its first argument. With rows as samples
+and columns as features. By default, <code>FUN</code> is
+<code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegan::vegdist</a></code>.</p></dd>
+
+
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
+<dd><p>a method that is used to calculate the distance. Method is
+passed to the function that is specified by <code>FUN</code>. By default,
+<code>method</code> is <code>"bray"</code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>optional arguments</p></dd>
-
-
-<dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies which assay to use for
-calculation. (Default: <code>"counts"</code>)</p></dd>
-
-
-<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
-
-
-<dt id="arg-reference">reference<a class="anchor" aria-label="anchor" href="#arg-reference"></a></dt>
-<dd><p><code>Character scalar</code>. A column name from
-<code>colData(x)</code> or either <code>"mean"</code> or <code>"median"</code>.
-(Default: <code>"median"</code>)</p></dd>
-
-
-<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies which dissimilarity to
-calculate. (Default: <code>"bray"</code>)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -147,13 +158,10 @@ between comparisons.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The method that are used to calculate distance in divergence and </span></span></span>
 <span class="r-in"><span><span class="co"># reference can be specified. Here, euclidean distance and dist function from </span></span></span>
-<span class="r-in"><span><span class="co"># stats package are used. Reference is the first sample. It is recommended</span></span></span>
-<span class="r-in"><span><span class="co"># to add reference to colData.</span></span></span>
-<span class="r-in"><span><span class="va">tse</span><span class="op">[[</span><span class="st">"reference"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDivergence</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>, name <span class="op">=</span> <span class="st">"divergence_first_sample"</span>, </span></span>
-<span class="r-in"><span>    reference <span class="op">=</span> <span class="st">"reference"</span>,</span></span>
-<span class="r-in"><span>    method <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># stats package are used. Reference is the first sample.</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDivergence</span><span class="op">(</span><span class="va">tse</span>, name <span class="op">=</span> <span class="st">"divergence_first_sample"</span>, </span></span>
+<span class="r-in"><span>                          reference <span class="op">=</span> <span class="fu">assays</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, </span></span>
+<span class="r-in"><span>                          FUN <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span>, method <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Reference can also be median or mean of all samples. </span></span></span>
 <span class="r-in"><span><span class="co"># By default, divergence is calculated by using median. Here, mean is used.</span></span></span>
@@ -161,7 +169,7 @@ between comparisons.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># All three divergence results are stored in colData.</span></span></span>
 <span class="r-in"><span><span class="fu">colData</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 26 rows and 11 columns</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 26 rows and 10 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         X.SampleID   Primer Final_Barcode Barcode_truncated_plus_T</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;factor&gt; &lt;factor&gt;      &lt;factor&gt;                 &lt;factor&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CL3        CL3      ILBC_01        AACGCA                   TGCGTT</span>
@@ -188,19 +196,19 @@ between comparisons.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Even1           TGACTCTGCGG      Mock </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Even2           TCTGATCGAGG      Mock </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Even3           AGAGAGACAGG      Mock </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                        Description divergence   reference</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                           &lt;factor&gt;  &lt;numeric&gt; &lt;character&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3     Calhoun South Carolina Pine soil, pH 4.9     0.989114         CL3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1     Cedar Creek Minnesota, grassland, pH 6.1     0.991217         CL3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1     Sevilleta new Mexico, desert scrub, pH 8.3   0.986994         CL3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw M3, Day 1, fecal swab, whole body study      0.995435         CL3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw M1, Day 1, fecal swab, whole body study      0.996395         CL3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ...                                            ...        ...         ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS28                                       Twin #1   0.991388         CL3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS29                                       Twin #2   0.992698         CL3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even1                                      Even1     0.990063         CL3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even2                                      Even2     0.989827         CL3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even3                                      Even3     0.991461         CL3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                        Description divergence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                           &lt;factor&gt;  &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3     Calhoun South Carolina Pine soil, pH 4.9     0.989114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1     Cedar Creek Minnesota, grassland, pH 6.1     0.991217</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1     Sevilleta new Mexico, desert scrub, pH 8.3   0.986994</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw M3, Day 1, fecal swab, whole body study      0.995435</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw M1, Day 1, fecal swab, whole body study      0.996395</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ...                                            ...        ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28                                       Twin #1   0.991388</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29                                       Twin #2   0.992698</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1                                      Even1     0.990063</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2                                      Even2     0.989827</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3                                      Even3     0.991461</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         divergence_first_sample divergence_average</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       &lt;numeric&gt;          &lt;numeric&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CL3                         0.0           0.879196</span>
