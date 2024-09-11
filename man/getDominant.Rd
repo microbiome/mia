@@ -11,6 +11,7 @@ getDominant(
   x,
   assay.type = assay_name,
   assay_name = "counts",
+  group = rank,
   rank = NULL,
   other.name = "Other",
   n = NULL,
@@ -22,6 +23,7 @@ getDominant(
   x,
   assay.type = assay_name,
   assay_name = "counts",
+  group = rank,
   rank = NULL,
   other.name = "Other",
   n = NULL,
@@ -48,8 +50,10 @@ calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a value of
-\code{taxonomyRanks()} function.}
+\item{group}{\code{Character scalar}. Defines a group. Must be a value of
+\code{taxonomyRanks()} or rowData(x) function.}
+
+\item{rank}{Deprecated. Use \code{group} instead.}
 
 \item{other.name}{\code{Character scalar}. A name for features that are not
 included in n the most frequent dominant features in the data. (Default: \code{"Other"})}
