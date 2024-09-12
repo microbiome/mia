@@ -6,15 +6,15 @@
 \alias{addCCA}
 \alias{getRDA}
 \alias{addRDA}
+\alias{calculateCCA}
 \alias{getCCA,ANY-method}
 \alias{getCCA,SummarizedExperiment-method}
-\alias{calculateCCA}
 \alias{addCCA,SingleCellExperiment-method}
+\alias{calculateRDA}
+\alias{runRDA}
 \alias{getRDA,ANY-method}
 \alias{getRDA,SummarizedExperiment-method}
-\alias{calculateRDA}
 \alias{addRDA,SingleCellExperiment-method}
-\alias{runRDA}
 \title{Canonical Correspondence Analysis and Redundancy Analysis}
 \usage{
 getCCA(x, ...)
@@ -25,45 +25,45 @@ getRDA(x, ...)
 
 addRDA(x, ...)
 
-\S4method{getCCA}{ANY}(x, ...)
-
-\S4method{getCCA}{SummarizedExperiment}(
-  x,
-  formula,
-  variables,
-  test.signif = TRUE,
-  assay.type = assay_name,
-  assay_name = exprs_values,
-  exprs_values = "counts",
-  scores = "wa",
-  ...
-)
-
 calculateCCA(x, ...)
-
-\S4method{addCCA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "CCA", ...)
 
 runCCA(x, ...)
 
-\S4method{getRDA}{ANY}(x, ...)
+\S4method{getCCA}{ANY}(x, formula, data, ...)
 
-\S4method{getRDA}{SummarizedExperiment}(
+\S4method{getCCA}{SummarizedExperiment}(
   x,
-  formula,
-  variables,
+  formula = NULL,
+  col.var = variables,
+  variables = NULL,
   test.signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts",
-  scores = "wa",
   ...
 )
 
+\S4method{addCCA}{SingleCellExperiment}(x, altexp = NULL, name = "CCA", ...)
+
 calculateRDA(x, ...)
 
-\S4method{addRDA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "RDA", ...)
-
 runRDA(x, ...)
+
+\S4method{getRDA}{ANY}(x, formula, data, ...)
+
+\S4method{getRDA}{SummarizedExperiment}(
+  x,
+  formula = NULL,
+  col.var = variables,
+  variables = NULL,
+  test.signif = TRUE,
+  assay.type = assay_name,
+  assay_name = exprs_values,
+  exprs_values = "counts",
+  ...
+)
+
+\S4method{addRDA}{SingleCellExperiment}(x, altexp = NULL, name = "RDA", ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
@@ -99,6 +99,9 @@ a formula can be supplied. Based on the right-hand side of the given formula
 \code{variables} and \code{formula} can be missing, which turns the CCA analysis
 into a CA analysis and dbRDA into PCoA/MDS.}
 
+\item{data}{\code{data.frame} or coarcible to one. The covariance table
+including covariates defined by \code{formula}.}
+
 \item{variables}{\code{Character scalar}. When \code{x} is a \code{SummarizedExperiment},
 \code{variables} can be used to specify variables from \code{colData}.
 
@@ -119,11 +122,6 @@ calculation. (Default: \code{"counts"})}
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
-
-\item{scores}{\code{Character scalar}. Specifies scores to be returned. Must be
-'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
-v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-'u' ((weighted) orthonormal site scores). (Default: \code{'wa'})}
 
 \item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an alternative experiment
 containing the input data.}

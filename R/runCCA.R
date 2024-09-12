@@ -396,24 +396,22 @@ setMethod("addRDA", "SingleCellExperiment",
 # on usr-specified formual or variables. If neither is specified, the function
 # returns empty table with corresponding formula.
 .get_formula_and_covariates <- function(x, formula, col.var){
-    # If formula is missing but variables are not
-    if( !is.null(col.var) && is.null(formula) ){
-        # Create a formula based on variables
+    # If formula is specified
+    if( !is.null(formula) ){
+        # Otherwise if formula is provided, get variables based on formula
+        variables <- .get_variables_based_on_formula(x, formula)
+    } else if( !is.null(col.var) ){
+        # If column variables are specified, create a formula based on them and
+        # get variables
         formula <- as.formula(
             paste0("mat ~ ", paste(col.var, collapse = " + ")))
         # Get the data from colData
         variables <- colData(x)[ , col.var, drop = FALSE]
     } else{
-        # Otherwise if formula is provided, get variables based on formula
-        # (If formula is not provided variables is just empty data.frame)
-        variables <- .get_variables_from_data_and_formula(x, formula)
-        # Create a formula. If there are no covariates, do not add them to
-        # model. If there are covariates, add them all.
-        if( ncol(variables) == 0L ){
-            formula <- mat ~ 1
-        } else{
-            formula <- mat ~ .
-        }
+        # Else either formula nor column variables were specified. Get empty
+        # variable table and formula that does not incorporate covariates.
+        variables <- colData(x)[, 0]
+        formula <- mat ~ 1
     }
     # Return a list that holds both formula and covariates
     res <- list(formula = formula, variables = variables)
@@ -424,23 +422,18 @@ setMethod("addRDA", "SingleCellExperiment",
 # was not specified, te functio returns an emtpy table.
 #' @importFrom stats terms
 #' @importFrom SummarizedExperiment colData
-.get_variables_from_data_and_formula <- function(x, formula){
-    if( !is.null(formula) ){
-        # Get variables from formula
-        terms <- rownames(attr(terms(formula),"factors"))
-        terms <- terms[terms != as.character(formula)[2L]]
-        terms <- .remove_special_functions_from_terms(terms)
-        # Check that all variables specify a column from colData
-        if( !all(terms %in% colnames(colData(x))) ){
-            stop("All variables on the right hand side of 'formula' must be ",
-                "present in colData(x).", call. = FALSE)
-        }
-        # Get the variables from colData
-        df <- colData(x)[, terms, drop=FALSE]
-    } else{
-        # Return empty df
-        df <- colData(x)[ , 0]
+.get_variables_based_on_formula <- function(x, formula){
+    # Get variables from formula
+    terms <- rownames(attr(terms(formula),"factors"))
+    terms <- terms[terms != as.character(formula)[2L]]
+    terms <- .remove_special_functions_from_terms(terms)
+    # Check that all variables specify a column from colData
+    if( !all(terms %in% colnames(colData(x))) ){
+        stop("All variables on the right hand side of 'formula' must be ",
+            "present in colData(x).", call. = FALSE)
     }
+    # Get the variables from colData
+    df <- colData(x)[, terms, drop = FALSE]
     return(df)
 }
 
@@ -532,7 +525,7 @@ setMethod("addRDA", "SingleCellExperiment",
     
     # Get eigenvalues from the object
     eig <- eigenvals(res_obj)
-    # Get total number of coordinates. There might be imaginry axes, exclude
+    # Get total number of coordinates. There might be imaginary axes, exclude
     # them because otherwise error occurs in scores() call.
     tot_num_coord <- sum(eig >= 0)
     # Now we know how many coordinates there are. We use that info to get
