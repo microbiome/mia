@@ -419,12 +419,18 @@ setMethod("addRDA", "SingleCellExperiment",
 }
 
 # This function fetch variables from colData based on formula. If formula
-# was not specified, te functio returns an emtpy table.
+# was not specified, the function returns an empty table.
 #' @importFrom stats terms
 #' @importFrom SummarizedExperiment colData
 .get_variables_based_on_formula <- function(x, formula){
+    # If user specified "all" covariates, give error. User should use col.var
+    # to do that.
+    if( as.character(formula)[[3]] == "." ){
+        stop("To incorporate all variables from colData(x) with 'x~.', use ",
+            "'col.var' and leave 'formula' unspecified.", call. = FALSE)
+    }
     # Get variables from formula
-    terms <- rownames(attr(terms(formula),"factors"))
+    terms <- rownames(attr(terms(formula), "factors"))
     terms <- terms[terms != as.character(formula)[2L]]
     terms <- .remove_special_functions_from_terms(terms)
     # Check that all variables specify a column from colData
