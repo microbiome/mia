@@ -509,6 +509,7 @@ setMethod("addRDA", "SingleCellExperiment",
     na_action_name <- sub('.*UseMethod\\("([^"]+)"\\).*', '\\1', na_action_name)
     res_obj$call <- paste0(
         res_obj$method, "(formula = ", deparse(formula),
+        ", data = data",
         ifelse(ord.method == "CCA", paste0(", scale = ", scale), ""),
         ifelse(ord.method == "RDA", paste0(", distance = ", method), ""),
         ", na.action = ", na_action_name,  ", ...)")
