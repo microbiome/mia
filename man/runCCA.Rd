@@ -94,23 +94,25 @@ for significance testing in \code{vegan::anova.cca}. (By default: \code{permutat
 \item{formula}{If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 a formula can be supplied. Based on the right-hand side of the given formula
-\code{colData} is subset to \code{variables}.
+\code{colData} is subset to \code{col.var}.
 
-\code{variables} and \code{formula} can be missing, which turns the CCA analysis
+\code{col.var} and \code{formula} can be missing, which turns the CCA analysis
 into a CA analysis and dbRDA into PCoA/MDS.}
 
 \item{data}{\code{data.frame} or coarcible to one. The covariance table
 including covariates defined by \code{formula}.}
 
-\item{variables}{\code{Character scalar}. When \code{x} is a \code{SummarizedExperiment},
-\code{variables} can be used to specify variables from \code{colData}.
+\item{col.var}{\code{Character scalar}. When \code{x} is a \code{SummarizedExperiment},
+\code{col.var} can be used to specify variables from \code{colData}.
 
-When \code{x} is a matrix, \code{variables} is a \code{data.frame} or
+When \code{x} is a matrix, \code{col.var} is a \code{data.frame} or
 an object coercible to one containing the variables to use.
 
 All variables are used. Please subset, if you want to consider only some of them.
-\code{variables} and \code{formula} can be missing, which turns the CCA analysis
+\code{col.var} and \code{formula} can be missing, which turns the CCA analysis
 into a CA analysis and dbRDA into PCoA/MDS.}
+
+\item{variables}{Deprecated. Use \code{"col.var"} instead.}
 
 \item{test.signif}{\code{Logical scalar}. Should the PERMANOVA and analysis of
 multivariate homogeneity of group dispersions be performed.
@@ -130,16 +132,18 @@ containing the input data.}
 \code{colData} where results will be stored. (Default: \code{"CCA"})}
 }
 \value{
-For \code{getCCA} a matrix with samples as rows and CCA dimensions as
-columns. Attributes include calculated \code{cca}/\code{rda} object and
-significance analysis results.
+For \code{getCCA} a matrix with samples as rows and CCA dimensions as columns.
+Attributes include output from \code{\link[vegan:scores]{scores}}, eigenvalues,
+the \code{cca}/\code{rda} object and significance analysis results.
 
 For \code{addCCA} a modified \code{x} with the results stored in
 \code{reducedDim} as the given \code{name}.
 }
 \description{
 These functions perform Canonical Correspondence Analysis on data stored
-in a \code{SummarizedExperiment}.
+in a \code{SummarizedExperiment}. We make use of wrappers for
+\code{\link[vegan:cca]{cca}} and \code{\link[vegan:dbrda]{dbrda}} for
+these calculations.
 }
 \details{
 For \code{run*} a
@@ -180,7 +184,8 @@ tse <- addRDA(tse,
               formula = data ~ ClinicalStatus,
               assay.type = "relabundance",
               method = "bray",
-              name = "RDA_bray")
+              name = "RDA_bray",
+              na.action = na.exclude)
 
 # To scale values when using *RDA functions, use
 # transformAssay(MARGIN = "features", ...) 
