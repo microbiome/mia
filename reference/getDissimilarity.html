@@ -50,7 +50,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate dissimilarities</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_rda/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/update_divergence/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
     <div class="hidden name"><code>getDissimilarity.Rd</code></div>
     </div>
 
@@ -68,35 +68,32 @@ by default.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, name <span class="op">=</span> <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"bray"</span>, name <span class="op">=</span> <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">getDissimilarity</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  <span class="va">method</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"bray"</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  niter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  tree <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">getDissimilarity</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  <span class="va">method</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"bray"</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  tree.name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
 <span>  niter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  tree <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'ANY'</span></span>
-<span><span class="fu">getDissimilarity</span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, niter <span class="op">=</span> <span class="cn">NULL</span>, tree <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">getDissimilarity</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"bray"</span>, niter <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -110,7 +107,7 @@ or <code>matrix</code>.</p></dd>
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p><code>Character scalar</code>. Specifies which dissimilarity to
-calculate.</p></dd>
+calculate. (Default: <code>"bray"</code>)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -120,6 +117,11 @@ calculate.</p></dd>
 (Default: <code>min(rowSums2(x))</code>)</p></li>
 <li><p><code>dis.fun</code>: <code>Character scalar</code>. Specifies the dissimilarity
 function to be used.</p></li>
+<li><p><code>tree.name</code>: (Unifrac)  <code>Character scalar</code>. Specifies the
+name of the tree from <code>rowTree(x)</code> that is used in calculation.
+Disabled when <code>tree</code> is specified. (Default: <code>"phylo"</code>)</p></li>
+<li><p><code>tree</code>: (Unifrac) <code>phylo</code>. A phylogenetic tree used in
+calculation. (Default: <code>NULL</code>)</p></li>
 <li><p><code>weighted</code>: (Unifrac) <code>Logical scalar</code>. Should use
 weighted-Unifrac calculation?
 Weighted-Unifrac takes into account the relative abundance of
@@ -162,17 +164,6 @@ rarefaction is disabled. (Default: <code>NULL</code>)</p></dd>
 <dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
 <dd><p><code>Logical scalar</code>. Specifies if x is transposed with
 cells in rows. (Default: <code>FALSE</code>)</p></dd>
-
-
-<dt id="arg-tree">tree<a class="anchor" aria-label="anchor" href="#arg-tree"></a></dt>
-<dd><p>(Unifrac) <code>phylo</code>. A phylogenetic tree used in calculation.
-(Default: <code>NULL</code>)</p></dd>
-
-
-<dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
-<dd><p>(Unifrac) <code>Character scalar</code>. Specifies the name of the
-tree from <code>rowTree(x)</code> that is used in calculation. Disabled when
-<code>tree</code> is specified. (Default: <code>"phylo"</code>)</p></dd>
 
 </dl></div>
     <div id="value">
