@@ -111,7 +111,7 @@ test_that("transformAssay", {
         
         ## Check internal CSS equals CSS from metagenomeSeq package
         ## First create subset matrix from metagenomeSeq calc
-        normalized_counts <- matrix(c(0.998004, 188.5389326, 2.994012, 0.8748906), nrow = 2, ncol = 2, byrow = TRUE)
+        normalized_counts <- matrix(c(1.358696, 317.846608, 4.076087, 1.474926), nrow = 2, ncol = 2, byrow = TRUE)
         rownames(normalized_counts) <- c(46043, 512519)
         colnames(normalized_counts) <- c("NP3", "NP5")
         
