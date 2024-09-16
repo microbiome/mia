@@ -139,7 +139,7 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
 # those those are not recommended.
 .get_reference_type <- function(reference, x){
     is_col <- .is_a_string(reference) && reference %in% colnames(colData(x)) &&
-        all(x[[reference]] %in% colnames(x))
+        all(!is.na(x[[reference]]) %in% colnames(x))
     is_mean_or_median <- .is_a_string(reference) && reference %in% c(
         "mean", "median")
     is_num_vector <- is.numeric(reference) && length(reference) == nrow(x)
