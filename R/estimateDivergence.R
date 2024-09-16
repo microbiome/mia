@@ -197,6 +197,8 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
 .calc_divergence <- function(mat, reference, method, ...){
     # Create sample-pair data.frame
     reference <- data.frame(sample = colnames(mat), reference = reference)
+    # Exclude NA values
+    reference <- reference[!is.na(reference$reference), ]
     # For dissimilarity calculation, the samples must be in rows
     mat <- t(mat)
     # Loop through sample-pairs
