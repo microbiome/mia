@@ -13,7 +13,7 @@ Authors@R:
              comment = c(ORCID = "0000-0002-8563-8884")),
       person(given = "Leo", family = "Lahti", role = c("aut"),
              email = "leo.lahti@iki.fi",
-             comment = c(ORCID = "0000-0001-5537-637X")),      
+             comment = c(ORCID = "0000-0001-5537-637X")),
       person(given = "Yang", family = "Cao", role = c("ctb")),
       person(given = "Nathan D.", family = "Olson", role = c("ctb"),
              email = "nolson@nist.gov"),
@@ -45,8 +45,8 @@ Authors@R:
       person(given = "Danielle", family = "Callan", role=c("ctb")))
 Title: Microbiome analysis
 Description:
-    mia implements tools for microbiome analysis based on the 
-    SummarizedExperiment, SingleCellExperiment and TreeSummarizedExperiment 
+    mia implements tools for microbiome analysis based on the
+    SummarizedExperiment, SingleCellExperiment and TreeSummarizedExperiment
     infrastructure. Data wrangling and analysis in the context of taxonomic data
     is the main scope. Additional functions for common task are implemented such
     as community indices calculation and summarization.
@@ -61,51 +61,51 @@ Depends:
     TreeSummarizedExperiment (>= 1.99.3),
     MultiAssayExperiment
 Imports:
-    methods,
-    stats,
-    utils,
-    MASS,
     ape,
-    decontam,
-    vegan,
     BiocGenerics,
-    S4Vectors,
-    IRanges,
-    Biostrings,
-    DECIPHER,
     BiocParallel,
+    Biostrings,
+    bluster,
+    DECIPHER,
+    decontam,
     DelayedArray,
     DelayedMatrixStats,
-    scuttle,
-    scater,
     DirichletMultinomial,
-    rlang,
     dplyr,
-    tibble,
-    tidyr,
-    bluster,
+    IRanges,
+    MASS,
     MatrixGenerics,
     mediation,
+    methods,
     rbiom
+    rlang,
+    S4Vectors,
+    scater,
+    scuttle,
+    stats,
+    tibble,
+    tidyr,
+    utils,
+    vegan
 Suggests:
-    testthat,
-    knitr,
-    patchwork,
-    BiocStyle,
-    yaml,
-    miaViz,
-    phyloseq,
-    dada2,
-    stringr,
-    biomformat,
-    reldist,
     ade4,
+    BiocStyle,
+    biomformat,
+    dada2,
+    knitr,
+    miaViz,
     microbiomeDataSets,
-    rmarkdown,
-    rhdf5,
-    topicmodels,
-    topicdoc,
     NMF
+    patchwork,
+    phyloseq,
+    reldist,
+    rhdf5,
+    rmarkdown,
+    stringr,
+    testthat,
+    topicdoc,
+    topicmodels,
+    yaml,
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
