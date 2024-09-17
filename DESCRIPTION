@@ -56,10 +56,10 @@ Encoding: UTF-8
 LazyData: false
 Depends:
     R (>= 4.0),
-    SummarizedExperiment,
+    MultiAssayExperiment,
     SingleCellExperiment,
-    TreeSummarizedExperiment (>= 1.99.3),
-    MultiAssayExperiment
+    SummarizedExperiment,
+    TreeSummarizedExperiment (>= 1.99.3)
 Imports:
     ape,
     BiocGenerics,
@@ -77,7 +77,7 @@ Imports:
     MatrixGenerics,
     mediation,
     methods,
-    rbiom
+    rbiom,
     rlang,
     S4Vectors,
     scater,
@@ -95,7 +95,7 @@ Suggests:
     knitr,
     miaViz,
     microbiomeDataSets,
-    NMF
+    NMF,
     patchwork,
     phyloseq,
     reldist,
@@ -105,7 +105,7 @@ Suggests:
     testthat,
     topicdoc,
     topicmodels,
-    yaml,
+    yaml
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
