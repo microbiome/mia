@@ -488,7 +488,8 @@
     # split the taxa strings
     taxa_split <- CharacterList(strsplit(taxa_tab[, col.name],sep))
     # extract present prefixes
-    taxa_prefixes <- lapply(taxa_split, substr, 1L, 3L)
+    taxa_prefixes <- lapply(
+        taxa_split, gsub, pattern = "(^[a-zA-Z]+__).*", replacement = "\\1")
     # match them to the order given by present_prefixes
     taxa_prefixes_match <- lapply(taxa_prefixes, match, x = all_prefixes)
     taxa_prefixes_match <- IntegerList(taxa_prefixes_match)
