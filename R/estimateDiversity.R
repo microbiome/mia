@@ -311,20 +311,25 @@ NULL
             call. = FALSE)
     }
     
-    # Subset and rename rows of the assay to correspond node_labs
+    # Subset rows of the assay to correspond node_labs (if there are any NAs
+    # in node labels)
     if( !is.null(node.label) && any(is.na(node.label)) ){
-        # Subset
-        if( !any(is.na(node.label)) ){
-            warning(
-                "The tree named does not include all the ",
-                "rows. 'x' is subsetted.", call. = FALSE)
-            mat <- mat[ !is.na(node.label), ]
-            node.label <- node.label[ !is.na(node.label) ]
-        }
-        # Rename
+        warning(
+            "The tree named does not include all the ",
+            "rows. 'x' is subsetted.", call. = FALSE)
+        mat <- mat[ !is.na(node.label), ]
+        node.label <- node.label[ !is.na(node.label) ]
+    }
+    # If there are node labels (any TreeSE should have because they are rowLinks
+    # by default), rename the features in matrix to match with labels found in
+    # tree.
+    if( !is.null(node.label) ){
         rownames(mat) <- node.label
     }
-    # To calculate faith, the assay must have rownames
+    
+    # To calculate faith, the assay must have rownames. TreeSE has always
+    # rownames at this point, but if the object is SE, it might be that it is
+    # missing rownames.
     if( is.null(rownames(mat)) ){
         stop("'x' must have rownames.", call. = FALSE)
     }
