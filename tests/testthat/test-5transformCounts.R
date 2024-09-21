@@ -1,4 +1,3 @@
-
 context("transformAssay")
 
 test_that("transformAssay", {
@@ -339,6 +338,26 @@ test_that("transformAssay", {
                                     MARGIN = 2)
         compare <- t(compare)
         expect_equal(na.omit(actual), na.omit(compare))
+        
+        # Check that transformation is applied to altExps
+        expect_error(transformAssay(tse, altexp = "Phylum"))
+        expect_error(transformAssay(tse, altexp = 1))
+        expect_error(transformAssay(tse, altexp = TRUE))
+        expect_error(transformAssay(tse, altexp = NA))
+        expect_error(transformAssay(tse, altexp = c(1, 2, 3)))
+        expect_error(transformAssay(tse, altexp = character(0)))
+        expect_warning(
+        tse <- agglomerateByRanks(tse)
+        )
+        ref <- transformAssay(altExp(tse, "Phylum"), method = "relabundance")
+        test <- transformAssay(tse, altexp = "Phylum", method = "relabundance")
+        test <- altExp(test, "Phylum")
+        expect_equal(assay(test, "relabundance"), assay(ref, "relabundance"))
+        #
+        ref <- transformAssay(altExp(tse, "Genus"), method = "relabundance")
+        test <- transformAssay(tse, method = "relabundance")
+        test <- altExp(test, "Genus")
+        expect_equal(assay(test, "relabundance"), assay(ref, "relabundance"))
     }
 
     # TSE object
