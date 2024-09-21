@@ -50,8 +50,9 @@
 #'
 #' \itemize{
 #' 
-#' \item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log', 'normalize', 'pa', 'rank', 'rclr'
-#' 'relabundance', 'rrank', 'standardize', 'total': please refer to 
+#' \item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
+#' 'normalize', 'pa', 'rank', 'rclr' relabundance', 'rrank', 'standardize',
+#' 'total': please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
 #' \item 'log10': log10 transformation can be used for reducing the skewness
@@ -70,7 +71,8 @@
 #'
 #' @return
 #' \code{transformAssay} returns the input object \code{x}, with a new 
-#' transformed abundance table named \code{name} added in the \code{\link{assay}}.
+#' transformed abundance table named \code{name} added in the
+#' \code{\link{assay}}.
 #'
 #' @name transformAssay
 #' @export
@@ -136,9 +138,9 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     function(x,
         assay.type = "counts", assay_name = NULL,
         method = c("alr", "chi.square", "clr", "css", "css.fast", "frequency", 
-                  "hellinger", "log", "log10", "log2", "max", "normalize", 
-                  "pa", "range", "rank", "rclr", "relabundance", "rrank",
-                  "standardize", "total", "z"),
+            "hellinger", "log", "log10", "log2", "max", "normalize", 
+            "pa", "range", "rank", "rclr", "relabundance", "rrank",
+            "standardize", "total", "z"),
         MARGIN = "samples",
         name = method,
         pseudocount = FALSE,
@@ -321,16 +323,17 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 ####################################.calc_log###################################
 # This function applies log transformation to abundance table.
 .calc_log <- function(mat, method, ...){
-    # If abundance table contains zeros or negative values, gives an error, because
-    # it is not possible to calculate log from zeros. Otherwise, calculates log.
+    # If abundance table contains zeros or negative values, gives an error,
+    # because it is not possible to calculate log from zeros. Otherwise,
+    # calculates log.
     if ( any(mat < 0, na.rm = TRUE) ){
         stop("The assay contains negative values and ", method,
-             " transformation is being applied without pseudocount.",
+            " transformation is being applied without pseudocount.",
             "`pseudocount` must be specified manually.", call. = FALSE)
     } else if ( any(mat == 0, na.rm = TRUE) ){
         stop("The assay contains zeroes and ", method,
-             " transformation is being applied without pseudocount.",
-             "`pseudocount` must be set to TRUE.", call. = FALSE)
+            " transformation is being applied without pseudocount.",
+            "`pseudocount` must be set to TRUE.", call. = FALSE)
     }
     # Calculate log2 or log10 abundances
     if(method == "log2"){
@@ -374,8 +377,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         ref_dimnames <- list(var_names, reference_name)
         }
     # Reference sample as NAs or with symbols that are specified by user
-    reference_sample <- matrix(reference, nrow = nrow, ncol = ncol,  
-                               dimnames = ref_dimnames)
+    reference_sample <- matrix(
+        reference, nrow = nrow, ncol = ncol, dimnames = ref_dimnames)
     # Add reference sample/feature
     if(MARGIN == 1){
         mat <- rbind(mat, reference_sample)
@@ -387,9 +390,9 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         mat <- mat[, orig_names]
     }
     # Add those attributes that were related to calculation
-    attributes(mat) <- c(attributes(mat),
-                         attributes[ !names(attributes) %in%
-                                         c("dim", "dimnames") ])
+    attributes(mat) <- c(
+        attributes(mat),
+        attributes[ !names(attributes) %in% c("dim", "dimnames") ])
     return(mat)
 }
 
@@ -403,10 +406,11 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
             warning("The assay contains missing values (NAs). These will be ",
                 "ignored in pseudocount calculation.", call. = FALSE)
         }    
-        # If pseudocount TRUE but some negative values, numerical pseudocount needed
+        # If pseudocount TRUE but some negative values, numerical pseudocount
+        # needed
         if ( pseudocount && any(mat < 0, na.rm = TRUE) ){
             stop("The assay contains negative values. ",
-                 "'pseudocount' must be specified manually.", call. = FALSE)
+                "'pseudocount' must be specified manually.", call. = FALSE)
         }
         # If pseudocount TRUE, set it to half of non-zero minimum value
         # else set it to zero.
