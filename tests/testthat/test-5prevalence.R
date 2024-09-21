@@ -55,6 +55,8 @@ test_that("getPrevalence", {
     rownames(gp_null) <- NULL
 
     pr1 <- unname(getPrevalence(GlobalPatterns, detection=0.004, as.relative=TRUE))
+    # If there are no rownames, getPrevalence returns names "featurex" where
+    # x denotes the index.
     pr2 <- unname(getPrevalence(gp_null, detection=0.004, as.relative=TRUE))
     expect_equal(pr1, pr2)
 
