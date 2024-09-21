@@ -18,7 +18,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.41</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Transform assay</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/badges/R/transformCounts.R" class="external-link"><code>R/transformCounts.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/transformCounts.R" class="external-link"><code>R/transformCounts.R</code></a></small>
     <div class="hidden name"><code>transformAssay.Rd</code></div>
     </div>
 
@@ -55,32 +55,24 @@ See details for options.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">transformAssay</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alr"</span>, <span class="st">"chi.square"</span>, <span class="st">"clr"</span>, <span class="st">"frequency"</span>, <span class="st">"hellinger"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>,</span>
-<span>    <span class="st">"log2"</span>, <span class="st">"max"</span>, <span class="st">"normalize"</span>, <span class="st">"pa"</span>, <span class="st">"range"</span>, <span class="st">"rank"</span>, <span class="st">"rclr"</span>, <span class="st">"relabundance"</span>, <span class="st">"rrank"</span>,</span>
-<span>    <span class="st">"standardize"</span>, <span class="st">"total"</span>, <span class="st">"z"</span><span class="op">)</span>,</span>
-<span>  MARGIN <span class="op">=</span> <span class="st">"samples"</span>,</span>
-<span>  name <span class="op">=</span> <span class="va">method</span>,</span>
-<span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">transformAssay</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">transformAssay</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alr"</span>, <span class="st">"chi.square"</span>, <span class="st">"clr"</span>, <span class="st">"frequency"</span>, <span class="st">"hellinger"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>,</span>
-<span>    <span class="st">"log2"</span>, <span class="st">"max"</span>, <span class="st">"normalize"</span>, <span class="st">"pa"</span>, <span class="st">"range"</span>, <span class="st">"rank"</span>, <span class="st">"rclr"</span>, <span class="st">"relabundance"</span>, <span class="st">"rrank"</span>,</span>
-<span>    <span class="st">"standardize"</span>, <span class="st">"total"</span>, <span class="st">"z"</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alr"</span>, <span class="st">"chi.square"</span>, <span class="st">"clr"</span>, <span class="st">"css"</span>, <span class="st">"css.fast"</span>, <span class="st">"frequency"</span>, <span class="st">"hellinger"</span>,</span>
+<span>    <span class="st">"log"</span>, <span class="st">"log10"</span>, <span class="st">"log2"</span>, <span class="st">"max"</span>, <span class="st">"normalize"</span>, <span class="st">"pa"</span>, <span class="st">"range"</span>, <span class="st">"rank"</span>, <span class="st">"rclr"</span>,</span>
+<span>    <span class="st">"relabundance"</span>, <span class="st">"rrank"</span>, <span class="st">"standardize"</span>, <span class="st">"total"</span>, <span class="st">"z"</span><span class="op">)</span>,</span>
 <span>  MARGIN <span class="op">=</span> <span class="st">"samples"</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
 <span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
+<span><span class="fu">transformAssay</span><span class="op">(</span><span class="va">x</span>, altexp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExpNames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -89,6 +81,14 @@ See details for options.</p>
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p><code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>additional arguments passed on to <code>vegan:decostand</code>:</p><ul><li><p><code>reference</code>: <code>Character scalar</code>. use to
+to fill reference sample's column in returned assay when calculating alr.
+(Default: <code>NA</code>)</p></li>
+<li><p><code>ref_vals</code> Deprecated. Use <code>reference</code> instead.</p></li>
+</ul></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
@@ -126,12 +126,11 @@ Alternatively, a user-specified numeric value can be added as pseudocount.
 (Default: <code>FALSE</code>).</p></dd>
 
 
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional arguments passed on to <code>vegan:decostand</code>:</p><ul><li><p><code>reference</code>: <code>Character scalar</code>. use to
-to fill reference sample's column in returned assay when calculating alr.
-(Default: <code>NA</code>)</p></li>
-<li><p><code>ref_vals</code> Deprecated. Use <code>reference</code> instead.</p></li>
-</ul></dd>
+<dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
+<dd><p><code>Character vector</code> or <code>NULL</code>. Specifies the names
+of alternative experiments to which the transformation should also be
+applied. If <code>NULL</code>, the transformation is only applied to the main
+experiment. (Default: <code>altExpNames(x)</code>).</p></dd>
 
 </dl></div>
     <div id="value">
@@ -163,8 +162,8 @@ where \(x\) is a single value of data.</p></li>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span>, package<span class="op">=</span><span class="st">"mia"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">esophagus</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># By specifying 'method', it is possible to apply different transformations, </span></span></span>
 <span class="r-in"><span><span class="co"># e.g. compositional transformation.</span></span></span>
@@ -177,16 +176,44 @@ where \(x\) is a single value of data.</p></li>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"clr"</span>, </span></span>
 <span class="r-in"><span>                     pseudocount <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span>                     <span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> A pseudocount of 0.00196078431372549 was applied.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> A pseudocount of 2.12117779669868e-07 was applied.</span>
 <span class="r-in"><span>                      </span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"clr"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  B          C           D</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22  3.8466481  2.4264566  1.39281014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 -0.9945089  0.3723329 -1.14435965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_12  0.8013473  2.0587318 -1.14435965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_3_22 -0.9945089  0.3723329  0.05824235</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_5_1  -0.9945089 -1.2371050  0.05824235</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10 -0.9945089 -1.2371050  0.05824235</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              CL3       CC1       SV1    M31Fcsw    M11Fcsw   M31Plmr    M11Plmr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322 -1.503009 -1.629094 -1.246806 -0.4159582 -0.3502969 -0.626809 -0.9297687</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457 -1.503009 -1.629094 -1.246806 -0.4159582 -0.3502969 -0.626809 -0.9297687</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951    -1.503009 -1.629094 -1.246806 -0.4159582 -0.3502969 -0.626809  1.5438443</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423 -1.503009 -1.629094 -1.246806 -0.4159582 -0.3502969 -0.626809 -0.9297687</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076 -1.503009 -1.629094 -1.246806 -0.4159582 -0.3502969 -0.626809 -0.9297687</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140 -1.503009 -1.629094 -1.246806 -0.4159582 -0.3502969 -0.626809 -0.9297687</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           F21Plmr    M31Tong   M11Tong   LMEpi24M   SLEpi20M    AQC1cm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322 -0.6794681 -0.3541412 -0.524686 -0.4745231  1.0715840  3.607222</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457 -0.6794681 -0.3541412 -0.524686 -0.4745231 -0.5120773 -1.093283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951    -0.6794681 -0.3541412 -0.524686 -0.4745231 -0.5120773 -1.093283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423 -0.6794681 -0.3541412 -0.524686 -0.4745231 -0.5120773 -1.093283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076 -0.6794681 -0.3541412 -0.524686 -0.4745231 -0.5120773 -1.093283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140 -0.6794681 -0.3541412 -0.524686 -0.4745231 -0.5120773 -1.093283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             AQC4cm     AQC7cm        NP2        NP3        NP5    TRRsed1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322  4.27795825  4.8045323  1.8130749 -0.6256967 -0.5083015 -0.8942877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457  0.58409126  1.7843282 -0.4898264 -0.6256967 -0.5083015 -0.8942877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951    -1.02534666 -1.0861723 -0.4898264 -0.6256967 -0.5083015 -0.8942877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423  2.78131583  3.3138775 -0.4898264 -0.6256967 -0.5083015 -0.8942877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076  0.58409126  0.2420447 -0.4898264 -0.6256967 -0.5083015 -0.8942877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140  0.07326563  1.1463040 -0.4898264 -0.6256967 -0.5083015 -0.8942877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           TRRsed2   TRRsed3       TS28       TS29      Even1      Even2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322 -0.9741225 -1.029362 -0.4540262 -0.4062524 -0.5829973 -0.4578325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457 -0.9741225 -1.029362 -0.4540262 -0.4062524 -0.5829973 -0.4578325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951    -0.9741225 -1.029362 -0.4540262 -0.4062524 -0.5829973 -0.4578325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423 -0.9741225 -1.029362 -0.4540262 -0.4062524 -0.5829973 -0.4578325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076 -0.9741225 -1.029362 -0.4540262 -0.4062524 -0.5829973 -0.4578325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140 -0.9741225 -1.029362 -0.4540262 -0.4062524 -0.5829973 -0.4578325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Even3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322 -0.4074094</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457 -0.4074094</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951    -0.4074094</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423 -0.4074094</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076 -0.4074094</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140 -0.4074094</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># With MARGIN, you can specify the if transformation is done for samples or</span></span></span>
 <span class="r-in"><span><span class="co"># for features. Here Z-transformation is done feature-wise.</span></span></span>
@@ -194,50 +221,144 @@ where \(x\) is a single value of data.</p></li>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>result contains NaN, perhaps due to impossible mathematical</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>                  operation</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"standardize"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  B          C          D</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22  1.1000638 -0.2460669 -0.8539969</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 -0.5773503  1.1547005 -0.5773503</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_12 -0.4285714  1.1428571 -0.7142857</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_3_22 -1.0000000  1.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_5_1  -0.5773503 -0.5773503  1.1547005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10 -0.5773503 -0.5773503  1.1547005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               CL3        CC1        SV1    M31Fcsw    M11Fcsw    M31Plmr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322 -0.3146909 -0.3146909 -0.3146909 -0.3146909 -0.3146909 -0.3146909</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457 -0.2511010 -0.2511010 -0.2511010 -0.2511010 -0.2511010 -0.2511010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951    -0.1961161 -0.1961161 -0.1961161 -0.1961161 -0.1961161 -0.1961161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423 -0.2802242 -0.2802242 -0.2802242 -0.2802242 -0.2802242 -0.2802242</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076 -0.2674311 -0.2674311 -0.2674311 -0.2674311 -0.2674311 -0.2674311</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140 -0.2511010 -0.2511010 -0.2511010 -0.2511010 -0.2511010 -0.2511010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           M11Plmr    F21Plmr    M31Tong    M11Tong   LMEpi24M   SLEpi20M</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322 -0.3146909 -0.3146909 -0.3146909 -0.3146909 -0.3146909 -0.2831003</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457 -0.2511010 -0.2511010 -0.2511010 -0.2511010 -0.2511010 -0.2511010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951     4.9029034 -0.1961161 -0.1961161 -0.1961161 -0.1961161 -0.1961161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423 -0.2802242 -0.2802242 -0.2802242 -0.2802242 -0.2802242 -0.2802242</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076 -0.2674311 -0.2674311 -0.2674311 -0.2674311 -0.2674311 -0.2674311</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140 -0.2511010 -0.2511010 -0.2511010 -0.2511010 -0.2511010 -0.2511010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            AQC1cm     AQC4cm     AQC7cm        NP2        NP3        NP5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322  0.5382551  2.8443686  3.7920864 -0.2831003 -0.3146909 -0.3146909</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457 -0.2511010  1.3810554  4.6453681 -0.2511010 -0.2511010 -0.2511010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951    -0.1961161 -0.1961161 -0.1961161 -0.1961161 -0.1961161 -0.1961161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423 -0.2802242  2.8626823  3.8626980 -0.2802242 -0.2802242 -0.2802242</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076 -0.2674311  4.3680412  2.0503050 -0.2674311 -0.2674311 -0.2674311</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140 -0.2511010  1.3810554  4.6453681 -0.2511010 -0.2511010 -0.2511010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           TRRsed1    TRRsed2    TRRsed3       TS28       TS29      Even1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322 -0.3146909 -0.3146909 -0.3146909 -0.3146909 -0.3146909 -0.3146909</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457 -0.2511010 -0.2511010 -0.2511010 -0.2511010 -0.2511010 -0.2511010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951    -0.1961161 -0.1961161 -0.1961161 -0.1961161 -0.1961161 -0.1961161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423 -0.2802242 -0.2802242 -0.2802242 -0.2802242 -0.2802242 -0.2802242</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076 -0.2674311 -0.2674311 -0.2674311 -0.2674311 -0.2674311 -0.2674311</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140 -0.2511010 -0.2511010 -0.2511010 -0.2511010 -0.2511010 -0.2511010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Even2      Even3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322 -0.3146909 -0.3146909</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457 -0.2511010 -0.2511010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951    -0.1961161 -0.1961161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423 -0.2802242 -0.2802242</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076 -0.2674311 -0.2674311</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140 -0.2511010 -0.2511010</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Name of the stored table can be specified.</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, method<span class="op">=</span><span class="st">"hellinger"</span>, name<span class="op">=</span><span class="st">"test"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"test"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  B          C          D</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22 0.49629167 0.27296484 0.15109947</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 0.00000000 0.08856149 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_12 0.09925833 0.22578838 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_3_22 0.00000000 0.08856149 0.06757374</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_5_1  0.00000000 0.00000000 0.06757374</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10 0.00000000 0.00000000 0.06757374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        CL3 CC1 SV1 M31Fcsw M11Fcsw M31Plmr     M11Plmr F21Plmr M31Tong M11Tong</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322   0   0   0       0       0       0 0.000000000       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457   0   0   0       0       0       0 0.000000000       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951      0   0   0       0       0       0 0.001518127       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423   0   0   0       0       0       0 0.000000000       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076   0   0   0       0       0       0 0.000000000       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140   0   0   0       0       0       0 0.000000000       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        LMEpi24M     SLEpi20M      AQC1cm       AQC4cm       AQC7cm        NP2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322        0 0.0009063565 0.004808474 0.0065133368 0.0087465653 0.00138193</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457        0 0.0000000000 0.000000000 0.0009211249 0.0018790636 0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951           0 0.0000000000 0.000000000 0.0000000000 0.0000000000 0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423        0 0.0000000000 0.000000000 0.0030550257 0.0041310920 0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076        0 0.0000000000 0.000000000 0.0009211249 0.0007671245 0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140        0 0.0000000000 0.000000000 0.0006513337 0.0013286986 0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        NP3 NP5 TRRsed1 TRRsed2 TRRsed3 TS28 TS29 Even1 Even2 Even3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322   0   0       0       0       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457   0   0       0       0       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951      0   0       0       0       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423   0   0       0       0       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076   0   0       0       0       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140   0   0       0       0       0    0    0     0     0     0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># pa returns presence absence table.</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"pa"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"pa"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         B C D</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22 1 1 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 0 1 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_12 1 1 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_3_22 0 1 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_5_1  0 0 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10 0 0 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        CL3 CC1 SV1 M31Fcsw M11Fcsw M31Plmr M11Plmr F21Plmr M31Tong M11Tong</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322   0   0   0       0       0       0       0       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457   0   0   0       0       0       0       0       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951      0   0   0       0       0       0       1       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423   0   0   0       0       0       0       0       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076   0   0   0       0       0       0       0       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140   0   0   0       0       0       0       0       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        LMEpi24M SLEpi20M AQC1cm AQC4cm AQC7cm NP2 NP3 NP5 TRRsed1 TRRsed2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322        0        1      1      1      1   1   0   0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457        0        0      0      1      1   0   0   0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951           0        0      0      0      0   0   0   0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423        0        0      0      1      1   0   0   0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076        0        0      0      1      1   0   0   0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140        0        0      0      1      1   0   0   0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        TRRsed3 TS28 TS29 Even1 Even2 Even3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951          0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140       0    0    0     0     0     0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rank returns ranks of taxa.</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"rank"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rank"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            B  C    D</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22 27.0 30 33.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13  0.0 13  0.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_12 16.5 28  0.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_3_22  0.0 13 11.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_5_1   0.0  0 11.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10  0.0  0 11.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        CL3 CC1 SV1 M31Fcsw M11Fcsw M31Plmr M11Plmr F21Plmr M31Tong M11Tong</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322   0   0   0       0       0       0     0.0       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457   0   0   0       0       0       0     0.0       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951      0   0   0       0       0       0   532.5       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423   0   0   0       0       0       0     0.0       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076   0   0   0       0       0       0     0.0       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140   0   0   0       0       0       0     0.0       0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        LMEpi24M SLEpi20M AQC1cm AQC4cm AQC7cm   NP2 NP3 NP5 TRRsed1 TRRsed2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322        0    580.5   4941 5710.0 5673.0 509.5   0   0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457        0      0.0      0 1978.5 3329.5   0.0   0   0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951           0      0.0      0    0.0    0.0   0.0   0   0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423        0      0.0      0 4691.0 4780.0   0.0   0   0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076        0      0.0      0 1978.5  800.0   0.0   0   0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140        0      0.0      0  804.5 2479.5   0.0   0   0       0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        TRRsed3 TS28 TS29 Even1 Even2 Even3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 549322       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 522457       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 951          0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244423       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 586076       0    0    0     0     0     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246140       0    0    0     0     0     0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># In order to use other ranking variants, modify the chosen assay directly:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rank_average"</span>, withDimnames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">colRanks</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"counts"</span><span class="op">)</span>, ties.method <span class="op">=</span> <span class="st">"average"</span>, preserveShape <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  </span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Using altexp parameter. First agglomerate the data and then apply</span></span></span>
+<span class="r-in"><span><span class="co"># transformation.</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="agglomerate-methods.html">agglomerateByRanks</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># The transformation is applied to all altternative experiments</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"Species"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 944 26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): agglomerated_by_rank</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(2): counts relabundance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(944): Abiotrophiadefectiva Achromatiumoxaliferum ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   proteobacteriumsymbiontofOsedaxsp.MB4 symbiontofNoeetapupillata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (944 rows)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
