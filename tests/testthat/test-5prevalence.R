@@ -55,7 +55,7 @@ test_that("getPrevalence", {
     rownames(gp_null) <- NULL
 
     pr1 <- unname(getPrevalence(GlobalPatterns, detection=0.004, as.relative=TRUE))
-    pr2 <- getPrevalence(gp_null, detection=0.004, as.relative=TRUE)
+    pr2 <- unname(getPrevalence(gp_null, detection=0.004, as.relative=TRUE))
     expect_equal(pr1, pr2)
 
     pr1 <- getPrevalence(GlobalPatterns, detection=0.004, as.relative=TRUE, rank = "Family")
@@ -446,7 +446,7 @@ test_that("agglomerateByPrevalence", {
     # Get single taxon as reference. Merge those sequences and test that it
     # equals to one that is output of agglomerateByPrevalence
     seqs_ref <- referenceSeq(se)
-    feature <- sample(na.omit(rowData(se)[["Genus"]]), 1)
+    feature <- sample(na.omit(rowData(actual)[["Genus"]]), 1)
     seqs_ref <- seqs_ref[ rowData(se)[["Genus"]] %in% feature ]
     seqs_ref <- .merge_refseq(
       seqs_ref, factor(rep(feature, length(seqs_ref))), rownames(seqs_ref),

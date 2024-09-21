@@ -119,7 +119,7 @@
 #' tse <- GlobalPatterns
 #' tse <- agglomerateByRanks(tse)
 #' tse <- transformAssay(tse, method = "relabundance")
-#' # The transformation is applied to all altternative experiments
+#' # The transformation is applied to all alternative experiments
 #' altExp(tse, "Species")
 #' 
 NULL
