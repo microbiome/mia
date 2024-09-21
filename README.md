@@ -2,10 +2,12 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check-bioc-devel](https://github.com/microbiome/mia/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/microbiome/mia/actions)
-<!--[![R-CMD-check-bioc](https://github.com/microbiome/mia/actions/workflows/check-bioc.yml/badge.svg)](https://github.com/microbiome/mia/actions/workflows/check-bioc.yml)-->
+[![Platforms](http://bioconductor.org/shields/availability/release/miaViz.svg)](https://bioconductor.org/packages/release/bioc/html/miaViz.html#archives)
+[![rworkflows](https://github.com/microbiome/mia/workflows/rworkflows/badge.svg)](https://github.com/microbiome/mia/actions)
+[![Bioc-release](http://bioconductor.org/shields/build/release/bioc/mia.svg)](http://bioconductor.org/packages/release/bioc/html/mia.html)
 [![Codecov test
 coverage](https://codecov.io/gh/microbiome/mia/branch/master/graph/badge.svg)](https://codecov.io/gh/microbiome/mia?branch=master)
+[![Dependencies](http://bioconductor.org//shields/dependencies/release/mia.svg)](https://bioconductor.org/packages/release/bioc/html/mia.html#since)
 
 <!-- badges: end -->
 
