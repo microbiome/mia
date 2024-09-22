@@ -12,7 +12,7 @@
 #' or \code{matrix}.
 #'
 #' @param method \code{Character scalar}. Specifies which dissimilarity to 
-#' calculate.
+#' calculate. (Default: \code{"bray"})
 #' 
 #' @param name \code{Character scalar}. The name to be used to store the result 
 #' in metadata of the output. (Default: \code{method})
@@ -25,16 +25,9 @@
 #'   
 #' @param transposed \code{Logical scalar}. Specifies if x is transposed with
 #' cells in rows. (Default: \code{FALSE})
-#'   
-#' @param tree.name (Unifrac) \code{Character scalar}. Specifies the name of the
-#' tree from \code{rowTree(x)} that is used in calculation. Disabled when
-#' \code{tree} is specified. (Default: \code{"phylo"})
-#'   
-#' @param tree (Unifrac) \code{phylo}. A phylogenetic tree used in calculation.
-#' (Default: \code{NULL})
 #'
-#' @param ... other arguments passed onto \code{\link[vegan:avgdist]{avgdist}},
-#' \code{\link[vegan:vegdist]{vegdist}}, or onto mia internal functions:
+#' @param ... other arguments passed into \code{\link[vegan:avgdist]{avgdist}},
+#' \code{\link[vegan:vegdist]{vegdist}}, or into mia internal functions:
 #' 
 #' \itemize{
 #'   \item \code{sample}: The sampling depth in rarefaction.
@@ -42,6 +35,13 @@
 #'   
 #'   \item \code{dis.fun}: \code{Character scalar}. Specifies the dissimilarity
 #'   function to be used.
+#'   
+#'   \item \code{tree.name}: (Unifrac)  \code{Character scalar}. Specifies the
+#'   name of the tree from \code{rowTree(x)} that is used in calculation.
+#'   Disabled when \code{tree} is specified. (Default: \code{"phylo"})
+#'   
+#'   \item \code{tree}: (Unifrac) \code{phylo}. A phylogenetic tree used in
+#'   calculation. (Default: \code{NULL})
 #'   
 #'   \item \code{weighted}: (Unifrac) \code{Logical scalar}. Should use
 #'   weighted-Unifrac calculation? 
@@ -165,7 +165,7 @@ setGeneric(
 #' @export
 setMethod(
     "addDissimilarity", signature = c(x = "SummarizedExperiment"),
-    function(x, method, name = method, ...){
+    function(x, method = "bray", name = method, ...){
     #
     res <- getDissimilarity(x, method = method, ...)
     # Add matrix to original SE
@@ -185,8 +185,8 @@ setGeneric(
 setMethod(
     "getDissimilarity", signature = c(x = "SummarizedExperiment"),
     function(
-        x, method, assay.type = "counts", niter = NULL, transposed = FALSE,
-        tree = NULL, ...){
+        x, method = "bray", assay.type = "counts", niter = NULL,
+        transposed = FALSE, ...){
     # Input checks
     .check_assay_present(assay.type, x)
     if( !.is_non_empty_string(method) ){
@@ -196,9 +196,6 @@ setMethod(
     if( !.is_a_bool(transposed) ){
         stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
     }
-    if( !(is.null(tree) || is(tree, "phylo")) ){
-        stop("'tree' must be NULL or phylo.", call. = FALSE)
-    }
     #
     # Get arguments
     mat <- assay(x, assay.type)
@@ -206,8 +203,7 @@ setMethod(
         mat <- t(mat)
     }
     args <- c(
-        list(x = mat, method = method, tree = tree, niter = niter),
-        list(...))
+        list(x = mat, method = method, niter = niter), list(...))
     # Calculate dissimilarity based on matrix
     mat <- do.call(getDissimilarity, args)
     return(mat)
@@ -219,8 +215,8 @@ setMethod(
 setMethod(
     "getDissimilarity", signature = c(x = "TreeSummarizedExperiment"),
     function(
-        x, method, assay.type = "counts", tree.name = "phylo", niter = NULL,
-        transposed = FALSE, tree = NULL, ...){
+        x, method = "bray", assay.type = "counts", niter = NULL,
+        transposed = FALSE, ...){
     # Input checks
     .check_assay_present(assay.type, x)
     if( !.is_non_empty_string(method) ){
@@ -228,17 +224,13 @@ setMethod(
             call. = FALSE)
     }
     if( !.is_a_bool(transposed) ){
-        stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
-    }
-    if( !(is.null(tree) || is(tree, "phylo")) ){
-        stop("'tree' must be NULL or phylo.", call. = FALSE)
+        stop("'transposed' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    # Retrieve tree arguments from TreeSE object, if method is unifrac and
-    # user did not specify external tree
-    if( method %in% c("unifrac") && is.null(tree) ){
+    # Retrieve tree arguments from TreeSE object, if method is unifrac
+    if( method %in% c("unifrac") ){
         args <- .get_tree_args(
-            x,  method = method, assay.type = assay.type, tree.name = tree.name,
+            x,  method = method, assay.type = assay.type,
             transposed = transposed, ...)
     } else{
         # For other cases, do not fetch tree data from TreeSE
@@ -247,8 +239,7 @@ setMethod(
             mat <- t(mat)
         }
         args <- c(
-            list(x = mat, method = method, tree = tree, niter = niter),
-            list(...))
+            list(x = mat, method = method, niter = niter), list(...))
     }
     # Calculate dissimilarity
     mat <- do.call(getDissimilarity, args)
@@ -260,26 +251,24 @@ setMethod(
 #' @export
 setMethod(
     "getDissimilarity", signature = c(x = "ANY"), function(
-        x, method, niter = NULL, tree = NULL, ...){
+        x, method = "bray", niter = NULL, ...){
     # Input check
     if( !.is_a_string(method) ){
         stop("'method' must be a single character value.", call. = FALSE)
     }
-    if( !(is.null(tree) || is(tree, "phylo")) ){
-        stop("'tree' must be NULL or phylo.", call. = FALSE)
-    }
     #
     # Calculate dissimilarity
     mat <- .calculate_dissimilarity(
-        mat = x, method = method, niter = niter, tree = tree, ...)
+        mat = x, method = method, niter = niter, ...)
     return(mat)
     }
 )
 
 # This function chooses right method and calculates dissimilarity matrix.
+#' @importFrom MatrixGenerics rowSums2
 #' @importFrom vegan vegdist avgdist
 .calculate_dissimilarity <- function(
-        mat, method, niter, dis.fun = distfun, distfun = NULL,
+        mat, method, niter, dis.fun = distfun, distfun = FUN, FUN = NULL,
         sample = min(rowSums2(mat)), ...){
     # input check
     if( !(is.null(dis.fun) || is.function(dis.fun)) ){
@@ -291,7 +280,7 @@ setMethod(
     # sample is only used when niter is specified
     if( !is.null(niter) && !.is_an_integer(sample) ){
         stop("'sample' must be an integer.", call. = FALSE)
-    }
+    } 
     #
     # If the dissimilarity function is not specified, get default choice
     if( is.null(dis.fun) ){
@@ -326,11 +315,36 @@ setMethod(
     return(res)
 }
 
-# If user want to calculate unifrac dissimilarity and user wants to use tree
-# data from TreeSE, this function is used to retrieve the data.
+# If user want to calculate unifrac dissimilarity, this function gathers tree
+# data.
 .get_tree_args <- function(
-        x, method, assay.type = "counts", tree.name = "phylo",
-        transposed = FALSE, ...){
+        x, method, assay.type = "counts", transposed = FALSE, tree = NULL, ...){
+    # Check tree.
+    if( !(is.null(tree) || is(tree, "phylo")) ){
+        stop("'tree' must be NULL or phylo.", call. = FALSE)
+    }
+    #
+    # Create an argument list that includes matrix, and tree-related parameters.
+    args <- list(method = method)
+    args <- c(args, list(...))
+    # Either add tree that was provided by user, or get tree from TreeSE
+    if( !is.null(tree) ){
+        mat <- assay(x, assay.type)
+        if( !transposed ){
+            mat <- t(mat)
+        }
+        tree_args <- list(x = mat, tree = tree)
+    } else{
+        tree_args <- .get_tree_args_from_TreeSE(x, transposed = transposed, 
+            assay.type = assay.type, ...)
+    }
+    args <- c(args, tree_args)
+    return(args)
+}
+
+# This function fetches tree arguments fro TreeSE slots.
+.get_tree_args_from_TreeSE <- function(
+        x, transposed, tree.name = "phylo", assay.type, ...){
     # Get functions and parameters based on direction
     tree_present_FUN <- if (transposed) .check_colTree_present
         else .check_rowTree_present
@@ -361,6 +375,7 @@ setMethod(
     links <- links_FUN(x)
     links <- links[ , "nodeLab"]
     node.label <- links
+    
     # Get assay. By default, dissimilarity between samples is calculated. In
     # dissimilarity functions, features must be in columns and samples in rows
     # in this case.
@@ -368,8 +383,7 @@ setMethod(
     if( !transposed ){
         mat <- t(mat)
     }
-    # Create an arument list that includes matrix, and tree-related parameters.
-    args <- list(x = mat, method = method, tree = tree, node.label = node.label)
-    args <- c(args, list(...))
+    # Return a list of tree arguments
+    args <- list(x = mat, tree = tree, node.label = node.label)
     return(args)
 }

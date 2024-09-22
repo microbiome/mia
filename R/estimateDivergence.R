@@ -2,32 +2,15 @@
 #'
 #' Estimate divergence against a given reference sample.
 #' 
+#' @inheritParams addDissimilarity
+#' 
 #' @param x a \code{\link{SummarizedExperiment}} object.
+#'   
+#' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'
-#' @param assay.type the name of the assay used for calculation of the
-#'   sample-wise estimates.
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
-#' @param name a name for the column of the colData the results should be
-#'   stored in. By default, \code{name} is \code{"divergence"}.
-#'   
-#' @param reference a numeric vector that has length equal to number of
-#'   features, or a non-empty character value; either 'median' or 'mean'.
-#'   \code{reference} specifies the reference that is used to calculate
-#'   \code{divergence}. by default, \code{reference} is  \code{"median"}.
-#'   
-#' @param FUN a \code{function} for distance calculation. The function must
-#'   expect the input matrix as its first argument. With rows as samples 
-#'   and columns as features. By default, \code{FUN} is
-#'   \code{vegan::vegdist}.
-#'   
-#' @param method a method that is used to calculate the distance. Method is
-#'   passed to the function that is specified by \code{FUN}. By default,
-#'   \code{method} is \code{"bray"}.
+#' @param reference \code{Character scalar}. A column name from
+#' \code{colData(x)} or either \code{"mean"} or \code{"median"}.
+#' (Default: \code{"median"})
 #'
 #' @param ... optional arguments
 #' 
@@ -39,9 +22,10 @@
 #' set can be quantified by the average sample dissimilarity or beta
 #' diversity with respect to a given reference sample.
 #'
-#' This measure is sensitive to sample size.
-#' Subsampling or bootstrapping can be applied to equalize sample sizes
-#' between comparisons.
+#' The calculation makes use of the function `getDissimilarity()`. The
+#' divergence 
+#' measure is sensitive to sample size. Subsampling or bootstrapping can be 
+#' applied to equalize sample sizes between comparisons.
 #' 
 #' @seealso
 #' \code{\link[scater:plotColData]{plotColData}}
@@ -58,19 +42,20 @@
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' 
-#' # By default, reference is median of all samples. The name of column where results
-#' # is "divergence" by default, but it can be specified. 
+#' # By default, reference is median of all samples. The name of column where
+#' # results is "divergence" by default, but it can be specified. 
 #' tse <- addDivergence(tse)
 #' 
 #' # The method that are used to calculate distance in divergence and 
-#' # reference can be specified. Here, euclidean distance and dist function from 
-#' # stats package are used. Reference is the first sample.
-#' tse <- addDivergence(tse, name = "divergence_first_sample", 
-#'                           reference = assays(tse)$counts[,1], 
-#'                           FUN = stats::dist, method = "euclidean")
+#' # reference can be specified. Here, euclidean distance is used. Reference is
+#' # the first sample. It is recommended # to add reference to colData.
+#' tse[["reference"]] <- rep(colnames(tse)[[1]], ncol(tse))
+#' tse <- addDivergence(
+#'     tse, name = "divergence_first_sample", 
+#'     reference = "reference",
+#'     method = "euclidean")
 #' 
-#' # Reference can also be median or mean of all samples. 
-#' # By default, divergence is calculated by using median. Here, mean is used.
+#' # Here we compare samples to global mean
 #' tse <- addDivergence(tse, name = "divergence_average", reference = "mean")
 #' 
 #' # All three divergence results are stored in colData.
@@ -80,76 +65,158 @@ NULL
 
 #' @rdname addDivergence
 #' @export
-setGeneric("addDivergence",signature = c("x"),
-           function(x, assay.type = assay_name, assay_name = "counts", 
-                    name = "divergence", reference = "median", 
-                    FUN = vegan::vegdist, method = "bray", ...)
-             standardGeneric("addDivergence"))
+setGeneric(
+    "addDivergence",signature = c("x"),
+    function(x, name = "divergence", ...)
+    standardGeneric("addDivergence"))
 
 #' @rdname addDivergence
 #' @export
 setMethod("addDivergence", signature = c(x="SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", 
-             name = "divergence", reference = "median", 
-             FUN = vegan::vegdist, method = "bray", ...){
-        
+    function(x, name = "divergence", ...){
         ################### Input check ###############
-        # Check assay.type
-        .check_assay_present(assay.type, x)
         # Check name
-        if(!.is_non_empty_character(name) || length(name) != 1L){
-            stop("'name' must be a non-empty character value.",
-                 call. = FALSE)
+        if( !.is_a_string(name) ){
+            stop("'name' must be a non-empty character value.", call. = FALSE)
         }
-        # Check reference
-        # If "reference" is not right: 
-        # it is not numeric or character
-        # its length does not equal to number of samples when it's numeric,
-        # reference is not "median" or "mean"
-        reference_stop_msg <- 
-            paste0("'reference' must be a numeric vector that has lenght equal",
-                   " to number of features, or 'reference' must be either",
-                   " 'median' or 'mean'.")
-        if( !(is.numeric(reference) || is.character(reference)) ){
-            stop(reference_stop_msg, call. = FALSE)
-        } else {
-            if( is.numeric(reference) && length(reference) != nrow(x) ){
-                stop(reference_stop_msg, call. = FALSE)
-            }
-            if( is.character(reference) && length(reference) != 1L && 
-               !any(c("median","mean") %in% reference) ){
-                stop(reference_stop_msg, call. = FALSE)
-            }
-        }
-
         ################# Input check end #############
-        divergence <- .calc_reference_dist(mat = assay(x, assay.type),
-                                       reference = reference, 
-                                       FUN = FUN,
-                                       method = method, ...)
-
-        .add_values_to_colData(x, list(divergence), name)
-
+        # Calculate values
+        res <- getDivergence(x, ...)
+        # Add them to colData
+        x <- .add_values_to_colData(x, list(res), name)
+        return(x)
     }
 )
 
+#' @rdname addDivergence
+#' @export
+setGeneric("getDivergence", signature = c("x"),
+    function(
+        x, assay.type = assay_name, assay_name = "counts", reference = "median",
+        method = "bray", ...)
+    standardGeneric("getDivergence"))
+
+#' @rdname addDivergence
+#' @export
+setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
+    function(
+        x, assay.type = assay_name, assay_name = "counts", 
+        reference = "median", method = "bray", ...){
+        ################### Input check ###############
+        # Check assay.type
+        .check_assay_present(assay.type, x)
+        # Check reference
+        ref_type <- .get_reference_type(reference, x)
+        if( is.null(ref_type) ){
+            stop(
+                "'reference' must be a column from colData or either 'mean' ",
+                "or 'median'.", call. = FALSE)
+        }
+        # If there are no colnames, add them. They are not added to returned
+        # values; they are used just in calculation.
+        if( is.null(colnames(x)) ){
+            colnames(x) <- paste0("sample_", seq_len(ncol(x)))
+        }
+        ################# Input check end #############
+        # Get assay and references
+        mat <- .get_matrix_and_reference(x, assay.type, reference, ref_type)
+        reference <- mat[[2]]
+        mat <- mat[[1]]
+        # Calculate sample-wise divergence
+        res <- .calc_divergence(mat, reference, method, ...)
+        # Get only values and ensure that their order is correct
+        res <- res[match(colnames(x), res[["sample"]]), "value"]
+        return(res)
+        }
+)
 ############################## HELP FUNCTIONS ##############################
 
-
-.calc_reference_dist <- function(mat, reference, FUN = stats::dist, method, ...){
-
-    # Calculates median or mean if that is specified
-    if (is.character(reference)) {
-        if( "median" %in% reference || "mean" %in% reference ){
-            reference <- apply(mat, 1, reference)
-        } else if( !reference %in% colnames(mat) ) {
-            stop("Reference ", reference, " not recognized.", call. = FALSE)
-        }
+# This function returns reference type.
+# reference must be a column from colData, or either "median" or "mean".
+# We also support providing a numeric vector or single sample name, but
+# those are not recommended for user to not make the function too complex to
+# use (too many options).
+.get_reference_type <- function(reference, x){
+    is_col <- .is_a_string(reference) && reference %in% colnames(colData(x)) &&
+        all(!is.na(x[[reference]]) %in% colnames(x))
+    is_mean_or_median <- .is_a_string(reference) && reference %in% c(
+        "mean", "median")
+    is_num_vector <- is.numeric(reference) && length(reference) == nrow(x)
+    is_char_vector <- is.character(reference) && length(reference) == ncol(x) &&
+        all(reference %in% colnames(x))
+    is_sample <- .is_a_string(reference) && reference %in% colnames(x)
+    #
+    res <- NULL
+    if( is_col ){
+        res <- "colData_column"
+    } else if(is_mean_or_median){
+        res <- reference
+    } else if( is_num_vector ){
+        res <- "num_vector"
+    } else if( is_char_vector ){
+        res <- "char_vector"
+    } else if( is_sample ){
+        res <- "sample"
     }
-
-    # Distance between all samples against one reference sample
-    # FIXME: could be be optimzed with sweep / parallelization
-    v <- seq_len(ncol(mat))
-    vapply(v, function (i) {FUN(rbind(mat[,i], reference), method=method, ...)},FUN.VALUE = numeric(1))
+    return(res)
 }
 
+# This function gets the abundance table along with reference information
+.get_matrix_and_reference <- function(
+        x, assay.type, reference, ref_type,
+        ref.name = "temporal_reference_for_divergence"){
+    #
+    if( !.is_a_string(ref.name) ){
+        stop("'ref.name' must be a single character value.", call. = FALSE)
+    }
+    #
+    # Get assay
+    mat <- assay(x, assay.type)
+    # If reference type is median or mean, calculate it
+    if( ref_type %in% c("median", "mean") ){
+        reference <- apply(mat, 1, ref_type)
+    }
+    # In case of numeric values, add them to matrix
+    if( ref_type %in% c("num_vector", "median", "mean") ){
+        reference <- matrix(reference)
+        colnames(reference) <- ref.name
+        mat <- cbind(mat, reference)
+        reference <- ref.name
+    }
+    # In case of colData variable, get name reference samples from there
+    if( ref_type %in% c("colData_column") ){
+        reference <- x[[reference]]
+    }
+    # If the reference is only one sample, replicate it to cover all samples
+    if( .is_a_string(reference) ){
+        reference <- rep(reference, ncol(mat))
+    }
+    # Return a list with matrix and reference samples for each sample
+    res <- list(mat, reference)
+    return(res)
+}
+
+# For each sample-pair, this function calculates dissimilarity.
+#' @importFrom dplyr mutate
+.calc_divergence <- function(mat, reference, method, ...){
+    # Create sample-pair data.frame
+    reference <- data.frame(sample = colnames(mat), reference = reference)
+    # Exclude NA values
+    reference <- reference[!is.na(reference$reference), ]
+    # For dissimilarity calculation, the samples must be in rows
+    mat <- t(mat)
+    # Loop through sample-pairs
+    temp <- t(reference) |> as.data.frame()
+    temp <- lapply(temp, function(sample_pair){
+        # Calculate dissimilarity between a sample pair
+        temp <- mat[ sample_pair, ]
+        temp <- getDissimilarity(temp, method, ...)
+        # Get only the single value
+        temp <- temp[[1]]
+        return(temp)
+    })
+    # Add values to data.frame that holds sample pairs 
+    temp <- unlist(temp)
+    reference[["value"]] <- temp
+    return(reference)
+}

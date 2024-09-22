@@ -3,36 +3,36 @@
 \name{transformAssay}
 \alias{transformAssay}
 \alias{transformAssay,SummarizedExperiment-method}
+\alias{transformAssay,SingleCellExperiment-method}
 \title{Transform assay}
 \usage{
-transformAssay(
+transformAssay(x, ...)
+
+\S4method{transformAssay}{SummarizedExperiment}(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
-    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
-    "standardize", "total", "z"),
+  method = c("alr", "chi.square", "clr", "css", "css.fast", "frequency", "hellinger",
+    "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr",
+    "relabundance", "rrank", "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
   ...
 )
 
-\S4method{transformAssay}{SummarizedExperiment}(
-  x,
-  assay.type = "counts",
-  assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
-    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
-    "standardize", "total", "z"),
-  MARGIN = "samples",
-  name = method,
-  pseudocount = FALSE,
-  ...
-)
+\S4method{transformAssay}{SingleCellExperiment}(x, altexp = altExpNames(x), ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
+
+\item{...}{additional arguments passed on to \code{vegan:decostand}:
+\itemize{
+\item \code{reference}: \code{Character scalar}. use to
+to fill reference sample's column in returned assay when calculating alr.
+(Default: \code{NA})
+\item \code{ref_vals} Deprecated. Use \code{reference} instead.
+}}
 
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
@@ -57,17 +57,15 @@ When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.
 (Default: \code{FALSE}).}
 
-\item{...}{additional arguments passed on to \code{vegan:decostand}:
-\itemize{
-\item \code{reference}: \code{Character scalar}. use to
-to fill reference sample's column in returned assay when calculating alr.
-(Default: \code{NA})
-\item \code{ref_vals} Deprecated. Use \code{reference} instead.
-}}
+\item{altexp}{\code{Character vector} or \code{NULL}. Specifies the names
+of alternative experiments to which the transformation should also be
+applied. If \code{NULL}, the transformation is only applied to the main
+experiment. (Default: \code{altExpNames(x)}).}
 }
 \value{
 \code{transformAssay} returns the input object \code{x}, with a new
-transformed abundance table named \code{name} added in the \code{\link{assay}}.
+transformed abundance table named \code{name} added in the
+\code{\link{assay}}.
 }
 \description{
 Variety of transformations for abundance data, stored in \code{assay}.
@@ -86,8 +84,9 @@ The available transformation methods include:
 
 \itemize{
 
-\item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log', 'normalize', 'pa', 'rank', 'rclr'
-'relabundance', 'rrank', 'standardize', 'total': please refer to
+\item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
+'normalize', 'pa', 'rank', 'rclr' relabundance', 'rrank', 'standardize',
+'total': please refer to
 \code{\link[vegan:decostand]{decostand}} for details.
 
 \item 'log10': log10 transformation can be used for reducing the skewness
@@ -105,8 +104,8 @@ where \eqn{x} is a single value of data.
 }
 }
 \examples{
-data(esophagus, package="mia")
-tse <- esophagus
+data(GlobalPatterns)
+tse <- GlobalPatterns
 
 # By specifying 'method', it is possible to apply different transformations, 
 # e.g. compositional transformation.
@@ -142,5 +141,13 @@ head(assay(tse, "rank"))
 # In order to use other ranking variants, modify the chosen assay directly:
 assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(
     assay(tse, "counts"), ties.method = "average", preserveShape = TRUE)  
+
+# Using altexp parameter. First agglomerate the data and then apply
+# transformation.
+tse <- GlobalPatterns
+tse <- agglomerateByRanks(tse)
+tse <- transformAssay(tse, method = "relabundance")
+# The transformation is applied to all alternative experiments
+altExp(tse, "Species")
 
 }
