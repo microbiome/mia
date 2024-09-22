@@ -153,3 +153,4 @@ computation
 + new methods getNMF and addNMF for NMF ordination with feature loadings
 computation
 + If missing values, give informative error in *RDA/*CCA functions
++ transformAssay can apply transformation to altExp
