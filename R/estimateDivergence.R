@@ -41,22 +41,20 @@
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' 
-#' # By default, reference is median of all samples. The name of column where results
-#' # is "divergence" by default, but it can be specified. 
+#' # By default, reference is median of all samples. The name of column where
+#' # results is "divergence" by default, but it can be specified. 
 #' tse <- addDivergence(tse)
 #' 
 #' # The method that are used to calculate distance in divergence and 
-#' # reference can be specified. Here, euclidean distance and dist function from 
-#' # stats package are used. Reference is the first sample. It is recommended
-#' # to add reference to colData.
+#' # reference can be specified. Here, euclidean distance is used. Reference is
+#' # the first sample. It is recommended # to add reference to colData.
 #' tse[["reference"]] <- rep(colnames(tse)[[1]], ncol(tse))
 #' tse <- addDivergence(
 #'     tse, name = "divergence_first_sample", 
 #'     reference = "reference",
 #'     method = "euclidean")
 #' 
-#' # Reference can also be median or mean of all samples. 
-#' # By default, divergence is calculated by using median. Here, mean is used.
+#' # Here we compare samples to global mean
 #' tse <- addDivergence(tse, name = "divergence_average", reference = "mean")
 #' 
 #' # All three divergence results are stored in colData.
@@ -115,7 +113,7 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
                 "or 'median'.", call. = FALSE)
         }
         # If there are no colnames, add them. They are not added to returned
-        # vaues.
+        # values; they are used just in calculation.
         if( is.null(colnames(x)) ){
             colnames(x) <- paste0("sample_", seq_len(ncol(x)))
         }
@@ -136,7 +134,8 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
 # This function returns reference type.
 # reference must be a column from colData, or either "median" or "mean".
 # We also support providing a numeric vector or single sample name, but
-# those those are not recommended.
+# those are not recommended for user to not make the function too complex to
+# use (too many options).
 .get_reference_type <- function(reference, x){
     is_col <- .is_a_string(reference) && reference %in% colnames(colData(x)) &&
         all(!is.na(x[[reference]]) %in% colnames(x))
@@ -166,6 +165,11 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
 .get_matrix_and_reference <- function(
         x, assay.type, reference, ref_type,
         ref.name = "temporal_reference_for_divergence"){
+    #
+    if( !.is_a_string(ref.name) ){
+        stop("'ref.name' must be a single character value.", call. = FALSE)
+    }
+    #
     # Get assay
     mat <- assay(x, assay.type)
     # If reference type is median or mean, calculate it
@@ -179,7 +183,7 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
         mat <- cbind(mat, reference)
         reference <- ref.name
     }
-    # In case of colData variable, get reference samples from there
+    # In case of colData variable, get name reference samples from there
     if( ref_type %in% c("colData_column") ){
         reference <- x[[reference]]
     }
@@ -207,7 +211,7 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
         # Calculate dissimilarity between a sample pair
         temp <- mat[ sample_pair, ]
         temp <- getDissimilarity(temp, method, ...)
-        # Get only the value
+        # Get only the single value
         temp <- temp[[1]]
         return(temp)
     })

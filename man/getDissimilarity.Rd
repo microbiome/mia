@@ -42,8 +42,8 @@ or \code{matrix}.}
 \item{method}{\code{Character scalar}. Specifies which dissimilarity to
 calculate. (Default: \code{"bray"})}
 
-\item{...}{other arguments passed onto \code{\link[vegan:avgdist]{avgdist}},
-\code{\link[vegan:vegdist]{vegdist}}, or onto mia internal functions:
+\item{...}{other arguments passed into \code{\link[vegan:avgdist]{avgdist}},
+\code{\link[vegan:vegdist]{vegdist}}, or into mia internal functions:
 
 \itemize{
 \item \code{sample}: The sampling depth in rarefaction.

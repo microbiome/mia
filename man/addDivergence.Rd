@@ -68,22 +68,20 @@ applied to equalize sample sizes between comparisons.
 data(GlobalPatterns)
 tse <- GlobalPatterns
 
-# By default, reference is median of all samples. The name of column where results
-# is "divergence" by default, but it can be specified. 
+# By default, reference is median of all samples. The name of column where
+# results is "divergence" by default, but it can be specified. 
 tse <- addDivergence(tse)
 
 # The method that are used to calculate distance in divergence and 
-# reference can be specified. Here, euclidean distance and dist function from 
-# stats package are used. Reference is the first sample. It is recommended
-# to add reference to colData.
+# reference can be specified. Here, euclidean distance is used. Reference is
+# the first sample. It is recommended # to add reference to colData.
 tse[["reference"]] <- rep(colnames(tse)[[1]], ncol(tse))
 tse <- addDivergence(
     tse, name = "divergence_first_sample", 
     reference = "reference",
     method = "euclidean")
 
-# Reference can also be median or mean of all samples. 
-# By default, divergence is calculated by using median. Here, mean is used.
+# Here we compare samples to global mean
 tse <- addDivergence(tse, name = "divergence_average", reference = "mean")
 
 # All three divergence results are stored in colData.

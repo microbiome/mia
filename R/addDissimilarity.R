@@ -26,8 +26,8 @@
 #' @param transposed \code{Logical scalar}. Specifies if x is transposed with
 #' cells in rows. (Default: \code{FALSE})
 #'
-#' @param ... other arguments passed onto \code{\link[vegan:avgdist]{avgdist}},
-#' \code{\link[vegan:vegdist]{vegdist}}, or onto mia internal functions:
+#' @param ... other arguments passed into \code{\link[vegan:avgdist]{avgdist}},
+#' \code{\link[vegan:vegdist]{vegdist}}, or into mia internal functions:
 #' 
 #' \itemize{
 #'   \item \code{sample}: The sampling depth in rarefaction.
@@ -227,8 +227,7 @@ setMethod(
         stop("'transposed' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    # Retrieve tree arguments from TreeSE object, if method is unifrac and
-    # user did not specify external tree
+    # Retrieve tree arguments from TreeSE object, if method is unifrac
     if( method %in% c("unifrac") ){
         args <- .get_tree_args(
             x,  method = method, assay.type = assay.type,
@@ -241,7 +240,6 @@ setMethod(
         }
         args <- c(
             list(x = mat, method = method, niter = niter), list(...))
-        # Add tree only if it is not NULL
     }
     # Calculate dissimilarity
     mat <- do.call(getDissimilarity, args)
@@ -267,6 +265,7 @@ setMethod(
 )
 
 # This function chooses right method and calculates dissimilarity matrix.
+#' @importFrom MatrixGenerics rowSums2
 #' @importFrom vegan vegdist avgdist
 .calculate_dissimilarity <- function(
         mat, method, niter, dis.fun = distfun, distfun = FUN, FUN = NULL,
@@ -324,7 +323,7 @@ setMethod(
     if( !(is.null(tree) || is(tree, "phylo")) ){
         stop("'tree' must be NULL or phylo.", call. = FALSE)
     }
-
+    #
     # Create an argument list that includes matrix, and tree-related parameters.
     args <- list(method = method)
     args <- c(args, list(...))
@@ -344,10 +343,11 @@ setMethod(
 }
 
 # This function fetches tree arguments fro TreeSE slots.
-.get_tree_args_from_TreeSE <- function(x, transposed, tree.name = "phylo", assay.type, ...){
+.get_tree_args_from_TreeSE <- function(
+        x, transposed, tree.name = "phylo", assay.type, ...){
     # Get functions and parameters based on direction
     tree_present_FUN <- if (transposed) .check_colTree_present
-    else .check_rowTree_present
+        else .check_rowTree_present
     tree_FUN <- if (transposed) colTree else rowTree
     links_FUN <- if (transposed) colLinks else rowLinks
     margin_name <- if (transposed) "col" else "row"

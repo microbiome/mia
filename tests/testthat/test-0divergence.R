@@ -92,7 +92,7 @@ test_that("divergence estimates", {
   # samples for each sample.
   # Assign reference randomly
   references <- sample(colnames(tse), ncol(tse), replace = TRUE)
-  test_values <-getDivergence(tse, reference = references)
+  test_values <- getDivergence(tse, reference = references)
   # Get reference values
   ref_values <- sapply(seq_len(ncol(tse)), function(i){
     ref <- references[[i]]
