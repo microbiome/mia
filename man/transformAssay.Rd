@@ -64,7 +64,8 @@ experiment. (Default: \code{altExpNames(x)}).}
 }
 \value{
 \code{transformAssay} returns the input object \code{x}, with a new
-transformed abundance table named \code{name} added in the \code{\link{assay}}.
+transformed abundance table named \code{name} added in the
+\code{\link{assay}}.
 }
 \description{
 Variety of transformations for abundance data, stored in \code{assay}.
@@ -83,8 +84,9 @@ The available transformation methods include:
 
 \itemize{
 
-\item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log', 'normalize', 'pa', 'rank', 'rclr'
-'relabundance', 'rrank', 'standardize', 'total': please refer to
+\item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
+'normalize', 'pa', 'rank', 'rclr' relabundance', 'rrank', 'standardize',
+'total': please refer to
 \code{\link[vegan:decostand]{decostand}} for details.
 
 \item 'log10': log10 transformation can be used for reducing the skewness
@@ -145,7 +147,7 @@ assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(
 tse <- GlobalPatterns
 tse <- agglomerateByRanks(tse)
 tse <- transformAssay(tse, method = "relabundance")
-# The transformation is applied to all altternative experiments
+# The transformation is applied to all alternative experiments
 altExp(tse, "Species")
 
 }
