@@ -60,7 +60,8 @@ Microbiota divergence (heterogeneity / spread) within a given sample
 set can be quantified by the average sample dissimilarity or beta
 diversity with respect to a given reference sample.
 
-The calculation makes use of the function \code{getDissimilarity()}. The divergence
+The calculation makes use of the function \code{getDissimilarity()}. The
+divergence
 measure is sensitive to sample size. Subsampling or bootstrapping can be
 applied to equalize sample sizes between comparisons.
 }

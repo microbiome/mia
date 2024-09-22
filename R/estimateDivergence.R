@@ -22,7 +22,8 @@
 #' set can be quantified by the average sample dissimilarity or beta
 #' diversity with respect to a given reference sample.
 #'
-#' The calculation makes use of the function `getDissimilarity()`. The divergence 
+#' The calculation makes use of the function `getDissimilarity()`. The
+#' divergence 
 #' measure is sensitive to sample size. Subsampling or bootstrapping can be 
 #' applied to equalize sample sizes between comparisons.
 #' 
@@ -76,8 +77,7 @@ setMethod("addDivergence", signature = c(x="SummarizedExperiment"),
         ################### Input check ###############
         # Check name
         if( !.is_a_string(name) ){
-            stop("'name' must be a non-empty character value.",
-                 call. = FALSE)
+            stop("'name' must be a non-empty character value.", call. = FALSE)
         }
         ################# Input check end #############
         # Calculate values
