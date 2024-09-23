@@ -105,7 +105,7 @@ The available transformation methods include:
 by accounting for differences in library sizes. By default, the function
 determines the normalization percentile for summing and scaling
 counts. If you want to specify the percentile value, good default value
-might be \code{0.5}.The method is inspired by method included in
+might be \code{0.5}.The method is inspired by the CSS methods in
 \code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}
 package.
 
