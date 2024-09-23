@@ -11,42 +11,39 @@
 \usage{
 addDissimilarity(x, method, ...)
 
-\S4method{addDissimilarity}{SummarizedExperiment}(x, method, name = method, ...)
+\S4method{addDissimilarity}{SummarizedExperiment}(x, method = "bray", name = method, ...)
 
 getDissimilarity(x, method, ...)
 
 \S4method{getDissimilarity}{SummarizedExperiment}(
   x,
-  method,
+  method = "bray",
   assay.type = "counts",
   niter = NULL,
   transposed = FALSE,
-  tree = NULL,
   ...
 )
 
 \S4method{getDissimilarity}{TreeSummarizedExperiment}(
   x,
-  method,
+  method = "bray",
   assay.type = "counts",
-  tree.name = "phylo",
   niter = NULL,
   transposed = FALSE,
-  tree = NULL,
   ...
 )
 
-\S4method{getDissimilarity}{ANY}(x, method, niter = NULL, tree = NULL, ...)
+\S4method{getDissimilarity}{ANY}(x, method = "bray", niter = NULL, ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 or \code{matrix}.}
 
 \item{method}{\code{Character scalar}. Specifies which dissimilarity to
-calculate.}
+calculate. (Default: \code{"bray"})}
 
-\item{...}{other arguments passed onto \code{\link[vegan:avgdist]{avgdist}},
-\code{\link[vegan:vegdist]{vegdist}}, or onto mia internal functions:
+\item{...}{other arguments passed into \code{\link[vegan:avgdist]{avgdist}},
+\code{\link[vegan:vegdist]{vegdist}}, or into mia internal functions:
 
 \itemize{
 \item \code{sample}: The sampling depth in rarefaction.
@@ -54,6 +51,13 @@ calculate.}
 
 \item \code{dis.fun}: \code{Character scalar}. Specifies the dissimilarity
 function to be used.
+
+\item \code{tree.name}: (Unifrac)  \code{Character scalar}. Specifies the
+name of the tree from \code{rowTree(x)} that is used in calculation.
+Disabled when \code{tree} is specified. (Default: \code{"phylo"})
+
+\item \code{tree}: (Unifrac) \code{phylo}. A phylogenetic tree used in
+calculation. (Default: \code{NULL})
 
 \item \code{weighted}: (Unifrac) \code{Logical scalar}. Should use
 weighted-Unifrac calculation?
@@ -93,13 +97,6 @@ rarefaction is disabled. (Default: \code{NULL})}
 
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with
 cells in rows. (Default: \code{FALSE})}
-
-\item{tree}{(Unifrac) \code{phylo}. A phylogenetic tree used in calculation.
-(Default: \code{NULL})}
-
-\item{tree.name}{(Unifrac) \code{Character scalar}. Specifies the name of the
-tree from \code{rowTree(x)} that is used in calculation. Disabled when
-\code{tree} is specified. (Default: \code{"phylo"})}
 }
 \value{
 \code{getDissimilarity} returns a sample-by-sample dissimilarity matrix.
