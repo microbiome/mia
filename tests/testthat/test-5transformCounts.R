@@ -70,6 +70,54 @@ test_that("transformAssay", {
                          log2(x+5)
                      }), check.attributes = FALSE)
         
+        ############################ CSS ######################################
+        # Define counts matrix for the css and css_fast testing
+        counts_matrix <- as.matrix(assay(tse, "counts"))
+        
+        ## Test that the percentile parameter works
+        # Apply CSS normalization using transformAssay
+        tmp <- mia::transformAssay(tse, method = "css", assay.type = "counts")
+        ass <- assays(tmp)$css
+        
+        # Apply CSS normalization using transformAssay setting the percentile arg
+        tmp_2 <- mia::transformAssay(tse, method = "css", percentile = 0.65)
+        ass_2 <- assays(tmp_2)$css
+        
+        # Assert assays are different
+        expect_false(identical(ass, ass_2))
+        
+        
+        ## Test the scaling parameter
+        # Manually compute CSS normalization using default scaling
+        css_default <- .calc_css(counts_matrix)
+        
+        # Manually compute CSS normalization using scaling of 2000
+        css_2000 <- .calc_css(counts_matrix, scaling = 2000)
+        
+        # Ensure the scaling changes the results
+        expect_false(identical(css_default, css_2000))
+
+        
+        ## Test the .calc_scaling_factors method directly
+        # Calculate scaling factors in 2 scenarios
+        scaling_factors_default <- .calc_scaling_factors(as.matrix(assay(tse, "counts")), 0.5)
+        scaling_factors_75 <- .calc_scaling_factors(as.matrix(assay(tse, "counts")), 0.75)
+        
+        # Ensure scaling factors are calculated correctly for different percentiles
+        expect_true(length(scaling_factors_default) == ncol(assay(tse, "counts")))
+        expect_true(length(scaling_factors_75) == ncol(assay(tse, "counts")))
+        expect_false(identical(scaling_factors_default, scaling_factors_75))
+        
+        
+        ## Check internal CSS equals CSS from metagenomeSeq package
+        ## First create subset matrix from metagenomeSeq calc
+        normalized_counts <- matrix(c(1.358696, 317.846608, 4.076087, 1.474926), nrow = 2, ncol = 2, byrow = TRUE)
+        rownames(normalized_counts) <- c(46043, 512519)
+        colnames(normalized_counts) <- c("NP3", "NP5")
+        
+        # Test for equality of your CSS normalization with metagenomeSeq normalization
+        expect_true(all.equal(as.matrix(ass[19:20, 17:18]), normalized_counts, check.attributes = FALSE))
+
         ########################## PA ##########################################
         # Calculates pa transformation. Should be equal.
         actual <- assay(mia::transformAssay(tse, method = "pa"),"pa")
