@@ -1,50 +1,44 @@
 #' Canonical Correspondence Analysis and Redundancy Analysis
 #'
 #' These functions perform Canonical Correspondence Analysis on data stored
-#' in a \code{SummarizedExperiment}. We make use of wrappers for
-#' \code{\link[vegan:cca]{cca}} and \code{\link[vegan:dbrda]{dbrda}} for 
-#' these calculations.
+#' in a \code{SummarizedExperiment}.
 #'
 #' @inheritParams getDominant
 #' @inheritParams getDissimilarity
 #'
-#' @details
-#'   For \code{run*} a
-#'   \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
-#'   or a derived object.
-#'
-#' @param formula If \code{x} is a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   a formula can be supplied. Based on the right-hand side of the given formula
-#'   \code{colData} is subset to \code{col.var}.
+#' @param formula \code{formula}. If \code{x} is a
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' a formula can be supplied. Based on the right-hand side of the given formula
+#' \code{colData} is subset to \code{col.var}.
 #'   
-#'   \code{col.var} and \code{formula} can be missing, which turns the CCA analysis 
-#'   into a CA analysis and dbRDA into PCoA/MDS.
+#' \code{col.var} and \code{formula} can be missing, which turns the CCA
+#' analysis into a CA analysis and dbRDA into PCoA/MDS.
 #'
 #' @param data \code{data.frame} or coarcible to one. The covariance table
 #' including covariates defined by \code{formula}.
 #'
-#' @param col.var \code{Character scalar}. When \code{x} is a \code{SummarizedExperiment},
-#'   \code{col.var} can be used to specify variables from \code{colData}. 
+#' @param col.var \code{Character scalar}. When \code{x} is a
+#' \code{SummarizedExperiment},\code{col.var} can be used to specify variables
+#' from \code{colData}. 
 #'   
-#'   When \code{x} is a matrix, \code{col.var} is a \code{data.frame} or 
-#'   an object coercible to one containing the variables to use. 
+#' When \code{x} is a matrix, \code{col.var} is a \code{data.frame} or 
+#' an object coercible to one containing the variables to use. 
 #'    
-#'   All variables are used. Please subset, if you want to consider only some of them. 
-#'   \code{col.var} and \code{formula} can be missing, which turns the CCA analysis 
-#'   into a CA analysis and dbRDA into PCoA/MDS.
+#' All variables are used. Please subset, if you want to consider only some
+#' of them. \code{col.var} and \code{formula} can be missing, which turns the
+#' CCA analysis into a CA analysis and dbRDA into PCoA/MDS.
 #'   
 #' @param variables Deprecated. Use \code{"col.var"} instead.
 #' 
-#' @param test.signif \code{Logical scalar}. Should the PERMANOVA and analysis of
-#'   multivariate homogeneity of group dispersions be performed.
-#'   (Default: \code{TRUE})
+#' @param test.signif \code{Logical scalar}. Should the PERMANOVA and analysis
+#' of multivariate homogeneity of group dispersions be performed.
+#' (Default: \code{TRUE})
 #'   
-#' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an alternative experiment
-#'   containing the input data.
+#' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an
+#' alternative experiment containing the input data.
 #' 
 #' @param name \code{Character scalar}. A name for the column of the 
-#'   \code{colData} where results will be stored. (Default: \code{"CCA"})
+#' \code{colData} where results will be stored. (Default: \code{"CCA"})
 #' 
 #' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #'
@@ -52,7 +46,8 @@
 #' other internal functions.
 #' \itemize{
 #'   \item{\code{method} a dissimilarity measure to be applied in dbRDA and
-#'   possible following homogeneity test. (By default: \code{method="euclidean"})}
+#'   possible following homogeneity test. (By default:
+#'   \code{method="euclidean"})}
 #'   \item{\code{scale}: \code{Logical scalar}. Should the expression values be
 #'   standardized? \code{scale} is disabled when using \code{*RDA} functions.
 #'   Please scale before performing RDA. (Default: \code{TRUE})}
@@ -67,33 +62,35 @@
 #'   Options include 'permanova' (\code{vegan::permutest}), 'anova'
 #'   (\code{stats::anova}) and 'tukeyhsd' (\code{stats::TukeyHSD}).
 #'   (By default: \code{homogeneity.test="permanova"})}
-#'   \item{\code{permutations} a numeric value specifying the number of permutations 
-#'   for significance testing in \code{vegan::anova.cca}. (By default: \code{permutations=999})}
+#'   \item{\code{permutations} a numeric value specifying the number of
+#'   permutations for significance testing in \code{vegan::anova.cca}.
+#'   (By default: \code{permutations=999})}
 #' }
 #' 
 #' @details
-#'   *CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
-#'   By default, dbRDA is done with euclidean distances, which is equivalent to
-#'   RDA. 
+#' *CCA functions utilize \code{vegan:cca} and *RDA functions
+#' \code{vegan:dbRDA}. By default, dbRDA is done with euclidean distances, which
+#' is equivalent to RDA.
 #'   
-#'   Significance tests are done with \code{vegan:anova.cca} (PERMANOVA). Group
-#'   dispersion, i.e., homogeneity within groups is analyzed with 
-#'   \code{vegan:betadisper} (multivariate homogeneity of groups dispersions (variances))
-#'   and statistical significance of homogeneity is tested with a test
-#'   specified by \code{homogeneity.test} parameter.
+#' Significance tests are done with \code{vegan:anova.cca} (PERMANOVA). Group
+#' dispersion, i.e., homogeneity within groups is analyzed with 
+#' \code{vegan:betadisper} (multivariate homogeneity of groups dispersions
+#' (variances)) and statistical significance of homogeneity is tested with a
+#' test specified by \code{homogeneity.test} parameter.
 #'
 #' @return
-#' For \code{getCCA} a matrix with samples as rows and CCA dimensions as columns. 
-#' Attributes include output from \code{\link[vegan:scores]{scores}}, eigenvalues, 
-#' the \code{cca}/\code{rda} object and significance analysis results.
+#' For \code{getCCA} a matrix with samples as rows and CCA dimensions as
+#' columns. Attributes include output from \code{\link[vegan:scores]{scores}},
+#' eigenvalues, the \code{cca}/\code{rda} object and significance analysis
+#' results.
 #'
 #' For \code{addCCA} a modified \code{x} with the results stored in
 #' \code{reducedDim} as the given \code{name}.
 #'
 #' @name runCCA
 #' @seealso
-#' For more details on the actual implementation see \code{\link[vegan:cca]{cca}}
-#' and \code{\link[vegan:dbrda]{dbrda}}
+#' For more details on the actual implementation see
+#' \code{\link[vegan:cca]{cca}} and \code{\link[vegan:dbrda]{dbrda}}
 #'
 #' @examples
 #' library(miaViz)
@@ -101,13 +98,14 @@
 #' tse <- enterotype
 #'
 #' # Perform CCA and exclude any sample with missing ClinicalStatus
-#' tse <- addCCA(tse,
-#'               formula = data ~ ClinicalStatus,
-#'               na.action = na.exclude)
+#' tse <- addCCA(
+#'     tse,
+#'     formula = data ~ ClinicalStatus,
+#'     na.action = na.exclude
+#'     )
 #'
 #' # Plot CCA
-#' plotCCA(tse, "CCA",
-#'         colour_by = "ClinicalStatus")
+#' plotCCA(tse, "CCA", colour_by = "ClinicalStatus")
 #'
 #' # Fetch significance results
 #' attr(reducedDim(tse, "CCA"), "significance")
@@ -115,47 +113,52 @@
 #' tse <- transformAssay(tse, method = "relabundance")
 #'
 #' # Specify dissimilarity measure
-#' tse <- addRDA(tse,
-#'               formula = data ~ ClinicalStatus,
-#'               assay.type = "relabundance",
-#'               method = "bray",
-#'               name = "RDA_bray",
-#'               na.action = na.exclude)
+#' tse <- addRDA(
+#'     tse,
+#'     formula = data ~ ClinicalStatus,
+#'     assay.type = "relabundance",
+#'     method = "bray",
+#'     name = "RDA_bray",
+#'     na.action = na.exclude
+#'     )
 #'
 #' # To scale values when using *RDA functions, use
 #' # transformAssay(MARGIN = "features", ...) 
-#' tse <- transformAssay(tse,
-#'                       method = "standardize",
-#'                       MARGIN = "features")
+#' tse <- transformAssay(tse, method = "standardize", MARGIN = "features")
 #'
 #' # Data might include taxa that do not vary. Remove those because after
 #' # z-transform their value is NA
 #' tse <- tse[rowSums(is.na(assay(tse, "standardize"))) == 0, ]
 #'
 #' # Calculate RDA
-#' tse <- addRDA(tse,
-#'               formula = data ~ ClinicalStatus,
-#'               assay.type = "standardize",
-#'               name = "rda_scaled",
-#'               na.action = na.omit)
+#' tse <- addRDA(
+#'    tse,
+#'    formula = data ~ ClinicalStatus,
+#'    assay.type = "standardize",
+#'    name = "rda_scaled",
+#'    na.action = na.omit
+#'    )
 #'
 #' # Plot RDA
-#' plotRDA(tse, "rda_scaled",
-#'         colour_by = "ClinicalStatus")
+#' plotRDA(tse, "rda_scaled", colour_by = "ClinicalStatus")
 #'
 #' # A common choice along with PERMANOVA is ANOVA when statistical significance
 #' # of homogeneity of groups is analysed. Moreover, full significance test
 #' # results can be returned.
-#' tse <- addRDA(tse,
-#'               formula = data ~ ClinicalStatus,
-#'               homogeneity.test = "anova",
-#'               full = TRUE)
+#' tse <- addRDA(
+#'     tse,
+#'     formula = data ~ ClinicalStatus,
+#'     homogeneity.test = "anova",
+#'     full = TRUE
+#'     )
 #'
 #' # Example showing how to pass extra parameters, such as 'permutations',
 #' # to anova.cca
-#' tse <- addRDA(tse,
-#'               formula = data ~ ClinicalStatus,
-#'               permutations = 500)
+#' tse <- addRDA(
+#'     tse,
+#'     formula = data ~ ClinicalStatus,
+#'     permutations = 500
+#'     )
 #'
 NULL
 
@@ -227,7 +230,7 @@ setMethod("getCCA", "SummarizedExperiment",
         }
         if( !(is.null(col.var) ||
                 (is.character(col.var) &&
-                     all(col.var %in% colnames(colData(x))))) ){
+                    all(col.var %in% colnames(colData(x))))) ){
             stop("'col.var' must specify column from colData(x) or be NULL.",
                 call. = FALSE)
         }
@@ -264,9 +267,9 @@ setMethod("addCCA", "SingleCellExperiment",
         ############################# Input check ##############################
         if( !(is.null(altexp) ||
             (length(altexp) == 1L && is.character(altexp) &&
-                 all(altexp %in% altExpNames(x))) ||
+                all(altexp %in% altExpNames(x))) ||
             (.is_an_integer(altexp) && altexp > 0 &&
-                 altexp <= length(altExps(x))) ) ){
+                altexp <= length(altExps(x))) ) ){
             stop("'altexp' must specify an alternative experiment from ",
                 "altExp(x).", call. = FALSE)
         }
@@ -319,7 +322,7 @@ setMethod("getRDA", "ANY", function(x, formula, data, ...){
     }
     #
     res <- .calculate_rda(
-      x, formula = formula, data = data, ord.method = "RDA", ...)
+        x, formula = formula, data = data, ord.method = "RDA", ...)
     return(res)
     })
 
@@ -336,7 +339,7 @@ setMethod("getRDA", "SummarizedExperiment",
         }
         if( !(is.null(col.var) ||
                 (is.character(col.var) &&
-                     all(col.var %in% colnames(colData(x))))) ){
+                    all(col.var %in% colnames(colData(x))))) ){
             stop("'col.var' must specify column from colData(x) or be NULL.",
                 call. = FALSE)
         }
@@ -467,8 +470,8 @@ setMethod("addRDA", "SingleCellExperiment",
 #' @importFrom stats as.formula na.fail
 #' @importFrom vegan cca dbrda sppscores<- eigenvals scores
 .calculate_rda <- function(
-    x, formula, data, scores, scale = TRUE, na.action = na.fail,
-     method = distance, distance = "euclidean", ord.method = "CCA", ...){
+        x, formula, data, scores, scale = TRUE, na.action = na.fail,
+        method = distance, distance = "euclidean", ord.method = "CCA", ...){
     # input check
     if(!.is_a_bool(scale)){
         stop("'scale' must be TRUE or FALSE.", call. = FALSE)
@@ -477,7 +480,7 @@ setMethod("addRDA", "SingleCellExperiment",
         stop("'method' must be a single string value.", call. = FALSE)
     }
     if( !(.is_a_string(ord.method) && ord.method %in% c("CCA", "RDA")) ){
-      stop("'ord.method' must be 'CCA' or 'RDA'.", call. = FALSE)
+        stop("'ord.method' must be 'CCA' or 'RDA'.", call. = FALSE)
     }
     #
     # Get data in correct orientation. Samples should be in rows in abundance
@@ -721,8 +724,8 @@ setMethod("addRDA", "SingleCellExperiment",
         tse <- tse[ , rownames(rda) ]
         # Give a message
         warning(
-          "Certain samples are removed from the result because they did ",
-          "not include sufficient metadata.", call. = FALSE)
+            "Certain samples are removed from the result because they did ",
+            "not include sufficient metadata.", call. = FALSE)
     } else if( !all(colnames(tse) %in% rownames(rda)) && !subset.result ){
         # If user do not want to subset the data
         # Save attributes from the object
