@@ -106,14 +106,7 @@ including covariates defined by \code{formula}.}
 
 \item{col.var}{\code{Character scalar}. When \code{x} is a
 \code{SummarizedExperiment},\code{col.var} can be used to specify variables
-from \code{colData}.
-
-When \code{x} is a matrix, \code{col.var} is a \code{data.frame} or
-an object coercible to one containing the variables to use.
-
-All variables are used. Please subset, if you want to consider only some
-of them. \code{col.var} and \code{formula} can be missing, which turns the
-CCA analysis into a CA analysis and dbRDA into PCoA/MDS.}
+from \code{colData}.}
 
 \item{variables}{Deprecated. Use \code{"col.var"} instead.}
 
@@ -150,7 +143,8 @@ in a \code{SummarizedExperiment}.
 \details{
 *CCA functions utilize \code{vegan:cca} and *RDA functions
 \code{vegan:dbRDA}. By default, dbRDA is done with euclidean distances, which
-is equivalent to RDA.
+is equivalent to RDA. \code{col.var} and \code{formula} can be missing,
+which turns the CCA analysis into a CA analysis and dbRDA into PCoA/MDS.
 
 Significance tests are done with \code{vegan:anova.cca} (PERMANOVA). Group
 dispersion, i.e., homogeneity within groups is analyzed with
