@@ -315,17 +315,17 @@ setGeneric("getPrevalent", signature = "x",
 
     # get logical vector which row does exceed threshold
     if (include.lowest) {
-        group <- pr >= prevalence
+        f <- pr >= prevalence
     } else {
-        group <- pr > prevalence
+        f <- pr > prevalence
     }
     # get it back into order of x
-    m <- match(rownames(x),names(group))
-    taxa <- group[m]
+    m <- match(rownames(x),names(f))
+    taxa <- f[m]
     # Gets indices of most prevalent taxa
     indices <- which(taxa)
-    # revert the order based on group
-    m <- match(names(group),names(indices))
+    # revert the order based on f
+    m <- match(names(f),names(indices))
     m <- m[!is.na(m)]
     indices <- indices[m]
     #
@@ -385,8 +385,8 @@ setGeneric("getRare", signature = "x",
     indices <- .get_prevalent_indices(x = x, ...)
     # reverse the indices
     indices_x <- seq_len(nrow(x))
-    group <- !(indices_x %in% indices)
-    indices_new <- indices_x[group]
+    f <- !(indices_x %in% indices)
+    indices_new <- indices_x[f]
     indices_new
 }
 
@@ -565,10 +565,10 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
         #
         x <- .agg_for_prevalence(x, rank, check.assays = FALSE, ...)
         pr <- getPrevalent(x, rank = NULL, ...)
-        group <- rownames(x) %in% pr
-        if(any(!group)){
-            other_x <- agglomerateByVariable(x[!group,], by = "rows",
-                                            factor(rep(1L,sum(!group))),
+        f <- rownames(x) %in% pr
+        if(any(!f)){
+            other_x <- agglomerateByVariable(x[!f,], by = "rows",
+                                            factor(rep(1L,sum(!f))),
                                             check_assays = FALSE)
             rowData(other_x)[,colnames(rowData(other_x))] <- NA
             # set the other label
@@ -576,7 +576,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
             if(!is.null(rank)){
                 rowData(other_x)[,rank] <- other.name
             }
-            x <- rbind(x[group,], other_x)
+            x <- rbind(x[f,], other_x)
         }
         x
     }
@@ -610,11 +610,11 @@ setMethod("agglomerateByPrevalence",
             # If user wants to agglomerate based on rank
             x <- .agg_for_prevalence(x, rank, check.assays = FALSE, ...)
             # Find groups that will be used to agglomerate the data
-            group <- rownames(x)[ match(rownames(x), rownames(res)) ]
-            group[ is.na(group) ] <- other.name
+            f <- rownames(x)[ match(rownames(x), rownames(res)) ]
+            f[ is.na(f) ] <- other.name
             # Find consensus sequences, and add them to result
             ref_seq <- referenceSeq(x)
-            ref_seq <- .merge_refseq_list(ref_seq, group, rownames(res), ...)
+            ref_seq <- .merge_refseq_list(ref_seq, f, rownames(res), ...)
             referenceSeq(res) <- ref_seq
         }
         # Update tree if user has specified to do so

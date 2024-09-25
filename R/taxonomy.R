@@ -283,13 +283,13 @@ getTaxonomyRanks <- function() {
 #' @importFrom SummarizedExperiment rowData
 .check_for_taxonomic_data_order <- function(x){
     ranks <- colnames(rowData(x))
-    group <- tolower(ranks) %in% TAXONOMY_RANKS
-    if(!any(group)){
+    f <- tolower(ranks) %in% TAXONOMY_RANKS
+    if(!any(f)){
         stop("no taxonomic ranks detected in rowData(). Columns with one of ",
             "the following names can be used: '",
             paste(TAXONOMY_RANKS, collapse = "', '"), "'", call. = FALSE)
     }
-    m <- match(TAXONOMY_RANKS, tolower(ranks[group]))
+    m <- match(TAXONOMY_RANKS, tolower(ranks[f]))
     m <- m[!is.na(m)]
     # check that taxonomic ranks are in order. If they are all value in check
     # should be 1 or 0
@@ -770,9 +770,9 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
     conf <- DataFrame(as.matrix(conf))
     colnames(conf) <- names
     # subset to valid taxonomic information
-    group <- tolower(names) %in% TAXONOMY_RANKS
-    taxa <- taxa[,group]
-    conf <- conf[,group]
+    f <- tolower(names) %in% TAXONOMY_RANKS
+    taxa <- taxa[,f]
+    conf <- conf[,f]
     # combine with confidence data
     metadata(taxa)$confidence <- conf
     #

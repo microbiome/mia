@@ -224,9 +224,9 @@ NULL
     d <- t((t(a) - c)^2/S)
     d[mat == 0] <- 0
 
-    group <- colSums2(d, na.rm = TRUE)
+    f <- colSums2(d, na.rm = TRUE)
 
-    (1 - 2/pi * atan(group))
+    (1 - 2/pi * atan(f))
 }
 
 .get_evenness_values <- function(index, mat, threshold = 0, ...){

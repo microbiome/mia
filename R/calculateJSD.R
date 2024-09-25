@@ -49,9 +49,9 @@
     spn <- utils::combn(rownames(x), 2, simplify = TRUE)
     #
     N <- ncol(spn)
-    group <- ceiling(seq_len(N)/chunkSize)
-    A <- split(spn[1L,], group)
-    B <- split(spn[2L,], group)
+    f <- ceiling(seq_len(N)/chunkSize)
+    A <- split(spn[1L,], f)
+    B <- split(spn[2L,], f)
     FUN <- function(X, a, b){
         .JSD(X[a,,drop=FALSE], X[b,,drop=FALSE])
     }

@@ -313,9 +313,9 @@ data(esophagus)
 esophagus
 plot(rowTree(esophagus))
 # get a factor for merging
-group <- factor(regmatches(rownames(esophagus),
+f <- factor(regmatches(rownames(esophagus),
                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-merged <- agglomerateByVariable(esophagus, by = "rows", group,
+merged <- agglomerateByVariable(esophagus, by = "rows", f,
                                 update.tree = TRUE)
 plot(rowTree(merged))
 #
