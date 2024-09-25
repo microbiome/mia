@@ -14,15 +14,13 @@ test_that("agglomerate", {
     rowData(xtse) <- tax_data
     # mergeRows for agglomerateByRank
     tax_factors <- mia:::.get_tax_groups(xtse, col = 2)
-    actual_family <- actual <- agglomerateByVariable(xtse, by = "rows",
-                                                    group = tax_factors)
+    actual_family <- actual <- agglomerateByVariable(xtse, by = "rows", group = tax_factors)
     expect_s4_class(actual,class(xtse))
     expect_equal(dim(actual),c(8,10))
     expect_equal(assays(actual)$mat[8,1],c(c_NA = 8))
     expect_equal(assays(actual)$mat[7,1],c(c_h = 16))
     tax_factors <- mia:::.get_tax_groups(xtse, col = 1)
-    actual_phylum <- actual <- agglomerateByVariable(xtse, by = "rows", 
-                                                    group = tax_factors)
+    actual_phylum <- actual <- agglomerateByVariable(xtse, by = "rows", group = tax_factors)
     expect_s4_class(actual,class(xtse))
     expect_equal(dim(actual),c(3,10))
     expect_equal(assays(actual)$mat[1,1],c(a = 6))
