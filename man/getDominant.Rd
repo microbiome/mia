@@ -56,13 +56,17 @@ columns from \code{rowData(x)}. (Default: \code{NULL})}
 \item{rank}{Deprecated. Use \code{group} instead.}
 
 \item{other.name}{\code{Character scalar}. A name for features that are not
-included in n the most frequent dominant features in the data. (Default: \code{"Other"})}
+included in n the most frequent dominant features in the data.
+(Default: \code{"Other"})}
 
-\item{n}{\code{Numeric scalar}. The number of features that are the most frequent
-dominant features. Default is NULL, which defaults that each sample is assigned
+\item{n}{\code{Numeric scalar}. The number of features that are the most
+frequent
+dominant features. Default is NULL, which defaults that each sample is
+assigned
 a dominant taxon. (Default: \code{NULL})}
 
-\item{complete}{\code{Logical scalar}. A value to manage multiple dominant taxa for a sample.
+\item{complete}{\code{Logical scalar}. A value to manage multiple dominant
+taxa for a sample.
 Default for getDominant is TRUE to include all equally dominant taxa
 for each sample. complete = FALSE samples one taxa for the samples that have
 multiple.
@@ -74,7 +78,8 @@ list that includes all dominant taxa for each sample into colData.}
 \code{rank} is specified.}
 
 \item{name}{\code{Character scalar}. A name for the column of the
-\code{colData} where results will be stored. (Default: \code{"dominant_taxa"})}
+\code{colData} where results will be stored.
+(Default: \code{"dominant_taxa"})}
 }
 \value{
 \code{getDominant} returns a named character vector \code{x}

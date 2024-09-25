@@ -9,7 +9,8 @@
 \alias{unsplitOn,list-method}
 \alias{unsplitOn,SimpleList-method}
 \alias{unsplitOn,SingleCellExperiment-method}
-\title{Split \code{TreeSummarizedExperiment} column-wise or row-wise based on grouping variable}
+\title{Split \code{TreeSummarizedExperiment} column-wise or row-wise based on
+grouping variable}
 \usage{
 splitOn(x, ...)
 
@@ -49,7 +50,8 @@ unsplitOn(x, ...)
 See \code{\link[=agglomerate-methods]{agglomerateByVariable}} for more
 details.
 \itemize{
-\item \code{use.names}: \code{Logical scalar}. Specifies whether to name elements of
+\item \code{use.names}: \code{Logical scalar}. Specifies whether to name
+elements of
 list by their group names. (Default: \code{TRUE})
 }}
 
@@ -82,7 +84,8 @@ breaks the link between the data used to calculate the reduced dims.
 \item{keep_reducedDims}{Deprecated. Use \code{keep.dimred} instead.}
 }
 \value{
-For \code{splitOn}: \code{SummarizedExperiment} objects in a \code{SimpleList}.
+For \code{splitOn}: \code{SummarizedExperiment} objects in a
+\code{SimpleList}.
 
 For \code{unsplitOn}: \code{x}, with \code{rowData} and \code{assay}
 data replaced by the unsplit data. \code{colData} of x is kept as well
@@ -90,7 +93,8 @@ and any existing \code{rowTree} is dropped as well, since existing
 \code{rowLinks} are not valid anymore.
 }
 \description{
-Split \code{TreeSummarizedExperiment} column-wise or row-wise based on grouping variable
+Split \code{TreeSummarizedExperiment} column-wise or row-wise based on
+grouping variable
 }
 \details{
 \code{splitOn} split data based on grouping variable. Splitting can be done
@@ -113,11 +117,12 @@ colData(tse)$group <- sample(1:3, ncol(tse), replace = TRUE)
 
 # Split based on rows
 # Each element is named based on their group name. If you don't want to name
-# elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
-# you must use `by`.
+# elements, use use_name = FALSE. Since "group" can be found from rowdata and
+# colData you must use `by`.
 se_list <- splitOn(tse, group = "group", use.names = FALSE, by = 1)
 
-# When column names are shared between elements, you can store the list to altExps
+# When column names are shared between elements, you can store the list to
+# altExps
 altExps(tse) <- se_list
 
 altExps(tse)

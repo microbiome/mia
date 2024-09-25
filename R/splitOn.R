@@ -1,4 +1,5 @@
-#' Split \code{TreeSummarizedExperiment} column-wise or row-wise based on grouping variable
+#' Split \code{TreeSummarizedExperiment} column-wise or row-wise based on
+#' grouping variable
 #'
 #' @inheritParams agglomerate-methods
 #'
@@ -25,7 +26,8 @@
 #'   See \code{\link[=agglomerate-methods]{agglomerateByVariable}} for more 
 #'   details.
 #'   \itemize{
-#'     \item \code{use.names}: \code{Logical scalar}. Specifies whether to name elements of
+#'     \item \code{use.names}: \code{Logical scalar}. Specifies whether to name
+#'     elements of
 #'     list by their group names. (Default: \code{TRUE})
 #'   }
 #'
@@ -37,7 +39,8 @@
 #' group.
 #'
 #' @return
-#' For \code{splitOn}: \code{SummarizedExperiment} objects in a \code{SimpleList}.
+#' For \code{splitOn}: \code{SummarizedExperiment} objects in a
+#' \code{SimpleList}.
 #'
 #' For \code{unsplitOn}: \code{x}, with \code{rowData} and \code{assay}
 #' data replaced by the unsplit data. \code{colData} of x is kept as well
@@ -70,11 +73,12 @@
 #' 
 #' # Split based on rows
 #' # Each element is named based on their group name. If you don't want to name
-#' # elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
-#' # you must use `by`.
+#' # elements, use use_name = FALSE. Since "group" can be found from rowdata and
+#' # colData you must use `by`.
 #' se_list <- splitOn(tse, group = "group", use.names = FALSE, by = 1)
 #' 
-#' # When column names are shared between elements, you can store the list to altExps
+#' # When column names are shared between elements, you can store the list to
+#' # altExps
 #' altExps(tse) <- se_list
 #' 
 #' altExps(tse)
@@ -103,8 +107,8 @@ setGeneric("splitOn",
     # Check f
     if(is.null(f)){
         stop("'group' must either be a single non-empty character value or",
-            " vector coercible to factor alongside the one of the dimensions of 'x'",
-            call. = FALSE)
+            " vector coercible to factor alongside the one of the dimensions ",
+            "of 'x'", call. = FALSE)
     }
     # Check by
     if( !is.null(by) ){
@@ -154,8 +158,8 @@ setGeneric("splitOn",
             # Give error if it cannot be found
             if(is(tmp,"try-error")){
                 stop("'group' is not found. ",
-                    "Please check that 'group' specifies a column from ", dim_name, ".", 
-                    call. = FALSE)
+                    "Please check that 'group' specifies a column from ",
+                    dim_name, ".", call. = FALSE)
             }
             # Get values
             f <- tmp$value
@@ -270,8 +274,8 @@ setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, group = f, f = NULL, update.tree = update_rowTree, update_rowTree = FALSE,
-            ...){
+    function(x, group = f, f = NULL, update.tree = update_rowTree,
+            update_rowTree = FALSE, ...){
         # Input check
         # Check update.tree
         if( !.is_a_bool(update.tree) ){
@@ -311,7 +315,8 @@ setGeneric("unsplitOn",
                 standardGeneric("unsplitOn"))
 
 # Perform the unsplit
-.list_unsplit_on <- function(ses, update.tree = FALSE, by = MARGIN, MARGIN = NULL, ...){
+.list_unsplit_on <- function(
+        ses, update.tree = FALSE, by = MARGIN, MARGIN = NULL, ...){
     # Input check
     is_check <- vapply(ses,is,logical(1L),"SummarizedExperiment")
     if(!all(is_check)){
@@ -354,7 +359,8 @@ setGeneric("unsplitOn",
         # Get correct dimension, it is opposite of by
         dim <- ifelse(by == 1, 2, 1)
         if( length(unique(dims[dim,])) != 1L ){
-            stop("The dimensions are not equal across all elements.", call. = FALSE)
+            stop("The dimensions are not equal across all elements.",
+                call. = FALSE)
         }
     }
     

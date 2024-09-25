@@ -216,9 +216,12 @@ retained as defined by \code{archetype}.
 agglomerated, i.e. summed up. If the assay contains values other than counts
 or absolute values, this can lead to meaningless values being produced.
 
-Agglomeration sums up the values of assays at the specified taxonomic level. With
-certain assays, e.g. those that include binary or negative values, this summing
-can produce meaningless values. In those cases, consider performing agglomeration
+Agglomeration sums up the values of assays at the specified taxonomic level.
+With
+certain assays, e.g. those that include binary or negative values, this
+summing
+can produce meaningless values. In those cases, consider performing
+agglomeration
 first, and then applying the transformation afterwards.
 
 \code{agglomerateByVariable} works similarly to
