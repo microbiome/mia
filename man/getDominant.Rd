@@ -51,7 +51,7 @@ calculation. (Default: \code{"counts"})}
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{group}{\code{Character scalar}. Defines a group. Must be one of the
-columns from \code{rowData(x)}.}
+columns from \code{rowData(x)}. (Default: \code{NULL})}
 
 \item{rank}{Deprecated. Use \code{group} instead.}
 
@@ -107,9 +107,9 @@ data(GlobalPatterns)
 x <- GlobalPatterns
 
 # Finds the dominant taxa.
-sim.dom <- getDominant(x, rank="Genus")
+sim.dom <- getDominant(x, group = "Genus")
 
 # Add information to colData
-x <- addDominant(x, rank = "Genus", name="dominant_genera")
+x <- addDominant(x, group = "Genus", name ="dominant_genera")
 colData(x)
 }

@@ -14,7 +14,7 @@
 #' included in n the most frequent dominant features in the data. (Default: \code{"Other"})
 #' 
 #' @param group \code{Character scalar}. Defines a group. Must be one of the
-#' columns from \code{rowData(x)}.
+#' columns from \code{rowData(x)}. (Default: \code{NULL})
 #' 
 #' @param rank Deprecated. Use \code{group} instead.
 #' 
@@ -61,10 +61,10 @@
 #' x <- GlobalPatterns
 #'
 #' # Finds the dominant taxa.
-#' sim.dom <- getDominant(x, rank="Genus")
+#' sim.dom <- getDominant(x, group = "Genus")
 #'
 #' # Add information to colData
-#' x <- addDominant(x, rank = "Genus", name="dominant_genera")
+#' x <- addDominant(x, group = "Genus", name ="dominant_genera")
 #' colData(x)
 NULL
 
