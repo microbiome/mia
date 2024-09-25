@@ -13,8 +13,8 @@
 #' @param other.name \code{Character scalar}. A name for features that are not 
 #' included in n the most frequent dominant features in the data. (Default: \code{"Other"})
 #' 
-#' @param group \code{Character scalar}. Defines a group. Must be a value of
-#'   \code{taxonomyRanks()} or rowData(x) function.
+#' @param group \code{Character scalar}. Defines a group. Must be one of the
+#' columns from \code{rowData(x)}.
 #' 
 #' @param rank Deprecated. Use \code{group} instead.
 #' 
@@ -39,14 +39,14 @@
 #' object, and stores the information in the \code{colData}. It is a wrapper for
 #' \code{getDominant}.
 #'
-#' With \code{rank} parameter, it is possible to agglomerate taxa based on
-#' taxonomic ranks. E.g. if 'Genus' rank is used, all abundances of same Genus
-#' are added together, and those families are returned.
-#' See \code{agglomerateByRank()} for additional arguments to deal with
+#' With \code{group} parameter, it is possible to agglomerate rows based on
+#' groups. If the value is one of the columns in \code{taxonomyRanks()},
+#' \code{agglomerateByRank()} is applied. Otherwise,
+#' \code{agglomerateByVariable()} is utilized.
+#' E.g. if 'Genus' rank is used, all abundances of same Genus
+#' are added together, and agglomerated features are returned.
+#' See corresponding functions for additional arguments to deal with
 #' missing values or special characters.
-#' If the \code{rank} is not specifying a taxonomy rank from
-#' \code{taxonomyRanks(x)}, the function
-#' agglomerates rows with \code{agglomerateByVariable()}.
 #'
 #' @return \code{getDominant} returns a named character vector \code{x}
 #' while \code{addDominant} returns

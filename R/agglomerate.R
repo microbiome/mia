@@ -78,10 +78,13 @@
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}.
 #'
-#' @param group A factor for merging. Must be the same length as
-#'   \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
-#'   merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
-#'   returned unchanged.
+#' @param group \code{Character scalar}, \code{character vector} or
+#' \code{factor vector}. A column name from \code{rowData(x)} or
+#' \code{colData(x)} or alternatively a vector specifying how the merging is
+#' performed. If vector, the value must be the same length as
+#' \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
+#' merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
+#' returned unchanged.
 #'  
 #' @param f Deprecated. Use \code{group} instead.
 #'
@@ -318,7 +321,7 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable",
             signature = c(x = "TreeSummarizedExperiment"),
-            function(x, by, group = f, f,  update.tree = mergeTree, mergeTree = FALSE, ...){
+            function(x, by, group = f, f, update.tree = mergeTree, mergeTree = FALSE, ...){
                 # Check by
                 by <- .check_MARGIN(by)
                 # Get function based on by
@@ -381,9 +384,9 @@ setMethod(
     function(x, column, empty.fields = c(NA,""," ","\t","-","_"))
         {
         tax <- as.character(rowData(x)[,column])
-        group <- !(tax %in% empty.fields)
-        if(any(!group)){
-            x <- x[group, , drop=FALSE]
+        f <- !(tax %in% empty.fields)
+        if(any(!f)){
+            x <- x[f, , drop=FALSE]
         }
         x
     }

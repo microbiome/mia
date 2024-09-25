@@ -126,7 +126,10 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}
 
-\item{group}{A factor for merging. Must be the same length as
+\item{group}{\code{Character scalar}, \code{character vector} or
+\code{factor vector}. A column name from \code{rowData(x)} or
+\code{colData(x)} or alternatively a vector specifying how the merging is
+performed. If vector, the value must be the same length as
 \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
 merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
 returned unchanged.}

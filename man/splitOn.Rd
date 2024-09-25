@@ -53,12 +53,14 @@ details.
 list by their group names. (Default: \code{TRUE})
 }}
 
-\item{group}{\code{Character vector}. Specifies the grouping variable
-from \code{rowData} or \code{colData} or a \code{factor} or \code{vector}
-with the same length as one of the dimensions. If \code{group} matches with both
-dimensions, \code{by} must be specified.
-Split by cols is not encouraged, since this is not compatible with
-storing the results in \code{altExps}. (Default: \code{NULL})}
+\item{group}{\code{Character scalar}, \code{character vector} or
+\code{factor vector}. A column name from \code{rowData(x)} or
+\code{colData(x)} or alternatively a vector specifying how the merging is
+performed. If vector, the value must be the same length as
+\code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
+merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
+returned unchanged. If \code{group} matches with both dimensions,
+\code{by} must be specified. (Default: \code{NULL})}
 
 \item{f}{Deprecated. Use \code{group} instead.}
 

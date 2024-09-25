@@ -2,12 +2,14 @@
 #'
 #' @inheritParams agglomerate-methods
 #'
-#' @param group \code{Character vector}. Specifies the grouping variable
-#'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 
-#'   with the same length as one of the dimensions. If \code{group} matches with both
-#'   dimensions, \code{by} must be specified. 
-#'   Split by cols is not encouraged, since this is not compatible with 
-#'   storing the results in \code{altExps}. (Default: \code{NULL})
+#' @param group \code{Character scalar}, \code{character vector} or
+#' \code{factor vector}. A column name from \code{rowData(x)} or
+#' \code{colData(x)} or alternatively a vector specifying how the merging is
+#' performed. If vector, the value must be the same length as
+#' \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
+#' merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
+#' returned unchanged. If \code{group} matches with both dimensions,
+#' \code{by} must be specified. (Default: \code{NULL})
 #'   
 #' @param f Deprecated. Use \code{group} instead.
 #' 
@@ -98,7 +100,7 @@ setGeneric("splitOn",
         x, f, by = MARGIN, MARGIN = NULL, use.names = use_names,
         use_names = TRUE, ...){
     # input check
-    # Check group
+    # Check f
     if(is.null(f)){
         stop("'group' must either be a single non-empty character value or",
             " vector coercible to factor alongside the one of the dimensions of 'x'",
@@ -108,7 +110,7 @@ setGeneric("splitOn",
     if( !is.null(by) ){
         by <- .check_MARGIN(by)
     }
-    # If group is a vector containing levels
+    # If f is a vector containing levels
     if( !.is_non_empty_string(f) ){
         # Convert into factors
         f <- factor(f, unique(f))
@@ -122,19 +124,19 @@ setGeneric("splitOn",
         } else if( is.null(by) && all(length(f) == dim(x)) ){
             stop("The length of 'group' matches with nrow and ncol. ",
                 "Please specify 'by'.", call. = FALSE)
-        # If by is specified but it does not match with length of group
+        # If by is specified but it does not match with length of f
         } else if( !is.null(by) && (length(f) !=  dim(x)[[by]]) ){
             stop("'group' does not match with ", 
                 ifelse(by==1, "nrow", "ncol"), ". Please check 'by'.",
                 call. = FALSE)
-        # IF group matches with nrow
+        # IF f matches with nrow
         } else if(length(f) == dim(x)[[1]] && is.null(by)  ){
             by <- 1L
-        # If group matches with ncol
+        # If f matches with ncol
         } else if( is.null(by) ){
             by <- 2L
         }
-    # Else if group is a character specifying column from rowData or colData  
+    # Else if f is a character specifying column from rowData or colData  
     } else {
         # If by is specified
         if( !is.null(by) ){

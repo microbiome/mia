@@ -97,7 +97,7 @@
     # merge to result
     x <- x[.get_element_pos(f, archetype = archetype),]
     assays(x, withDimnames = FALSE) <- assays
-    # Change rownames to f names
+    # Change rownames to group names
     rownames(x) <- rownames(assays[[1]])
     x
 }
@@ -158,7 +158,7 @@
     # merge to result
     x <- x[,.get_element_pos(f, archetype = archetype)]
     assays(x, withDimnames = FALSE) <- assays
-    # Change colnames to f names
+    # Change colnames to group names
     colnames(x) <- colnames(assays[[1]])
     x
 }
