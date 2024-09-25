@@ -106,7 +106,7 @@ test_that("merge", {
         tse, by = "rows", group = rowData(tse)$group2, update.tree = FALSE)
     merged3 <- agglomerateByVariable(
         esophagus, by = "rows", group = rowData(esophagus)$group2, update.tree = TRUE)
-    merged4 <- .merge_features(tse, merge.by = rowData(tse)$group2, pdate.tree = TRUE)
+    merged4 <- .merge_features(tse, merge.by = rowData(tse)$group2, update.tree = TRUE)
     merged5 <- agglomerateByVariable(
         tse, by = "rows", group = rowData(tse)$group2, update.tree = TRUE)
     expect_equal( rowLinks(merged)$whichTree,
