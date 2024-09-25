@@ -9,7 +9,7 @@ test_that("taxonomy", {
                                      rowRanges = unname(grl))
     tax_data <- DataFrame(Phylum = c(rep("a",3),rep("b",3),rep("c",3)),
                           score = 1:9,
-                          Class = c("c",NA,"d","e","group","g","h",NA,"i"),
+                          Class = c("c",NA,"d","e","f","g","h",NA,"i"),
                           Family = c("j",NA,"k","l","m","n","o",NA,"o"),
                           n = 7:15)
     rowData(xtse) <- tax_data
@@ -43,7 +43,7 @@ test_that("taxonomy", {
     actual <- mia:::.get_tax_groups(xtse,2)
     expect_true(is.factor(actual))
     expect_length(actual,nrow(xtse))
-    expect_equal(levels(actual),c("a_c","a_NA","a_d","b_e","b_group","b_g","c_h","c_NA","c_i"))
+    expect_equal(levels(actual),c("a_c","a_NA","a_d","b_e","b_f","b_g","c_h","c_NA","c_i"))
     # .get_taxonomic_label
     expect_error(mia:::.get_taxonomic_label(),
                  'argument "x" is missing')
