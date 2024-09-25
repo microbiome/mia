@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.44</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.43</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get dominant taxa</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_rda/R/getDominant.R" class="external-link"><code>R/getDominant.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fgroup/R/getDominant.R" class="external-link"><code>R/getDominant.R</code></a></small>
     <div class="hidden name"><code>getDominant.Rd</code></div>
     </div>
 
@@ -61,6 +61,7 @@ object.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  group <span class="op">=</span> <span class="va">rank</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  other.name <span class="op">=</span> <span class="st">"Other"</span>,</span>
 <span>  n <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -73,6 +74,7 @@ object.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  group <span class="op">=</span> <span class="va">rank</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  other.name <span class="op">=</span> <span class="st">"Other"</span>,</span>
 <span>  n <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -110,9 +112,13 @@ calculation. (Default: <code>"counts"</code>)</p></dd>
 <dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
+<dt id="arg-group">group<a class="anchor" aria-label="anchor" href="#arg-group"></a></dt>
+<dd><p><code>Character scalar</code>. Defines a group. Must be a value of
+<code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> or rowData(x) function.</p></dd>
+
+
 <dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
-<dd><p><code>Character scalar</code>. Defines a taxonomic rank. Must be a value of
-<code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
+<dd><p>Deprecated. Use <code>group</code> instead.</p></dd>
 
 
 <dt id="arg-other-name">other.name<a class="anchor" aria-label="anchor" href="#arg-other-name"></a></dt>
