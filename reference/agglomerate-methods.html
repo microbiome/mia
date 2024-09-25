@@ -24,7 +24,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.43</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.44</span>
       </span>
     </div>
 
@@ -201,7 +201,10 @@ Must be <code>'rows'</code> or <code>'cols'</code>.</p></dd>
 
 
 <dt id="arg-group">group<a class="anchor" aria-label="anchor" href="#arg-group"></a></dt>
-<dd><p>A factor for merging. Must be the same length as
+<dd><p><code>Character scalar</code>, <code>character vector</code> or
+<code>factor vector</code>. A column name from <code>rowData(x)</code> or
+<code>colData(x)</code> or alternatively a vector specifying how the merging is
+performed. If vector, the value must be the same length as
 <code>nrow(x)/ncol(x)</code>. Rows/Cols corresponding to the same level will be
 merged. If <code>length(levels(group)) == nrow(x)/ncol(x)</code>, <code>x</code> will be
 returned unchanged.</p></dd>
@@ -300,9 +303,12 @@ retained as defined by <code>archetype</code>.
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> are
 agglomerated, i.e. summed up. If the assay contains values other than counts
 or absolute values, this can lead to meaningless values being produced.</p>
-<p>Agglomeration sums up the values of assays at the specified taxonomic level. With
-certain assays, e.g. those that include binary or negative values, this summing
-can produce meaningless values. In those cases, consider performing agglomeration
+<p>Agglomeration sums up the values of assays at the specified taxonomic level.
+With
+certain assays, e.g. those that include binary or negative values, this
+summing
+can produce meaningless values. In those cases, consider performing
+agglomeration
 first, and then applying the transformation afterwards.</p>
 <p><code>agglomerateByVariable</code> works similarly to
 <code><a href="https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html" class="external-link">sumCountsAcrossFeatures</a></code>.
