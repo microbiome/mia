@@ -51,7 +51,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Agglomerate or merge data using taxonomic information</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_biom/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/fix_biom/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fgroup/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/fgroup/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
     <div class="hidden name"><code>agglomerate-methods.Rd</code></div>
     </div>
 
@@ -81,12 +81,13 @@ experiments and flattens them again into a single
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">x</span>, <span class="va">by</span>, <span class="va">f</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">x</span>, <span class="va">by</span>, group <span class="op">=</span> <span class="va">f</span>, <span class="va">f</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">agglomerateByVariable</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">by</span>,</span>
+<span>  group <span class="op">=</span> <span class="va">f</span>,</span>
 <span>  <span class="va">f</span>,</span>
 <span>  update.tree <span class="op">=</span> <span class="va">mergeTree</span>,</span>
 <span>  mergeTree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -199,11 +200,18 @@ row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be <code>'rows'</code> or <code>'cols'</code>.</p></dd>
 
 
-<dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
-<dd><p>A factor for merging. Must be the same length as
+<dt id="arg-group">group<a class="anchor" aria-label="anchor" href="#arg-group"></a></dt>
+<dd><p><code>Character scalar</code>, <code>character vector</code> or
+<code>factor vector</code>. A column name from <code>rowData(x)</code> or
+<code>colData(x)</code> or alternatively a vector specifying how the merging is
+performed. If vector, the value must be the same length as
 <code>nrow(x)/ncol(x)</code>. Rows/Cols corresponding to the same level will be
-merged. If <code>length(levels(f)) == nrow(x)/ncol(x)</code>, <code>x</code> will be
+merged. If <code>length(levels(group)) == nrow(x)/ncol(x)</code>, <code>x</code> will be
 returned unchanged.</p></dd>
+
+
+<dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
+<dd><p>Deprecated. Use <code>group</code> instead.</p></dd>
 
 
 <dt id="arg-update-tree">update.tree<a class="anchor" aria-label="anchor" href="#arg-update-tree"></a></dt>
@@ -295,9 +303,12 @@ retained as defined by <code>archetype</code>.
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> are
 agglomerated, i.e. summed up. If the assay contains values other than counts
 or absolute values, this can lead to meaningless values being produced.</p>
-<p>Agglomeration sums up the values of assays at the specified taxonomic level. With
-certain assays, e.g. those that include binary or negative values, this summing
-can produce meaningless values. In those cases, consider performing agglomeration
+<p>Agglomeration sums up the values of assays at the specified taxonomic level.
+With
+certain assays, e.g. those that include binary or negative values, this
+summing
+can produce meaningless values. In those cases, consider performing
+agglomeration
 first, and then applying the transformation afterwards.</p>
 <p><code>agglomerateByVariable</code> works similarly to
 <code><a href="https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html" class="external-link">sumCountsAcrossFeatures</a></code>.
