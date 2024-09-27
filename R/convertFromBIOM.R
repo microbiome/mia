@@ -1,4 +1,5 @@
-#' Convert a \code{TreeSummarizedExperiment} object to/from \sQuote{BIOM} results
+#' Convert a \code{TreeSummarizedExperiment} object to/from \sQuote{BIOM}
+#' results
 #'
 #' For convenience, a few functions are available to convert BIOM, DADA2 and 
 #' phyloseq objects to 
@@ -9,8 +10,8 @@
 #' 
 #' @param prefix.rm \code{Logical scalar}. Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
-#' taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
-#' (Default: \code{FALSE})
+#' taxa columns meaning that \code{rank.from.prefix} should be enabled in the
+#' most cases. (Default: \code{FALSE})
 #' 
 #' @param removeTaxaPrefixes Deprecated. Use \code{prefix.rm} instead.
 #' 
@@ -27,7 +28,8 @@
 #' @param remove.artifacts Deprecated. Use \code{artifact.rm} instead.
 #' 
 #' @details 
-#' \code{convertFromBIOM} coerces a \code{\link[biomformat:biom-class]{biom}} object to a 
+#' \code{convertFromBIOM} coerces a \code{\link[biomformat:biom-class]{biom}}
+#' object to a 
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object.
 #' 
@@ -37,7 +39,7 @@
 #'   
 #' @return
 #' \code{convertFromBIOM} returns an object of class
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   
 #' @name importBIOM
 #' 
@@ -75,7 +77,7 @@ NULL
 #' 
 #' @return 
 #' \code{importBIOM} returns an object of class
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' 
 #' @name importBIOM
 #' 
@@ -187,7 +189,8 @@ convertFromBIOM <- function(
         # Transposing feature_data and make it df object
         feature_data <- as.data.frame(feature_data)
         # Add column that includes all the data
-        feature_data[["taxonomy_unparsed"]] <- apply(feature_data, 1, paste0, collapse = ";")
+        merged_col <- apply(feature_data, 1, paste0, collapse = ";")
+        feature_data <- cbind(feature_data, merged_col)
         # Add correct colnames
         colnames(feature_data) <- c(colnames, "taxonomy_unparsed")
     }
@@ -195,27 +198,29 @@ convertFromBIOM <- function(
     # that the taxonomy is not parsed. Try to parse it.
     if( ncol(feature_data) == 1 ){
         colnames(feature_data) <- "taxonomy_unparsed"
-        tax_tab <- .parse_taxonomy(feature_data, column_name = colnames(feature_data))
+        tax_tab <- .parse_taxonomy(
+            feature_data, column_name = colnames(feature_data))
         feature_data <- cbind(tax_tab, feature_data)
         feature_data <- as.data.frame(feature_data)
     }
     
-    # Clean feature_data from possible character artifacts if specified
+    # Clean feature_data from possible character artifacts if specified.
     if( artifact.rm ){
         feature_data <- .detect_taxa_artifacts_and_clean(feature_data, ...)
     }
-    
-    # Replace taxonomy ranks with ranks found based on prefixes
-    if( rank.from.prefix && all(
-        unlist(lapply(colnames(feature_data),
-                        function(x) !x %in% TAXONOMY_RANKS)))){
+    # Replace taxonomy ranks with ranks found based on prefixes. Test first
+    # if columns are already ranks. If they are, do not change them.
+    cols_not_already_ranks <- lapply(
+        colnames(feature_data), function(x) !x %in% TAXONOMY_RANKS) |>
+        unlist() |> all()
+    if( rank.from.prefix && cols_not_already_ranks ){
         # Find ranks
-        ranks <- lapply(colnames(feature_data),
-                        .replace_colnames_based_on_prefix, x=feature_data)
+        ranks <- lapply(
+            colnames(feature_data), .replace_colnames_based_on_prefix,
+            x = feature_data)
         # Replace old ranks with found ranks
         colnames(feature_data) <- unlist(ranks)
     }
-    
     # Adjust row and colnames
     rownames(counts) <- rownames(feature_data) <- biomformat::rownames(x)
     colnames(counts) <- rownames(sample_data) <- biomformat::colnames(x)
@@ -225,27 +230,24 @@ convertFromBIOM <- function(
     feature_data <- DataFrame(feature_data)
     # Convert into list
     assays <- SimpleList(counts = counts)
-    
     # Create TreeSE
     tse <- TreeSummarizedExperiment(
         assays = assays,
         colData = sample_data,
         rowData = feature_data)
-    
     # Set ranks based on rowData columns if user has specified to do so
     temp <- .set_ranks_based_on_rowdata(tse, ...)
-    
     # Remove prefixes if specified and rowData includes info
     if(prefix.rm && ncol(rowData(tse)) > 0){
-        rowData(tse) <- .remove_prefixes_from_taxa(rowData(tse), ...)
+        rowData(tse) <- .remove_prefixes_from_taxa(rd, ...)
     }
-    
     return(tse)
 }
 
 #' @rdname importBIOM
 #' 
-#' @param x \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' @param x
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' 
 #' @param assay.type \code{Character scaler}. The name of assay.
 #' (Default: \code{"counts"})
@@ -280,7 +282,7 @@ setMethod(
         feature_tab,
         prefixes = paste0(
             "(", paste0(.taxonomy_rank_prefixes, collapse = "|"), ")__"),
-        only.taxa.col = TRUE, ...){
+        only.taxa.col = TRUE, ignore.col = "taxonomy_unparsed", ...){
     #
     if( !.is_a_bool(only.taxa.col) ){
         stop("'only.taxa.col' must be TRUE or FALSE.", call. = FALSE)
@@ -289,17 +291,22 @@ setMethod(
     if( !.is_a_string(prefixes) ){
         stop("'prefixes' must be a single character value.", call. = FALSE)
     }
+    #
+    if( !(is.character(ignore.col) || is.null(ignore.col)) ){
+        stop("'ignore.col' must be a character value or NULL.", call. = FALSE)
+    }
+    #
     # Subset by taking only taxonomy info if user want to remove the pattern 
     # only from those. (Might be too restricting, e.g., if taxonomy columns are 
     # not detected in previous steps. That is way the default is FALSE)
+    ind <- rep(TRUE, ncol(feature_tab))
     if( only.taxa.col ){
         ind <- tolower(colnames(feature_tab)) %in% TAXONOMY_RANKS
-        temp <- feature_tab[, ind, drop = FALSE]
-    } else{
-        ind <- rep(TRUE, ncol(feature_tab))
-        temp <- feature_tab
     }
-    
+    # Also remove those columns that are specified to ignore (by default the
+    # column that has unparsed data)
+    ind <- ind & !colnames(feature_tab) %in% ignore.col
+    temp <- feature_tab[, ind, drop = FALSE]
     # If there are columns left for removing the pattern
     if( ncol(temp) > 0 ){
         # Remove patterns
@@ -321,7 +328,7 @@ setMethod(
 # rank that is fed to function.
 .replace_colnames_based_on_prefix <- function(colname, x){
     # Get column
-    col = x[ , colname]
+    col <- x[ , colname]
     # List prefixes
     all_ranks <- .taxonomy_rank_prefixes
     prefixes <- paste0("^", all_ranks, "__")
@@ -340,35 +347,53 @@ setMethod(
 }
 
 # Detect and clean non wanted characters from Taxonomy data if needed.
-.detect_taxa_artifacts_and_clean <- function(x, pattern = "auto", ...) {
+.detect_taxa_artifacts_and_clean <- function(
+        x, pattern = "auto", ignore.col = "taxonomy_unparsed", ...) {
     #
     if( !.is_non_empty_character(pattern) ){
         stop("'pattern' must be a single character value.", call. = FALSE)
     }
     #
-    row_names <- rownames(x)
-    # Remove artifacts
-    if( pattern == "auto" ){
-        .require_package("stringr")
-        # Remove all but these characters
-        pattern <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
-        x <- lapply(x, function(col){
-            # Take all specified characters as a matrix where each column is a 
-            # character
-            temp <- stringr::str_extract_all(col, pattern = pattern, simplify = TRUE)
-            # Collapse matrix to strings
-            temp <- apply(temp, 1, paste, collapse = "")
-            # Now NAs are converted into characters. Convert them back
-            temp[ temp == "NA" ] <- NA
-            # Convert also empty strings to NA
-            temp[ temp == "" ] <- NA
-            return(temp)
-        })
-    } else{
-        # Remove pattern specified by user
-        x <- lapply(x, gsub, pattern = pattern, replacement = "")
+    if( !(is.character(ignore.col) || is.null(ignore.col)) ){
+        stop("'ignore.col' must be a character value or NULL.", call. = FALSE)
     }
+    #
+    # Store rownames because they are lost during modifications
+    row_names <- rownames(x)
+    # Get those columns that are not modified
+    not_mod <- x[ , colnames(x) %in% ignore.col, drop = FALSE]
+    # Subset the data being modified so that it includes only those that user
+    # wants to modify
+    x <- x[ , !colnames(x) %in% ignore.col, drop = FALSE]
+    # If there are still columns to clean after subsetting
+    if( ncol(x) > 0 ){
+        # Remove artifacts
+        if( pattern == "auto" ){
+            .require_package("stringr")
+            # Remove all but these characters
+            pattern <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
+            x <- lapply(x, function(col){
+                # Take all specified characters as a matrix where each column
+                # is a character
+                temp <- stringr::str_extract_all(
+                    col, pattern = pattern, simplify = TRUE)
+                # Collapse matrix to strings
+                temp <- apply(temp, 1, paste, collapse = "")
+                # Now NAs are converted into characters. Convert them back
+                temp[ temp == "NA" ] <- NA
+                # Convert also empty strings to NA
+                temp[ temp == "" ] <- NA
+                return(temp)
+            })
+        } else{
+            # Remove pattern specified by user
+            x <- lapply(x, gsub, pattern = pattern, replacement = "")
+        }
+    }
+    # Ensure that the data is data.frame
     x <- as.data.frame(x)
+    # Combine modified and non-modified data
+    x <- cbind(x, not_mod)
     # Add rownames because they are dropped while removing artifacts
     rownames(x) <- row_names
     return(x)

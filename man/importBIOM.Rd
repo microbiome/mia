@@ -5,7 +5,8 @@
 \alias{convertFromBIOM}
 \alias{convertToBIOM}
 \alias{convertToBIOM,SummarizedExperiment-method}
-\title{Convert a \code{TreeSummarizedExperiment} object to/from \sQuote{BIOM} results}
+\title{Convert a \code{TreeSummarizedExperiment} object to/from \sQuote{BIOM}
+results}
 \usage{
 importBIOM(file, ...)
 
@@ -33,8 +34,8 @@ convertToBIOM(x, assay.type = "counts", ...)
 
 \item{prefix.rm}{\code{Logical scalar}. Should
 taxonomic prefixes be removed? The prefixes is removed only from detected
-taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
-(Default: \code{FALSE})}
+taxa columns meaning that \code{rank.from.prefix} should be enabled in the
+most cases. (Default: \code{FALSE})}
 
 \item{removeTaxaPrefixes}{Deprecated. Use \code{prefix.rm} instead.}
 
@@ -69,7 +70,8 @@ objects, and
 objects to phyloseq objects.
 }
 \details{
-\code{convertFromBIOM} coerces a \code{\link[biomformat:biom-class]{biom}} object to a
+\code{convertFromBIOM} coerces a \code{\link[biomformat:biom-class]{biom}}
+object to a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.
 
