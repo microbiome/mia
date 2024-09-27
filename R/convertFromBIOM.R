@@ -239,7 +239,7 @@ convertFromBIOM <- function(
     temp <- .set_ranks_based_on_rowdata(tse, ...)
     # Remove prefixes if specified and rowData includes info
     if(prefix.rm && ncol(rowData(tse)) > 0){
-        rowData(tse) <- .remove_prefixes_from_taxa(rd, ...)
+        rowData(tse) <- .remove_prefixes_from_taxa(rowData(tse), ...)
     }
     return(tse)
 }
