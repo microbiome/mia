@@ -540,7 +540,8 @@
 # This function sets taxonomy ranks based on rowData of TreeSE. With this,
 # user can automatically set ranks based on imported data.
 .set_ranks_based_on_rowdata <- function(
-        tse, set.ranks = FALSE, verbose = TRUE, ...){
+        tse, set.ranks = FALSE, verbose = TRUE,
+        ignore.col = "taxonomy_unparsed", ...){
     #
     if( !.is_a_bool(set.ranks) ){
         stop("'set.ranks' must be TRUE or FALSE.", call. = FALSE)
@@ -550,28 +551,38 @@
         stop("'verbose' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    # If user do not want to set ranks
-    if( !set.ranks ){
-        return(NULL)
+    if( !(is.character(ignore.col) || is.null(ignore.col)) ){
+        stop("'ignore.col' must be a character value or NULL.", call. = FALSE)
     }
+    #
     # Get ranks from rowData
-    ranks <- colnames(rowData(tse))
+    rd <- rowData(tse)
+    # Remove those columns that are ignored. By default, the column
+    # containing unparsed taxonomy.
+    rd <- rd[ , !colnames(rd) %in% ignore.col, drop = FALSE]
     # Ranks must be character columns
-    is_char <- lapply(rowData(tse), function(x) is.character(x) || is.factor(x))
+    is_char <- lapply(
+        rd, function(x) is.character(x) || is.factor(x))
     is_char <- unlist(is_char)
-    ranks <- ranks[ is_char ]
-    # rowData is empty, cannot set ranks
-    if( length(ranks) == 0 ){
+    rd <- rd[ , is_char, drop = FALSE]
+    # If user wants to set ranks and there are ranks after filtering out
+    # those columns that are not characters.
+    if( set.ranks && ncol(rd) > 0L ){
+        # Finally, set ranks and give message
+        ranks <- colnames(rd)
+        temp <- setTaxonomyRanks(ranks)
+        if( verbose ){
+            message(
+                "TAXONOMY_RANKS set to: '",
+                paste0(ranks, collapse = "', '"), "'")
+        }
+    }
+    # If user wanted to set ranks but there were no suitable columns in rowData,
+    # give warning
+    if( set.ranks && ncol(rd) == 0L ){
         warning(
             "Ranks cannot be set. rowData(x) does not include columns ",
             "specifying character values.", call. = FALSE)
-        return(NULL)
-    }
-    # Finally, set ranks and give message
-    temp <- setTaxonomyRanks(ranks)
-    if( verbose ){
-        message(
-            "TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
     }
     return(NULL)
 }
