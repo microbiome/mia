@@ -9,15 +9,23 @@
 \alias{unsplitOn,list-method}
 \alias{unsplitOn,SimpleList-method}
 \alias{unsplitOn,SingleCellExperiment-method}
-\title{Split \code{TreeSummarizedExperiment} column-wise or row-wise based on grouping variable}
+\title{Split \code{TreeSummarizedExperiment} column-wise or row-wise based on
+grouping variable}
 \usage{
 splitOn(x, ...)
 
-\S4method{splitOn}{SummarizedExperiment}(x, f = NULL, ...)
+\S4method{splitOn}{SummarizedExperiment}(x, group = NULL, ...)
 
-\S4method{splitOn}{SingleCellExperiment}(x, f = NULL, ...)
+\S4method{splitOn}{SingleCellExperiment}(x, group = NULL, ...)
 
-\S4method{splitOn}{TreeSummarizedExperiment}(x, f = NULL, update.tree = update_rowTree, update_rowTree = FALSE, ...)
+\S4method{splitOn}{TreeSummarizedExperiment}(
+  x,
+  group = f,
+  f = NULL,
+  update.tree = update_rowTree,
+  update_rowTree = FALSE,
+  ...
+)
 
 unsplitOn(x, ...)
 
@@ -42,16 +50,21 @@ unsplitOn(x, ...)
 See \code{\link[=agglomerate-methods]{agglomerateByVariable}} for more
 details.
 \itemize{
-\item \code{use.names}: \code{Logical scalar}. Specifies whether to name elements of
+\item \code{use.names}: \code{Logical scalar}. Specifies whether to name
+elements of
 list by their group names. (Default: \code{TRUE})
 }}
 
-\item{f}{\code{Character vector}. Specifies the grouping variable
-from \code{rowData} or \code{colData} or a \code{factor} or \code{vector}
-with the same length as one of the dimensions. If \code{f} matches with both
-dimensions, \code{by} must be specified.
-Split by cols is not encouraged, since this is not compatible with
-storing the results in \code{altExps}. (Default: \code{NULL})}
+\item{group}{\code{Character scalar}, \code{character vector} or
+\code{factor vector}. A column name from \code{rowData(x)} or
+\code{colData(x)} or alternatively a vector specifying how the merging is
+performed. If vector, the value must be the same length as
+\code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
+merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
+returned unchanged. If \code{group} matches with both dimensions,
+\code{by} must be specified. (Default: \code{NULL})}
+
+\item{f}{Deprecated. Use \code{group} instead.}
 
 \item{update.tree}{\code{Logical scalar}. Should
 \code{rowTree()} also be merged? (Default: \code{FALSE})}
@@ -71,7 +84,8 @@ breaks the link between the data used to calculate the reduced dims.
 \item{keep_reducedDims}{Deprecated. Use \code{keep.dimred} instead.}
 }
 \value{
-For \code{splitOn}: \code{SummarizedExperiment} objects in a \code{SimpleList}.
+For \code{splitOn}: \code{SummarizedExperiment} objects in a
+\code{SimpleList}.
 
 For \code{unsplitOn}: \code{x}, with \code{rowData} and \code{assay}
 data replaced by the unsplit data. \code{colData} of x is kept as well
@@ -79,7 +93,8 @@ and any existing \code{rowTree} is dropped as well, since existing
 \code{rowLinks} are not valid anymore.
 }
 \description{
-Split \code{TreeSummarizedExperiment} column-wise or row-wise based on grouping variable
+Split \code{TreeSummarizedExperiment} column-wise or row-wise based on
+grouping variable
 }
 \details{
 \code{splitOn} split data based on grouping variable. Splitting can be done
@@ -91,7 +106,7 @@ group.
 data(GlobalPatterns)
 tse <- GlobalPatterns
 # Split data based on SampleType. 
-se_list <- splitOn(tse, f = "SampleType")
+se_list <- splitOn(tse, group = "SampleType")
 
 # List of SE objects is returned. 
 se_list
@@ -102,17 +117,18 @@ colData(tse)$group <- sample(1:3, ncol(tse), replace = TRUE)
 
 # Split based on rows
 # Each element is named based on their group name. If you don't want to name
-# elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
-# you must use `by`.
-se_list <- splitOn(tse, f = "group", use.names = FALSE, by = 1)
+# elements, use use_name = FALSE. Since "group" can be found from rowdata and
+# colData you must use `by`.
+se_list <- splitOn(tse, group = "group", use.names = FALSE, by = 1)
 
-# When column names are shared between elements, you can store the list to altExps
+# When column names are shared between elements, you can store the list to
+# altExps
 altExps(tse) <- se_list
 
 altExps(tse)
 
 # If you want to split on columns and update rowTree, you can do
-se_list <- splitOn(tse, f = colData(tse)$group, update.tree = TRUE)
+se_list <- splitOn(tse, group = colData(tse)$group, update.tree = TRUE)
 
 # If you want to combine groups back together, you can use unsplitBy
 unsplitOn(se_list)
