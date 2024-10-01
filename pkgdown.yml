@@ -1,6 +1,6 @@
-pandoc: '3.3'
+pandoc: '3.4'
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   mia: mia.html
-last_built: 2024-09-27T07:51Z
+last_built: 2024-10-01T06:15Z
