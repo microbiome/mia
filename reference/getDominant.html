@@ -46,7 +46,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get dominant taxa</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/badges/R/getDominant.R" class="external-link"><code>R/getDominant.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/getDominant.R" class="external-link"><code>R/getDominant.R</code></a></small>
     <div class="hidden name"><code>getDominant.Rd</code></div>
     </div>
 
@@ -61,6 +61,7 @@ object.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  group <span class="op">=</span> <span class="va">rank</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  other.name <span class="op">=</span> <span class="st">"Other"</span>,</span>
 <span>  n <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -73,6 +74,7 @@ object.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  group <span class="op">=</span> <span class="va">rank</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  other.name <span class="op">=</span> <span class="st">"Other"</span>,</span>
 <span>  n <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -110,24 +112,32 @@ calculation. (Default: <code>"counts"</code>)</p></dd>
 <dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
+<dt id="arg-group">group<a class="anchor" aria-label="anchor" href="#arg-group"></a></dt>
+<dd><p><code>Character scalar</code>. Defines a group. Must be one of the
+columns from <code>rowData(x)</code>. (Default: <code>NULL</code>)</p></dd>
+
+
 <dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
-<dd><p><code>Character scalar</code>. Defines a taxonomic rank. Must be a value of
-<code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
+<dd><p>Deprecated. Use <code>group</code> instead.</p></dd>
 
 
 <dt id="arg-other-name">other.name<a class="anchor" aria-label="anchor" href="#arg-other-name"></a></dt>
 <dd><p><code>Character scalar</code>. A name for features that are not
-included in n the most frequent dominant features in the data. (Default: <code>"Other"</code>)</p></dd>
+included in n the most frequent dominant features in the data.
+(Default: <code>"Other"</code>)</p></dd>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p><code>Numeric scalar</code>. The number of features that are the most frequent
-dominant features. Default is NULL, which defaults that each sample is assigned
+<dd><p><code>Numeric scalar</code>. The number of features that are the most
+frequent
+dominant features. Default is NULL, which defaults that each sample is
+assigned
 a dominant taxon. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-complete">complete<a class="anchor" aria-label="anchor" href="#arg-complete"></a></dt>
-<dd><p><code>Logical scalar</code>. A value to manage multiple dominant taxa for a sample.
+<dd><p><code>Logical scalar</code>. A value to manage multiple dominant
+taxa for a sample.
 Default for getDominant is TRUE to include all equally dominant taxa
 for each sample. complete = FALSE samples one taxa for the samples that have
 multiple.
@@ -143,7 +153,8 @@ list that includes all dominant taxa for each sample into colData.</p></dd>
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
 <dd><p><code>Character scalar</code>. A name for the column of the
-<code>colData</code> where results will be stored. (Default: <code>"dominant_taxa"</code>)</p></dd>
+<code>colData</code> where results will be stored.
+(Default: <code>"dominant_taxa"</code>)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -159,14 +170,14 @@ with additional column in <code><a href="https://rdrr.io/pkg/SummarizedExperimen
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object, and stores the information in the <code>colData</code>. It is a wrapper for
 <code>getDominant</code>.</p>
-<p>With <code>rank</code> parameter, it is possible to agglomerate taxa based on
-taxonomic ranks. E.g. if 'Genus' rank is used, all abundances of same Genus
-are added together, and those families are returned.
-See <code><a href="agglomerate-methods.html">agglomerateByRank()</a></code> for additional arguments to deal with
-missing values or special characters.
-If the <code>rank</code> is not specifying a taxonomy rank from
-<code>taxonomyRanks(x)</code>, the function
-agglomerates rows with <code><a href="agglomerate-methods.html">agglomerateByVariable()</a></code>.</p>
+<p>With <code>group</code> parameter, it is possible to agglomerate rows based on
+groups. If the value is one of the columns in <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code>,
+<code><a href="agglomerate-methods.html">agglomerateByRank()</a></code> is applied. Otherwise,
+<code><a href="agglomerate-methods.html">agglomerateByVariable()</a></code> is utilized.
+E.g. if 'Genus' rank is used, all abundances of same Genus
+are added together, and agglomerated features are returned.
+See corresponding functions for additional arguments to deal with
+missing values or special characters.</p>
     </div>
 
     <div id="ref-examples">
@@ -175,10 +186,10 @@ agglomerates rows with <code><a href="agglomerate-methods.html">agglomerateByVar
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Finds the dominant taxa.</span></span></span>
-<span class="r-in"><span><span class="va">sim.dom</span> <span class="op">&lt;-</span> <span class="fu">getDominant</span><span class="op">(</span><span class="va">x</span>, rank<span class="op">=</span><span class="st">"Genus"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sim.dom</span> <span class="op">&lt;-</span> <span class="fu">getDominant</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="st">"Genus"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add information to colData</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">addDominant</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="st">"Genus"</span>, name<span class="op">=</span><span class="st">"dominant_genera"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">addDominant</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="st">"Genus"</span>, name <span class="op">=</span><span class="st">"dominant_genera"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 26 rows and 8 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         X.SampleID   Primer Final_Barcode Barcode_truncated_plus_T</span>
