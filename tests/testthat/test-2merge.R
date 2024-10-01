@@ -100,32 +100,29 @@ test_that("merge", {
     # (trees are pruned differently --> first instance represent specific branch)
     tse <- tse[c(rownames(esophagus), rownames(GlobalPatterns)), ]
     # Only esophagus has these groups --> the merge should contain only esophagus
-    merged  <- agglomerateByVariable(tse, by = "rows",
-                                    f = rowData(tse)$group2, update.tree=TRUE)
-    merged2 <- agglomerateByVariable(tse, by = "rows",
-                                    f = rowData(tse)$group2, update.tree = FALSE)
-    merged3 <- agglomerateByVariable(esophagus, by = "rows",
-                                    f = rowData(esophagus)$group2,
-                                    update.tree = TRUE)
-    merged4 <- .merge_features(tse, merge.by = rowData(tse)$group2,
-                                    update.tree = TRUE)
-    merged5 <- agglomerateByVariable(tse, by = "rows",
-                                    f = rowData(tse)$group2, update.tree = TRUE)
+    merged  <- agglomerateByVariable(
+        tse, by = "rows", group = rowData(tse)$group2, update.tree=TRUE)
+    merged2 <- agglomerateByVariable(
+        tse, by = "rows", group = rowData(tse)$group2, update.tree = FALSE)
+    merged3 <- agglomerateByVariable(
+        esophagus, by = "rows", group = rowData(esophagus)$group2, update.tree = TRUE)
+    merged4 <- .merge_features(tse, merge.by = rowData(tse)$group2, update.tree = TRUE)
+    merged5 <- agglomerateByVariable(
+        tse, by = "rows", group = rowData(tse)$group2, update.tree = TRUE)
     expect_equal( rowLinks(merged)$whichTree,
                   rowLinks(merged2)$whichTree )
     expect_false( all(rowLinks(merged) == rowLinks(merged2)) )
     expect_equal(rowTree(tse), rowTree(merged2))
     expect_equal(merged4, merged5)
-    expect_equal(agglomerateByVariable(tse, by = "rows",
-                                        f=rowData(tse)$group2),
-                agglomerateByVariable(tse, by = "rows",
-                                        f=rowData(tse)$group2))
+    expect_equal(
+        agglomerateByVariable(tse, by = "rows", group = rowData(tse)$group2),
+        agglomerateByVariable(tse, by = "rows", group = rowData(tse)$group2))
 
     # Both datasets have group variable
-    merged <- agglomerateByVariable(tse, by = "rows",
-                                    f = rowData(tse)$group, update.tree = TRUE)
-    merged2 <- agglomerateByVariable(tse, by = "rows",
-                                    f = rowData(tse)$group, update.tree = FALSE)
+    merged <- agglomerateByVariable(
+        tse, by = "rows", group = rowData(tse)$group, update.tree = TRUE)
+    merged2 <- agglomerateByVariable(
+        tse, by = "rows", group = rowData(tse)$group, update.tree = FALSE)
     expect_equal( rowLinks(merged)$whichTree,
                   rowLinks(merged2)$whichTree )
     expect_false( all(rowLinks(merged) == rowLinks(merged2)) )
