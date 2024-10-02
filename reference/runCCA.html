@@ -45,7 +45,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Canonical Correspondence Analysis and Redundancy Analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/badges/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_rda/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
     <div class="hidden name"><code>runCCA.Rd</code></div>
     </div>
 
@@ -63,51 +63,51 @@ in a <code>SummarizedExperiment</code>.</p>
 <span></span>
 <span><span class="fu">addRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for class 'ANY'</span></span>
-<span><span class="fu">getCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">getCCA</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  <span class="va">formula</span>,</span>
-<span>  <span class="va">variables</span>,</span>
-<span>  test.signif <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
-<span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  scores <span class="op">=</span> <span class="st">"wa"</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu">calculateCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
-<span><span class="fu">addCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">variables</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"CCA"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">runCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'ANY'</span></span>
-<span><span class="fu">getRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">getCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">data</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">getRDA</span><span class="op">(</span></span>
+<span><span class="fu">getCCA</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  <span class="va">formula</span>,</span>
-<span>  <span class="va">variables</span>,</span>
+<span>  formula <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  col.var <span class="op">=</span> <span class="va">variables</span>,</span>
+<span>  variables <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  test.signif <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
 <span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  scores <span class="op">=</span> <span class="st">"wa"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
+<span><span class="fu">addCCA</span><span class="op">(</span><span class="va">x</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"CCA"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">calculateRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
-<span><span class="fu">addRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">variables</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"RDA"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">runRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">runRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
+<span><span class="fu">getRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">data</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
+<span><span class="fu">getRDA</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  formula <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  col.var <span class="op">=</span> <span class="va">variables</span>,</span>
+<span>  variables <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  test.signif <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
+<span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
+<span><span class="fu">addRDA</span><span class="op">(</span><span class="va">x</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"RDA"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -121,7 +121,8 @@ in a <code>SummarizedExperiment</code>.</p>
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional arguments passed to vegan::cca or vegan::dbrda and
 other internal functions.</p><ul><li><p><code>method</code> a dissimilarity measure to be applied in dbRDA and
-possible following homogeneity test. (By default: <code>method="euclidean"</code>)</p></li>
+possible following homogeneity test. (By default:
+<code>method="euclidean"</code>)</p></li>
 <li><p><code>scale</code>: <code>Logical scalar</code>. Should the expression values be
 standardized? <code>scale</code> is disabled when using <code>*RDA</code> functions.
 Please scale before performing RDA. (Default: <code>TRUE</code>)</p></li>
@@ -136,33 +137,39 @@ the significance test used to analyse <code><a href="https://rdrr.io/pkg/vegan/m
 Options include 'permanova' (<code><a href="https://rdrr.io/pkg/vegan/man/anova.cca.html" class="external-link">vegan::permutest</a></code>), 'anova'
 (<code><a href="https://rdrr.io/r/stats/anova.html" class="external-link">stats::anova</a></code>) and 'tukeyhsd' (<code><a href="https://rdrr.io/r/stats/TukeyHSD.html" class="external-link">stats::TukeyHSD</a></code>).
 (By default: <code>homogeneity.test="permanova"</code>)</p></li>
-<li><p><code>permutations</code> a numeric value specifying the number of permutations
-for significance testing in <code><a href="https://rdrr.io/pkg/vegan/man/anova.cca.html" class="external-link">vegan::anova.cca</a></code>. (By default: <code>permutations=999</code>)</p></li>
+<li><p><code>permutations</code> a numeric value specifying the number of
+permutations for significance testing in <code><a href="https://rdrr.io/pkg/vegan/man/anova.cca.html" class="external-link">vegan::anova.cca</a></code>.
+(By default: <code>permutations=999</code>)</p></li>
 </ul></dd>
 
 
 <dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a></dt>
-<dd><p>If <code>x</code> is a
+<dd><p><code>formula</code>. If <code>x</code> is a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 a formula can be supplied. Based on the right-hand side of the given formula
-<code>colData</code> is subset to <code>variables</code>.</p>
-<p><code>variables</code> and <code>formula</code> can be missing, which turns the CCA analysis
-into a CA analysis and dbRDA into PCoA/MDS.</p></dd>
+<code>colData</code> is subset to <code>col.var</code>.</p>
+<p><code>col.var</code> and <code>formula</code> can be missing, which turns the CCA
+analysis into a CA analysis and dbRDA into PCoA/MDS.</p></dd>
+
+
+<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+<dd><p><code>data.frame</code> or coarcible to one. The covariance table
+including covariates defined by <code>formula</code>.</p></dd>
+
+
+<dt id="arg-col-var">col.var<a class="anchor" aria-label="anchor" href="#arg-col-var"></a></dt>
+<dd><p><code>Character scalar</code>. When <code>x</code> is a
+<code>SummarizedExperiment</code>,<code>col.var</code> can be used to specify variables
+from <code>colData</code>.</p></dd>
 
 
 <dt id="arg-variables">variables<a class="anchor" aria-label="anchor" href="#arg-variables"></a></dt>
-<dd><p><code>Character scalar</code>. When <code>x</code> is a <code>SummarizedExperiment</code>,
-<code>variables</code> can be used to specify variables from <code>colData</code>.</p>
-<p>When <code>x</code> is a matrix, <code>variables</code> is a <code>data.frame</code> or
-an object coercible to one containing the variables to use.</p>
-<p>All variables are used. Please subset, if you want to consider only some of them.
-<code>variables</code> and <code>formula</code> can be missing, which turns the CCA analysis
-into a CA analysis and dbRDA into PCoA/MDS.</p></dd>
+<dd><p>Deprecated. Use <code>"col.var"</code> instead.</p></dd>
 
 
 <dt id="arg-test-signif">test.signif<a class="anchor" aria-label="anchor" href="#arg-test-signif"></a></dt>
-<dd><p><code>Logical scalar</code>. Should the PERMANOVA and analysis of
-multivariate homogeneity of group dispersions be performed.
+<dd><p><code>Logical scalar</code>. Should the PERMANOVA and analysis
+of multivariate homogeneity of group dispersions be performed.
 (Default: <code>TRUE</code>)</p></dd>
 
 
@@ -179,16 +186,9 @@ calculation. (Default: <code>"counts"</code>)</p></dd>
 <dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
-<dt id="arg-scores">scores<a class="anchor" aria-label="anchor" href="#arg-scores"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies scores to be returned. Must be
-'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
-v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-'u' ((weighted) orthonormal site scores). (Default: <code>'wa'</code>)</p></dd>
-
-
 <dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
-<dd><p><code>Character scalar</code> or <code>integer scalar</code>. Specifies an alternative experiment
-containing the input data.</p></dd>
+<dd><p><code>Character scalar</code> or <code>integer scalar</code>. Specifies an
+alternative experiment containing the input data.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
@@ -199,29 +199,28 @@ containing the input data.</p></dd>
     <div id="value">
     <h2>Value</h2>
     <p>For <code>getCCA</code> a matrix with samples as rows and CCA dimensions as
-columns. Attributes include calculated <code>cca</code>/<code>rda</code> object and
-significance analysis results.</p>
+columns. Attributes include output from <code><a href="https://rdrr.io/pkg/vegan/man/scores.html" class="external-link">scores</a></code>,
+eigenvalues, the <code>cca</code>/<code>rda</code> object and significance analysis
+results.</p>
 <p>For <code>addCCA</code> a modified <code>x</code> with the results stored in
 <code>reducedDim</code> as the given <code>name</code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>For <code>run*</code> a
-<code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></code>
-or a derived object.</p>
-<p>*CCA functions utilize <code>vegan:cca</code> and *RDA functions <code>vegan:dbRDA</code>.
-By default, dbRDA is done with euclidean distances, which is equivalent to
-RDA.</p>
+    <p>*CCA functions utilize <code>vegan:cca</code> and *RDA functions
+<code>vegan:dbRDA</code>. By default, dbRDA is done with euclidean distances, which
+is equivalent to RDA. <code>col.var</code> and <code>formula</code> can be missing,
+which turns the CCA analysis into a CA analysis and dbRDA into PCoA/MDS.</p>
 <p>Significance tests are done with <code>vegan:anova.cca</code> (PERMANOVA). Group
 dispersion, i.e., homogeneity within groups is analyzed with
-<code>vegan:betadisper</code> (multivariate homogeneity of groups dispersions (variances))
-and statistical significance of homogeneity is tested with a test
-specified by <code>homogeneity.test</code> parameter.</p>
+<code>vegan:betadisper</code> (multivariate homogeneity of groups dispersions
+(variances)) and statistical significance of homogeneity is tested with a
+test specified by <code>homogeneity.test</code> parameter.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p>For more details on the actual implementation see <code><a href="https://rdrr.io/pkg/vegan/man/cca.html" class="external-link">cca</a></code>
-and <code><a href="https://rdrr.io/pkg/vegan/man/dbrda.html" class="external-link">dbrda</a></code></p></div>
+    <div class="dont-index"><p>For more details on the actual implementation see
+<code><a href="https://rdrr.io/pkg/vegan/man/cca.html" class="external-link">cca</a></code> and <code><a href="https://rdrr.io/pkg/vegan/man/dbrda.html" class="external-link">dbrda</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -237,14 +236,16 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/dbrda.html" class="external-lin
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">enterotype</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Perform CCA and exclude any sample with missing ClinicalStatus</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addCCA</span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>              formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
-<span class="r-in"><span>              na.action <span class="op">=</span> <span class="va">na.exclude</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Certain samples are removed from the result because they did not include sufficient metadata.</span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addCCA</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
+<span class="r-in"><span>    na.action <span class="op">=</span> <span class="va">na.exclude</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot CCA</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/miaViz/man/plotCCA.html" class="external-link">plotCCA</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"CCA"</span>,</span></span>
-<span class="r-in"><span>        colour_by <span class="op">=</span> <span class="st">"ClinicalStatus"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/miaViz/man/plotCCA.html" class="external-link">plotCCA</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"CCA"</span>, colour_by <span class="op">=</span> <span class="st">"ClinicalStatus"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>RDA/CCA object was not found. Please compute RDA/CCA by using addCCA or getCCA.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>RDA/CCA object was not found. Please compute RDA/CCA by using addCCA or getCCA.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
 <span class="r-plt img"><img src="runCCA-1.png" alt="" width="700" height="433"></span>
@@ -267,34 +268,37 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/dbrda.html" class="external-lin
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Specify dissimilarity measure</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>              formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
-<span class="r-in"><span>              assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
-<span class="r-in"><span>              method <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
-<span class="r-in"><span>              name <span class="op">=</span> <span class="st">"RDA_bray"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
+<span class="r-in"><span>    method <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
+<span class="r-in"><span>    name <span class="op">=</span> <span class="st">"RDA_bray"</span>,</span></span>
+<span class="r-in"><span>    na.action <span class="op">=</span> <span class="va">na.exclude</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># To scale values when using *RDA functions, use</span></span></span>
 <span class="r-in"><span><span class="co"># transformAssay(MARGIN = "features", ...) </span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>                      method <span class="op">=</span> <span class="st">"standardize"</span>,</span></span>
-<span class="r-in"><span>                      MARGIN <span class="op">=</span> <span class="st">"features"</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>result contains NaN, perhaps due to impossible mathematical</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>                  operation</span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"standardize"</span>, MARGIN <span class="op">=</span> <span class="st">"features"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Data might include taxa that do not vary. Remove those because after</span></span></span>
 <span class="r-in"><span><span class="co"># z-transform their value is NA</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">tse</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"standardize"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate RDA</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>              formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
-<span class="r-in"><span>              assay.type <span class="op">=</span> <span class="st">"standardize"</span>,</span></span>
-<span class="r-in"><span>              name <span class="op">=</span> <span class="st">"rda_scaled"</span>,</span></span>
-<span class="r-in"><span>              na.action <span class="op">=</span> <span class="va">na.omit</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span></span></span>
+<span class="r-in"><span>   <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>   formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
+<span class="r-in"><span>   assay.type <span class="op">=</span> <span class="st">"standardize"</span>,</span></span>
+<span class="r-in"><span>   name <span class="op">=</span> <span class="st">"rda_scaled"</span>,</span></span>
+<span class="r-in"><span>   na.action <span class="op">=</span> <span class="va">na.omit</span></span></span>
+<span class="r-in"><span>   <span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Certain samples are removed from the result because they did not include sufficient metadata.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot RDA</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/miaViz/man/plotCCA.html" class="external-link">plotRDA</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rda_scaled"</span>,</span></span>
-<span class="r-in"><span>        colour_by <span class="op">=</span> <span class="st">"ClinicalStatus"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/miaViz/man/plotCCA.html" class="external-link">plotRDA</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rda_scaled"</span>, colour_by <span class="op">=</span> <span class="st">"ClinicalStatus"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>RDA/CCA object was not found. Please compute RDA/CCA by using addCCA or getCCA.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>RDA/CCA object was not found. Please compute RDA/CCA by using addCCA or getCCA.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
 <span class="r-plt img"><img src="runCCA-2.png" alt="" width="700" height="433"></span>
@@ -302,16 +306,20 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/dbrda.html" class="external-lin
 <span class="r-in"><span><span class="co"># A common choice along with PERMANOVA is ANOVA when statistical significance</span></span></span>
 <span class="r-in"><span><span class="co"># of homogeneity of groups is analysed. Moreover, full significance test</span></span></span>
 <span class="r-in"><span><span class="co"># results can be returned.</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>              formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
-<span class="r-in"><span>              homogeneity.test <span class="op">=</span> <span class="st">"anova"</span>,</span></span>
-<span class="r-in"><span>              full <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
+<span class="r-in"><span>    homogeneity.test <span class="op">=</span> <span class="st">"anova"</span>,</span></span>
+<span class="r-in"><span>    full <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Example showing how to pass extra parameters, such as 'permutations',</span></span></span>
 <span class="r-in"><span><span class="co"># to anova.cca</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>              formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
-<span class="r-in"><span>              permutations <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
+<span class="r-in"><span>    permutations <span class="op">=</span> <span class="fl">500</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
