@@ -18,7 +18,7 @@ grouping variable"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aja
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.44</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.45</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ grouping variable"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aja
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Split <code>TreeSummarizedExperiment</code> column-wise or row-wise based on grouping variable</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_rda/R/splitOn.R" class="external-link"><code>R/splitOn.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_spliton/R/splitOn.R" class="external-link"><code>R/splitOn.R</code></a></small>
     <div class="hidden name"><code>splitOn.Rd</code></div>
     </div>
 
@@ -58,10 +58,10 @@ grouping variable</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="va">f</span>, f <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
-<span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="va">f</span>, f <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">splitOn</span><span class="op">(</span></span>
@@ -222,7 +222,7 @@ group.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rownames(19216): 549322 522457 ... 200359 271582</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(8): Kingdom Phylum ... Species group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 SV1 ... Even1 Even3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(8): X.SampleID Primer ... Description group</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
