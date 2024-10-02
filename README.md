@@ -8,7 +8,7 @@
 [![Bioc-age](http://bioconductor.org/shields/years-in-bioc/mia.svg)](https://bioconductor.org/packages/release/bioc/html/mia.html#since)
 [![Codecov test
 coverage](https://codecov.io/gh/microbiome/mia/branch/devel/graph/badge.svg)](https://codecov.io/gh/microbiome/mia?branch=devel)
-[![Dependencies](http://bioconductor.org//shields/dependencies/release/mia.svg)](https://bioconductor.org/packages/release/bioc/html/mia.html#since)
+[![Dependencies](http://bioconductor.org//shields/dependencies/release/mia.svg)](https://bioconductor.org/packages/release/bioc/html/mia.html)
 
 <!-- badges: end -->
 
