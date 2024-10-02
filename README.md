@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 
-[![Platforms](http://bioconductor.org/shields/availability/release/miaViz.svg)](https://bioconductor.org/packages/release/bioc/html/miaViz.html#archives)
+[![Platforms](http://bioconductor.org/shields/availability/release/mia.svg)](https://bioconductor.org/packages/release/bioc/html/mia.html)
 [![rworkflows](https://github.com/microbiome/mia/actions/workflows/rworkflows.yml/badge.svg?branch=devel)](https://github.com/microbiome/mia/actions)
 [![Bioc-release](http://bioconductor.org/shields/build/release/bioc/mia.svg)](http://bioconductor.org/packages/release/bioc/html/mia.html)
 [![Bioc-age](http://bioconductor.org/shields/years-in-bioc/mia.svg)](https://bioconductor.org/packages/release/bioc/html/mia.html#since)
