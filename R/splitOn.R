@@ -101,11 +101,11 @@ setGeneric("splitOn",
 # This function collects group (grouping variable), by, and 
 # use.names and returns them as a list.
 .norm_args_for_split_by <- function(
-        x, f, by = MARGIN, MARGIN = NULL, use.names = use_names,
+        x, group = f, f, by = MARGIN, MARGIN = NULL, use.names = use_names,
         use_names = TRUE, ...){
     # input check
-    # Check f
-    if(is.null(f)){
+    # Check group
+    if(is.null(group)){
         stop("'group' must either be a single non-empty character value or",
             " vector coercible to factor alongside the one of the dimensions ",
             "of 'x'", call. = FALSE)
@@ -114,33 +114,33 @@ setGeneric("splitOn",
     if( !is.null(by) ){
         by <- .check_MARGIN(by)
     }
-    # If f is a vector containing levels
-    if( !.is_non_empty_string(f) ){
+    # If group is a vector containing levels
+    if( !.is_non_empty_string(group) ){
         # Convert into factors
-        f <- factor(f, unique(f))
+        group <- factor(group, unique(group))
         # Check if the length of group matches with one of the dimensions
-        if(!length(f) %in% dim(x)){
+        if(!length(group) %in% dim(x)){
             stop("'group' must either be a single non-empty character value or",
                 " vector coercible to factor alongside the on of the ",
                 "dimensions of 'x'.",
                 call. = FALSE)
         # If it matches with both dimensions, give error if by is not specified
-        } else if( is.null(by) && all(length(f) == dim(x)) ){
+        } else if( is.null(by) && all(length(group) == dim(x)) ){
             stop("The length of 'group' matches with nrow and ncol. ",
                 "Please specify 'by'.", call. = FALSE)
-        # If by is specified but it does not match with length of f
-        } else if( !is.null(by) && (length(f) !=  dim(x)[[by]]) ){
+        # If by is specified but it does not match with length of group
+        } else if( !is.null(by) && (length(group) !=  dim(x)[[by]]) ){
             stop("'group' does not match with ", 
                 ifelse(by==1, "nrow", "ncol"), ". Please check 'by'.",
                 call. = FALSE)
-        # IF f matches with nrow
-        } else if(length(f) == dim(x)[[1]] && is.null(by)  ){
+        # IF group matches with nrow
+        } else if(length(group) == dim(x)[[1]] && is.null(by)  ){
             by <- 1L
-        # If f matches with ncol
+        # If group matches with ncol
         } else if( is.null(by) ){
             by <- 2L
         }
-    # Else if f is a character specifying column from rowData or colData  
+    # Else if group is a character specifying column from rowData or colData  
     } else {
         # If by is specified
         if( !is.null(by) ){
@@ -153,7 +153,7 @@ setGeneric("splitOn",
                                 "1" = retrieveFeatureInfo,
                                 "2" = retrieveCellInfo)
             # Try to get information
-            tmp <- try({dim_FUN(x, f, search = dim_name)},
+            tmp <- try({dim_FUN(x, group, search = dim_name)},
                         silent = TRUE)
             # Give error if it cannot be found
             if(is(tmp,"try-error")){
@@ -162,14 +162,14 @@ setGeneric("splitOn",
                     dim_name, ".", call. = FALSE)
             }
             # Get values
-            f <- tmp$value
+            group <- tmp$value
         # Else if by is not specified
         } else{
             # Try to get information from rowData
-            tmp_row <- try({retrieveFeatureInfo(x, f, search = "rowData")},
+            tmp_row <- try({retrieveFeatureInfo(x, group, search = "rowData")},
                             silent = TRUE)
             # Try to get information from colData
-            tmp_col <- try({retrieveCellInfo(x, f, search = "colData")}, 
+            tmp_col <- try({retrieveCellInfo(x, group, search = "colData")}, 
                             silent = TRUE)
             
             # If it was not found 
@@ -187,20 +187,20 @@ setGeneric("splitOn",
             } else if( !is(tmp_row, "try-error") ){
                 by <- 1L
                 # Get values
-                f <- tmp_row$value
+                group <- tmp_row$value
                 # Otherwise, it was found from colData
             } else{
                 by <- 2L
                 # Get values
-                f <- tmp_col$value
+                group <- tmp_col$value
             }
         }
         # Convert values into factors
-        f <- factor(f, unique(f))
+        group <- factor(group, unique(group))
         
         # If there are NAs, add NA as level
-        if( any(is.na(f)) ){
-            f <- addNA(f)
+        if( any(is.na(group)) ){
+            group <- addNA(group)
         }
     }
     # Check use.names
@@ -209,7 +209,7 @@ setGeneric("splitOn",
             call. = FALSE)
     }
     # Create a list from arguments
-    list(f = f,
+    list(f = group,
         by = by,
         use.names = use.names)
 }
@@ -250,9 +250,9 @@ setGeneric("splitOn",
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "SummarizedExperiment"),
-    function(x, group = NULL,  ...){
+    function(x, group = f, f = NULL,  ...){
         # Get arguments
-        args <- .norm_args_for_split_by(x, f = group, ...)
+        args <- .norm_args_for_split_by(x, group = group, ...)
         # Split data
         .split_on(x, args, ...)
     }
@@ -261,9 +261,9 @@ setMethod("splitOn", signature = c(x = "SummarizedExperiment"),
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
-    function(x, group = NULL, ...){
+    function(x, group = f, f = NULL, ...){
         # Get arguments
-        args <- .norm_args_for_split_by(x, f = group, ...)
+        args <- .norm_args_for_split_by(x, group = group, ...)
         # Should alternative experiment be removed? --> yes
         args[["altexp.rm"]] <- TRUE
         # Split data

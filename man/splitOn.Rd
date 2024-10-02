@@ -14,9 +14,9 @@ grouping variable}
 \usage{
 splitOn(x, ...)
 
-\S4method{splitOn}{SummarizedExperiment}(x, group = NULL, ...)
+\S4method{splitOn}{SummarizedExperiment}(x, group = f, f = NULL, ...)
 
-\S4method{splitOn}{SingleCellExperiment}(x, group = NULL, ...)
+\S4method{splitOn}{SingleCellExperiment}(x, group = f, f = NULL, ...)
 
 \S4method{splitOn}{TreeSummarizedExperiment}(
   x,
