@@ -31,11 +31,12 @@ agglomerateByVariable(x, ...)
   ...
 )
 
-\S4method{agglomerateByVariable}{SummarizedExperiment}(x, by, f, ...)
+\S4method{agglomerateByVariable}{SummarizedExperiment}(x, by, group = f, f, ...)
 
 \S4method{agglomerateByVariable}{TreeSummarizedExperiment}(
   x,
   by,
+  group = f,
   f,
   update.tree = mergeTree,
   mergeTree = FALSE,
@@ -125,10 +126,15 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}
 
-\item{f}{A factor for merging. Must be the same length as
+\item{group}{\code{Character scalar}, \code{character vector} or
+\code{factor vector}. A column name from \code{rowData(x)} or
+\code{colData(x)} or alternatively a vector specifying how the merging is
+performed. If vector, the value must be the same length as
 \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
-merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
+merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
 returned unchanged.}
+
+\item{f}{Deprecated. Use \code{group} instead.}
 
 \item{update.tree}{\code{Logical scalar}. Should
 \code{rowTree()} also be merged? (Default: \code{FALSE})}
@@ -210,9 +216,12 @@ retained as defined by \code{archetype}.
 agglomerated, i.e. summed up. If the assay contains values other than counts
 or absolute values, this can lead to meaningless values being produced.
 
-Agglomeration sums up the values of assays at the specified taxonomic level. With
-certain assays, e.g. those that include binary or negative values, this summing
-can produce meaningless values. In those cases, consider performing agglomeration
+Agglomeration sums up the values of assays at the specified taxonomic level.
+With
+certain assays, e.g. those that include binary or negative values, this
+summing
+can produce meaningless values. In those cases, consider performing
+agglomeration
 first, and then applying the transformation afterwards.
 
 \code{agglomerateByVariable} works similarly to

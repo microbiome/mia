@@ -1,13 +1,18 @@
-#' Split \code{TreeSummarizedExperiment} column-wise or row-wise based on grouping variable
+#' Split \code{TreeSummarizedExperiment} column-wise or row-wise based on
+#' grouping variable
 #'
 #' @inheritParams agglomerate-methods
 #'
-#' @param f \code{Character vector}. Specifies the grouping variable
-#'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 
-#'   with the same length as one of the dimensions. If \code{f} matches with both
-#'   dimensions, \code{by} must be specified. 
-#'   Split by cols is not encouraged, since this is not compatible with 
-#'   storing the results in \code{altExps}. (Default: \code{NULL})
+#' @param group \code{Character scalar}, \code{character vector} or
+#' \code{factor vector}. A column name from \code{rowData(x)} or
+#' \code{colData(x)} or alternatively a vector specifying how the merging is
+#' performed. If vector, the value must be the same length as
+#' \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
+#' merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
+#' returned unchanged. If \code{group} matches with both dimensions,
+#' \code{by} must be specified. (Default: \code{NULL})
+#'   
+#' @param f Deprecated. Use \code{group} instead.
 #' 
 #' @param update_rowTree Deprecated. Use \code{update.tree } instead.
 #'   
@@ -21,7 +26,8 @@
 #'   See \code{\link[=agglomerate-methods]{agglomerateByVariable}} for more 
 #'   details.
 #'   \itemize{
-#'     \item \code{use.names}: \code{Logical scalar}. Specifies whether to name elements of
+#'     \item \code{use.names}: \code{Logical scalar}. Specifies whether to name
+#'     elements of
 #'     list by their group names. (Default: \code{TRUE})
 #'   }
 #'
@@ -33,7 +39,8 @@
 #' group.
 #'
 #' @return
-#' For \code{splitOn}: \code{SummarizedExperiment} objects in a \code{SimpleList}.
+#' For \code{splitOn}: \code{SummarizedExperiment} objects in a
+#' \code{SimpleList}.
 #'
 #' For \code{unsplitOn}: \code{x}, with \code{rowData} and \code{assay}
 #' data replaced by the unsplit data. \code{colData} of x is kept as well
@@ -55,7 +62,7 @@
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' # Split data based on SampleType. 
-#' se_list <- splitOn(tse, f = "SampleType")
+#' se_list <- splitOn(tse, group = "SampleType")
 #' 
 #' # List of SE objects is returned. 
 #' se_list
@@ -66,17 +73,18 @@
 #' 
 #' # Split based on rows
 #' # Each element is named based on their group name. If you don't want to name
-#' # elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
-#' # you must use `by`.
-#' se_list <- splitOn(tse, f = "group", use.names = FALSE, by = 1)
+#' # elements, use use_name = FALSE. Since "group" can be found from rowdata and
+#' # colData you must use `by`.
+#' se_list <- splitOn(tse, group = "group", use.names = FALSE, by = 1)
 #' 
-#' # When column names are shared between elements, you can store the list to altExps
+#' # When column names are shared between elements, you can store the list to
+#' # altExps
 #' altExps(tse) <- se_list
 #' 
 #' altExps(tse)
 #' 
 #' # If you want to split on columns and update rowTree, you can do
-#' se_list <- splitOn(tse, f = colData(tse)$group, update.tree = TRUE)
+#' se_list <- splitOn(tse, group = colData(tse)$group, update.tree = TRUE)
 #' 
 #' # If you want to combine groups back together, you can use unsplitBy
 #' unsplitOn(se_list)
@@ -90,7 +98,7 @@ setGeneric("splitOn",
             function(x, ...)
                 standardGeneric("splitOn"))
 
-# This function collects f (grouping variable), by, and 
+# This function collects group (grouping variable), by, and 
 # use.names and returns them as a list.
 .norm_args_for_split_by <- function(
         x, f, by = MARGIN, MARGIN = NULL, use.names = use_names,
@@ -98,9 +106,9 @@ setGeneric("splitOn",
     # input check
     # Check f
     if(is.null(f)){
-        stop("'f' must either be a single non-empty character value or",
-            " vector coercible to factor alongside the one of the dimensions of 'x'",
-            call. = FALSE)
+        stop("'group' must either be a single non-empty character value or",
+            " vector coercible to factor alongside the one of the dimensions ",
+            "of 'x'", call. = FALSE)
     }
     # Check by
     if( !is.null(by) ){
@@ -110,19 +118,19 @@ setGeneric("splitOn",
     if( !.is_non_empty_string(f) ){
         # Convert into factors
         f <- factor(f, unique(f))
-        # Check if the length of f matches with one of the dimensions
+        # Check if the length of group matches with one of the dimensions
         if(!length(f) %in% dim(x)){
-            stop("'f' must either be a single non-empty character value or",
+            stop("'group' must either be a single non-empty character value or",
                 " vector coercible to factor alongside the on of the ",
                 "dimensions of 'x'.",
                 call. = FALSE)
         # If it matches with both dimensions, give error if by is not specified
         } else if( is.null(by) && all(length(f) == dim(x)) ){
-            stop("The length of 'f' matches with nrow and ncol. ",
+            stop("The length of 'group' matches with nrow and ncol. ",
                 "Please specify 'by'.", call. = FALSE)
         # If by is specified but it does not match with length of f
         } else if( !is.null(by) && (length(f) !=  dim(x)[[by]]) ){
-            stop("'f' does not match with ", 
+            stop("'group' does not match with ", 
                 ifelse(by==1, "nrow", "ncol"), ". Please check 'by'.",
                 call. = FALSE)
         # IF f matches with nrow
@@ -149,9 +157,9 @@ setGeneric("splitOn",
                         silent = TRUE)
             # Give error if it cannot be found
             if(is(tmp,"try-error")){
-                stop("'f' is not found. ",
-                    "Please check that 'f' specifies a column from ", dim_name, ".", 
-                    call. = FALSE)
+                stop("'group' is not found. ",
+                    "Please check that 'group' specifies a column from ",
+                    dim_name, ".", call. = FALSE)
             }
             # Get values
             f <- tmp$value
@@ -166,13 +174,13 @@ setGeneric("splitOn",
             
             # If it was not found 
             if( is(tmp_row, "try-error") && is(tmp_col, "try-error") ){
-                stop("'f' is not found. ",
-                    "Please check that 'f' specifies a column from ",
+                stop("'group' is not found. ",
+                    "Please check that 'group' specifies a column from ",
                     "rowData or colData.", 
                     call. = FALSE)
-                # If f was found from both
+                # If group was found from both
             } else if( !is(tmp_row, "try-error") && !is(tmp_col, "try-error") ){
-                stop("'f' can be found from both rowData and colData. ",
+                stop("'group' can be found from both rowData and colData. ",
                     "Please specify 'by'.",
                     call. = FALSE)
                 # If it was found from rowData
@@ -242,9 +250,9 @@ setGeneric("splitOn",
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "SummarizedExperiment"),
-    function(x, f = NULL,  ...){
+    function(x, group = NULL,  ...){
         # Get arguments
-        args <- .norm_args_for_split_by(x, f = f, ...)
+        args <- .norm_args_for_split_by(x, f = group, ...)
         # Split data
         .split_on(x, args, ...)
     }
@@ -253,9 +261,9 @@ setMethod("splitOn", signature = c(x = "SummarizedExperiment"),
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
-    function(x, f = NULL, ...){
+    function(x, group = NULL, ...){
         # Get arguments
-        args <- .norm_args_for_split_by(x, f = f, ...)
+        args <- .norm_args_for_split_by(x, f = group, ...)
         # Should alternative experiment be removed? --> yes
         args[["altexp.rm"]] <- TRUE
         # Split data
@@ -266,8 +274,8 @@ setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, f = NULL, update.tree = update_rowTree, update_rowTree = FALSE,
-            ...){
+    function(x, group = f, f = NULL, update.tree = update_rowTree,
+            update_rowTree = FALSE, ...){
         # Input check
         # Check update.tree
         if( !.is_a_bool(update.tree) ){
@@ -307,7 +315,8 @@ setGeneric("unsplitOn",
                 standardGeneric("unsplitOn"))
 
 # Perform the unsplit
-.list_unsplit_on <- function(ses, update.tree = FALSE, by = MARGIN, MARGIN = NULL, ...){
+.list_unsplit_on <- function(
+        ses, update.tree = FALSE, by = MARGIN, MARGIN = NULL, ...){
     # Input check
     is_check <- vapply(ses,is,logical(1L),"SummarizedExperiment")
     if(!all(is_check)){
@@ -350,7 +359,8 @@ setGeneric("unsplitOn",
         # Get correct dimension, it is opposite of by
         dim <- ifelse(by == 1, 2, 1)
         if( length(unique(dims[dim,])) != 1L ){
-            stop("The dimensions are not equal across all elements.", call. = FALSE)
+            stop("The dimensions are not equal across all elements.",
+                call. = FALSE)
         }
     }
     
