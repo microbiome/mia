@@ -5,7 +5,7 @@
 [![Platforms](http://bioconductor.org/shields/availability/release/mia.svg)](https://bioconductor.org/packages/release/bioc/html/mia.html)
 [![rworkflows](https://github.com/microbiome/mia/actions/workflows/rworkflows.yml/badge.svg?branch=devel)](https://github.com/microbiome/mia/actions)
 [![Bioc-release](http://bioconductor.org/shields/build/release/bioc/mia.svg)](http://bioconductor.org/packages/release/bioc/html/mia.html)
-[![Bioc-age](http://bioconductor.org/shields/years-in-bioc/mia.svg)](https://bioconductor.org/packages/release/bioc/html/mia.html#since)
+[![Bioc-age](http://bioconductor.org/shields/years-in-bioc/mia.svg)](https://bioconductor.org/packages/release/bioc/html/mia.html)
 [![Codecov test
 coverage](https://codecov.io/gh/microbiome/mia/branch/devel/graph/badge.svg)](https://codecov.io/gh/microbiome/mia?branch=devel)
 [![Dependencies](http://bioconductor.org//shields/dependencies/release/mia.svg)](https://bioconductor.org/packages/release/bioc/html/mia.html)
