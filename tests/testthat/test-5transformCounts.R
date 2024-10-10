@@ -44,7 +44,7 @@ test_that("transformAssay", {
 
         ########################### LOG10 ######################################
         # Calculates log10 transformation with pseudocount. Should be equal.
-	    tmp <- mia::transformAssay(tse, method = "log10", pseudocount = 1)
+        tmp <- mia::transformAssay(tse, method = "log10", pseudocount = 1)
 
         ass <- assays(tmp)$log10
         expect_equal(as.matrix(ass),
@@ -52,7 +52,7 @@ test_that("transformAssay", {
                          log10(x+1)
                      }), check.attributes = FALSE)
 
-        # Tests transformAssay(MARGIN = "features"), , calculates log10 transformation with pseudocount.
+        # Tests transformAssay(MARGIN = "features"), calculates log10 transformation with pseudocount.
         # Should be equal.
         tmp <- mia::transformAssay(tse, MARGIN = "features", method = "log10", pseudocount = 1)
         ass <- assays(tmp)$log10
@@ -70,20 +70,68 @@ test_that("transformAssay", {
                          log2(x+5)
                      }), check.attributes = FALSE)
         
+        ############################ CSS ######################################
+        # Define counts matrix for the css and css_fast testing
+        counts_matrix <- as.matrix(assay(tse, "counts"))
+        
+        ## Test that the percentile parameter works
+        # Apply CSS normalization using transformAssay
+        tmp <- mia::transformAssay(tse, method = "css", assay.type = "counts")
+        ass <- assays(tmp)$css
+        
+        # Apply CSS normalization using transformAssay setting the percentile arg
+        tmp_2 <- mia::transformAssay(tse, method = "css", percentile = 0.65)
+        ass_2 <- assays(tmp_2)$css
+        
+        # Assert assays are different
+        expect_false(identical(ass, ass_2))
+        
+        
+        ## Test the scaling parameter
+        # Manually compute CSS normalization using default scaling
+        css_default <- .calc_css(counts_matrix)
+        
+        # Manually compute CSS normalization using scaling of 2000
+        css_2000 <- .calc_css(counts_matrix, scaling = 2000)
+        
+        # Ensure the scaling changes the results
+        expect_false(identical(css_default, css_2000))
+
+        
+        ## Test the .calc_scaling_factors method directly
+        # Calculate scaling factors in 2 scenarios
+        scaling_factors_default <- .calc_scaling_factors(as.matrix(assay(tse, "counts")), 0.5)
+        scaling_factors_75 <- .calc_scaling_factors(as.matrix(assay(tse, "counts")), 0.75)
+        
+        # Ensure scaling factors are calculated correctly for different percentiles
+        expect_true(length(scaling_factors_default) == ncol(assay(tse, "counts")))
+        expect_true(length(scaling_factors_75) == ncol(assay(tse, "counts")))
+        expect_false(identical(scaling_factors_default, scaling_factors_75))
+        
+        
+        ## Check internal CSS equals CSS from metagenomeSeq package
+        ## First create subset matrix from metagenomeSeq calc
+        normalized_counts <- matrix(c(1.358696, 317.846608, 4.076087, 1.474926), nrow = 2, ncol = 2, byrow = TRUE)
+        rownames(normalized_counts) <- c(46043, 512519)
+        colnames(normalized_counts) <- c("NP3", "NP5")
+        
+        # Test for equality of your CSS normalization with metagenomeSeq normalization
+        expect_true(all.equal(as.matrix(ass[19:20, 17:18]), normalized_counts, check.attributes = FALSE))
+
         ########################## PA ##########################################
         # Calculates pa transformation. Should be equal.
         actual <- assay(mia::transformAssay(tse, method = "pa"),"pa")
         expect_equal(as.vector(actual),
                      as.integer(as.matrix(assay(tse, "counts")) > 0),
                      check.attributes = FALSE)
-        expect_equal(type(actual),"double")
+        expect_equal(typeof(actual),"double")
         expect_true(all(actual == 1 | actual == 0))
         
-        # Tests transformAssay(MARGIN = "features"), , calculates pa transformation. Should be equal.
+        # Tests transformAssay(MARGIN = "features"), calculates pa transformation. Should be equal.
         actual <- assay(mia::transformAssay(tse, MARGIN = "features", method = "pa"),"pa")
         expect_equal(as.vector(actual),
                      as.integer(t(as.matrix(t(assay(tse, "counts"))) > 0)))
-        expect_equal(type(actual),"double")
+        expect_equal(typeof(actual),"double")
         expect_true(all(actual == 1 | actual == 0))
         
         ######################## HELLINGER #####################################
@@ -113,11 +161,11 @@ test_that("transformAssay", {
         mat_comp <- apply(as.matrix(relative), 2, FUN=function(x){
             log(x) - mean(log(x))
         })
-        # Remove atributes since vegan adds additional ones
+        # Remove attributes since vegan adds additional ones
         attributes(mat) <- NULL
         attributes(mat_comp) <- NULL
         # Compare
-        expect_equal( mat, mat_comp )
+        expect_equal(mat, mat_comp)
 
         # Tests rclr
         # Calc RCLRs
@@ -174,7 +222,7 @@ test_that("transformAssay", {
         test2 <- test2[-1, ]
         
         # Expect that under 10 values are unequal. Values have only one decimal.
-        expect_true( sum(round(test, 1) != round(test2, 1), na.rm = TRUE) < 10 )
+        expect_true(sum(round(test, 1) != round(test2, 1), na.rm = TRUE) < 10)
 
         tse <- transformAssay(tse, method = "relabundance")
         # Expect error when counts and zeroes
@@ -194,8 +242,10 @@ test_that("transformAssay", {
         test3 <- tmp
         assay(test3, "na_values") <- assay(test3, "counts")
         assay(test3, "na_values")[4, 5] <- NA
+        expect_warning(
         actual <- transformAssay(test3, method = "relabundance",
                                 assay.type = "na_values", pseudocount = TRUE)
+        )
         value <- attr(assay(actual, "relabundance"), "parameters")[["pseudocount"]]
         ref <- assay(actual, "na_values")
         ref <- min(ref[ref > 0], na.rm = TRUE)/2
@@ -206,7 +256,7 @@ test_that("transformAssay", {
         tse <- transformAssay(tse, assay.type = "pseudo", method = "clr", name = "clr1")
         tse <- transformAssay(
             tse, assay.type = "counts", method = "clr", name = "clr2",
-            pseudocount =1)
+            pseudocount = 1)
         expect_equal(assay(tse, "clr1"), assay(tse, "clr2"),
                      check.attributes = FALSE)
         # Same with relabundance
@@ -255,9 +305,9 @@ test_that("transformAssay", {
         # Calculates rank
         tse_rank <- transformAssay(tse, method = "rank")
         # Expect that assay contains count and rank table
-        expect_true( all(c("counts", "rank") %in% assayNames(tse_rank)) )
+        expect_true(all(c("counts", "rank") %in% assayNames(tse_rank)))
 
-        for( i in c(1:10) ){
+        for(i in c(1:10)){
             # Gets columns from 'rank' table
             ranks <- assay(tse_rank, "rank")[,i]
             # Gets columns from 'counts' table, and calculates ranks
@@ -316,7 +366,7 @@ test_that("transformAssay", {
                                     pseudocount = 4, reference = 2)	    
 
         # The TreeSE version maintains the row & col number including the reference
-	      coms <- intersect(rownames(actual), rownames(compare))
+	    coms <- intersect(rownames(actual), rownames(compare))
         expect_equal(actual[coms, -2], compare[coms, -2], check.attributes = FALSE)
 
         # hellinger
@@ -336,7 +386,26 @@ test_that("transformAssay", {
                                     MARGIN = 2)
         compare <- t(compare)
         expect_equal(na.omit(actual), na.omit(compare))
-
+        
+        # Check that transformation is applied to altExps
+        expect_error(transformAssay(tse, altexp = "Phylum"))
+        expect_error(transformAssay(tse, altexp = 1))
+        expect_error(transformAssay(tse, altexp = TRUE))
+        expect_error(transformAssay(tse, altexp = NA))
+        expect_error(transformAssay(tse, altexp = c(1, 2, 3)))
+        expect_error(transformAssay(tse, altexp = character(0)))
+        expect_warning(
+        tse <- agglomerateByRanks(tse)
+        )
+        ref <- transformAssay(altExp(tse, "Phylum"), method = "relabundance")
+        test <- transformAssay(tse, altexp = "Phylum", method = "relabundance")
+        test <- altExp(test, "Phylum")
+        expect_equal(assay(test, "relabundance"), assay(ref, "relabundance"))
+        #
+        ref <- transformAssay(altExp(tse, "Genus"), method = "relabundance")
+        test <- transformAssay(tse, method = "relabundance")
+        test <- altExp(test, "Genus")
+        expect_equal(assay(test, "relabundance"), assay(ref, "relabundance"))
     }
 
     # TSE object
@@ -346,4 +415,3 @@ test_that("transformAssay", {
     assay(tse,"counts") <- DelayedArray(assay(tse,"counts"))
     testTransformations(tse)
 })
-

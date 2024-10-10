@@ -3,13 +3,16 @@
 \name{transformAssay}
 \alias{transformAssay}
 \alias{transformAssay,SummarizedExperiment-method}
+\alias{transformAssay,SingleCellExperiment-method}
 \title{Transform assay}
 \usage{
-transformAssay(
+transformAssay(x, ...)
+
+\S4method{transformAssay}{SummarizedExperiment}(
   x,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+  method = c("alr", "chi.square", "clr", "css", "frequency", "hellinger", "log", "log10",
     "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
     "standardize", "total", "z"),
   MARGIN = "samples",
@@ -18,21 +21,30 @@ transformAssay(
   ...
 )
 
-\S4method{transformAssay}{SummarizedExperiment}(
-  x,
-  assay.type = "counts",
-  assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
-    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
-    "standardize", "total", "z"),
-  MARGIN = "samples",
-  name = method,
-  pseudocount = FALSE,
-  ...
-)
+\S4method{transformAssay}{SingleCellExperiment}(x, altexp = altExpNames(x), ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
+
+\item{...}{additional arguments passed e.g. on to \code{vegan:decostand}.
+\itemize{
+\item \code{reference}: \code{Character scalar}. Used to
+to fill reference sample's column in returned assay when calculating alr.
+(Default: \code{NA})
+\item \code{ref_vals} Deprecated. Use \code{reference} instead.
+\item \code{percentile}: \code{Numeric scalar} or \code{NULL} (css). Used
+to set the  percentile value that calculates the scaling factors in the css
+normalization. If \code{NULL}, percentile is estimated from the data by
+calculating the portion of samples that exceed the \code{threshold}.
+(Default: \code{NULL})
+\item \code{scaling}: \code{Numeric scalar}. Adjusts the normalization
+scale  by dividing the calculated scaling factors, effectively changing
+the magnitude of the normalized counts. (Default: \code{1000}).
+\item \code{threshold}: \code{Numeric scalar}. Specifies relative
+difference threshold and determines the first point where the relative
+change in  differences between consecutive quantiles exceeds this
+threshold. (Default: \code{0.1}).
+}}
 
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
@@ -57,17 +69,15 @@ When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.
 (Default: \code{FALSE}).}
 
-\item{...}{additional arguments passed on to \code{vegan:decostand}:
-\itemize{
-\item \code{reference}: \code{Character scalar}. use to
-to fill reference sample's column in returned assay when calculating alr.
-(Default: \code{NA})
-\item \code{ref_vals} Deprecated. Use \code{reference} instead.
-}}
+\item{altexp}{\code{Character vector} or \code{NULL}. Specifies the names
+of alternative experiments to which the transformation should also be
+applied. If \code{NULL}, the transformation is only applied to the main
+experiment. (Default: \code{altExpNames(x)}).}
 }
 \value{
 \code{transformAssay} returns the input object \code{x}, with a new
-transformed abundance table named \code{name} added in the \code{\link{assay}}.
+transformed abundance table named \code{name} added in the
+\code{\link{assay}}.
 }
 \description{
 Variety of transformations for abundance data, stored in \code{assay}.
@@ -86,9 +96,18 @@ The available transformation methods include:
 
 \itemize{
 
-\item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log', 'normalize', 'pa', 'rank', 'rclr'
-'relabundance', 'rrank', 'standardize', 'total': please refer to
+\item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
+'normalize', 'pa', 'rank', 'rclr' relabundance', 'rrank', 'standardize',
+'total': please refer to
 \code{\link[vegan:decostand]{decostand}} for details.
+
+\item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data
+by accounting for differences in library sizes. By default, the function
+determines the normalization percentile for summing and scaling
+counts. If you want to specify the percentile value, good default value
+might be \code{0.5}.The method is inspired by the CSS methods in
+\code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}
+package.
 
 \item 'log10': log10 transformation can be used for reducing the skewness
 of the data.
@@ -105,8 +124,8 @@ where \eqn{x} is a single value of data.
 }
 }
 \examples{
-data(esophagus, package="mia")
-tse <- esophagus
+data(GlobalPatterns)
+tse <- GlobalPatterns
 
 # By specifying 'method', it is possible to apply different transformations, 
 # e.g. compositional transformation.
@@ -116,11 +135,16 @@ tse <- transformAssay(tse, method = "relabundance")
 # Pseudocount can be added by specifying 'pseudocount'.
 
 # Perform CLR with smallest positive value as pseudocount
-tse <- transformAssay(tse, assay.type = "relabundance", method = "clr", 
-                     pseudocount = TRUE
-                     )
+tse <- transformAssay(
+    tse, assay.type = "relabundance", method = "clr", 
+    pseudocount = TRUE
+    )
                       
 head(assay(tse, "clr"))
+
+# Perform CSS normalization.
+tse <- transformAssay(tse, method = "css")
+head(assay(tse, "css"))
 
 # With MARGIN, you can specify the if transformation is done for samples or
 # for features. Here Z-transformation is done feature-wise.
@@ -143,4 +167,18 @@ head(assay(tse, "rank"))
 assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(
     assay(tse, "counts"), ties.method = "average", preserveShape = TRUE)  
 
+# Using altexp parameter. First agglomerate the data and then apply
+# transformation.
+tse <- GlobalPatterns
+tse <- agglomerateByRanks(tse)
+tse <- transformAssay(tse, method = "relabundance")
+# The transformation is applied to all alternative experiments
+altExp(tse, "Species")
+
+}
+\references{
+Paulson, J., Stine, O., Bravo, H. et al. (2013)
+Differential abundance analysis for microbial marker-gene surveys
+\emph{Nature Methods} 10, 1200–1202.
+doi:10.1038/nmeth.2658
 }

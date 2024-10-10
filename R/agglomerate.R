@@ -45,7 +45,8 @@
 #'        \item \code{detection}: The threshold value for determining presence
 #'        or absence. A value in \code{x} must exceed this threshold to be
 #'        considered present.
-#'        \item \code{assay.type}: \code{Character scalar}. Specifies the assay used to
+#'        \item \code{assay.type}: \code{Character scalar}. Specifies the assay
+#'        used to
 #'        calculate prevalence. (Default: \code{"counts"})
 #'        \item \code{prevalence}: Prevalence threshold (in 0 to 1). The
 #'        required prevalence is strictly greater by default. To include the
@@ -56,10 +57,11 @@
 #'        from
 #'        \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
 #'        is returned. (Default: \code{FALSE})
-#'        \item \code{archetype} Of each level of \code{f}, which element should
+#'        \item \code{archetype} Of each level of \code{group}, which element
+#'        should
 #'        be regarded as the archetype and metadata in the columns or rows kept,
 #'        while merging? This can be single integer value or an integer vector
-#'        of the same length as \code{levels(f)}. (Default:
+#'        of the same length as \code{levels(group)}. (Default:
 #'        \code{1L}, which means the first element encountered per
 #'        factor level will be kept)
 #'    }
@@ -78,10 +80,15 @@
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}.
 #'
-#' @param f A factor for merging. Must be the same length as
-#'   \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
-#'   merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
-#'   returned unchanged.
+#' @param group \code{Character scalar}, \code{character vector} or
+#' \code{factor vector}. A column name from \code{rowData(x)} or
+#' \code{colData(x)} or alternatively a vector specifying how the merging is
+#' performed. If vector, the value must be the same length as
+#' \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
+#' merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
+#' returned unchanged.
+#'  
+#' @param f Deprecated. Use \code{group} instead.
 #'
 #' @param update.tree \code{Logical scalar}. Should
 #'   \code{rowTree()} also be merged? (Default: \code{FALSE})
@@ -90,9 +97,12 @@
 #'
 #' @details
 #' 
-#' Agglomeration sums up the values of assays at the specified taxonomic level. With
-#' certain assays, e.g. those that include binary or negative values, this summing
-#' can produce meaningless values. In those cases, consider performing agglomeration
+#' Agglomeration sums up the values of assays at the specified taxonomic level.
+#' With
+#' certain assays, e.g. those that include binary or negative values, this
+#' summing
+#' can produce meaningless values. In those cases, consider performing
+#' agglomeration
 #' first, and then applying the transformation afterwards.
 #'
 #' \code{agglomerateByVariable} works similarly to
@@ -275,7 +285,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 
         # merge taxa
         x <- agglomerateByVariable(
-            x, by = "rows", f = tax_factors, na.rm = TRUE, ...)
+            x, by = "rows", group = tax_factors, na.rm = TRUE, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){
@@ -303,10 +313,10 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @aliases agglomerateByVariable
 #' @export
 setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
-            function(x, by, f, ...){
+            function(x, by, group = f, f, ...){
                 by <- .check_MARGIN(by)
                 FUN <- switch(by, .merge_rows, .merge_cols)
-                x <- FUN(x, f, ...)
+                x <- FUN(x, group, ...)
                 return(x)
             }
 )
@@ -316,13 +326,14 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable",
             signature = c(x = "TreeSummarizedExperiment"),
-            function(x, by, f, update.tree = mergeTree, mergeTree = FALSE, ...){
+            function(x, by, group = f, f, update.tree = mergeTree,
+                    mergeTree = FALSE, ...){
                 # Check by
                 by <- .check_MARGIN(by)
                 # Get function based on by
                 FUN <- switch(by, .merge_rows_TSE, .merge_cols_TSE)
                 # Agglomerate
-                x <- FUN(x, f, update.tree = update.tree, ...)
+                x <- FUN(x, group, update.tree = update.tree, ...)
                 return(x)
             }
 )
@@ -331,7 +342,8 @@ setMethod("agglomerateByVariable",
 #' @importFrom SingleCellExperiment altExp altExp<- altExps<-
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
-    function(x, ..., altexp = NULL, altexp.rm = strip_altexp, strip_altexp = TRUE){
+    function(x, ..., altexp = NULL, altexp.rm = strip_altexp,
+            strip_altexp = TRUE){
         # input check
         if(!.is_a_bool(altexp.rm)){
             stop("'altexp.rm' mus be TRUE or FALSE.", call. = FALSE)
@@ -352,8 +364,8 @@ setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
 setMethod(
     "agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
     function(
-        x, ..., update.tree = agglomerateTree, agglomerate.tree = agglomerateTree, 
-        agglomerateTree = FALSE){
+        x, ..., update.tree = agglomerateTree,
+        agglomerate.tree = agglomerateTree, agglomerateTree = FALSE){
                 # input check
                 if(!.is_a_bool(update.tree)){
                     stop("'update.tree' must be TRUE or FALSE.",
@@ -388,7 +400,7 @@ setMethod(
 
 # This function removes empty rank columns from rowdata. (Those that include
 # only NA values)
-.remove_NA_cols_from_rowdata <- function(x, empty.ranks.rm = remove_empty_ranks, 
+.remove_NA_cols_from_rowdata <- function(x, empty.ranks.rm = remove_empty_ranks,
     remove_empty_ranks = FALSE, ...){
     # Check empty.ranks.rm
     if( !.is_a_bool(empty.ranks.rm) ){

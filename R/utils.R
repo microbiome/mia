@@ -4,9 +4,11 @@
     pkg_version <- utils::packageDescription(pkgname, fields = "Version")
     msg <- paste0(
         "This is ", pkgname, " version ", pkg_version, "\n",
-        "- Online documentation and vignettes: https://microbiome.github.io/", pkgname, "/",
+        "- Online documentation and vignettes: https://microbiome.github.io/",
+        pkgname, "/",
         "\n",
-        "- Online book 'Orchestrating Microbiome Analysis (OMA)': https://microbiome.github.io/OMA/docs/devel/"
+        "- Online book 'Orchestrating Microbiome Analysis (OMA)': ",
+        "https://microbiome.github.io/OMA/docs/devel/"
     )
     packageStartupMessage(msg)
 }
@@ -23,7 +25,7 @@
 .require_package <- function(pkg){
     if(!requireNamespace(pkg, quietly = TRUE)){
     stop("'",pkg,"' package not found. Please install the '",pkg,"' package ",
-         "to use this function.", call. = FALSE)
+        "to use this function.", call. = FALSE)
     }
 }
 
@@ -31,23 +33,23 @@
 # testing
 
 .is_a_bool <- function(x){
-  is.logical(x) && length(x) == 1L && !is.na(x)
+    is.logical(x) && length(x) == 1L && !is.na(x)
 }
 
 .is_non_empty_character <- function(x){
-  is.character(x) && all(nzchar(x))
+    is.character(x) && all(nzchar(x))
 }
 
 .is_non_empty_string <- function(x){
-  .is_non_empty_character(x) && length(x) == 1L
+    .is_non_empty_character(x) && length(x) == 1L
 }
 
 .is_a_string <- function(x){
-  is.character(x) && length(x) == 1L
+    is.character(x) && length(x) == 1L
 }
 
 .is_integer <- function(x){
-  is.numeric(x) && all(x%%1==0)
+    is.numeric(x) && all(x%%1==0)
 }
 
 .is_an_integer <- function(x){
@@ -55,68 +57,72 @@
 }
 
 .are_whole_numbers <- function(x){
-  tol <- 100 * .Machine$double.eps
-  abs(x - round(x)) <= tol && !is.infinite(x)
+    tol <- 100 * .Machine$double.eps
+    abs(x - round(x)) <= tol && !is.infinite(x)
+}
+
+.is_a_numeric <- function(x){
+    is.numeric(x) && length(x) == 1L
 }
 
 .is_numeric_string <- function(x){
-  x <- as.character(x)
-  suppressWarnings({x <- as.numeric(x)})
-  !is.na(x)
+    x <- as.character(x)
+    suppressWarnings({x <- as.numeric(x)})
+    !is.na(x)
 }
 
 .is_function <- function(x){
-  typeof(x) == "closure" && is(x, "function")
+    typeof(x) == "closure" && is(x, "function")
 }
 
 .all_are_existing_files <- function(x){
-  all(file.exists(x))
+    all(file.exists(x))
 }
 
 .get_name_in_parent <- function(x) {
-  .safe_deparse(do.call(substitute, list(substitute(x), parent.frame())))
+    .safe_deparse(do.call(substitute, list(substitute(x), parent.frame())))
 }
 
 .safe_deparse <- function (expr, ...) {
-  paste0(deparse(expr, width.cutoff = 500L, ...), collapse = "")
+    paste0(deparse(expr, width.cutoff = 500L, ...), collapse = "")
 }
 
 ################################################################################
 # checks
 
 #' @importFrom SummarizedExperiment assays
-.check_assay_present <- function(assay.type, x,
-                                 name = .get_name_in_parent(assay.type)){
+.check_assay_present <- function(
+        assay.type, x, name = .get_name_in_parent(assay.type)){
     if(!.is_non_empty_string(assay.type)){
         stop("'",name,"' must be a single non-empty character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if(!(assay.type %in% names(assays(x)))){
         stop("'",name,"' must be a valid name of assays(x)", call. = FALSE)
     }
 }
 
-.check_rowTree_present <- function(tree.name, x,
-                                   name = .get_name_in_parent(tree.name) ){
+.check_rowTree_present <- function(
+        tree.name, x, name = .get_name_in_parent(tree.name) ){
     if( !.is_non_empty_string(tree.name) ){
         stop("'", name, "' must be a single non-empty character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if( !(tree.name %in% names(x@rowTree)) ){
         stop("'", name, "' must specify a tree from 'x@rowTree'.",
-             call. = FALSE)
+            call. = FALSE)
     }
 }
 
-.check_colTree_present <- function(tree.name, x,
-                                   name = .get_name_in_parent(tree.name) ){
+.check_colTree_present <- function(
+        tree.name, x, name = .get_name_in_parent(tree.name) ){
     if( !.is_non_empty_string(tree.name) ){
         stop("'", name, "' must be a single non-empty character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if( !(tree.name %in% names(x@colTree)) ){
         stop("'", name, "' must specify a tree from 'x@colTree'.",
-             call. = FALSE)
+            call. = FALSE)
     }
 }
 
@@ -146,9 +152,9 @@
     if( !is.null(altexp) && !altexp %in% c(
             altExpNames(tse), seq_len(length(altExps(tse)))) ){
         stop(
-          "'", altExpName, "', does not specify an experiment from altExp ",
-          "slot of '", tse_name, "'.", call. = FALSE)
-      }
+            "'", altExpName, "', does not specify an experiment from altExp ",
+            "slot of '", tse_name, "'.", call. = FALSE)
+    }
 }
 
 # Check MARGIN parameters. Should be defining rows or columns.
@@ -353,11 +359,11 @@
     f <- names(old_altexp) %in% names(values)
     if( any(f) ){
         warning(
-          "The following values are already present in `altExps` and will ",
-          "be overwritten: '",
-          paste(names(old_altexp)[f], collapse = "', '"),
-          "'. Consider using the 'name' argument to specify alternative ",
-          "names.", call. = FALSE)
+            "The following values are already present in `altExps` and will ",
+            "be overwritten: '",
+            paste(names(old_altexp)[f], collapse = "', '"),
+            "'. Consider using the 'name' argument to specify alternative ",
+            "names.", call. = FALSE)
     }
     # Keep only unique values
     values <- c( old_altexp[!f], values )
@@ -387,7 +393,7 @@
     }
     if( !identical(rownames(as.matrix(values)), colnames(x)) ){
         stop("Rownames of the matrix should match with colnames(x).",
-             " The result is not added to reducedDims.")
+            " The result is not added to reducedDims.", call. = FALSE)
     }
     # Throw warning if values of reducedDim are overwritten
     if( name %in% names(reducedDims(x)) ){
@@ -406,9 +412,7 @@
 
 # keep dimnames of feature table (assay) consistent with the meta data 
 # of sample (colData) and feature (rowData)
-.set_feature_tab_dimnames <- function(feature_tab, 
-                                      sample_meta, 
-                                      feature_meta) {
+.set_feature_tab_dimnames <- function(feature_tab, sample_meta, feature_meta) {
     if (nrow(sample_meta) > 0 || ncol(sample_meta) > 0) {
         if (ncol(feature_tab) != nrow(sample_meta) 
             || !setequal(colnames(feature_tab), rownames(sample_meta))) {
@@ -436,7 +440,6 @@
             feature_tab <- feature_tab[rownames(feature_meta), , drop = FALSE]
         }
     }
-  
     feature_tab
 }
 
@@ -447,8 +450,8 @@
 #'  between different taxonomic levels, defaults to one compatible with both
 #'  GreenGenes and SILVA `; |;"`.
 #'  
-#' @param col.name a single \code{character} value defining the column of taxa_tab
-#'  that includes taxonomical information.
+#' @param col.name a single \code{character} value defining the column of
+#' taxa_tab that includes taxonomical information.
 #'  
 #' @param prefix.rm {\code{TRUE} or \code{FALSE}: Should 
 #'  taxonomic prefixes be removed? (default: \code{prefix.rm = FALSE})}
@@ -465,14 +468,12 @@
     ############################### Input check ################################
     # Check sep
     if(!.is_non_empty_string(sep)){
-      stop("'sep' must be a single character value.",
-           call. = FALSE)
+        stop("'sep' must be a single character value.", call. = FALSE)
     }
     # Check col.name
     if( !(.is_non_empty_string(col.name) && col.name %in% colnames(taxa_tab)) ){
-      stop("'col.name' must be a single character value defining column that includes",
-           " information about taxonomic levels.",
-           call. = FALSE)
+        stop("'col.name' must be a single character value defining column ",
+            "that includes information about taxonomic levels.", call. = FALSE)
     }
     # Check remove.prefix
     if(!.is_a_bool(remove.prefix)){
@@ -522,12 +523,13 @@
 # internal wrappers for agglomerateByRank/agglomerateByVariable
 .merge_features <- function(x, merge.by, ...) {
     # Check if merge.by parameter belongs to taxonomyRanks
-    if (is.character(merge.by) && length(merge.by) == 1 && merge.by %in% taxonomyRanks(x)) {
-         #Merge using agglomerateByRank
+    if (is.character(merge.by) && length(merge.by) == 1 &&
+        merge.by %in% taxonomyRanks(x)) {
+        # Merge using agglomerateByRank
         x <- agglomerateByRank(x, rank = merge.by, ...)
     } else {
         # Merge using agglomerateByVariable
-        x <- agglomerateByVariable(x, by = "rows", f = merge.by, ...)
+        x <- agglomerateByVariable(x, by = "rows", group = merge.by, ...)
     }
     return(x)
 }
@@ -536,7 +538,8 @@
 # This function sets taxonomy ranks based on rowData of TreeSE. With this,
 # user can automatically set ranks based on imported data.
 .set_ranks_based_on_rowdata <- function(
-        tse, set.ranks = FALSE, verbose = TRUE, ...){
+        tse, set.ranks = FALSE, verbose = TRUE,
+        ignore.col = "taxonomy_unparsed", ...){
     #
     if( !.is_a_bool(set.ranks) ){
         stop("'set.ranks' must be TRUE or FALSE.", call. = FALSE)
@@ -546,28 +549,38 @@
         stop("'verbose' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    # If user do not want to set ranks
-    if( !set.ranks ){
-        return(NULL)
+    if( !(is.character(ignore.col) || is.null(ignore.col)) ){
+        stop("'ignore.col' must be a character value or NULL.", call. = FALSE)
     }
+    #
     # Get ranks from rowData
-    ranks <- colnames(rowData(tse))
+    rd <- rowData(tse)
+    # Remove those columns that are ignored. By default, the column
+    # containing unparsed taxonomy.
+    rd <- rd[ , !colnames(rd) %in% ignore.col, drop = FALSE]
     # Ranks must be character columns
-    is_char <- lapply(rowData(tse), function(x) is.character(x) || is.factor(x))
+    is_char <- lapply(
+        rd, function(x) is.character(x) || is.factor(x))
     is_char <- unlist(is_char)
-    ranks <- ranks[ is_char ]
-    # rowData is empty, cannot set ranks
-    if( length(ranks) == 0 ){
+    rd <- rd[ , is_char, drop = FALSE]
+    # If user wants to set ranks and there are ranks after filtering out
+    # those columns that are not characters.
+    if( set.ranks && ncol(rd) > 0L ){
+        # Finally, set ranks and give message
+        ranks <- colnames(rd)
+        temp <- setTaxonomyRanks(ranks)
+        if( verbose ){
+            message(
+                "TAXONOMY_RANKS set to: '",
+                paste0(ranks, collapse = "', '"), "'")
+        }
+    }
+    # If user wanted to set ranks but there were no suitable columns in rowData,
+    # give warning
+    if( set.ranks && ncol(rd) == 0L ){
         warning(
             "Ranks cannot be set. rowData(x) does not include columns ",
             "specifying character values.", call. = FALSE)
-        return(NULL)
-    }
-    # Finally, set ranks and give message
-    temp <- setTaxonomyRanks(ranks)
-    if( verbose ){
-        message(
-            "TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
     }
     return(NULL)
 }

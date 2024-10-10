@@ -11,6 +11,7 @@ getDominant(
   x,
   assay.type = assay_name,
   assay_name = "counts",
+  group = rank,
   rank = NULL,
   other.name = "Other",
   n = NULL,
@@ -22,6 +23,7 @@ getDominant(
   x,
   assay.type = assay_name,
   assay_name = "counts",
+  group = rank,
   rank = NULL,
   other.name = "Other",
   n = NULL,
@@ -48,17 +50,23 @@ calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a value of
-\code{taxonomyRanks()} function.}
+\item{group}{\code{Character scalar}. Defines a group. Must be one of the
+columns from \code{rowData(x)}. (Default: \code{NULL})}
+
+\item{rank}{Deprecated. Use \code{group} instead.}
 
 \item{other.name}{\code{Character scalar}. A name for features that are not
-included in n the most frequent dominant features in the data. (Default: \code{"Other"})}
+included in n the most frequent dominant features in the data.
+(Default: \code{"Other"})}
 
-\item{n}{\code{Numeric scalar}. The number of features that are the most frequent
-dominant features. Default is NULL, which defaults that each sample is assigned
+\item{n}{\code{Numeric scalar}. The number of features that are the most
+frequent
+dominant features. Default is NULL, which defaults that each sample is
+assigned
 a dominant taxon. (Default: \code{NULL})}
 
-\item{complete}{\code{Logical scalar}. A value to manage multiple dominant taxa for a sample.
+\item{complete}{\code{Logical scalar}. A value to manage multiple dominant
+taxa for a sample.
 Default for getDominant is TRUE to include all equally dominant taxa
 for each sample. complete = FALSE samples one taxa for the samples that have
 multiple.
@@ -70,7 +78,8 @@ list that includes all dominant taxa for each sample into colData.}
 \code{rank} is specified.}
 
 \item{name}{\code{Character scalar}. A name for the column of the
-\code{colData} where results will be stored. (Default: \code{"dominant_taxa"})}
+\code{colData} where results will be stored.
+(Default: \code{"dominant_taxa"})}
 }
 \value{
 \code{getDominant} returns a named character vector \code{x}
@@ -89,23 +98,23 @@ object.
 object, and stores the information in the \code{colData}. It is a wrapper for
 \code{getDominant}.
 
-With \code{rank} parameter, it is possible to agglomerate taxa based on
-taxonomic ranks. E.g. if 'Genus' rank is used, all abundances of same Genus
-are added together, and those families are returned.
-See \code{agglomerateByRank()} for additional arguments to deal with
+With \code{group} parameter, it is possible to agglomerate rows based on
+groups. If the value is one of the columns in \code{taxonomyRanks()},
+\code{agglomerateByRank()} is applied. Otherwise,
+\code{agglomerateByVariable()} is utilized.
+E.g. if 'Genus' rank is used, all abundances of same Genus
+are added together, and agglomerated features are returned.
+See corresponding functions for additional arguments to deal with
 missing values or special characters.
-If the \code{rank} is not specifying a taxonomy rank from
-\code{taxonomyRanks(x)}, the function
-agglomerates rows with \code{agglomerateByVariable()}.
 }
 \examples{
 data(GlobalPatterns)
 x <- GlobalPatterns
 
 # Finds the dominant taxa.
-sim.dom <- getDominant(x, rank="Genus")
+sim.dom <- getDominant(x, group = "Genus")
 
 # Add information to colData
-x <- addDominant(x, rank = "Genus", name="dominant_genera")
+x <- addDominant(x, group = "Genus", name ="dominant_genera")
 colData(x)
 }

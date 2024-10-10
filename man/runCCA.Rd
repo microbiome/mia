@@ -6,15 +6,15 @@
 \alias{addCCA}
 \alias{getRDA}
 \alias{addRDA}
+\alias{calculateCCA}
 \alias{getCCA,ANY-method}
 \alias{getCCA,SummarizedExperiment-method}
-\alias{calculateCCA}
 \alias{addCCA,SingleCellExperiment-method}
+\alias{calculateRDA}
+\alias{runRDA}
 \alias{getRDA,ANY-method}
 \alias{getRDA,SummarizedExperiment-method}
-\alias{calculateRDA}
 \alias{addRDA,SingleCellExperiment-method}
-\alias{runRDA}
 \title{Canonical Correspondence Analysis and Redundancy Analysis}
 \usage{
 getCCA(x, ...)
@@ -25,45 +25,45 @@ getRDA(x, ...)
 
 addRDA(x, ...)
 
-\S4method{getCCA}{ANY}(x, ...)
-
-\S4method{getCCA}{SummarizedExperiment}(
-  x,
-  formula,
-  variables,
-  test.signif = TRUE,
-  assay.type = assay_name,
-  assay_name = exprs_values,
-  exprs_values = "counts",
-  scores = "wa",
-  ...
-)
-
 calculateCCA(x, ...)
-
-\S4method{addCCA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "CCA", ...)
 
 runCCA(x, ...)
 
-\S4method{getRDA}{ANY}(x, ...)
+\S4method{getCCA}{ANY}(x, formula, data, ...)
 
-\S4method{getRDA}{SummarizedExperiment}(
+\S4method{getCCA}{SummarizedExperiment}(
   x,
-  formula,
-  variables,
+  formula = NULL,
+  col.var = variables,
+  variables = NULL,
   test.signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts",
-  scores = "wa",
   ...
 )
 
+\S4method{addCCA}{SingleCellExperiment}(x, altexp = NULL, name = "CCA", ...)
+
 calculateRDA(x, ...)
 
-\S4method{addRDA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "RDA", ...)
-
 runRDA(x, ...)
+
+\S4method{getRDA}{ANY}(x, formula, data, ...)
+
+\S4method{getRDA}{SummarizedExperiment}(
+  x,
+  formula = NULL,
+  col.var = variables,
+  variables = NULL,
+  test.signif = TRUE,
+  assay.type = assay_name,
+  assay_name = exprs_values,
+  exprs_values = "counts",
+  ...
+)
+
+\S4method{addRDA}{SingleCellExperiment}(x, altexp = NULL, name = "RDA", ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
@@ -72,7 +72,8 @@ runRDA(x, ...)
 other internal functions.
 \itemize{
 \item{\code{method} a dissimilarity measure to be applied in dbRDA and
-possible following homogeneity test. (By default: \code{method="euclidean"})}
+possible following homogeneity test. (By default:
+\code{method="euclidean"})}
 \item{\code{scale}: \code{Logical scalar}. Should the expression values be
 standardized? \code{scale} is disabled when using \code{*RDA} functions.
 Please scale before performing RDA. (Default: \code{TRUE})}
@@ -87,30 +88,30 @@ the significance test used to analyse \code{vegan::betadisper} results.
 Options include 'permanova' (\code{vegan::permutest}), 'anova'
 (\code{stats::anova}) and 'tukeyhsd' (\code{stats::TukeyHSD}).
 (By default: \code{homogeneity.test="permanova"})}
-\item{\code{permutations} a numeric value specifying the number of permutations
-for significance testing in \code{vegan::anova.cca}. (By default: \code{permutations=999})}
+\item{\code{permutations} a numeric value specifying the number of
+permutations for significance testing in \code{vegan::anova.cca}.
+(By default: \code{permutations=999})}
 }}
 
-\item{formula}{If \code{x} is a
+\item{formula}{\code{formula}. If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 a formula can be supplied. Based on the right-hand side of the given formula
-\code{colData} is subset to \code{variables}.
+\code{colData} is subset to \code{col.var}.
 
-\code{variables} and \code{formula} can be missing, which turns the CCA analysis
-into a CA analysis and dbRDA into PCoA/MDS.}
+\code{col.var} and \code{formula} can be missing, which turns the CCA
+analysis into a CA analysis and dbRDA into PCoA/MDS.}
 
-\item{variables}{\code{Character scalar}. When \code{x} is a \code{SummarizedExperiment},
-\code{variables} can be used to specify variables from \code{colData}.
+\item{data}{\code{data.frame} or coarcible to one. The covariance table
+including covariates defined by \code{formula}.}
 
-When \code{x} is a matrix, \code{variables} is a \code{data.frame} or
-an object coercible to one containing the variables to use.
+\item{col.var}{\code{Character scalar}. When \code{x} is a
+\code{SummarizedExperiment},\code{col.var} can be used to specify variables
+from \code{colData}.}
 
-All variables are used. Please subset, if you want to consider only some of them.
-\code{variables} and \code{formula} can be missing, which turns the CCA analysis
-into a CA analysis and dbRDA into PCoA/MDS.}
+\item{variables}{Deprecated. Use \code{"col.var"} instead.}
 
-\item{test.signif}{\code{Logical scalar}. Should the PERMANOVA and analysis of
-multivariate homogeneity of group dispersions be performed.
+\item{test.signif}{\code{Logical scalar}. Should the PERMANOVA and analysis
+of multivariate homogeneity of group dispersions be performed.
 (Default: \code{TRUE})}
 
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
@@ -120,21 +121,17 @@ calculation. (Default: \code{"counts"})}
 
 \item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{scores}{\code{Character scalar}. Specifies scores to be returned. Must be
-'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
-v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-'u' ((weighted) orthonormal site scores). (Default: \code{'wa'})}
-
-\item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an alternative experiment
-containing the input data.}
+\item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an
+alternative experiment containing the input data.}
 
 \item{name}{\code{Character scalar}. A name for the column of the
 \code{colData} where results will be stored. (Default: \code{"CCA"})}
 }
 \value{
 For \code{getCCA} a matrix with samples as rows and CCA dimensions as
-columns. Attributes include calculated \code{cca}/\code{rda} object and
-significance analysis results.
+columns. Attributes include output from \code{\link[vegan:scores]{scores}},
+eigenvalues, the \code{cca}/\code{rda} object and significance analysis
+results.
 
 For \code{addCCA} a modified \code{x} with the results stored in
 \code{reducedDim} as the given \code{name}.
@@ -144,19 +141,16 @@ These functions perform Canonical Correspondence Analysis on data stored
 in a \code{SummarizedExperiment}.
 }
 \details{
-For \code{run*} a
-\code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
-or a derived object.
-
-*CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
-By default, dbRDA is done with euclidean distances, which is equivalent to
-RDA.
+*CCA functions utilize \code{vegan:cca} and *RDA functions
+\code{vegan:dbRDA}. By default, dbRDA is done with euclidean distances, which
+is equivalent to RDA. \code{col.var} and \code{formula} can be missing,
+which turns the CCA analysis into a CA analysis and dbRDA into PCoA/MDS.
 
 Significance tests are done with \code{vegan:anova.cca} (PERMANOVA). Group
 dispersion, i.e., homogeneity within groups is analyzed with
-\code{vegan:betadisper} (multivariate homogeneity of groups dispersions (variances))
-and statistical significance of homogeneity is tested with a test
-specified by \code{homogeneity.test} parameter.
+\code{vegan:betadisper} (multivariate homogeneity of groups dispersions
+(variances)) and statistical significance of homogeneity is tested with a
+test specified by \code{homogeneity.test} parameter.
 }
 \examples{
 library(miaViz)
@@ -164,13 +158,14 @@ data("enterotype", package = "mia")
 tse <- enterotype
 
 # Perform CCA and exclude any sample with missing ClinicalStatus
-tse <- addCCA(tse,
-              formula = data ~ ClinicalStatus,
-              na.action = na.exclude)
+tse <- addCCA(
+    tse,
+    formula = data ~ ClinicalStatus,
+    na.action = na.exclude
+    )
 
 # Plot CCA
-plotCCA(tse, "CCA",
-        colour_by = "ClinicalStatus")
+plotCCA(tse, "CCA", colour_by = "ClinicalStatus")
 
 # Fetch significance results
 attr(reducedDim(tse, "CCA"), "significance")
@@ -178,49 +173,55 @@ attr(reducedDim(tse, "CCA"), "significance")
 tse <- transformAssay(tse, method = "relabundance")
 
 # Specify dissimilarity measure
-tse <- addRDA(tse,
-              formula = data ~ ClinicalStatus,
-              assay.type = "relabundance",
-              method = "bray",
-              name = "RDA_bray")
+tse <- addRDA(
+    tse,
+    formula = data ~ ClinicalStatus,
+    assay.type = "relabundance",
+    method = "bray",
+    name = "RDA_bray",
+    na.action = na.exclude
+    )
 
 # To scale values when using *RDA functions, use
 # transformAssay(MARGIN = "features", ...) 
-tse <- transformAssay(tse,
-                      method = "standardize",
-                      MARGIN = "features")
+tse <- transformAssay(tse, method = "standardize", MARGIN = "features")
 
 # Data might include taxa that do not vary. Remove those because after
 # z-transform their value is NA
 tse <- tse[rowSums(is.na(assay(tse, "standardize"))) == 0, ]
 
 # Calculate RDA
-tse <- addRDA(tse,
-              formula = data ~ ClinicalStatus,
-              assay.type = "standardize",
-              name = "rda_scaled",
-              na.action = na.omit)
+tse <- addRDA(
+   tse,
+   formula = data ~ ClinicalStatus,
+   assay.type = "standardize",
+   name = "rda_scaled",
+   na.action = na.omit
+   )
 
 # Plot RDA
-plotRDA(tse, "rda_scaled",
-        colour_by = "ClinicalStatus")
+plotRDA(tse, "rda_scaled", colour_by = "ClinicalStatus")
 
 # A common choice along with PERMANOVA is ANOVA when statistical significance
 # of homogeneity of groups is analysed. Moreover, full significance test
 # results can be returned.
-tse <- addRDA(tse,
-              formula = data ~ ClinicalStatus,
-              homogeneity.test = "anova",
-              full = TRUE)
+tse <- addRDA(
+    tse,
+    formula = data ~ ClinicalStatus,
+    homogeneity.test = "anova",
+    full = TRUE
+    )
 
 # Example showing how to pass extra parameters, such as 'permutations',
 # to anova.cca
-tse <- addRDA(tse,
-              formula = data ~ ClinicalStatus,
-              permutations = 500)
+tse <- addRDA(
+    tse,
+    formula = data ~ ClinicalStatus,
+    permutations = 500
+    )
 
 }
 \seealso{
-For more details on the actual implementation see \code{\link[vegan:cca]{cca}}
-and \code{\link[vegan:dbrda]{dbrda}}
+For more details on the actual implementation see
+\code{\link[vegan:cca]{cca}} and \code{\link[vegan:dbrda]{dbrda}}
 }
