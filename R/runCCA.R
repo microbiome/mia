@@ -95,7 +95,8 @@
 #' tse <- addCCA(
 #'     tse,
 #'     formula = data ~ ClinicalStatus,
-#'     na.action = na.exclude
+#'     na.action = na.exclude,
+#'     test.signif = TRUE
 #'     )
 #'
 #' # Plot CCA
