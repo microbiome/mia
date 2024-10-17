@@ -241,7 +241,7 @@ setMethod("meltSE", signature = c(x = "SummarizedExperiment"),
 .add_row_data_to_molten_assay <- function(molten_assay, x, add.row,
                                           row.name) {
     rd <- SummarizedExperiment::rowData(x)[,add.row,drop=FALSE] %>%
-        data.frame()
+        data.frame(check.names = FALSE)
     if(row.name %in% add.row){
         rd <- rd %>%
             dplyr::rename(!!sym(.row_switch_name(row.name)) := !!sym(row.name))
@@ -260,7 +260,7 @@ setMethod("meltSE", signature = c(x = "SummarizedExperiment"),
 .add_col_data_to_molten_assay <- function(molten_assay, x, add.col,
     col.name, check.names = check_names, check_names = FALSE,...) {
     cd <- SummarizedExperiment::colData(x)[,add.col,drop=FALSE] %>%
-        data.frame()
+        data.frame(check.names = FALSE)
     # This makes sure that sample names match
     if(check.names){
         rownames(cd) <- make.names(rownames(cd))
