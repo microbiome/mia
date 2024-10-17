@@ -25,7 +25,7 @@
 #' 
 #' @param test.signif \code{Logical scalar}. Should the PERMANOVA and analysis
 #' of multivariate homogeneity of group dispersions be performed.
-#' (Default: \code{TRUE})
+#' (Default: \code{FALSE})
 #'   
 #' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an
 #' alternative experiment containing the input data.
@@ -216,7 +216,7 @@ setMethod("getCCA", "ANY", function(x, formula, data, ...){
 setMethod("getCCA", "SummarizedExperiment",
     function(
         x, formula = NULL, col.var = variables, variables = NULL,
-        test.signif = TRUE, assay.type = assay_name, assay_name = exprs_values,
+        test.signif = FALSE, assay.type = assay_name, assay_name = exprs_values,
         exprs_values = "counts", ...){
         ############################# Input check ##############################
         if( !(is.null(formula) || is(formula, "formula")) ){
@@ -325,7 +325,7 @@ setMethod("getRDA", "ANY", function(x, formula, data, ...){
 setMethod("getRDA", "SummarizedExperiment",
     function(
         x, formula = NULL, col.var = variables, variables = NULL,
-        test.signif = TRUE, assay.type = assay_name, assay_name = exprs_values,
+        test.signif = FALSE, assay.type = assay_name, assay_name = exprs_values,
         exprs_values = "counts", ...){
         ############################# Input check ##############################
         if( !(is.null(formula) || is(formula, "formula")) ){
