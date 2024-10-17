@@ -36,7 +36,7 @@ runCCA(x, ...)
   formula = NULL,
   col.var = variables,
   variables = NULL,
-  test.signif = FALSE,
+  test.signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts",
@@ -56,7 +56,7 @@ runRDA(x, ...)
   formula = NULL,
   col.var = variables,
   variables = NULL,
-  test.signif = FALSE,
+  test.signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts",
@@ -112,7 +112,7 @@ from \code{colData}.}
 
 \item{test.signif}{\code{Logical scalar}. Should the PERMANOVA and analysis
 of multivariate homogeneity of group dispersions be performed.
-(Default: \code{FALSE})}
+(Default: \code{TRUE})}
 
 \item{assay.type}{\code{Character scalar}. Specifies which assay to use for
 calculation. (Default: \code{"counts"})}
@@ -161,8 +161,7 @@ tse <- enterotype
 tse <- addCCA(
     tse,
     formula = data ~ ClinicalStatus,
-    na.action = na.exclude,
-    test.signif = TRUE
+    na.action = na.exclude
     )
 
 # Plot CCA

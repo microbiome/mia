@@ -25,7 +25,7 @@
 #' 
 #' @param test.signif \code{Logical scalar}. Should the PERMANOVA and analysis
 #' of multivariate homogeneity of group dispersions be performed.
-#' (Default: \code{FALSE})
+#' (Default: \code{TRUE})
 #'   
 #' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an
 #' alternative experiment containing the input data.
@@ -95,8 +95,7 @@
 #' tse <- addCCA(
 #'     tse,
 #'     formula = data ~ ClinicalStatus,
-#'     na.action = na.exclude,
-#'     test.signif = TRUE
+#'     na.action = na.exclude
 #'     )
 #'
 #' # Plot CCA
@@ -217,7 +216,7 @@ setMethod("getCCA", "ANY", function(x, formula, data, ...){
 setMethod("getCCA", "SummarizedExperiment",
     function(
         x, formula = NULL, col.var = variables, variables = NULL,
-        test.signif = FALSE, assay.type = assay_name, assay_name = exprs_values,
+        test.signif = TRUE, assay.type = assay_name, assay_name = exprs_values,
         exprs_values = "counts", ...){
         ############################# Input check ##############################
         if( !(is.null(formula) || is(formula, "formula")) ){
@@ -326,7 +325,7 @@ setMethod("getRDA", "ANY", function(x, formula, data, ...){
 setMethod("getRDA", "SummarizedExperiment",
     function(
         x, formula = NULL, col.var = variables, variables = NULL,
-        test.signif = FALSE, assay.type = assay_name, assay_name = exprs_values,
+        test.signif = TRUE, assay.type = assay_name, assay_name = exprs_values,
         exprs_values = "counts", ...){
         ############################# Input check ##############################
         if( !(is.null(formula) || is(formula, "formula")) ){
@@ -556,10 +555,10 @@ setMethod("addRDA", "SingleCellExperiment",
 #' @importFrom stats anova
 .test_rda <- function(mat, rda, variables, ...){
     # Perform permanova for whole model and for variables
-    permanova_model <- anova.cca(rda, by = NULL, ...)
+    permanova_model <- anova.cca(rda, by = NULL)
     if( !is.null(variables) ){
         res <- .test_rda_vars(
-            mat, rda, variables, permanova_model, by = "margin", ...)
+            mat, rda, variables, permanova_model, ...)
     } else{
         res <- list(permanova = permanova_model)
     }
@@ -584,8 +583,16 @@ setMethod("addRDA", "SingleCellExperiment",
             call. = FALSE)
     }
     #
-    # Perform PERMANOVA
-    permanova <- anova.cca(rda, by = by, ...)
+    # Perform PERMANOVA. There might be error if variables were removed due to
+    # collinearity.
+    permanova <- tryCatch({
+         anova.cca(rda, by = by, ...)
+    }, error = function(e) {
+        warning("Error occurred in vegan::anova.cca(). This might occur when ",
+            "variables are exluded due to collinearity. Check other warning ",
+            "messages and consider trying another 'by' option.", call. = FALSE)
+        NULL
+    })
     # Create a table from the results
     # PERMANOVAs
     table_model <- as.data.frame(permanova_model)
