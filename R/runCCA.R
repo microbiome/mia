@@ -583,16 +583,8 @@ setMethod("addRDA", "SingleCellExperiment",
             call. = FALSE)
     }
     #
-    # Perform PERMANOVA. There might be error if variables were removed due to
-    # collinearity.
-    permanova <- tryCatch({
-         anova.cca(rda, by = by, ...)
-    }, error = function(e) {
-        warning("Error occurred in vegan::anova.cca(). This might occur when ",
-            "variables are exluded due to collinearity. Check other warning ",
-            "messages and consider trying another 'by' option.", call. = FALSE)
-        NULL
-    })
+    # Perform PERMANOVA
+    permanova <- anova.cca(rda, by = by, ...)
     # Create a table from the results
     # PERMANOVAs
     table_model <- as.data.frame(permanova_model)
