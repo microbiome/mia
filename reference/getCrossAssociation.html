@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate correlations between features of two experiments.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/getCrossAssociation.R" class="external-link"><code>R/getCrossAssociation.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_crosscor/R/getCrossAssociation.R" class="external-link"><code>R/getCrossAssociation.R</code></a></small>
     <div class="hidden name"><code>getCrossAssociation.Rd</code></div>
     </div>
 
@@ -102,7 +102,8 @@
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A
-<code><a href="https://github.com/waldronlab/MultiAssayExperiment/reference/MultiAssayExperiment-class.html" class="external-link">MultiAssayExperiment</a></code> or
+<code><a href="https://github.com/waldronlab/MultiAssayExperiment/reference/MultiAssayExperiment-class.html" class="external-link">MultiAssayExperiment</a></code>
+or
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p></dd>
 
@@ -111,33 +112,35 @@ object.</p></dd>
 <dd><p>Additional arguments:</p><ul><li><p><code>symmetric</code>:   <code>Logical scalar</code>. Specifies if
 measure is symmetric or not. When <code>symmetric = TRUE</code>, associations
 are calculated only for unique variable-pairs, and they are assigned to
-corresponding variable-pair. This decreases the number of calculations in 2-fold
-meaning faster execution. (By default: <code>FALSE</code>)</p></li>
-<li><p><code>association.fun</code>:  A function that is used to calculate (dis-)similarity
-between features. Function must take matrix as an input and give numeric
-values as an output. Adjust <code>method</code> and other parameters correspondingly.
-Supported functions are, for example, <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">stats::dist</a></code> and <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegan::vegdist</a></code>.</p></li>
+corresponding variable-pair. This decreases the number of calculations in
+2-fold meaning faster execution. (By default: <code>FALSE</code>)</p></li>
+<li><p><code>association.fun</code>:  A function that is used to calculate
+(dis-)similarity between features. Function must take matrix as an input
+and give numeric values as an output. Adjust <code>method</code> and other
+parameters correspondingly. Supported functions are, for example,
+<code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">stats::dist</a></code> and <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegan::vegdist</a></code>.</p></li>
 </ul></dd>
 
 
 <dt id="arg-experiment-">experiment1<a class="anchor" aria-label="anchor" href="#arg-experiment-"></a></dt>
-<dd><p><code>Character scalar</code> or <code>numeric scalar</code>. Selects the experiment 1
-from <code>experiments(x)</code> of <code>MultiassayExperiment</code> object.
-(Default: <code>1</code>)</p></dd>
+<dd><p><code>Character scalar</code> or <code>numeric scalar</code>.
+Selects the experiment 1 from <code>experiments(x)</code> of
+<code>MultiassayExperiment</code> object. (Default: <code>1</code>)</p></dd>
 
 
 <dt id="arg-experiment-">experiment2<a class="anchor" aria-label="anchor" href="#arg-experiment-"></a></dt>
-<dd><p><code>Character scalar</code> or <code>numeric scalar</code>. Selects the experiment 2
-from<code>experiments(x)</code> of <code>MultiAssayExperiment</code> object or
+<dd><p><code>Character scalar</code> or <code>numeric scalar</code>.
+Selects the experiment 2 from<code>experiments(x)</code> of
+<code>MultiAssayExperiment</code> object or
 <code>altExp(x)</code> of <code>TreeSummarizedExperiment</code> object. Alternatively,
-<code>experiment2</code> can also be <code>TreeSE</code> object when <code>x</code> is <code>TreeSE</code> object.
-(Default: <code>2</code> when <code>x</code> is <code>MAE</code> and
+<code>experiment2</code> can also be <code>TreeSE</code> object when <code>x</code> is
+<code>TreeSE</code> object. (Default: <code>2</code> when <code>x</code> is <code>MAE</code> and
 <code>x</code> when <code>x</code> is <code>TreeSE</code>)</p></dd>
 
 
 <dt id="arg-assay-type-">assay.type1<a class="anchor" aria-label="anchor" href="#arg-assay-type-"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the assay in experiment 1
-to be transformed.. (Default: <code>"counts"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. Specifies the name of the assay
+in experiment 1 to be transformed.. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name-">assay_name1<a class="anchor" aria-label="anchor" href="#arg-assay-name-"></a></dt>
@@ -145,8 +148,8 @@ to be transformed.. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-type-">assay.type2<a class="anchor" aria-label="anchor" href="#arg-assay-type-"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the assay in experiment 2
-to be transformed.. (Default: <code>"counts"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. Specifies the name of the
+assay in experiment 2 to be transformed.. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name-">assay_name2<a class="anchor" aria-label="anchor" href="#arg-assay-name-"></a></dt>
@@ -154,22 +157,20 @@ to be transformed.. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-altexp-">altexp1<a class="anchor" aria-label="anchor" href="#arg-altexp-"></a></dt>
-<dd><p><code>Character scalar</code> or <code>numeric scalar</code>. Specifies alternative experiment
-from the altExp of experiment 1. If NULL, then the experiment is itself
-and altExp option is disabled.
-(Default: <code>NULL</code>)</p></dd>
+<dd><p><code>Character scalar</code> or <code>numeric scalar</code>. Specifies
+alternative experiment from the altExp of experiment 1. If NULL, then the
+experiment is itself and altExp option is disabled. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-altexp-">altexp2<a class="anchor" aria-label="anchor" href="#arg-altexp-"></a></dt>
-<dd><p><code>Character scalar</code> or <code>numeric scalar</code>. Specifies alternative experiment
-from the altExp of experiment 2. If NULL, then the experiment is itself
-and altExp option is disabled.
-(Default: <code>NULL</code>)</p></dd>
+<dd><p><code>Character scalar</code> or <code>numeric scalar</code>. Specifies
+alternative experiment from the altExp of experiment 2. If NULL, then the
+experiment is itself and altExp option is disabled. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-col-var-">col.var1<a class="anchor" aria-label="anchor" href="#arg-col-var-"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies column(s) from colData
-of experiment 1. If col.var1 is used, assay.type1 is disabled.
+<dd><p><code>Character scalar</code>. Specifies column(s) from
+<code>colData</code> of experiment 1. If col.var1 is used, assay.type1 is disabled.
 (Default: <code>NULL</code>)</p></dd>
 
 
@@ -199,8 +200,8 @@ Must be <code>'rows'</code> or <code>'cols'</code>.</p></dd>
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p><code>Character scalar</code>. Defines the association method
-('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
-(Default: <code>"kendall"</code>)</p></dd>
+('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical'
+for discrete) (Default: <code>"kendall"</code>)</p></dd>
 
 
 <dt id="arg-mode">mode<a class="anchor" aria-label="anchor" href="#arg-mode"></a></dt>
@@ -246,13 +247,14 @@ in result matrices. Used method is hierarchical clustering.
 
 <dt id="arg-filter-self-cor">filter.self.cor<a class="anchor" aria-label="anchor" href="#arg-filter-self-cor"></a></dt>
 <dd><p><code>Logical scalar</code>. Specifies whether to
-filter out correlations between identical items. Applies only when correlation
-between experiment itself is tested, i.e., when assays are identical.
-(Default: <code>FALSE</code>)</p></dd>
+filter out correlations between identical items. Applies only when
+correlation between experiment itself is tested, i.e., when assays are
+identical. (Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-filter-self-correlations">filter_self_correlations<a class="anchor" aria-label="anchor" href="#arg-filter-self-correlations"></a></dt>
-<dd><p>Deprecated. Use <code>filter.self.cor</code> instead.</p></dd>
+<dd><p>Deprecated. Use <code>filter.self.cor</code>
+instead.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -271,8 +273,8 @@ statistical significance of associations.
 
 
 <dt id="arg-show-warnings">show.warnings<a class="anchor" aria-label="anchor" href="#arg-show-warnings"></a></dt>
-<dd><p><code>Logical scalar</code>. specifies whether to show warnings
-that might occur when correlations and p-values are calculated.
+<dd><p><code>Logical scalar</code>. specifies whether to show
+warnings that might occur when correlations and p-values are calculated.
 (Default: <code>FALSE</code>)</p></dd>
 
 
@@ -288,11 +290,11 @@ when <code>by = 1</code>. (Default: <code>FALSE</code>)</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>This function returns associations in table or matrix format. In table format,
-returned value is a data frame that includes  features and associations
-(and p-values) in columns. In matrix format, returned value is a one matrix
-when only associations are calculated. If also significances are tested, then
-returned value is a list of matrices.</p>
+    <p>This function returns associations in table or matrix format. In table
+format, returned value is a data frame that includes  features and
+associations (and p-values) in columns. In matrix format, returned value
+is a one matrix when only associations are calculated. If also significances
+are tested, then returned value is a list of matrices.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -300,10 +302,10 @@ returned value is a list of matrices.</p>
 features of two experiments. By default, it not only computes associations
 but also tests their significance. If desired, setting
 <code>test.signif</code> to FALSE disables significance calculation.</p>
-<p>We recommend the non-parametric Kendall's tau as the default method for association
-analysis. Kendall's tau has desirable statistical properties and robustness at lower
-sample sizes. Spearman rank correlation can provide faster solutions when
-running times are critical.</p>
+<p>We recommend the non-parametric Kendall's tau as the default method for
+association analysis. Kendall's tau has desirable statistical properties and
+robustness at lower sample sizes. Spearman rank correlation can provide
+faster solutions when running times are critical.</p>
     </div>
 
     <div id="ref-examples">
@@ -319,7 +321,8 @@ running times are critical.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> harmonizing input:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   removing 30 sampleMap rows with 'colname' not in colnames of experiments</span>
 <span class="r-in"><span><span class="co"># Several rows in the counts assay have a standard deviation of zero</span></span></span>
-<span class="r-in"><span><span class="co"># Remove them, since they do not add useful information about cross-association</span></span></span>
+<span class="r-in"><span><span class="co"># Remove them, since they do not add useful information about</span></span></span>
+<span class="r-in"><span><span class="co"># cross-association</span></span></span>
 <span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fu">rowSds</span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span><span class="co"># Transform data</span></span></span>
 <span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"rclr"</span><span class="op">)</span></span></span>
@@ -345,7 +348,8 @@ running times are critical.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Agglomeration of it might lead to meaningless values.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Check the assay, and consider doing transformation againmanually with agglomerated data.</span>
 <span class="r-in"><span><span class="co"># Transform data</span></span></span>
-<span class="r-in"><span><span class="fu">altExp</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">altExp</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="fu">altExp</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># When mode = "matrix", the return value is a matrix</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">mae</span>, experiment2 <span class="op">=</span> <span class="fl">2</span>, assay.type1 <span class="op">=</span> <span class="st">"relabundance"</span>, assay.type2 <span class="op">=</span> <span class="st">"nmr"</span>,</span></span>
@@ -374,10 +378,9 @@ running times are critical.</p>
 <span class="r-in"><span><span class="co"># filter.self.cor = TRUE filters self correlations</span></span></span>
 <span class="r-in"><span><span class="co"># p.adj.threshold can be used to filter those features that do not</span></span></span>
 <span class="r-in"><span><span class="co"># have any correlations whose p-value is lower than the threshold</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, experiment2 <span class="op">=</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"pearson"</span>,</span></span>
-<span class="r-in"><span>                                         filter.self.cor <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>                                         p.adj.threshold <span class="op">=</span> <span class="fl">0.05</span>,</span></span>
-<span class="r-in"><span>                                         test.signif <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, experiment2 <span class="op">=</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"pearson"</span>,</span></span>
+<span class="r-in"><span>    filter.self.cor <span class="op">=</span> <span class="cn">TRUE</span>, p.adj.threshold <span class="op">=</span> <span class="fl">0.05</span>, test.signif <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, col.var1: -, assay.type2: counts, col.var2: -</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> by: 1, function: stats::cor.test, method: pearson, test.signif: TRUE, p.adj.method: fdr, paired: FALSE, show.warnings: TRUE</span>
@@ -404,23 +407,22 @@ running times are critical.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate Bray-Curtis dissimilarity between samples. If dataset includes</span></span></span>
 <span class="r-in"><span><span class="co"># paired samples, you can use paired = TRUE.</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, by <span class="op">=</span> <span class="fl">2</span>, paired <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>                                        association.fun <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, </span></span>
-<span class="r-in"><span>                                        method <span class="op">=</span> <span class="st">"bray"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, by <span class="op">=</span> <span class="fl">2</span>, paired <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>    association.fun <span class="op">=</span> <span class="va">getDissimilarity</span>, method <span class="op">=</span> <span class="st">"bray"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, col.var1: -, assay.type2: counts, col.var2: -</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> by: 2, function: vegan::vegdist, method: bray, test.signif: FALSE, p.adj.method: -, paired: FALSE, show.warnings: TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> by: 2, function: getDissimilarity, method: bray, test.signif: FALSE, p.adj.method: -, paired: FALSE, show.warnings: TRUE</span>
 <span class="r-in"><span>                                        </span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># If experiments are equal and measure is symmetric (e.g., taxa1 vs taxa2 == taxa2 vs taxa1),</span></span></span>
-<span class="r-in"><span><span class="co"># it is possible to speed-up calculations by calculating association only for unique</span></span></span>
-<span class="r-in"><span><span class="co"># variable-pairs. Use "symmetric" to choose whether to measure association for only</span></span></span>
-<span class="r-in"><span><span class="co"># other half of of variable-pairs.</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span><span class="va">mae</span>, experiment1 <span class="op">=</span> <span class="st">"microbiota"</span>, </span></span>
-<span class="r-in"><span>                                 experiment2 <span class="op">=</span> <span class="st">"microbiota"</span>, </span></span>
-<span class="r-in"><span>                                 assay.type1 <span class="op">=</span> <span class="st">"counts"</span>, </span></span>
-<span class="r-in"><span>                                 assay.type2 <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
-<span class="r-in"><span>                                 symmetric <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># If experiments are equal and measure is symmetric</span></span></span>
+<span class="r-in"><span><span class="co"># (e.g., taxa1 vs taxa2 == taxa2 vs taxa1),</span></span></span>
+<span class="r-in"><span><span class="co"># it is possible to speed-up calculations by calculating association only</span></span></span>
+<span class="r-in"><span><span class="co"># for unique variable-pairs. Use "symmetric" to choose whether to measure</span></span></span>
+<span class="r-in"><span><span class="co"># association for only other half of of variable-pairs.</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">mae</span>, experiment1 <span class="op">=</span> <span class="st">"microbiota"</span>, experiment2 <span class="op">=</span> <span class="st">"microbiota"</span>, </span></span>
+<span class="r-in"><span>    assay.type1 <span class="op">=</span> <span class="st">"counts"</span>, assay.type2 <span class="op">=</span> <span class="st">"counts"</span>, symmetric <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, col.var1: -, assay.type2: counts, col.var2: -</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> by: 1, function: stats::cor, method: kendall, test.signif: FALSE, p.adj.method: -, paired: FALSE, show.warnings: TRUE</span>
@@ -437,13 +439,14 @@ running times are critical.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, col.var1: -, assay.type2: counts, col.var2: -</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> by: 1, function: stats::cor, method: kendall, test.signif: FALSE, p.adj.method: -, paired: FALSE, show.warnings: TRUE</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># It is also possible to choose variables from colData and calculate association</span></span></span>
-<span class="r-in"><span><span class="co"># between assay and sample metadata or between variables of sample metadata</span></span></span>
+<span class="r-in"><span><span class="co"># It is also possible to choose variables from colData and calculate</span></span></span>
+<span class="r-in"><span><span class="co"># association between assay and sample metadata or between variables of</span></span></span>
+<span class="r-in"><span><span class="co"># sample metadata</span></span></span>
 <span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="addAlpha.html">addAlpha</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'faith' index can be calculated only for TreeSE with rowTree(x) populated or with 'tree' provided separately.</span>
-<span class="r-in"><span><span class="co"># colData_variable works similarly to assay.type. Instead of fetching an assay</span></span></span>
-<span class="r-in"><span><span class="co"># named assay.type from assay slot, it fetches a column named colData_variable</span></span></span>
-<span class="r-in"><span><span class="co"># from colData.</span></span></span>
+<span class="r-in"><span><span class="co"># col.var works similarly to assay.type. Instead of fetching</span></span></span>
+<span class="r-in"><span><span class="co"># an assay named assay.type from assay slot, it fetches a column named</span></span></span>
+<span class="r-in"><span><span class="co"># col.var from colData.</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, assay.type1 <span class="op">=</span> <span class="st">"counts"</span>, </span></span>
 <span class="r-in"><span>    col.var2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"shannon_diversity"</span>, <span class="st">"coverage_diversity"</span><span class="op">)</span>,</span></span>
