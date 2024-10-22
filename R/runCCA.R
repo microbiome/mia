@@ -406,7 +406,7 @@ setMethod("addRDA", "SingleCellExperiment",
         # If column variables are specified, create a formula based on them and
         # get variables
         formula <- as.formula(
-            paste0("mat ~ ", paste(col.var, collapse = " + ")))
+            paste0("mat ~ `", paste(col.var, collapse = "` + `"), "`"))
         # Get the data from colData
         variables <- colData(x)[ , col.var, drop = FALSE]
     } else{
@@ -555,10 +555,10 @@ setMethod("addRDA", "SingleCellExperiment",
 #' @importFrom stats anova
 .test_rda <- function(mat, rda, variables, ...){
     # Perform permanova for whole model and for variables
-    permanova_model <- anova.cca(rda, by = NULL, ...)
+    permanova_model <- anova.cca(rda, by = NULL)
     if( !is.null(variables) ){
         res <- .test_rda_vars(
-            mat, rda, variables, permanova_model, by = "margin", ...)
+            mat, rda, variables, permanova_model, ...)
     } else{
         res <- list(permanova = permanova_model)
     }
