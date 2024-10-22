@@ -406,7 +406,7 @@ setMethod("addRDA", "SingleCellExperiment",
         # If column variables are specified, create a formula based on them and
         # get variables
         formula <- as.formula(
-            paste0("mat ~ `", paste(col.var, collapse = " + "), "`"))
+            paste0("mat ~ `", paste(col.var, collapse = "` + `"), "`"))
         # Get the data from colData
         variables <- colData(x)[ , col.var, drop = FALSE]
     } else{
