@@ -89,11 +89,12 @@ evaluating overlap between samples. (Default: \code{0})
 \item{name}{\code{Character scalar}. The name to be used to store the result
 in metadata of the output. (Default: \code{method})}
 
-\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
+used in calculation. (Default: \code{"counts"})}
 
-\item{niter}{The number of iterations performed. If \code{NULL},
-rarefaction is disabled. (Default: \code{NULL})}
+\item{niter}{\code{Integer scalar}. Specifies the number of
+rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
+(see Details section). (Default: \code{NULL})}
 
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with
 cells in rows. (Default: \code{FALSE})}
@@ -125,10 +126,18 @@ Unifrac is calculated with \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
 If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
 utilized.
 
-For JSD implementation:
-Susan Holmes \email{susan@stat.stanford.edu}.
-Adapted for phyloseq by Paul J. McMurdie.
-Adapted for mia by Felix G.M. Ernst
+Rarefaction can be used to control uneven sequencing depths. Although,
+it is highly debated method. Some think that it is the only option that
+successfully controls the variation caused by uneven sampling depths.
+The biggest argument against rarefaction is the fact that it omits data.
+
+Rarefaction works by sampling the counts randomly. This random sampling
+is done \code{niter} times. In each sampling iteration, \code{sample} number
+of random samples are drawn, and dissimilarity is calculated for this
+subset. After the iterative process, there are \code{niter} number of
+result that are then averaged to get the final result.
+
+Refer to Schloss (2024) for more details on rarefaction.
 }
 \examples{
 library(mia)
@@ -149,17 +158,25 @@ tse <- addDissimilarity(tse, method = "jsd")
 metadata(tse)[["jsd"]][1:6, 1:6]
 
 # Multi Dimensional Scaling applied to JSD dissimilarity matrix
-tse <- runMDS(tse, FUN = getDissimilarity, method = "overlap", 
-              assay.type = "counts")
-metadata(tse)[["MDS"]][1:6, ]
-              
+tse <- runMDS(
+    tse, FUN = getDissimilarity, method = "overlap", assay.type = "counts")
+reducedDim(tse, "MDS") |> head()
+
 ### Unifrac dissimilarity
 
 res <- getDissimilarity(tse, method = "unifrac", weighted = FALSE)
-dim(as.matrix((res)))
+dim(as.matrix(res))
 
 tse <- addDissimilarity(tse, method = "unifrac", weighted = TRUE)
 metadata(tse)[["unifrac"]][1:6, 1:6]
+
+### Bray dissimilarity
+
+# Bray is usually applied to relative abundances so we have to apply
+# transformation first
+tse <- transformAssay(tse, method = "relabundance")
+res <- getDissimilarity(tse, method = "bray", assay.type = "relabundance")
+as.matrix(res)[1:6, 1:6]
 
 }
 \references{
@@ -183,6 +200,11 @@ Jensen-Shannon Divergence and Hilbert space embedding.
 Bent Fuglede and Flemming Topsoe University of Copenhagen,
 Department of Mathematics
 \url{http://www.math.ku.dk/~topsoe/ISIT2004JSD.pdf}
+
+For rarefaction:
+Schloss PD (2024) Rarefaction is currently the best approach to control for
+uneven sequencing effort in amplicon sequence analyses. \emph{mSphere}
+28;9(2):e0035423. doi: 10.1128/msphere.00354-23
 }
 \seealso{
 \url{http://en.wikipedia.org/wiki/Jensen-Shannon_divergence}

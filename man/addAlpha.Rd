@@ -360,6 +360,22 @@ corresponding index in the \pkg{vegan} package is "richness".
 
 }
 }
+
+\subsection{Rarefaction}{
+
+Rarefaction can be used to control uneven sequencing depths. Although,
+it is highly debated method. Some think that it is the only option that
+successfully controls the variation caused by uneven sampling depths.
+The biggest argument against rarefaction is the fact that it omits data.
+
+Rarefaction works by sampling the counts randomly. This random sampling
+is done \code{niter} times. In each sampling iteration, \code{sample} number
+of random samples are drawn, and alpha diversity is calculated for this
+subset. After the iterative process, there are \code{niter} number of
+result that are then averaged to get the final result.
+
+Refer to Schloss (2024) for more details on rarefaction.
+}
 }
 \examples{
 
@@ -455,6 +471,10 @@ Species richness estimators: how many species can dance on the head of a pin?
 Pielou, EC. (1966)
 The measurement of diversity in different types of
 biological collections. \emph{J Theoretical Biology} 13:131--144.
+
+Schloss PD (2024) Rarefaction is currently the best approach to control for
+uneven sequencing effort in amplicon sequence analyses. \emph{mSphere}
+28;9(2):e0035423. doi: 10.1128/msphere.00354-23
 
 Simpson EH (1949)
 Measurement of Diversity.

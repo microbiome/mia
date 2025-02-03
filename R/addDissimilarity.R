@@ -8,6 +8,8 @@
 #' types of dissimilarities, they rely on \code{\link[vegan:vegdist]{vegdist}}
 #' by default.
 #'
+#' @inheritParams addAlpha
+#'
 #' @param x
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' or \code{matrix}.
@@ -17,12 +19,6 @@
 #'
 #' @param name \code{Character scalar}. The name to be used to store the result
 #' in metadata of the output. (Default: \code{method})
-#'
-#' @param assay.type \code{Character scalar}. Specifies which assay to use for
-#' calculation. (Default: \code{"counts"})
-#'
-#' @param niter The number of iterations performed. If \code{NULL},
-#' rarefaction is disabled. (Default: \code{NULL})
 #'
 #' @param transposed \code{Logical scalar}. Specifies if x is transposed with
 #' cells in rows. (Default: \code{FALSE})
@@ -89,10 +85,18 @@
 #' If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
 #' utilized.
 #'
-#' For JSD implementation:
-#' Susan Holmes \email{susan@@stat.stanford.edu}.
-#' Adapted for phyloseq by Paul J. McMurdie.
-#' Adapted for mia by Felix G.M. Ernst
+#' Rarefaction can be used to control uneven sequencing depths. Although,
+#' it is highly debated method. Some think that it is the only option that
+#' successfully controls the variation caused by uneven sampling depths.
+#' The biggest argument against rarefaction is the fact that it omits data.
+#'
+#' Rarefaction works by sampling the counts randomly. This random sampling
+#' is done \code{niter} times. In each sampling iteration, \code{sample} number
+#' of random samples are drawn, and dissimilarity is calculated for this
+#' subset. After the iterative process, there are \code{niter} number of
+#' result that are then averaged to get the final result.
+#'
+#' Refer to Schloss (2024) for more details on rarefaction.
 #'
 #' @name getDissimilarity
 #'
@@ -120,6 +124,11 @@
 #' Bent Fuglede and Flemming Topsoe University of Copenhagen,
 #' Department of Mathematics
 #' \url{http://www.math.ku.dk/~topsoe/ISIT2004JSD.pdf}
+#'
+#' For rarefaction:
+#' Schloss PD (2024) Rarefaction is currently the best approach to control for
+#' uneven sequencing effort in amplicon sequence analyses. _mSphere_
+#' 28;9(2):e0035423. doi: 10.1128/msphere.00354-23
 #'
 #' @export
 #'
