@@ -45,7 +45,7 @@ rarefaction."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Estimate alpha diversity indices</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/addAlpha.R" class="external-link"><code>R/addAlpha.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/update_docs/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/update_docs/R/addAlpha.R" class="external-link"><code>R/addAlpha.R</code></a></small>
     <div class="hidden name"><code>addAlpha.Rd</code></div>
     </div>
 
@@ -370,6 +370,22 @@ is detected above a given <code>detection</code> threshold in the observed sampl
 corresponding index in the <span class="pkg">vegan</span> package is "richness".</p></li>
 </ul></div>
 
+<div class="section">
+<h3 id="rarefaction">Rarefaction<a class="anchor" aria-label="anchor" href="#rarefaction"></a></h3>
+
+
+<p>Rarefaction can be used to control uneven sequencing depths. Although,
+it is highly debated method. Some think that it is the only option that
+successfully controls the variation caused by uneven sampling depths.
+The biggest argument against rarefaction is the fact that it omits data.</p>
+<p>Rarefaction works by sampling the counts randomly. This random sampling
+is done <code>niter</code> times. In each sampling iteration, <code>sample</code> number
+of random samples are drawn, and alpha diversity is calculated for this
+subset. After the iterative process, there are <code>niter</code> number of
+result that are then averaged to get the final result.</p>
+<p>Refer to Schloss (2024) for more details on rarefaction.</p>
+</div>
+
     </div>
     <div id="references">
     <h2>References</h2>
@@ -425,6 +441,9 @@ Species richness estimators: how many species can dance on the head of a pin?
 <p>Pielou, EC. (1966)
 The measurement of diversity in different types of
 biological collections. <em>J Theoretical Biology</em> 13:131–144.</p>
+<p>Schloss PD (2024) Rarefaction is currently the best approach to control for
+uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
+28;9(2):e0035423. doi: 10.1128/msphere.00354-23</p>
 <p>Simpson EH (1949)
 Measurement of Diversity.
 <em>Nature</em> 163(688). doi: 10.1038/163688a0</p>
