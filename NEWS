@@ -166,3 +166,4 @@ Changes in version 1.15.x
 + Add addPrevalence function that adds results of getPrevalence to rowData
 + Added support for dimred to getCrossAssociation
 + Add wrapper for PhILR transformation
++ Support rarefaction when applying unifrac

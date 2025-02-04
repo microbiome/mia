@@ -52,6 +52,9 @@ calculate. (Default: \code{"bray"})}
 \item \code{dis.fun}: \code{Character scalar}. Specifies the dissimilarity
 function to be used.
 
+\item \code{transf}: \code{Function}. Specifies the optional
+transformation applied before calculating the dissimilarity matrix.
+
 \item \code{tree.name}: (Unifrac)  \code{Character scalar}. Specifies the
 name of the tree from \code{rowTree(x)} that is used in calculation.
 Disabled when \code{tree} is specified. (Default: \code{"phylo"})
@@ -176,6 +179,15 @@ metadata(tse)[["unifrac"]][1:6, 1:6]
 # transformation first
 tse <- transformAssay(tse, method = "relabundance")
 res <- getDissimilarity(tse, method = "bray", assay.type = "relabundance")
+as.matrix(res)[1:6, 1:6]
+
+# If applying rarefaction, the input must be count matrix and transformation
+# method specified in function call (Note: increase niter)
+rclr <- function(x){
+    vegan::decostand(x, method="rclr")
+}
+res <- getDissimilarity(
+    tse, method = "euclidean", transf = rclr, niter = 2L)
 as.matrix(res)[1:6, 1:6]
 
 }
