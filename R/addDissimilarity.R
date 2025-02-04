@@ -314,7 +314,7 @@ setMethod(
         }
     }
     # Initialize an argument list
-    args <- c(list(mat), list(...))
+    args <- c(list(x = mat), list(...))
     # If rarefaction is specified, calculate dissimilarity with vegan::avgdist
     # function that utilizes the specified dissimilarity function. Otherwise,
     # call the specified function directly.
