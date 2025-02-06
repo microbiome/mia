@@ -279,7 +279,7 @@ setMethod("getCrossAssociation", signature = c(x = "MultiAssayExperiment"),
         colData_variable2 = NULL,
         by = MARGIN,
         MARGIN = 1,
-        method = c("kendall", "spearman", "categorical", "pearson"),
+        method = "kendall",
         mode = "table",
         p.adj.method = p_adj_method,
         p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm",
@@ -405,7 +405,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
         dimred1 = NULL,
         dimred2 = NULL,
         by = 1,
-        method = c("kendall", "spearman", "categorical", "pearson"),
+        method = NULL,
         mode = c("table", "matrix"),
         p.adj.method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm",
             "hommel", "none"),
@@ -822,7 +822,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
 .calculate_association <- function(
         assay1,
         assay2,
-        method = c("kendall", "spearman", "categorical", "pearson"),
+        method = NULL,
         p.adj.method,
         test.signif,
         show.warnings,
@@ -838,7 +838,17 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
         ...){
     # Check method if association.fun is not NULL
     if( is.null(association.fun) ){
-        method <- match.arg(method)
+        # The method is kendall by default
+        supported_methods <- c("kendall", "spearman", "categorical", "pearson")
+        if( is.null(method) ){
+            method <- supported_methods[[1]]
+        }
+        # Check that method is correct
+        if( !(.is_a_string(method) && method %in% supported_methods) ){
+            stop("'method' must be one of the following options: '",
+                paste0(supported_methods, collapse = "', '"), "'",
+                call. = FALSE)
+        }
         # Get function name for message
         function_name <- ifelse(
             method == "categorical", "mia:::.calculate_gktau",
@@ -872,7 +882,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
             ", dimred2: ", ifelse(!is.null(dimred2), dimred2, "-"),
             "\nby: ", by,
             ", function: ", function_name,
-            ", method: ", method,
+            ", method: ", ifelse(!is.null(method), method, "-"),
             ", test.signif: ", test.signif,
             ", p.adj.method: ",
             ifelse(!is.null(p.adj.method), p.adj.method, "-"),
