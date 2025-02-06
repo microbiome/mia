@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate correlations between features of two experiments.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/getCrossAssociation.R" class="external-link"><code>R/getCrossAssociation.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_corr_message/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/fix_corr_message/R/getCrossAssociation.R" class="external-link"><code>R/getCrossAssociation.R</code></a></small>
     <div class="hidden name"><code>getCrossAssociation.Rd</code></div>
     </div>
 
@@ -72,7 +72,7 @@
 <span>  colData_variable2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  by <span class="op">=</span> <span class="va">MARGIN</span>,</span>
 <span>  MARGIN <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"kendall"</span>, <span class="st">"spearman"</span>, <span class="st">"categorical"</span>, <span class="st">"pearson"</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"kendall"</span>,</span>
 <span>  mode <span class="op">=</span> <span class="st">"table"</span>,</span>
 <span>  p.adj.method <span class="op">=</span> <span class="va">p_adj_method</span>,</span>
 <span>  p_adj_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fdr"</span>, <span class="st">"BH"</span>, <span class="st">"bonferroni"</span>, <span class="st">"BY"</span>, <span class="st">"hochberg"</span>, <span class="st">"holm"</span>, <span class="st">"hommel"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
