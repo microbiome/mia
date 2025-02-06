@@ -405,7 +405,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
         dimred1 = NULL,
         dimred2 = NULL,
         by = 1,
-        method = NULL,
+        method = "kendall",
         mode = c("table", "matrix"),
         p.adj.method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm",
             "hommel", "none"),
@@ -822,7 +822,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
 .calculate_association <- function(
         assay1,
         assay2,
-        method = NULL,
+        method = "kendall",
         p.adj.method,
         test.signif,
         show.warnings,
@@ -838,12 +838,8 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
         ...){
     # Check method if association.fun is not NULL
     if( is.null(association.fun) ){
-        # The method is kendall by default
-        supported_methods <- c("kendall", "spearman", "categorical", "pearson")
-        if( is.null(method) ){
-            method <- supported_methods[[1]]
-        }
         # Check that method is correct
+        supported_methods <- c("kendall", "spearman", "categorical", "pearson")
         if( !(.is_a_string(method) && method %in% supported_methods) ){
             stop("'method' must be one of the following options: '",
                 paste0(supported_methods, collapse = "', '"), "'",
