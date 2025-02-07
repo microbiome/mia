@@ -191,7 +191,7 @@ tse <- addRDA(
     )
 
 # To scale values when using *RDA functions, use
-# transformAssay(MARGIN = "features", ...) 
+# transformAssay(MARGIN = "features", ...)
 tse <- transformAssay(tse, method = "standardize", MARGIN = "features")
 
 # Data might include taxa that do not vary. Remove those because after
