@@ -676,7 +676,7 @@
     # and they are now removed
     if( !all(colnames(tse) %in% rownames(res)) && subset.result ){
         # Get samples that are being removed
-        samples_rm <- setdiff(colnames(x), rownames(res))
+        samples_rm <- setdiff(colnames(tse), rownames(res))
         # Take a subset
         tse <- tse[ , rownames(res) ]
         # Give a message
