@@ -45,8 +45,8 @@ addDominant(x, name = "dominant_taxa", other.name = "Other", n = NULL, ...)
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
-\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
+used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -85,7 +85,8 @@ list that includes all dominant taxa for each sample into colData.}
 \code{getDominant} returns a named character vector \code{x}
 while \code{addDominant} returns
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-with additional column in \code{\link{colData}} named \code{*name*}.
+with additional column in
+\code{\link[SummarizedExperiment:colData]{colData}} named \code{*name*}.
 }
 \description{
 These functions return information about the most dominant taxa in a

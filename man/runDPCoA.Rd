@@ -67,8 +67,8 @@ standardized? (Default: \code{FALSE})}
 \item{transposed}{\code{Logical scalar}. Specifies if x is transposed with
 cells in rows. (Default: \code{FALSE})}
 
-\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
+used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -99,8 +99,9 @@ Double Principal Correspondance analysis is made available via the
 \code{reducedDims} and are available for all the expected functions.
 }
 \details{
-For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
-expression values as well as a \code{rowTree} to calculate \code{y} using
+For \code{addDPCoA} a
+\code{\link[TreeSummarizedExperiment]{TreeSummarizedExperiment}} containing
+the expression values as well as a \code{rowTree} to calculate \code{y} using
 \code{\link[ape:cophenetic.phylo]{cophenetic.phylo}}.
 
 In addition to the reduced dimension on the features, the reduced dimension

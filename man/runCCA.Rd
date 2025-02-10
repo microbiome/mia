@@ -121,8 +121,8 @@ from \code{colData}.}
 of multivariate homogeneity of group dispersions be performed.
 (Default: \code{TRUE})}
 
-\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
+used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 

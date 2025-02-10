@@ -130,8 +130,8 @@ and \code{subsetByRare} additional parameters passed to
 \code{getPrevalent}
 }}
 
-\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
+used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -190,7 +190,7 @@ Otherwise an \code{integer} vector is returned matching the rows in
 }
 \description{
 These functions calculate the population prevalence for taxonomic ranks in a
-\code{\link{SummarizedExperiment-class}} object.
+\code{\link[SummarizedExperiment]{SummarizedExperiment}} object.
 }
 \details{
 \code{getPrevalence} calculates the frequency of samples that exceed

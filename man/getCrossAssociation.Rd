@@ -24,7 +24,7 @@ getCrossAssociation(x, ...)
   colData_variable2 = NULL,
   by = MARGIN,
   MARGIN = 1,
-  method = c("kendall", "spearman", "categorical", "pearson"),
+  method = "kendall",
   mode = "table",
   p.adj.method = p_adj_method,
   p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm", "hommel", "none"),
