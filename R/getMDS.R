@@ -1,5 +1,5 @@
 #' @name
-#' getMDS
+#' addMDS
 #'
 #' @title
 #' Perform multi-dimensional scaling (MDS)
@@ -74,7 +74,7 @@
 #'
 NULL
 
-#' @rdname getMDS
+#' @rdname addMDS
 #' @export
 #' @importFrom scater calculateMDS
 setMethod("addMDS", signature = c(x = "SingleCellExperiment"),
@@ -94,7 +94,7 @@ setMethod("addMDS", signature = c(x = "SingleCellExperiment"),
     }
 )
 
-#' @rdname getMDS
+#' @rdname addMDS
 #' @export
 #' @importFrom scater calculateMDS
 setMethod("getMDS", signature = c(x = "SingleCellExperiment"),
@@ -106,7 +106,7 @@ setMethod("getMDS", signature = c(x = "SingleCellExperiment"),
     }
 )
 
-#' @rdname getMDS
+#' @rdname addMDS
 #' @export
 #' @importFrom scater calculateMDS
 setMethod("getMDS", signature = c(x = "TreeSummarizedExperiment"),
