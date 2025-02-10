@@ -25,6 +25,12 @@ addMDS(x, ...)
 \itemize{
 \item \code{FUN}: \code{Function}. A function that is applied to
 calculate dissimilarity. (Default: \code{getDissimilarity})
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{\\item \code{subset.result}: \code{Logical result}. Specifies whether to
+subset \code{x} to match the result if some samples were removed during
+calculation. (Default: \code{TRUE})
+}\if{html}{\out{</div>}}
+
 }}
 
 \item{name}{\code{Character scalar}. A name for the \code{reducedDim()}
@@ -63,7 +69,7 @@ tse <- GlobalPatterns
 
 # Calculate PCoA with Bray-Curtis dissimilarity
 tse <- transformAssay(tse, method = "relabundance")
-tse <- addMDS(tse, assay.type = "relabundance", ,ethod = "bray")
+tse <- addMDS(tse, assay.type = "relabundance", method = "bray")
 
 # Calculate PCoA with Unifrac and rarefaction. (Note: increase iterations)
 tse <- addMDS(tse, method = "unifrac", name = "unifrac")
@@ -72,8 +78,10 @@ tse <- addMDS(tse, method = "unifrac", name = "unifrac")
 tse <- addMDS(tse, method = "unifrac", name = "unifrac_rare", niter = 2L)
 
 # Visualize results
-p1 <- plotReducedDim(tse, "unifrac", colour_by = "SampleType")
-p2 <- plotReducedDim(tse, "unifrac_rare", colour_by = "SampleType")
+p1 <- plotReducedDim(tse, "unifrac", colour_by = "SampleType") +
+    labs(title = "Not rarefied")
+p2 <- plotReducedDim(tse, "unifrac_rare", colour_by = "SampleType") +
+    labs(title = "Rarefied")
 p1 + p2
 
 }

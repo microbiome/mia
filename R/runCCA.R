@@ -62,9 +62,13 @@
 #'   (\code{\link[stats:TukeyHSD]{stats::TukeyHSD}}).
 #'   (Default: \code{"permanova"})
 #'
-#'   \item \code{permutations} a numeric value specifying the number of
+#'   \item \code{permutations}: \code{Integer scalar}. Specifies the number of
 #'   permutations for significance testing in \code{vegan::anova.cca}.
 #'   (Default: \code{999})
+#'
+#'   \item \code{subset.result}: \code{Logical result}. Specifies whether to
+#'   subset \code{x} to match the result if some samples were removed during
+#'   calculation. (Default: \code{TRUE})
 #' }
 #'
 #' @details

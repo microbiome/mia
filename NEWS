@@ -167,3 +167,4 @@ Changes in version 1.15.x
 + Added support for dimred to getCrossAssociation
 + Add wrapper for PhILR transformation
 + Support rarefaction when applying unifrac
++ Added getMDS and addMDS: wrappers for scater::calculateMDS and scater::runMDS
