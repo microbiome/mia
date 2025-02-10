@@ -176,7 +176,7 @@ tse <- addCCA(
 plotCCA(tse, "CCA", colour_by = "ClinicalStatus")
 
 # Fetch significance results
-attr(reducedDim(tse, "CCA"), "significance")
+getReducedDimElement(tse, dimred = "CCA", name = "significance")
 
 tse <- transformAssay(tse, method = "relabundance")
 
@@ -191,7 +191,7 @@ tse <- addRDA(
     )
 
 # To scale values when using *RDA functions, use
-# transformAssay(MARGIN = "features", ...) 
+# transformAssay(MARGIN = "features", ...)
 tse <- transformAssay(tse, method = "standardize", MARGIN = "features")
 
 # Data might include taxa that do not vary. Remove those because after

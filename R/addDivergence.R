@@ -217,6 +217,9 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
 #' @importFrom dplyr group_by summarise
 #' @importFrom tidyr unnest
 .calc_divergence <- function(mat, reference, method, ...){
+    # This following line is to disable cmdcheck warning "no visible binding..."
+    value <- NULL
+
     # Create sample-pair data.frame
     reference <- data.frame(
         sample = colnames(mat), reference = I(unname(reference)))

@@ -10,7 +10,7 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' a formula can be supplied. Based on the right-hand side of the given formula
 #' \code{colData} is subset to \code{col.var}.
-#'   
+#'
 #' \code{col.var} and \code{formula} can be missing, which turns the CCA
 #' analysis into a CA analysis and dbRDA into PCoA/MDS.
 #'
@@ -20,19 +20,19 @@
 #' @param col.var \code{Character scalar}. When \code{x} is a
 #' \code{SummarizedExperiment},\code{col.var} can be used to specify variables
 #' from \code{colData}.
-#'   
+#'
 #' @param variables Deprecated. Use \code{col.var} instead.
-#' 
+#'
 #' @param test.signif \code{Logical scalar}. Should the PERMANOVA and analysis
 #' of multivariate homogeneity of group dispersions be performed.
 #' (Default: \code{TRUE})
-#'   
+#'
 #' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an
 #' alternative experiment containing the input data.
-#' 
-#' @param name \code{Character scalar}. A name for the \code{reducedDim()}  
+#'
+#' @param name \code{Character scalar}. A name for the \code{reducedDim()}
 #' where results will be stored. (Default: \code{"CCA"})
-#' 
+#'
 #' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #'
 #' @param ... additional arguments passed to vegan::cca or vegan::dbrda and
@@ -40,19 +40,19 @@
 #' \itemize{
 #'   \item \code{method} a dissimilarity measure to be applied in dbRDA and
 #'   possible following homogeneity test. (Default: \code{"euclidean"})
-#'   
+#'
 #'   \item \code{scale}: \code{Logical scalar}. Should the expression values be
 #'   standardized? \code{scale} is disabled when using \code{*RDA} functions.
 #'   Please scale before performing RDA. (Default: \code{TRUE})
-#'   
+#'
 #'   \item \code{na.action}: \code{function}. Action to take when missing
 #'   values for any of the variables in \code{formula} are encountered.
 #'   (Default: \code{na.fail})
-#'   
+#'
 #'   \item \code{full} \code{Logical scalar}. Should all the results from the
 #'   significance calculations be returned. When \code{FALSE}, only
 #'   summary tables are returned. (Default: \code{FALSE})
-#'   
+#'
 #'   \item \code{homogeneity.test}: \code{Character scalar}. Specifies
 #'   the significance test used to analyse
 #'   \code{\link[vegan:betadisper]{vegan::betadisper}} results.
@@ -61,20 +61,20 @@
 #'   (\code{\link[stats:anova]{stats::anova}}) and 'tukeyhsd'
 #'   (\code{\link[stats:TukeyHSD]{stats::TukeyHSD}}).
 #'   (Default: \code{"permanova"})
-#'   
+#'
 #'   \item \code{permutations} a numeric value specifying the number of
 #'   permutations for significance testing in \code{vegan::anova.cca}.
 #'   (Default: \code{999})
 #' }
-#' 
+#'
 #' @details
 #' *CCA functions utilize \code{vegan:cca} and *RDA functions
 #' \code{vegan:dbRDA}. By default, dbRDA is done with euclidean distances, which
 #' is equivalent to RDA. \code{col.var} and \code{formula} can be missing,
 #' which turns the CCA analysis into a CA analysis and dbRDA into PCoA/MDS.
-#'   
+#'
 #' Significance tests are done with \code{vegan:anova.cca} (PERMANOVA). Group
-#' dispersion, i.e., homogeneity within groups is analyzed with 
+#' dispersion, i.e., homogeneity within groups is analyzed with
 #' \code{\link[vegan:betadisper]{vegan::betadisper}}
 #' (multivariate homogeneity of groups dispersions
 #' (variances)) and statistical significance of homogeneity is tested with a
@@ -110,7 +110,7 @@
 #' plotCCA(tse, "CCA", colour_by = "ClinicalStatus")
 #'
 #' # Fetch significance results
-#' attr(reducedDim(tse, "CCA"), "significance")
+#' getReducedDimElement(tse, dimred = "CCA", name = "significance")
 #'
 #' tse <- transformAssay(tse, method = "relabundance")
 #'
@@ -125,7 +125,7 @@
 #'     )
 #'
 #' # To scale values when using *RDA functions, use
-#' # transformAssay(MARGIN = "features", ...) 
+#' # transformAssay(MARGIN = "features", ...)
 #' tse <- transformAssay(tse, method = "standardize", MARGIN = "features")
 #'
 #' # Data might include taxa that do not vary. Remove those because after
@@ -484,7 +484,7 @@ setMethod("addRDA", "SingleCellExperiment",
     # Create a formula from string
     formula <- as.formula(
         paste(as.character(formula)[c(2,1,3)], collapse = " "))
-    
+
     # Initialize an argument list with common arguments
     args <- c(
         list(formula = formula, data = data, na.action = na.action), list(...))
@@ -522,7 +522,7 @@ setMethod("addRDA", "SingleCellExperiment",
         }
         sppscores(res_obj) <- x
     }
-    
+
     # Get eigenvalues from the object
     eig <- eigenvals(res_obj)
     # Get total number of coordinates. There might be imaginary axes, exclude
@@ -579,10 +579,10 @@ setMethod("addRDA", "SingleCellExperiment",
     # Add info about explained variance
     permanova_tab[ , "Explained variance"] <- permanova_tab[ , 2] /
         permanova_tab[ , "Total variance"]
-    
+
     # Perform homogeneity analysis
     homogeneity <- .calculate_homogeneity(mat, variables, full = full, ...)
-    
+
     # Return whole data or just a tables
     permanova_res <- permanova_tab
     if( full ){
@@ -658,7 +658,7 @@ setMethod("addRDA", "SingleCellExperiment",
     res <- do.call(rbind, homogeneity_tab)
     # Return either only summary table or whole result including fitterd models
     if( full ){
-        res <- list(summary = res, variables = homogeneity_model)    
+        res <- list(summary = res, variables = homogeneity_model)
     }
     return(res)
 }

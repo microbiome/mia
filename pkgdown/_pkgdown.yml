@@ -70,6 +70,7 @@ reference:
   - runDPCoA
   - addLDA
   - addNMF
+  - utilization_functions
 
 - title: Package
 - contents:

@@ -421,6 +421,9 @@ setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
 #' @importFrom stringr str_extract str_replace_all
 #' @importFrom stats p.adjust
 .make_output <- function(models, p.adj.method, add.metadata, sort) {
+    # This following line is to disable cmdcheck warning "no visible binding..."
+    mediator <- NULL
+
     # Combine results
     res <- do.call(rbind, models) |> as.data.frame()
     res[["mediator"]] <- names(models)

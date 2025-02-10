@@ -381,3 +381,8 @@ setGeneric("addAbundanceClass", signature = "x", function(x, ...)
 #' @export
 setGeneric("addPrevalence", signature = "x", function(x, ...)
     standardGeneric("addPrevalence"))
+
+#' @rdname utilization_functions
+#' @export
+setGeneric("getReducedDimElement", signature = "x", function(x, ...)
+    standardGeneric("getReducedDimElement"))
