@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.21</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Canonical Correspondence Analysis and Redundancy Analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/runMDS/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/runMDS/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/corr_default_assay/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/corr_default_assay/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
     <div class="hidden name"><code>runCCA.Rd</code></div>
     </div>
 
@@ -139,12 +139,9 @@ Options include 'permanova'
 (<code><a href="https://rdrr.io/r/stats/anova.html" class="external-link">stats::anova</a></code>) and 'tukeyhsd'
 (<code><a href="https://rdrr.io/r/stats/TukeyHSD.html" class="external-link">stats::TukeyHSD</a></code>).
 (Default: <code>"permanova"</code>)</p></li>
-<li><p><code>permutations</code>: <code>Integer scalar</code>. Specifies the number of
+<li><p><code>permutations</code> a numeric value specifying the number of
 permutations for significance testing in <code><a href="https://rdrr.io/pkg/vegan/man/anova.cca.html" class="external-link">vegan::anova.cca</a></code>.
 (Default: <code>999</code>)</p></li>
-<li><p><code>subset.result</code>: <code>Logical result</code>. Specifies whether to
-subset <code>x</code> to match the result if some samples were removed during
-calculation. (Default: <code>TRUE</code>)</p></li>
 </ul></dd>
 
 
@@ -282,7 +279,7 @@ test specified by <code>homogeneity.test</code> parameter.</p>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># To scale values when using *RDA functions, use</span></span></span>
-<span class="r-in"><span><span class="co"># transformAssay(MARGIN = "features", ...)</span></span></span>
+<span class="r-in"><span><span class="co"># transformAssay(MARGIN = "features", ...) </span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"standardize"</span>, MARGIN <span class="op">=</span> <span class="st">"features"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Data might include taxa that do not vary. Remove those because after</span></span></span>
@@ -297,7 +294,7 @@ test specified by <code>homogeneity.test</code> parameter.</p>
 <span class="r-in"><span>   name <span class="op">=</span> <span class="st">"rda_scaled"</span>,</span></span>
 <span class="r-in"><span>   na.action <span class="op">=</span> <span class="va">na.omit</span></span></span>
 <span class="r-in"><span>   <span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The following samples are removed from the data as they are not includes in dimension reduction results (see 'subset.result' parameter): 'DA.AD.1T', 'DA.AD.3T', 'MH0001', 'MH0002', 'MH0003', 'MH0004', 'MH0005', 'MH0006', 'MH0007', 'MH0008', 'MH0009', 'MH0010', 'MH0011', 'MH0012', 'MH0013', 'MH0014', 'MH0015', 'MH0016', 'MH0017', 'MH0018', 'MH0019', 'MH0020', 'MH0021', 'MH0022', 'MH0023', 'MH0024', 'MH0025', 'MH0026', 'MH0027', 'MH0028', 'MH0030', 'MH0031', 'MH0032', 'MH0033', 'MH0034', 'MH0035', 'MH0036', 'MH0037', 'MH0038', 'MH0039', 'MH0040', 'MH0041', 'MH0042', 'MH0043', 'MH0044', 'MH0045', 'MH0046', 'MH0047', 'MH0048', 'MH0049', 'MH0050', 'MH0051', 'MH0052', 'MH0053', 'MH0054', 'MH0055', 'MH0056', 'MH0057', 'MH0058', 'MH0059', 'MH0060', 'MH0061', 'MH0062', 'MH0063', 'MH0064', 'MH0065', 'MH0066', 'MH0067', 'MH0068', 'MH0069', 'MH0070', 'MH0071', 'MH0072', 'MH0073', 'MH0074', 'MH0075', 'MH0076', 'MH0077', 'MH0078', 'MH0079', 'MH0080', 'MH0081', 'MH0082', 'MH0083', 'MH0084', 'MH0085', 'MH0086', 'TS1_V2', 'TS10_V2', 'TS100_V2', 'TS101.2_V2', 'TS103_V2', 'TS104_V2', 'TS105_V2', 'TS106_V2', 'TS107_V2', 'TS109_V2', 'TS11_V2', 'TS110_V2', 'TS111_V2', 'TS115_V2', 'TS116_V2', 'TS117_V2', 'TS118_V2', 'TS119_V2', 'TS12_V2', 'TS120_V2', 'TS124_V2', 'TS125_V2', 'TS126_V2', 'TS127_V2', 'TS128_V2', 'TS129_V2', 'TS13_V2', 'TS130_V2', 'TS131_V2', 'TS132_V2', 'TS133_V2', 'TS134_V2', 'TS135_V2', 'TS136_V2', 'TS137_V2', 'TS138_V2', 'TS139_V2', 'TS14_V2', 'TS140_V2', 'TS141_V2', 'TS142_V2', 'TS143_V2', 'TS144_V2', 'TS145_V2', 'TS146_V2', 'TS147_V2', 'TS148_V2', 'TS149_V2', 'TS15_V2', 'TS150_V2', 'TS151_V2', 'TS152_V2', 'TS153_V2', 'TS154.2_V2', 'TS155_V2', 'TS156_V2', 'TS16_V2', 'TS160_V2', 'TS161_V2', 'TS162_V2', 'TS163_V2', 'TS164_V2', 'TS165_V2', 'TS166_V2', 'TS167_V2', 'TS168_V2', 'TS169_V2', 'TS17_V2', 'TS170_V2', 'TS178_V2', 'TS179_V2', 'TS180_V2', 'TS181_V2', 'TS182_V2', 'TS183_V2', 'TS184_V2', 'TS185_V2', 'TS186_V2', 'TS19_V2', 'TS190_V2', 'TS191_V2', 'TS192_V2', 'TS193_V2', 'TS194_V2', 'TS195_V2', 'TS2_V2', 'TS20_V2', 'TS21_V2', 'TS22_V2', 'TS23_V2', 'TS25_V2', 'TS26_V2', 'TS27_V2', 'TS28_V2', 'TS29_V2', 'TS3_V2', 'TS30_V2', 'TS31_V2', 'TS32_V2', 'TS33_V2', 'TS34_V2', 'TS35_V2', 'TS37_V2', 'TS38_V2', 'TS39_V2', 'TS4_V2', 'TS43_V2', 'TS44_V2', 'TS49_V2', 'TS5_V2', 'TS50_V2', 'TS51_V2', 'TS55_V2', 'TS56_V2', 'TS57_V2', 'TS6_V2', 'TS61_V2', 'TS62_V2', 'TS63_V2', 'TS64_V2', 'TS65_V2', 'TS66_V2', 'TS67_V2', 'TS68_V2', 'TS69_V2', 'TS7_V2', 'TS70_V2', 'TS71_V2', 'TS72_V2', 'TS73_V2', 'TS74_V2', 'TS75_V2', 'TS76_V2', 'TS77_V2', 'TS78_V2', 'TS8_V2', 'TS82_V2', 'TS83_V2', 'TS84_V2', 'TS85_V2', 'TS86_V2', 'TS87_V2', 'TS88_V2', 'TS89_V2', 'TS9_V2', 'TS90_V2', 'TS91_V2', 'TS92_V2', 'TS94_V2', 'TS95_V2', 'TS96_V2', 'TS97_V2', 'TS98_V2', 'TS99.2_V2'</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Certain samples are removed from the result because they did not include sufficient metadata.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot RDA</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/miaViz/man/plotCCA.html" class="external-link">plotRDA</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rda_scaled"</span>, colour_by <span class="op">=</span> <span class="st">"ClinicalStatus"</span><span class="op">)</span></span></span>
