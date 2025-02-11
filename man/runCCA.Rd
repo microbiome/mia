@@ -95,9 +95,13 @@ Options include 'permanova'
 (\code{\link[stats:TukeyHSD]{stats::TukeyHSD}}).
 (Default: \code{"permanova"})
 
-\item \code{permutations} a numeric value specifying the number of
+\item \code{permutations}: \code{Integer scalar}. Specifies the number of
 permutations for significance testing in \code{vegan::anova.cca}.
 (Default: \code{999})
+
+\item \code{subset.result}: \code{Logical result}. Specifies whether to
+subset \code{x} to match the result if some samples were removed during
+calculation. (Default: \code{TRUE})
 }}
 
 \item{formula}{\code{formula}. If \code{x} is a
@@ -191,7 +195,7 @@ tse <- addRDA(
     )
 
 # To scale values when using *RDA functions, use
-# transformAssay(MARGIN = "features", ...) 
+# transformAssay(MARGIN = "features", ...)
 tse <- transformAssay(tse, method = "standardize", MARGIN = "features")
 
 # Data might include taxa that do not vary. Remove those because after

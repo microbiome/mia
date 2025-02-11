@@ -242,7 +242,7 @@
         values,
         name)
     values <- do.call(cbind, values)
-    
+
     # Based on MARGIN, get rowDatra or colData
     FUN <- switch(MARGIN, rowData, colData)
     # If altexp.name was not NULL, then we know that it specifies correctly
@@ -252,7 +252,7 @@
     } else{
         cd <- FUN(x)
     }
-    
+
     # check for duplicated values
     f <- colnames(cd) %in% colnames(values)
     FUN_name <- switch(MARGIN, "rowData", "colData")
@@ -267,7 +267,7 @@
     }
     # Keep only unique values
     cd <- cbind( (cd)[!f], values )
-    
+
     # Replace colData with new one
     x <- .add_to_coldata(x, cd, altexp = altexp, MARGIN = MARGIN)
     return(x)
@@ -410,7 +410,7 @@
     # Throw warning if values of reducedDim are overwritten
     if( name %in% names(reducedDims(x)) ){
         warning(
-            "The following values are already present in `reducedDims` and", 
+            "The following values are already present in `reducedDims` and",
             " will be overwritten: '", name,
             "'. Consider using the 'name' argument to specify alternative ",
             "names.", call. = FALSE)
@@ -422,7 +422,7 @@
 ################################################################################
 # Other common functions
 
-# keep dimnames of feature table (assay) consistent with the meta data 
+# keep dimnames of feature table (assay) consistent with the meta data
 # of sample (colData) and feature (rowData)
 .set_feature_tab_dimnames <- function(
         feature_tab, sample_meta, feature_meta, refseq = NULL,
@@ -456,7 +456,7 @@
         colnames(feature_tab) <- rownames(sample_meta) <- samples
         rownames(feature_tab) <- rownames(feature_meta) <- features
     }
-    
+
     # The abundance table takes the precedence, and metadata is modified
     # accordingly. Give warning if there are samples or features that are not
     # included in the metadata.
@@ -485,7 +485,7 @@
                 "are not present in the abundance table and thus being ",
                 "removed. Please check for errors.", call. = FALSE)
     }
-    
+
     # We order the metadata based on abundance table. Moreover, we subset
     # the metadata to match with abundance table if there are additional data.
     ind <- match(colnames(feature_tab), rownames(sample_meta))
@@ -518,17 +518,17 @@
 
 #' Parse taxa in different taxonomic levels
 #' @param taxa_tab `data.frame` object.
-#' 
+#'
 #' @param sep character string containing a regular expression, separator
 #'  between different taxonomic levels, defaults to one compatible with both
 #'  GreenGenes and SILVA `; |;"`.
-#'  
+#'
 #' @param col.name a single \code{character} value defining the column of
 #' taxa_tab that includes taxonomical information.
-#'  
-#' @param prefix.rm {\code{TRUE} or \code{FALSE}: Should 
+#'
+#' @param prefix.rm {\code{TRUE} or \code{FALSE}: Should
 #'  taxonomic prefixes be removed? (default: \code{prefix.rm = FALSE})}
-#'  
+#'
 #' @return  a `data.frame`.
 #' @keywords internal
 #' @importFrom IRanges CharacterList IntegerList
@@ -553,12 +553,12 @@
         stop("'remove.prefix' must be TRUE or FALSE.", call. = FALSE)
     }
     ############################## Input check end #############################
-    
+
     #  work with any combination of taxonomic ranks available
     all_ranks <- .taxonomy_rank_prefixes
     all_prefixes <- paste0(all_ranks, "__")
     names(all_prefixes) <- names(all_ranks)
-    
+
     # split the taxa strings
     taxa_split <- CharacterList(strsplit(taxa_tab[, col.name],sep))
     # extract present prefixes
@@ -583,12 +583,12 @@
     }
     taxa_tab <- DataFrame(as.matrix(taxa_split))
     colnames(taxa_tab) <- names(all_ranks)
-    
+
     # Subset columns so that include only those columns that have some
     # information
     non_empty <- colSums(is.na(taxa_tab)) != nrow(taxa_tab)
     taxa_tab <- taxa_tab[ , non_empty, drop = FALSE]
-    
+
     return(taxa_tab)
 }
 
@@ -661,4 +661,42 @@
 # This function converts vector of character values to capitalized.
 .capitalize <- function(x){
     paste0(toupper(substr(x, 1, 1)), substr(x, 2, nchar(x)))
+}
+
+################################################################################
+# This function adds dimension reduction to reducedDim
+.add_object_to_reduceddim <- function(
+        tse, res, name, subset.result = TRUE, ...){
+    # Test subset
+    if( !.is_a_bool(subset.result) ){
+        stop("'subset.result' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # If samples do not match / there were samples without appropriate metadata
+    # and they are now removed
+    if( !all(colnames(tse) %in% rownames(res)) && subset.result ){
+        # Get samples that are being removed
+        samples_rm <- setdiff(colnames(tse), rownames(res))
+        # Take a subset
+        tse <- tse[ , rownames(res) ]
+        # Give a message
+        warning("The following samples are removed from the data as they ",
+                "are not includes in dimension reduction results ",
+                "(see 'subset.result' parameter): '",
+                paste0(samples_rm, collapse = "', '"), "'", call. = FALSE)
+    } else if( !all(colnames(tse) %in% rownames(res)) && !subset.result ){
+        # If user do not want to subset the data
+        # Save attributes from the object as they are removed when subsetting
+        attr <- attributes(res)
+        attr <- attr[ !names(attr) %in% c("dim", "dimnames")]
+        # Add samples that were removed
+        res <- res[match(colnames(tse), rownames(res)), , drop = FALSE]
+        rownames(res) <- colnames(tse)
+        # Add attributes
+        attr <- c(attributes(res), attr)
+        attributes(res) <- attr
+    }
+    # Add object to reducedDIm
+    reducedDim(tse, name) <- res
+    return(tse)
 }

@@ -142,9 +142,9 @@
 #' head(metadata(tse)$assay_mediation, 5)
 #'
 #' # Perform ordination
-#' tse <- runMDS(
-#'     tse, name = "MDS", method = "euclidean",
-#'     assay.type = "clr", ncomponents = 3)
+#' tse <- addMDS(
+#'     tse, name = "MDS", method = "euclidean", assay.type = "clr",
+#'     ncomponents = 3)
 #'
 #' # Analyse mediated effect of nationality on BMI via NMDS components
 #' # 100 permutations were done to speed up execution, but ~1000 are recommended
