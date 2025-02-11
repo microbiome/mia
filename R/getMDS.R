@@ -76,7 +76,6 @@ NULL
 
 #' @rdname addMDS
 #' @export
-#' @importFrom scater calculateMDS
 setMethod("addMDS", signature = c(x = "SingleCellExperiment"),
     function(x, name = "MDS", ...){
         if( !.is_a_string(name) ){
@@ -117,6 +116,8 @@ setMethod("getMDS", signature = c(x = "TreeSummarizedExperiment"),
         return(res)
     }
 )
+
+################################ HELP FUNCTIONS ################################
 
 # This function is used to set default options for SCE
 .get_mds_args <- function(x, assay.type, FUN = getDissimilarity, ...){
