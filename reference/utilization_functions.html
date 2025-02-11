@@ -79,7 +79,7 @@ index of dimension reduction results. (Default: <code>1L</code>)</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p><code>Character scalar</code>. A name of values retrieved from
+<dd><p><code>Character vector</code>. A name of values retrieved from
 attributes of <code>reducedDim(x, dimred)</code>. If <code>NULL</code>, all the values
 are retrieved. (Default: <code>NULL</code>)</p></dd>
 
@@ -126,7 +126,7 @@ methods used to generate the results.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     fit</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Extract feature loadings</span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">getReducedDimElement</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"NMF"</span>, <span class="st">"loadings"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">getReducedDimElement</span><span class="op">(</span><span class="va">tse</span>, dimred <span class="op">=</span> <span class="st">"NMF"</span>, name <span class="op">=</span> <span class="st">"loadings"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         [,1]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> AD3             9.401622e-04</span>
