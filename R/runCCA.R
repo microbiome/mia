@@ -62,9 +62,13 @@
 #'   (\code{\link[stats:TukeyHSD]{stats::TukeyHSD}}).
 #'   (Default: \code{"permanova"})
 #'
-#'   \item \code{permutations} a numeric value specifying the number of
+#'   \item \code{permutations}: \code{Integer scalar}. Specifies the number of
 #'   permutations for significance testing in \code{vegan::anova.cca}.
 #'   (Default: \code{999})
+#'
+#'   \item \code{subset.result}: \code{Logical result}. Specifies whether to
+#'   subset \code{x} to match the result if some samples were removed during
+#'   calculation. (Default: \code{TRUE})
 #' }
 #'
 #' @details
@@ -258,6 +262,10 @@ setMethod("addCCA", "SingleCellExperiment",
             stop("'altexp' must specify an alternative experiment from ",
                 "altExp(x).", call. = FALSE)
         }
+        #
+        if( !.is_a_string(name) ){
+            stop("'name' must be a single character value.", call. = FALSE)
+        }
         ########################### Input check end ############################
         # Get TreeSE from altexp if specified.
         if( !is.null(altexp) ){
@@ -366,6 +374,10 @@ setMethod("addRDA", "SingleCellExperiment",
                 altexp <= length(altExps(x))) ) ){
             stop("'altexp' must specify an alternative experiment from ",
                 "altExp(x).", call. = FALSE)
+        }
+        #
+        if( !.is_a_string(name) ){
+            stop("'name' must be a single character value.", call. = FALSE)
         }
         ########################### Input check end ############################
         # Get TreeSE from altexp if specified.
@@ -699,43 +711,4 @@ setMethod("addRDA", "SingleCellExperiment",
         table = tab
     )
     return(res)
-}
-
-# Add RDA/CCA to reducedDim
-.add_object_to_reduceddim <- function(
-        tse, rda, name, subset.result = TRUE, ...){
-    # Test subset
-    if( !.is_a_bool(subset.result) ){
-        stop("'subset.result' must be TRUE or FALSE.", call. = FALSE)
-    }
-    #
-    # If samples do not match / there were samples without appropriate metadata
-    # and they are now removed
-    if( !all(colnames(tse) %in% rownames(rda)) && subset.result ){
-        # Take a subset
-        tse <- tse[ , rownames(rda) ]
-        # Give a message
-        warning(
-            "Certain samples are removed from the result because they did ",
-            "not include sufficient metadata.", call. = FALSE)
-    } else if( !all(colnames(tse) %in% rownames(rda)) && !subset.result ){
-        # If user do not want to subset the data
-        # Save attributes from the object
-        attr <- attributes(rda)
-        attr <- attr[ !names(attr) %in% c("dim", "dimnames")]
-        # Find samples that are removed
-        samples_not_found <- setdiff(colnames(tse), rownames(rda))
-        # Create an empty matrix
-        mat <- matrix(nrow = length(samples_not_found), ncol=ncol(rda))
-        rownames(mat) <- samples_not_found
-        # Combine the data and order it in correct order
-        rda <- rbind(rda, mat)
-        rda <- rda[colnames(tse), ]
-        # Add attributes
-        attr <- c(attributes(rda), attr)
-        attributes(rda) <- attr
-    }
-    # Add object to reducedDIm
-    reducedDim(tse, name) <- rda
-    return(tse)
 }

@@ -154,8 +154,7 @@
 #' metadata(tse)[["jsd"]][1:6, 1:6]
 #'
 #' # Multi Dimensional Scaling applied to JSD dissimilarity matrix
-#' tse <- runMDS(
-#'     tse, FUN = getDissimilarity, method = "overlap", assay.type = "counts")
+#' tse <- addMDS(tse, method = "overlap", assay.type = "counts")
 #' reducedDim(tse, "MDS") |> head()
 #'
 #' ### Unifrac dissimilarity
