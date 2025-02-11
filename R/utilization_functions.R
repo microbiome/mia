@@ -40,7 +40,7 @@
 #' tse <- addNMF(tse, k = 1, name = "NMF")
 #'
 #' # Extract feature loadings
-#' res <- getReducedDimElement(tse, "NMF", "loadings")
+#' res <- getReducedDimElement(tse, dimred = "NMF", name = "loadings")
 #' res |> head()
 #'
 #' @seealso

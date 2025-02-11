@@ -18,7 +18,7 @@ getReducedDimElement(x, ...)
 \item{dimred}{\code{Character scalar} or \code{integer scalar}. A name or
 index of dimension reduction results. (Default: \code{1L})}
 
-\item{name}{\code{Character scalar}. A name of values retrieved from
+\item{name}{\code{Character vector}. A name of values retrieved from
 attributes of \code{reducedDim(x, dimred)}. If \code{NULL}, all the values
 are retrieved. (Default: \code{NULL})}
 }
@@ -47,7 +47,7 @@ tse <- agglomerateByPrevalence(tse, rank = "Phylum")
 tse <- addNMF(tse, k = 1, name = "NMF")
 
 # Extract feature loadings
-res <- getReducedDimElement(tse, "NMF", "loadings")
+res <- getReducedDimElement(tse, dimred = "NMF", name = "loadings")
 res |> head()
 
 }
