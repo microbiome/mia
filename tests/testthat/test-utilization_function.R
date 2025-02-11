@@ -19,6 +19,10 @@ test_that("Test getReducedDimElement", {
     expect_equal(res, ref)
     #
     for( nam in names(ref) ){
+        # Get randomly an index to test
+        if( rnorm(1)>0 ){
+            nam <- which(nam == names(ref))
+        }
         res <- getReducedDimElement(tse, dimred = "MDS", name = nam)
         expect_equal(res, ref[[nam]])
     }

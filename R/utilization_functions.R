@@ -23,7 +23,7 @@
 #' @param dimred \code{Character scalar} or \code{integer scalar}. A name or
 #' index of dimension reduction results. (Default: \code{1L})
 #'
-#' @param name \code{Character scalar}. A name of values retrieved from
+#' @param name \code{Character vector}. A name of values retrieved from
 #' attributes of \code{reducedDim(x, dimred)}. If \code{NULL}, all the values
 #' are retrieved. (Default: \code{NULL})
 #'
@@ -49,34 +49,50 @@
 #'
 NULL
 
-
 #'
 #' @export
 #' @rdname utilization_functions
 #' @importFrom SingleCellExperiment reducedDim
 setMethod("getReducedDimElement", "SingleCellExperiment",
     function(x, dimred = 1L, name = NULL, ...){
+        if( !(is.null(name) || is.character(name) || .is_integer(name)) ){
+            stop("'name' must be NULL, character or integer value.",
+                call. = FALSE)
+        }
         # Check and get attributes from reducedDim
         temp <- .check_dimred_present(dimred, x)
         mat <- reducedDim(x, dimred)
         values <- attributes(mat)
-        # Remove matrix-specific attributes
-        rm <- c("dim", "dimnames")
-        values <- values[ !names(values) %in% rm ]
-        # Check that name is correct
-        if( !(is.null(name) || (.is_a_string(name) &&
-                any(names(values) %in% name))) ){
-            stop("'name' must be NULL or a single character value from the ",
-                "following options: '",
-                paste0(names(values), collapse = "', '"), "'", call. = FALSE)
-        }
-        # Get valus specified by name
-        if( !is.null(name) ){
-            values <- values[ names(values) %in% name ]
-        }
-        if( length(values) == 1L ){
-            values <- values[[1L]]
-        }
+        # Extract the user-specified elements
+        values <- .extract_elements_from_reduceddim(values, name)
         return(values)
     }
 )
+
+################################ HELP FUNCTIONS ################################
+
+# From a list, extract those elements that user has specified
+.extract_elements_from_reduceddim <- function(res, name){
+    # Remove matrix-specific attributes
+    rm <- c("dim", "dimnames")
+    res <- res[ !names(res) %in% rm ]
+    # Check that name is correct
+    if( is.character(name) && !any(names(res) %in% name) ){
+        stop("'name' must be from the following following options: '",
+            paste0(names(res), collapse = "', '"), "'", call. = FALSE)
+    }
+    if( .is_integer(name) && !all(name>0L & name<=length(res)) ){
+        stop("'name' must be from the following range (0, ", length(res), "]",
+            call. = FALSE)
+    }
+    # Get values specified by name or integer
+    if( is.character(name) || .is_integer(name) ){
+        res <- res[ name ]
+    }
+    # If there was only single match (which should be in the most cases)
+    # extract the element from the list
+    if( length(res) == 1L ){
+        res <- res[[1L]]
+    }
+    return(res)
+}
