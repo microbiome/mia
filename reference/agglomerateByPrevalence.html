@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.21</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.22</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Agglomerate data based on population prevalence</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/corr_default_assay/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/corr_default_assay/R/getPrevalence.R" class="external-link"><code>R/getPrevalence.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/runMDS/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/runMDS/R/getPrevalence.R" class="external-link"><code>R/getPrevalence.R</code></a></small>
     <div class="hidden name"><code>agglomerateByPrevalence.Rd</code></div>
     </div>
 
@@ -105,7 +105,7 @@ summary of non-prevalent taxa. (default: <code>"Other"</code>)</p></dd>
 
 <dt id="arg-update-tree">update.tree<a class="anchor" aria-label="anchor" href="#arg-update-tree"></a></dt>
 <dd><p><code>Logical scalar</code>. Should
-<code>rowTree()</code> also be merged? (Default: <code>TRUE</code>)</p></dd>
+<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-accessor.html" class="external-link">rowTree()</a></code> also be merged? (Default: <code>TRUE</code>)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -159,7 +159,7 @@ threshold) are agglomerated in an additional row taking the name indicated by
 <span class="r-in"><span><span class="co"># named by default "Other" takes the summed up values of all the other phyla</span></span></span>
 <span class="r-in"><span><span class="co"># that are below the prevalence threshold.</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">assay</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   CL3    CC1    SV1 M31Fcsw M11Fcsw</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  39601  90280 121703    2540     841</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   67395  96398  93436  804395 1424107</span>
