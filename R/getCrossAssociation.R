@@ -172,7 +172,8 @@
 #'
 #' # Calculate cross-correlations
 #' result <- getCrossAssociation(
-#'     mae, method = "pearson", assay.type1 = "counts", assay.type2 = "nmr")
+#'     mae, method = "pearson", assay.type1 = "counts", assay.type2 = "nmr",
+#'     show.warnings = FALSE, verbose = FALSE)
 #' # Show first 5 entries
 #' head(result, 5)
 #'
@@ -184,7 +185,8 @@
 #' # When mode = "matrix", the return value is a matrix
 #' result <- getCrossAssociation(
 #'     mae, experiment2 = 2, assay.type1 = "relabundance", assay.type2 = "nmr",
-#'     altexp1 = "Phylum", method = "pearson", mode = "matrix")
+#'     altexp1 = "Phylum", method = "pearson", mode = "matrix",
+#'     show.warnings = FALSE, verbose = FALSE)
 #' # Show first 5 entries
 #' head(result, 5)
 #'
@@ -196,7 +198,8 @@
 #' result <- getCrossAssociation(
 #'     mae[[1]], experiment2 = mae[[1]], method = "pearson",
 #'     assay.type1 = "counts", assay.type2 = "counts",
-#'     filter.self.cor = TRUE, p.adj.threshold = 0.05, test.signif = TRUE)
+#'     filter.self.cor = TRUE, p.adj.threshold = 0.05, test.signif = TRUE,
+#'     show.warnings = FALSE, verbose = FALSE)
 #' # Show first 5 entries
 #' head(result, 5)
 #'
@@ -208,7 +211,8 @@
 #' result <- getCrossAssociation(
 #'     mae[[1]], mae[[1]], by = 2, paired = FALSE,
 #'     assay.type1 = "counts", assay.type2 = "counts",
-#'     association.fun = getDissimilarity, method = "bray")
+#'     association.fun = getDissimilarity, method = "bray",
+#'     show.warnings = FALSE, verbose = FALSE)
 #'
 #' # If experiments are equal and measure is symmetric
 #' # (e.g., taxa1 vs taxa2 == taxa2 vs taxa1),
@@ -217,7 +221,8 @@
 #' # association for only other half of of variable-pairs.
 #' result <- getCrossAssociation(
 #'     mae, experiment1 = "microbiota", experiment2 = "microbiota",
-#'     assay.type1 = "counts", assay.type2 = "counts", symmetric = TRUE)
+#'     assay.type1 = "counts", assay.type2 = "counts", symmetric = TRUE,
+#'     show.warnings = FALSE, verbose = FALSE)
 #'
 #' # For big data sets, the calculations might take a long time.
 #' # To speed them up, you can take a random sample from the data.
@@ -227,7 +232,8 @@
 #' tse <- mae[[1]]
 #' tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
 #' result <- getCrossAssociation(
-#'     tse_sub, assay.type1 = "counts", assay.type2 = "counts")
+#'     tse_sub, assay.type1 = "counts", assay.type2 = "counts",
+#'     show.warnings = FALSE, verbose = FALSE)
 #'
 #' # It is also possible to choose variables from colData and calculate
 #' # association between assay and sample metadata or between variables of
@@ -239,7 +245,7 @@
 #' result <- getCrossAssociation(
 #'     mae[[1]], assay.type1 = "counts",
 #'     col.var2 = c("shannon_diversity", "coverage_diversity"),
-#'     test.signif = TRUE)
+#'     test.signif = TRUE, show.warnings = FALSE, verbose = FALSE)
 #'
 #' # If your data contains TreeSE with alternative experiment in altExp,
 #' # correlations can be calculated as follows.
@@ -252,7 +258,8 @@
 #'     tse,
 #'     altexp2 = "metabolites",
 #'     assay.type1 = "rclr",
-#'     assay.type2 = "nmr"
+#'     assay.type2 = "nmr",
+#'     show.warnings = FALSE, verbose = FALSE
 #' )
 #'
 #' # To calculate correlation of features to principal coordinates, you have to
@@ -260,7 +267,8 @@
 #' library(scater)
 #' tse <- addMDS(tse, assay.type = "rclr", method = "euclidean")
 #' # ...then calculate the correlation.
-#' res <- getCrossAssociation(tse, assay.type1 = "rclr", dimred2 = "MDS")
+#' res <- getCrossAssociation(tse, assay.type1 = "rclr", dimred2 = "MDS",
+#'     show.warnings = FALSE, verbose = FALSE)
 #' head(res)
 #'
 NULL
