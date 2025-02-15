@@ -50,7 +50,10 @@ used in calculation. (Default: \code{"counts"})}
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{reference}{\code{Character scalar}. A column name from
-\code{colData(x)} or either \code{"mean"} or \code{"median"}.
+\code{colData(x)} or either \code{"mean"} or \code{"median"}. If column name
+is specified, the column must include reference samples for each sample.
+If \code{"mean"} or \code{"median"} is specified, the mean or median of the
+entire dataset is calculated and used as the reference value.
 (Default: \code{"median"})}
 
 \item{method}{\code{Character scalar}. Specifies which dissimilarity to

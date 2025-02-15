@@ -21,7 +21,7 @@
 #' @param ... additional arguments:
 #' \itemize{
 #'   \item \code{assay.type}: \code{Character scalar}. Specifies the name of
-#'   the assay used in calculation. (Default: \code{"counts"})
+#'   the assay used in calculation. (Default: \code{"metaphlan"})
 #'   \item \code{prefix.rm}: \code{Logical scalar}. Should
 #'     taxonomic prefixes be removed? (Default: \code{FALSE})
 #'   \item \code{remove.suffix}: \code{Logical scalar}. Should
@@ -259,7 +259,7 @@ importMetaPhlAn <- function(
 
 # Create SE object that include rowdata and assay, from the metaphlan table
 .create_se_from_metaphlan <- function(
-        table, rowdata_col, assay.type = assay_name, assay_name = "counts",
+        table, rowdata_col, assay.type = assay_name, assay_name = "metaphlan",
         ...){
     # Check assay.type
     if( !.is_non_empty_character(assay.type) ){
