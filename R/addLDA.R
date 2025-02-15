@@ -53,13 +53,13 @@
 #' tse <- addLDA(tse)
 #'
 #' # Extract feature loadings
-#' loadings <- getReducedDimElement(tse, "LDA", "loadings")
+#' loadings <- getReducedDimAttribute(tse, "LDA", "loadings")
 #' head(loadings)
 #'
 #' # Estimate models with number of topics from 2 to 10
 #' tse <- addLDA(tse, k = c(2, 3, 4, 5, 6, 7, 8, 9, 10), name = "LDA_10")
 #' # Get the evaluation metrics
-#' tab <- getReducedDimElement(tse, "LDA_10","eval_metrics")
+#' tab <- getReducedDimAttribute(tse, "LDA_10","eval_metrics")
 #' # Plot
 #' plot(tab[["k"]], tab[["perplexity"]], xlab = "k", ylab = "perplexity")
 NULL

@@ -90,14 +90,14 @@ tse <- agglomerateByPrevalence(tse, rank = "Phylum")
 tse <- addNMF(tse, k = 2, name = "NMF")
 
 # Extract feature loadings
-loadings_NMF <- getReducedDimElement(tse, "NMF", "loadings")
+loadings_NMF <- getReducedDimAttribute(tse, "NMF", "loadings")
 head(loadings_NMF)
 
 # Estimate models with number of topics from 2 to 4. Perform 2 runs.
 tse <- addNMF(tse, k = c(2, 3, 4), name = "NMF_4", nrun = 2)
 
 # Extract feature loadings
-loadings_NMF_4 <- getReducedDimElement(tse, "NMF_4", "loadings")
+loadings_NMF_4 <- getReducedDimAttribute(tse, "NMF_4", "loadings")
 head(loadings_NMF_4)
 
 }
