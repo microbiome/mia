@@ -167,7 +167,7 @@ values contained in k, and the best fit is selected based on
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     fit</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Extract feature loadings</span></span></span>
-<span class="r-in"><span><span class="va">loadings_NMF</span> <span class="op">&lt;-</span> <span class="fu"><a href="utilization_functions.html">getReducedDimElement</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"NMF"</span>, <span class="st">"loadings"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">loadings_NMF</span> <span class="op">&lt;-</span> <span class="fu"><a href="utilization_functions.html">getReducedDimAttribute</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"NMF"</span>, <span class="st">"loadings"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">loadings_NMF</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         [,1]         [,2]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> AD3             8.396228e-04 1.297661e-07</span>
@@ -193,7 +193,7 @@ values contained in k, and the best fit is selected based on
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     fit</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Extract feature loadings</span></span></span>
-<span class="r-in"><span><span class="va">loadings_NMF_4</span> <span class="op">&lt;-</span> <span class="fu"><a href="utilization_functions.html">getReducedDimElement</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"NMF_4"</span>, <span class="st">"loadings"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">loadings_NMF_4</span> <span class="op">&lt;-</span> <span class="fu"><a href="utilization_functions.html">getReducedDimAttribute</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"NMF_4"</span>, <span class="st">"loadings"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">loadings_NMF_4</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         [,1]         [,2]         [,3]         [,4]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> AD3             5.577926e-04 2.220446e-16 2.220446e-16 1.204598e-07</span>
