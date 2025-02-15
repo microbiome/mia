@@ -9,7 +9,7 @@
 #' \code{TreeSummarizedExperiment} objects
 #'
 #' @details
-#' \code{getReducedDimElement} is a utility function that retrieves specific
+#' \code{getReducedDimAttribute} is a utility function that retrieves specific
 #' elements from the attributes of \code{reducedDim} in a
 #' \code{TreeSummarizedExperiment} object. These attributes may contain
 #' loadings, statistical test results, or other metadata, depending on the
@@ -40,7 +40,7 @@
 #' tse <- addNMF(tse, k = 1, name = "NMF")
 #'
 #' # Extract feature loadings
-#' res <- getReducedDimElement(tse, dimred = "NMF", name = "loadings")
+#' res <- getReducedDimAttribute(tse, dimred = "NMF", name = "loadings")
 #' res |> head()
 #'
 #' @seealso
@@ -53,7 +53,7 @@ NULL
 #' @export
 #' @rdname utilization_functions
 #' @importFrom SingleCellExperiment reducedDim
-setMethod("getReducedDimElement", "SingleCellExperiment",
+setMethod("getReducedDimAttribute", "SingleCellExperiment",
     function(x, dimred = 1L, name = NULL, ...){
         if( !(is.null(name) || is.character(name) || .is_integer(name)) ){
             stop("'name' must be NULL, character or integer value.",

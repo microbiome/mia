@@ -91,12 +91,12 @@ Selects the experiment 2 from\code{experiments(x)} of
 \code{x} when \code{x} is \code{TreeSE})}
 
 \item{assay.type1}{\code{Character scalar}. Specifies the name of the assay
-in experiment 1 to be transformed.. (Default: \code{NULL})}
+in experiment 1 to be transformed. (Default: \code{NULL})}
 
 \item{assay_name1}{Deprecated. Use \code{assay.type1} instead.}
 
 \item{assay.type2}{\code{Character scalar}. Specifies the name of the
-assay in experiment 2 to be transformed.. (Default: \code{NULL})}
+assay in experiment 2 to be transformed. (Default: \code{NULL})}
 
 \item{assay_name2}{Deprecated. Use \code{assay.type2} instead.}
 

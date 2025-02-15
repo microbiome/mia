@@ -394,5 +394,5 @@ setGeneric("addMDS", signature = "x", function(x, ...)
 
 #' @rdname utilization_functions
 #' @export
-setGeneric("getReducedDimElement", signature = "x", function(x, ...)
-    standardGeneric("getReducedDimElement"))
+setGeneric("getReducedDimAttribute", signature = "x", function(x, ...)
+    standardGeneric("getReducedDimAttribute"))

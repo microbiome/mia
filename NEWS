@@ -168,3 +168,4 @@ Changes in version 1.15.x
 + Add wrapper for PhILR transformation
 + Support rarefaction when applying unifrac
 + Added getMDS and addMDS: wrappers for scater::calculateMDS and scater::runMDS
++ getReducedDimAttribute: function for fetching elements from attributes of reducedDim
