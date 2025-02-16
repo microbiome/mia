@@ -6,8 +6,9 @@ test_that(".estimate_richness", {
     skip_if_not(requireNamespace("vegan", quietly = TRUE))
     data(esophagus, package="mia")
 
-    tse <- .estimate_richness(esophagus, detection = 1)
-    cd <- colData(tse)    
+    indices <- c("ace", "chao1", "hill", "observed")
+    tse <- addAlpha(esophagus, index = indices, detection = 1)
+    cd <- colData(tse)
     expect_equal(unname(round(cd$observed, 0)), c(15, 24, 16))
     # These are unaffected by detection parameter
     expect_equal(unname(round(cd$chao1, 4)), c(39.1429, 37.5000, 71.0000))
@@ -17,7 +18,7 @@ test_that(".estimate_richness", {
     test_internal_.estimate_richness <- function(tse){
 
         # Calculate all indices.
-        tse_idx <- .estimate_richness(tse)
+        tse_idx <- addAlpha(tse, index = indices)
 
         # Check that the type of output is the same as the type of input.
         expect_true(typeof(tse_idx) == typeof(tse))
@@ -31,10 +32,10 @@ test_that(".estimate_richness", {
             c("ace", "ace_se", "chao1", "chao1_se", "hill", "observed"))
 
         # Delete colData
-	colData(tse_idx) <- NULL
+	    colData(tse_idx) <- NULL
 
         # Calculate all indices with specified names
-        tse_idx <- .estimate_richness(tse,
+        tse_idx <- addAlpha(tse,
 	    index = c("observed", "chao1", "ace", "hill"),
 	    name = c("Observed", "Chao1", "ACE", "Hill")
 	    )
@@ -49,7 +50,7 @@ test_that(".estimate_richness", {
         expect_equal(
             unname(mia:::.calc_observed(mat, detection = 0)), c(28, 33, 38))
         expect_equal(
-            unname(mia:::.calc_observed(mat, detection = 1)), c(15, 24, 16))	
+            unname(mia:::.calc_observed(mat, detection = 1)), c(15, 24, 16))
 
         s <- mia:::.calc_chao1(mat)
         expect_equal(ncol(s), 2)
@@ -70,7 +71,7 @@ test_that(".estimate_richness", {
 
     # Standard tse
     test_internal_.estimate_richness(tse)
-    
+
     # DelayedArray version of the assay
     assay(tse,"counts") <- DelayedArray(assay(tse,"counts"))
     test_internal_.estimate_richness(tse)

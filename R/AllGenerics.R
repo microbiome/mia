@@ -3,22 +3,14 @@
 #' @rdname addAlpha
 #' @export
 setGeneric(
-    "addAlpha", signature = c("x"),
-    function(
-        x, assay.type = "counts", 
-        index = c(
-            "coverage_diversity", "fisher_diversity", "faith_diversity",
-            "gini_simpson_diversity", "inverse_simpson_diversity",
-            "log_modulo_skewness_diversity", "shannon_diversity",
-            "absolute_dominance", "dbp_dominance",
-            "core_abundance_dominance", "gini_dominance",
-            "dmn_dominance", "relative_dominance",
-            "simpson_lambda_dominance", "camargo_evenness",
-            "pielou_evenness", "simpson_evenness",
-            "evar_evenness", "bulla_evenness", "ace_richness",
-            "chao1_richness", "hill_richness", "observed_richness"),
-        name = index, niter = NULL, ...)
+    "addAlpha", signature = c("x"), function(x, ...)
     standardGeneric("addAlpha"))
+
+#' @rdname addAlpha
+#' @export
+setGeneric(
+    "getAlpha", signature = c("x"), function(x, ...)
+    standardGeneric("getAlpha"))
 
 #' @rdname getDissimilarity
 #' @export
@@ -88,8 +80,8 @@ setGeneric("calculateDMN", signature = c("x"), function(x, ...)
 #' @export
 setGeneric("addCluster", signature = c("x"),
     function(
-        x, BLUSPARAM, assay.type = assay_name, 
-        assay_name = "counts", by = MARGIN, MARGIN = "rows", full = FALSE, 
+        x, BLUSPARAM, assay.type = assay_name,
+        assay_name = "counts", by = MARGIN, MARGIN = "rows", full = FALSE,
         name = "clusters", clust.col = "clusters", ...)
     standardGeneric("addCluster"))
 
@@ -126,7 +118,7 @@ setGeneric("getCrossAssociation", signature = c("x"), function(x, ...)
 #' @export
 setGeneric("getDominant",signature = c("x"),
     function(x, assay.type = assay_name, assay_name = "counts",
-        group = rank, rank = NULL, other.name = "Other", n = NULL, 
+        group = rank, rank = NULL, other.name = "Other", n = NULL,
         complete = TRUE, ...)
     standardGeneric("getDominant"))
 
@@ -200,11 +192,7 @@ setGeneric("mergeSEs", signature = c("x"), function(x, ... )
 
 #' @rdname rarefyAssay
 #' @export
-setGeneric("rarefyAssay", signature = c("x"),
-    function(
-        x, assay.type = assay_name, assay_name = "counts", 
-        sample = min_size, min_size = min(colSums2(assay(x))),
-        replace = TRUE, name = "subsampled", verbose = TRUE, ...)
+setGeneric("rarefyAssay", signature = c("x"), function(x, ...)
     standardGeneric("rarefyAssay"))
 
 #' @rdname runCCA
@@ -358,3 +346,48 @@ setGeneric(".estimate_dominance",signature = c("x"),
             "simpson_lambda"),
         ntaxa = 1, aggregate = TRUE, name = index, BPPARAM = SerialParam(), ...)
         standardGeneric(".estimate_dominance"))
+
+#' @rdname getAbundant
+#' @export
+setGeneric("getAbundant", signature = "x", function(x, ...)
+    standardGeneric("getAbundant"))
+
+#' @rdname getAbundant
+#' @export
+setGeneric("getLowAbundant", signature = "x", function(x, ...)
+    standardGeneric("getLowAbundant"))
+
+#' @rdname getAbundant
+#' @export
+setGeneric("getConditionallyLowAbundant", signature = "x", function(x, ...)
+    standardGeneric("getConditionallyLowAbundant"))
+
+#' @rdname getAbundant
+#' @export
+setGeneric("getPermanentlyLowAbundant", signature = "x", function(x, ...)
+    standardGeneric("getPermanentlyLowAbundant"))
+
+#' @rdname getAbundant
+#' @export
+setGeneric("getAbundanceClass", signature = "x", function(x, ...)
+    standardGeneric("getAbundanceClass"))
+
+#' @rdname getAbundant
+#' @export
+setGeneric("addAbundanceClass", signature = "x", function(x, ...)
+    standardGeneric("addAbundanceClass"))
+
+#' @rdname getPrevalence
+#' @export
+setGeneric("addPrevalence", signature = "x", function(x, ...)
+    standardGeneric("addPrevalence"))
+
+#' @rdname addMDS
+#' @export
+setGeneric("getMDS", signature = "x", function(x, ...)
+    standardGeneric("getMDS"))
+
+#' @rdname addMDS
+#' @export
+setGeneric("addMDS", signature = "x", function(x, ...)
+    standardGeneric("addMDS"))

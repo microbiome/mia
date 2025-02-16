@@ -98,8 +98,8 @@ of the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}. (Default:
 
 \item{keep_dist}{Deprecated. Use \code{keep.dist} instead.}
 
-\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
+used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -128,7 +128,8 @@ Perform non-metric multi-dimensional scaling (nMDS) on samples, based on the
 data in a \code{SingleCellExperiment} object.
 }
 \details{
-For \code{addNMDS} a \linkS4class{SingleCellExperiment}
+For \code{addNMDS} a
+\code{\link[TreeSummarizedExperiment]{TreeSummarizedExperiment}}
 
 Either \code{\link[MASS:isoMDS]{MASS::isoMDS}} or
 \code{\link[vegan:monoMDS]{vegan::monoMDS}} are used internally to compute

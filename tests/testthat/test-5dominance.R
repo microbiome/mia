@@ -11,19 +11,21 @@ test_that(".estimate_dominance", {
 
         #.estimate_dominance
         #Calculates all indices.
-        tse_idx <- .estimate_dominance(tse)
+        indices <- c(
+            "absolute", "dbp", "core_abundance", "gini", "dmn", "relative",
+            "simpson_lambda")
+        tse_idx <- addAlpha(tse, index = indices)
 
         #Checks that the type of output is the same as the type of input.
         expect_true(typeof(tse_idx) == typeof(tse))
-	
+
         #Checks that every index is calculated by checking the column names from
         #colData.
         #Checks also, that the order of indices is right / the same as the order
         #in the input vector.
         expect_named(
             colData(tse_idx),
-            c("absolute", "dbp", "core_abundance", "gini", "dmn", "relative",
-            "simpson_lambda"))
+            indices)
 
         #.calc_core_dominance
         #Rounded because, without it gave an error (average difference was

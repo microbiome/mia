@@ -33,8 +33,8 @@ mergeSEs(x, ...)
 
 \item{...}{optional arguments (not used).}
 
-\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
+used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -65,11 +65,12 @@ taxonomy information along with OTU number matches.
 
 \item{collapse_features}{Deprecated. Use \code{collapse.rows} instead.}
 
-\item{verbose}{\code{Logical scalar}. Choose whether to show messages.
-(Default: \code{TRUE})}
+\item{verbose}{\code{Logical scalar}. Choose whether to show
+messages. (Default: \code{TRUE})}
 
-\item{y}{a \code{\link{SummarizedExperiment}} object when \code{x} is a
-\code{\link{SummarizedExperiment}} object. Disabled when \code{x} is a list.}
+\item{y}{a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
+when \code{x} is a \code{\link[SummarizedExperiment]{SummarizedExperiment}}
+object. Disabled when \code{x} is a list.}
 }
 \value{
 A single \code{SummarizedExperiment} object.
@@ -152,7 +153,7 @@ tse_temp
 
 # If your objects contain samples that describe one and same sample,
 # you can collapse equally named samples to one by specifying 'collapse.cols'
-tse_temp <- mergeSEs(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
+tse_temp <- mergeSEs(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]),
                        collapse.cols = TRUE,
                        join = "inner")
 tse_temp

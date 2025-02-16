@@ -30,7 +30,7 @@ getDivergence(
 )
 }
 \arguments{
-\item{x}{a \code{\link{SummarizedExperiment}} object.}
+\item{x}{a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object.}
 
 \item{name}{\code{Character scalar}. The name to be used to store the result
 in metadata of the output. (Default: \code{method})}
@@ -44,20 +44,24 @@ values are used to calculate divergence instead of the assay. Can be
 disabled with \code{NULL}. (Default: \code{NULL})
 }}
 
-\item{assay.type}{\code{Character scalar}. Specifies which assay to use for
-calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
+used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{reference}{\code{Character scalar}. A column name from
-\code{colData(x)} or either \code{"mean"} or \code{"median"}.
+\code{colData(x)} or either \code{"mean"} or \code{"median"}. If column name
+is specified, the column must include reference samples for each sample.
+If \code{"mean"} or \code{"median"} is specified, the mean or median of the
+entire dataset is calculated and used as the reference value.
 (Default: \code{"median"})}
 
 \item{method}{\code{Character scalar}. Specifies which dissimilarity to
 calculate. (Default: \code{"bray"})}
 }
 \value{
-\code{x} with additional \code{\link{colData}} named \code{name}
+\code{x} with additional
+\code{\link[SummarizedExperiment:colData]{colData}} named \code{name}
 }
 \description{
 Estimate divergence against a given reference sample.
@@ -77,15 +81,15 @@ data(GlobalPatterns)
 tse <- GlobalPatterns
 
 # By default, reference is median of all samples. The name of column where
-# results is "divergence" by default, but it can be specified. 
+# results is "divergence" by default, but it can be specified.
 tse <- addDivergence(tse)
 
-# The method that are used to calculate distance in divergence and 
+# The method that are used to calculate distance in divergence and
 # reference can be specified. Here, euclidean distance is used. Reference is
 # the first sample. It is recommended # to add reference to colData.
 tse[["reference"]] <- rep(colnames(tse)[[1]], ncol(tse))
 tse <- addDivergence(
-    tse, name = "divergence_first_sample", 
+    tse, name = "divergence_first_sample",
     reference = "reference",
     method = "euclidean")
 

@@ -2,25 +2,18 @@
 % Please edit documentation in R/AllGenerics.R, R/addAlpha.R
 \name{addAlpha}
 \alias{addAlpha}
+\alias{getAlpha}
 \alias{addAlpha,SummarizedExperiment-method}
+\alias{getAlpha,SummarizedExperiment-method}
 \title{Estimate alpha diversity indices}
 \usage{
-addAlpha(
-  x,
-  assay.type = "counts",
-  index = c("coverage_diversity", "fisher_diversity", "faith_diversity",
-    "gini_simpson_diversity", "inverse_simpson_diversity",
-    "log_modulo_skewness_diversity", "shannon_diversity", "absolute_dominance",
-    "dbp_dominance", "core_abundance_dominance", "gini_dominance", "dmn_dominance",
-    "relative_dominance", "simpson_lambda_dominance", "camargo_evenness",
-    "pielou_evenness", "simpson_evenness", "evar_evenness", "bulla_evenness",
-    "ace_richness", "chao1_richness", "hill_richness", "observed_richness"),
-  name = index,
-  niter = NULL,
-  ...
-)
+addAlpha(x, ...)
 
-\S4method{addAlpha}{SummarizedExperiment}(
+getAlpha(x, ...)
+
+\S4method{addAlpha}{SummarizedExperiment}(x, ...)
+
+\S4method{getAlpha}{SummarizedExperiment}(
   x,
   assay.type = "counts",
   index = c("coverage_diversity", "fisher_diversity", "faith_diversity",
@@ -32,24 +25,12 @@ addAlpha(
     "ace_richness", "chao1_richness", "hill_richness", "observed_richness"),
   name = index,
   niter = NULL,
+  BPPARAM = SerialParam(),
   ...
 )
 }
 \arguments{
-\item{x}{a \code{\link{SummarizedExperiment}} object.}
-
-\item{assay.type}{\code{Character scalar}. Specifies the name of assay
-used in calculation. (Default: \code{"counts"})}
-
-\item{index}{\code{Character vector}. Specifies the alpha diversity
-indices to be calculated.}
-
-\item{name}{\code{Character vector}. A name for the column of the
-\code{colData} where results will be stored. (Default: \code{index})}
-
-\item{niter}{\code{Integer scalar}. Specifies the number of
-rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
-(see Details section). (Default: \code{NULL})}
+\item{x}{a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object.}
 
 \item{...}{optional arguments:
 \itemize{
@@ -99,13 +80,32 @@ taxa with the indicated rank (default: \code{aggregate = TRUE}).
 \item \code{detection}: (observed index). \code{Numeric scalar} Selects
 detection threshold for the abundances (Default: \code{0})
 }}
+
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
+used in calculation. (Default: \code{"counts"})}
+
+\item{index}{\code{Character vector}. Specifies the alpha diversity
+indices to be calculated.}
+
+\item{name}{\code{Character vector}. A name for the column of the
+\code{colData} where results will be stored. (Default: \code{index})}
+
+\item{niter}{\code{Integer scalar}. Specifies the number of
+rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
+(see Details section). (Default: \code{NULL})}
+
+\item{BPPARAM}{A
+\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
+object specifying whether the calculation should be parallelized.}
 }
 \value{
-\code{x} with additional \code{colData} column(s) named \code{code}
+\code{getAlpha} returns a \code{DataFrame}.
+\code{addAlpha} returns a \code{x} with additional \code{colData} column(s)
+named \code{name}.
 }
 \description{
-The function estimates alpha diversity indices optionally using rarefaction,
-then stores results in \code{\link{colData}}.
+These functions estimates alpha diversity indices optionally using
+rarefaction.
 }
 \details{
 \subsection{Diversity}{
@@ -360,6 +360,22 @@ corresponding index in the \pkg{vegan} package is "richness".
 
 }
 }
+
+\subsection{Rarefaction}{
+
+Rarefaction can be used to control uneven sequencing depths. Although,
+it is highly debated method. Some think that it is the only option that
+successfully controls the variation caused by uneven sampling depths.
+The biggest argument against rarefaction is the fact that it omits data.
+
+Rarefaction works by sampling the counts randomly. This random sampling
+is done \code{niter} times. In each sampling iteration, \code{sample} number
+of random samples are drawn, and alpha diversity is calculated for this
+subset. After the iterative process, there are \code{niter} number of
+result that are then averaged to get the final result.
+
+Refer to Schloss (2024) for more details on rarefaction.
+}
 }
 \examples{
 
@@ -381,6 +397,11 @@ tse <- addAlpha(tse,
 
 # Shows the estimated observed richness
 tse$observed_richness
+
+# One can also calculate the indices and get the results without adding
+# them to colData
+res <- getAlpha(tse, index = "shannon")
+res |> head()
 
 }
 \references{
@@ -450,6 +471,10 @@ Species richness estimators: how many species can dance on the head of a pin?
 Pielou, EC. (1966)
 The measurement of diversity in different types of
 biological collections. \emph{J Theoretical Biology} 13:131--144.
+
+Schloss PD (2024) Rarefaction is currently the best approach to control for
+uneven sequencing effort in amplicon sequence analyses. \emph{mSphere}
+28;9(2):e0035423. doi: 10.1128/msphere.00354-23
 
 Simpson EH (1949)
 Measurement of Diversity.
