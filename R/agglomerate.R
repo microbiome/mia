@@ -472,27 +472,19 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
     # Get right argument names for subsetByLeaf call
     args_names <- switch(
         by,
-        "1" = c("x", "rowLeaf", "whichRowTree", "updateTree"),
-        "2" = c("x", "colLeaf", "whichColTree", "updateTree"),
+        "1" = c("x", "rowLeaf", "updateTree"),
+        "2" = c("x", "colLeaf", "updateTree"),
         stop("."))
     # Get names of trees and links between trees and rows
     tree_names <- tree_names_FUN(x)
     row_links <- links_FUN(x)
-    # Loop through tree names
-    for( name in tree_names ){
-        # Get the tree that is being agglomerated
-        tree <- tree_FUN(x, name)
-        # Get row links that corresponds this specific tree
-        links_temp <- row_links[ row_links[["whichTree"]] == name, ]
-        # If the tree represents the data, agglomerate it
-        if( nrow(links_temp) > 0 ){
-            # Get names of nodes that are preserved
-            links_temp <- links_temp[["nodeLab"]]
-            # Agglomerate the tree
-            args <- list(x, links_temp, name, TRUE)
-            names(args) <- args_names
-            x <- do.call(subsetByLeaf, args)
-        }
+    if( !is.null(row_links) ){
+        # Agglomerate the tree(s). If whichRowTree is not specified,
+        # subsetByLeaf automatically subsets all trees by selecting nodes from
+        # the available tree(s). This approach naturally works even when there
+        # is only a single tree.
+        args <- setNames(list(x, row_links[["nodeLab"]], TRUE), args_names)
+        x <- do.call(subsetByLeaf, args)
     }
     return(x)
 }
