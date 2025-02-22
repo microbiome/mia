@@ -8,14 +8,15 @@ test_that(".estimate_evenness", {
         # colData.
         # Check that the order of indices is right / the same as the order
         # in the input vector.
-	    tse_idx <- .estimate_evenness(tse)
+        indices <- c("camargo", "pielou", "simpson_evenness", "evar", "bulla")
+	    tse_idx <- addAlpha(tse, index = indices)
 
         # Check that the type of output is the same as the type of input.
         expect_true(typeof(tse_idx) == typeof(tse))
 
         expect_named(
             colData(tse_idx),
-            c("camargo", "pielou", "simpson_evenness", "evar", "bulla"))
+            indices)
 
         mat <- assay(tse_idx,"counts")
 
@@ -42,9 +43,9 @@ test_that(".estimate_evenness", {
 
     # TSE object
     data(esophagus, package="mia")
-    tse <- esophagus 
+    tse <- esophagus
     test_internal_.estimate_evenness(tse)
-    
+
     assay(tse,"counts") <- DelayedArray(assay(tse,"counts"))
     test_internal_.estimate_evenness(tse)
 })

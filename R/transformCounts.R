@@ -5,34 +5,35 @@
 #'
 #' @inheritParams getDominant
 #' @inheritParams getDissimilarity
-#'   
+#'
 #' @param method \code{Character scalar}. Specifies the transformation
 #'   method.
-#' 
+#'
 #' @param MARGIN \code{Character scalar}. Determines whether the
 #'   transformation is applied sample (column) or feature (row) wise.
 #'   (Default: \code{"samples"})
-#' 
-#' @param pseudocount \code{Logical scalar} or \code{numeric scalar}. 
-#'   When \code{TRUE}, automatically adds half of the minimum positive 
-#'   value of \code{assay.type} (missing values ignored by default: 
+#'
+#' @param pseudocount \code{Logical scalar} or \code{numeric scalar}.
+#'   When \code{TRUE}, automatically adds half of the minimum positive
+#'   value of \code{assay.type} (missing values ignored by default:
 #'   \code{na.rm = TRUE}).
 #'   When FALSE, does not add any pseudocount (pseudocount = 0).
 #'   Alternatively, a user-specified numeric value can be added as pseudocount.
 #'   (Default: \code{FALSE}).
-#' 
-#' @param name \code{Character scalar}. A name for the column of the 
-#'   \code{colData} where results will be stored. (Default: \code{"method"})
-#'   
-#' @param altexp \code{Character vector} or \code{NULL}. Specifies the names 
-#' of alternative experiments to which the transformation should also be 
-#' applied. If \code{NULL}, the transformation is only applied to the main 
-#' experiment. (Default: \code{altExpNames(x)}).
 #'
-#' @param ... additional arguments passed e.g. on to \code{vegan:decostand}.
+#' @param name \code{Character scalar}. The name for the transformed assay to
+#' be stored. (Default: \code{method})
+#'
+#' @param altexp \code{Character vector} or \code{NULL}. Specifies the names
+#' of alternative experiments to which the transformation should also be
+#' applied. If \code{NULL}, the transformation is only applied to the main
+#' experiment. (Default: \code{NULL}).
+#'
+#' @param ... additional arguments passed e.g. on to \code{vegan:decostand}
+#' or \code{philr::philr}.
 #' \itemize{
 #'   \item \code{reference}: \code{Character scalar}. Used to
-#'   to fill reference sample's column in returned assay when calculating alr. 
+#'   to fill reference sample's column in returned assay when calculating alr.
 #'   (Default: \code{NA})
 #'   \item \code{ref_vals} Deprecated. Use \code{reference} instead.
 #'   \item \code{percentile}: \code{Numeric scalar} or \code{NULL} (css). Used
@@ -41,12 +42,18 @@
 #'   calculating the portion of samples that exceed the \code{threshold}.
 #'   (Default: \code{NULL})
 #'   \item \code{scaling}: \code{Numeric scalar}. Adjusts the normalization
-#'   scale  by dividing the calculated scaling factors, effectively changing 
+#'   scale  by dividing the calculated scaling factors, effectively changing
 #'   the magnitude of the normalized counts. (Default: \code{1000}).
 #'   \item \code{threshold}: \code{Numeric scalar}. Specifies relative
 #'   difference threshold and determines the first point where the relative
 #'   change in  differences between consecutive quantiles exceeds this
 #'   threshold. (Default: \code{0.1}).
+#'   \item \code{tree}: \code{phylo}. Phylogeny used in PhILR transformation.
+#'   If \code{NULL}, the tree is retrieved from \code{x}.
+#'   (Default: \code{NULL}).
+#'   \item \code{node.labels}: \code{Character vector}. Linkages between
+#'   \code{tree} and \code{x}. Used in PhILR transformation.
+#'   (Default: \code{NULL}).
 #' }
 #' @details
 #'
@@ -57,30 +64,32 @@
 #' The \code{transformAssay} provides sample-wise (column-wise) or feature-wise
 #' (row-wise) transformation to the abundance table
 #' (assay) based on specified \code{MARGIN}.
-#' 
+#'
 #' The available transformation methods include:
 #'
 #' \itemize{
-#' 
+#'
 #' \item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
 #' 'normalize', 'pa', 'rank', 'rclr' relabundance', 'rrank', 'standardize',
-#' 'total': please refer to 
+#' 'total': please refer to
 #' \code{\link[vegan:decostand]{decostand}} for details.
-#' 
+#'
+#' \item 'philr': please refer to \code{\link[philr:philr]{philr}} for details.
+#'
 #' \item 'css': Cumulative Sum Scaling (CSS) can be used to normalize count data
 #' by accounting for differences in library sizes. By default, the function
-#' determines the normalization percentile for summing and scaling 
+#' determines the normalization percentile for summing and scaling
 #' counts. If you want to specify the percentile value, good default value
-#' might be \code{0.5}.The method is inspired by the CSS methods in
+#' might be \code{0.5}. The method is inspired by the CSS methods in
 #' \code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}
 #' package.
-#' 
+#'
 #' \item 'log10': log10 transformation can be used for reducing the skewness
 #' of the data.
 #' \deqn{log10 = \log_{10} x}{%
 #' log10 = log10(x)}
 #' where \eqn{x} is a single value of data.
-#' 
+#'
 #' \item 'log2': log2 transformation can be used for reducing the skewness of
 #' the data.
 #' \deqn{log2 = \log_{2} x}{%
@@ -90,16 +99,22 @@
 #' }
 #'
 #' @return
-#' \code{transformAssay} returns the input object \code{x}, with a new 
+#' \code{transformAssay} returns the input object \code{x}, with a new
 #' transformed abundance table named \code{name} added in the
-#' \code{\link{assay}}.
-#' 
+#' \code{\link[SummarizedExperiment:assays]{assays}}.
+#'
 #' @references
-#'  
+#'
 #' Paulson, J., Stine, O., Bravo, H. et al. (2013)
 #' Differential abundance analysis for microbial marker-gene surveys
 #' _Nature Methods_ 10, 1200–1202.
 #' doi:10.1038/nmeth.2658
+#'
+#' @seealso
+#' \itemize{
+#'   \item \code{\link[vegan:decostand]{vegan::decostand}}
+#'   \item \code{\link[philr:philr]{philr::philr}}
+#' }
 #'
 #' @name transformAssay
 #' @export
@@ -108,30 +123,30 @@
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #'
-#' # By specifying 'method', it is possible to apply different transformations, 
+#' # By specifying 'method', it is possible to apply different transformations,
 #' # e.g. compositional transformation.
 #' tse <- transformAssay(tse, method = "relabundance")
-#' 
+#'
 #' # The target of transformation can be specified with "assay.type"
 #' # Pseudocount can be added by specifying 'pseudocount'.
-#' 
-#' # Perform CLR with smallest positive value as pseudocount
+#'
+#' # Perform CLR with half of the smallest positive value as pseudocount
 #' tse <- transformAssay(
-#'     tse, assay.type = "relabundance", method = "clr", 
+#'     tse, assay.type = "counts", method = "clr",
 #'     pseudocount = TRUE
 #'     )
-#'                       
+#'
 #' head(assay(tse, "clr"))
-#' 
+#'
 #' # Perform CSS normalization.
 #' tse <- transformAssay(tse, method = "css")
 #' head(assay(tse, "css"))
-#' 
+#'
 #' # With MARGIN, you can specify the if transformation is done for samples or
 #' # for features. Here Z-transformation is done feature-wise.
 #' tse <- transformAssay(tse, method = "standardize", MARGIN = "features")
 #' head(assay(tse, "standardize"))
-#' 
+#'
 #' # Name of the stored table can be specified.
 #' tse <- transformAssay(tse, method="hellinger", name="test")
 #' head(assay(tse, "test"))
@@ -139,39 +154,44 @@
 #' # pa returns presence absence table.
 #' tse <- transformAssay(tse, method = "pa")
 #' head(assay(tse, "pa"))
-#' 
+#'
 #' # rank returns ranks of taxa.
 #' tse <- transformAssay(tse, method = "rank")
 #' head(assay(tse, "rank"))
 #'
 #' # In order to use other ranking variants, modify the chosen assay directly:
 #' assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(
-#'     assay(tse, "counts"), ties.method = "average", preserveShape = TRUE)  
-#' 
+#'     assay(tse, "counts"), ties.method = "average", preserveShape = TRUE)
+#'
 #' # Using altexp parameter. First agglomerate the data and then apply
 #' # transformation.
 #' tse <- GlobalPatterns
 #' tse <- agglomerateByRanks(tse)
-#' tse <- transformAssay(tse, method = "relabundance")
+#' tse <- transformAssay(
+#'     tse, method = "relabundance", altexp = altExpNames(tse))
 #' # The transformation is applied to all alternative experiments
 #' altExp(tse, "Species")
-#' 
+#'
+#' \dontrun{
+#' # philr transformation can be applied if the philr package is installed.
+#' # Subset data b taking only prevalent taxa
+#' tse <- subsetByPrevalent(tse)
+#' # Apply transformation
+#' tse <- transformAssay(tse, method = "philr", pseudocount = 1, MARGIN = 1L)
+#' # The transformed data is added to altExp
+#' altExp(tse, "philr")
+#' }
+#'
 NULL
-
-#' @rdname transformAssay
-#' @export
-setGeneric("transformAssay", signature = c("x"),
-    function(x,  ...)
-    standardGeneric("transformAssay"))
 
 #' @rdname transformAssay
 #' @export
 setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     function(x,
         assay.type = "counts", assay_name = NULL,
-        method = c("alr", "chi.square", "clr", "css", "frequency", 
-            "hellinger", "log", "log10", "log2", "max", "normalize", 
-            "pa", "range", "rank", "rclr", "relabundance", "rrank",
+        method = c("alr", "chi.square", "clr", "css", "frequency",
+            "hellinger", "log", "log10", "log2", "max", "normalize",
+            "pa", "philr", "range", "rank", "rclr", "relabundance", "rrank",
             "standardize", "total", "z"),
         MARGIN = "samples",
         name = method,
@@ -188,9 +208,11 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 #' @rdname transformAssay
 #' @export
 setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
-    function(x, altexp = altExpNames(x), ...){
+    function(x, altexp = NULL, ...){
         # Check altexp
-        if( !(is.null(altexp) || all(altexp %in% altExpNames(x))) ){
+        if( !(is.null(altexp) || all(altexp %in% altExpNames(x)) ||
+                (.is_integer(altexp) &&
+                all(altexp<=length(altExps(x)) & altexp>0)) ) ){
             stop("'altexp' should be NULL or specify names from ",
                 "altExpNames(x).", call. = FALSE)
         }
@@ -199,7 +221,13 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         x <- .transform_assay(x, ...)
         # Transform alternative experiments
         altExps(x)[altexp] <- lapply(altExps(x)[altexp], function(y){
-            .transform_assay(y, ...)
+            # Give informative error message that states that the error
+            # happened during processing alternative experiments.
+            tryCatch({.transform_assay(y, ...)},
+                error = function(e){
+                    stop("Transforming altExps: ", conditionMessage(e),
+                        call. = FALSE)
+                })
         })
         return(x)
     }
@@ -214,9 +242,9 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 .transform_assay <- function(
         x, assay.type = "counts", assay_name = NULL,
         method = c(
-            "alr", "chi.square", "clr", "css", "frequency", 
-            "hellinger", "log", "log10", "log2", "max", "normalize", 
-            "pa", "range", "rank", "rclr", "relabundance", "rrank",
+            "alr", "chi.square", "clr", "css", "frequency",
+            "hellinger", "log", "log10", "log2", "max", "normalize",
+            "pa", "philr", "range", "rank", "rclr", "relabundance", "rrank",
             "standardize", "total", "z"),
         MARGIN = "samples",
         name = method,
@@ -224,7 +252,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         ...){
     # Input check
     if(!is.null(assay_name)){
-        .Deprecated(old="assay_name", new="assay.type", "Now assay_name is 
+        .Deprecated(old="assay_name", new="assay.type", "Now assay_name is
                 deprecated. Use assay.type instead.")
         assay.type <- assay_name
     }
@@ -245,7 +273,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     # Check that MARGIN is 1 or 2
     MARGIN <- .check_MARGIN(MARGIN)
     # Check pseudocount
-    if( !.is_a_bool(pseudocount) && !(is.numeric(pseudocount) && 
+    if( !.is_a_bool(pseudocount) && !(is.numeric(pseudocount) &&
             length(pseudocount) == 1 && pseudocount >= 0) ){
         stop("'pseudocount' must be TRUE, FALSE or a number equal to or ",
             "greater than 0.", call. = FALSE)
@@ -265,14 +293,17 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     if( method %in% c("log10", "log2", "css") ){
         transformed_table <- .apply_transformation(
             assay, method, MARGIN, ...)
+    } else if( method %in% c("philr") ){
+        transformed_table <- .apply_transformation_from_philr(
+            assay, method, MARGIN, x = x, ...)
     } else {
         transformed_table <- .apply_transformation_from_vegan(
             assay, method, MARGIN, ...)
     }
     # Add pseudocount info to transformed table
     attr(transformed_table, "parameters")$pseudocount <- pseudocount
-    # Assign transformed table to assays
-    assay(x, name, withDimnames = FALSE) <- transformed_table
+    # Add transformed table back to original TreeSE
+    x <- .add_transformed_data(x, transformed_table, name)
     return(x)
 }
 
@@ -294,7 +325,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     )
     # Get transformed table
     transformed_table <- do.call(
-        FUN, list(mat = assay, method = method, ...) )
+        FUN, list(mat = assay, method = method, MARGIN = MARGIN, ...) )
     # Transpose back to normal if MARGIN is row
     if( MARGIN == 1L ){
         transformed_table <- t(transformed_table)
@@ -309,6 +340,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 # Help function for transformAssay, takes abundance
 # table as input and returns transformed table. This function utilizes vegan's
 # transformation functions.
+#' @importFrom vegan decostand
 .apply_transformation_from_vegan <- function(
         mat, method, MARGIN, reference = ref_vals, ref_vals = NA, ...){
     # Input check
@@ -331,16 +363,15 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         .Deprecated(old="z", new="standardize")
     }
     method <- ifelse(method == "z", "standardize", method)
-    
+
     # If method is ALR, vegan drops one column/sample, because it is used
     # as a reference. To work with TreeSE, reference sample must be added back.
     # Get the original order of samples/features
     orig_dimnames <- dimnames(mat)
 
     # Call vegan::decostand and apply transformation
-    transformed_table <- vegan::decostand(
-        mat, method = method, MARGIN = MARGIN, ...)
-    
+    transformed_table <- decostand(mat, method = method, MARGIN = MARGIN, ...)
+
     # Add reference sample back if ALR
     if( method %in% c("alr") ){
         transformed_table <- .adjust_alr_table(
@@ -585,7 +616,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         if ( pseudocount && any(is.na(mat)) ){
             warning("The assay contains missing values (NAs). These will be ",
                 "ignored in pseudocount calculation.", call. = FALSE)
-        }    
+        }
         # If pseudocount TRUE but some negative values, numerical pseudocount
         # needed
         if ( pseudocount && any(mat < 0, na.rm = TRUE) ){
@@ -622,4 +653,128 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     # Set attr equal to pseudocount
     attr(mat, "pseudocount") <- pseudocount
     return(mat)
+}
+
+###################### .apply_transformation_from_philr ########################
+# This function works as a wrapper for philr::philr
+#' @importFrom ape is.rooted is.binary
+.apply_transformation_from_philr <- function(
+        mat, method, MARGIN, x, tree.name = "phylo", tree = NULL,
+        node.label = NULL, ...){
+    # We have "soft dependency" for philr package, i.e., it is only required
+    # in this function.
+    .require_package("philr")
+    # Get functions based on MARGIN
+    tree_check_FUN <- switch(
+        MARGIN, .check_rowTree_present, .check_colTree_present)
+    tree_FUN <- switch(MARGIN, rowTree, colTree)
+    links_FUN <- switch(MARGIN, rowLinks, colLinks)
+    names_FUN <- switch(MARGIN, rownames, colnames)
+    names_ass_FUN <- switch(MARGIN, `rownames<-`, `colnames<-`)
+    n_FUN <- switch(MARGIN, nrow, ncol)
+
+    # Do data validity checks
+    # The original object must be TreeSE or tree must be provided
+    if( is.null(tree) &&
+        !(is(x, "TreeSummarizedExperiment") && !is.null(rowTree(x))) ){
+        stop("'tree' must be provided.", call. = FALSE)
+    }
+    # If tree is not specified, then we get rowTree
+    if( is.null(tree) ){
+        tree_check_FUN(tree.name, x)
+        tree <- tree_FUN(x, tree.name)
+        node.label <- links_FUN(x)[ , "nodeLab" ]
+        node.label[ links_FUN(x)[, "whichTree"] != tree.name ] <- NA
+    }
+    # Check that tree is in correct format
+    if( !(is.null(tree) || (is(tree, "phylo") &&
+            !is.null(tree$edge.length)) ) ){
+        stop("'tree' is NULL or it does not have any branches. The PhILR ",
+            "transformation is not possible to apply.", call. = FALSE)
+    }
+    # Check that node.label is NULL or it specifies links between rownames and
+    # node labs
+    if( !( is.null(node.label) ||
+            is.character(node.label) && length(node.label) == n_FUN(x) ) ){
+        stop("'node.label' must be NULL or a vector specifying links between ",
+            "features and node labs of 'tree'.", call. = FALSE)
+    }
+    # Subset rows of the assay to correspond node_labs (if there are any NAs
+    # in node labels)
+    if( !is.null(node.label) && any(is.na(node.label)) ){
+        warning("The tree named does not include all the features. 'x' is ",
+                "subsetted.", call. = FALSE)
+        if( MARGIN == 1L ){
+            mat <- mat[ , !is.na(node.label), drop = FALSE]
+        } else{
+            mat <- mat[ !is.na(node.label), , drop = FALSE]
+        }
+        node.label <- node.label[ !is.na(node.label) ]
+    }
+    # If there are node labels, rename the features in matrix to match with
+    # labels found in tree.
+    if( !is.null(node.label) ){
+        mat <- names_ass_FUN(mat, node.label)
+    }
+    if( is.null(names_FUN(mat)) ){
+        stop("'x' must have ", switch(MARGIN, "row", "col"), "names.",
+            call. = FALSE)
+    }
+    # The tree must be rooted and binary
+    if( !(is.rooted(tree) && is.binary(tree)) ){
+        warning("The tree should be rooted and binary.", call. = FALSE)
+    }
+    # Final check that each row can be found from the tree
+    if( !all(names_FUN(mat) %in% c(tree$node.label, tree$tip.label)) ){
+        stop("The feature names in abundance matrix must be found from the ",
+            "tree.", call. = FALSE)
+    }
+
+    # Transpose if MARGIN is row
+    if( MARGIN == 1L ){
+        mat <- t(mat)
+    }
+    # Check that the tree is phylo object and rows can be found from it.
+    mat <- philr::philr(mat, tree, ...)
+    # Transpose back to original orientation
+    if( MARGIN == 1L ){
+        mat <- t(mat)
+    }
+    # Add method and margin to attributes
+    attr(mat, "philr") <- "philr"
+    attr(mat, "parameters")$margin <- MARGIN
+    return(mat)
+}
+
+# This function is used to add transformed table back to TreeSE. With most of
+# the methods it is simple: it is added to assay. However, with philr, the
+# features do not match with original ones, so we add philr-transformed data
+# to altExp. If philr was, applied to columns, we cannot use altExp so
+# we return only the transformed data.
+#' @importFrom stats setNames
+.add_transformed_data <- function(x, mat, name){
+    rnames_ok <- nrow(x) == nrow(mat)
+    cnames_ok <- ncol(x) == ncol(mat)
+    if( rnames_ok && cnames_ok ){
+        assay(x, name, withDimnames = FALSE) <- mat
+    } else if( cnames_ok ){
+        if( !is(x, "SingleCellExperiment") ){
+            x <- as(x, "SingleCellExperiment")
+        }
+        x_new <- TreeSummarizedExperiment(
+            assays = setNames(SimpleList(mat), name),
+            colData = colData(x)
+        )
+        altExp(x, name) <- x_new
+        message("The rows of the transformed data do not match the original ",
+                "data. The transformed data has been added to altExp(x, name).")
+    } else{
+        x <- TreeSummarizedExperiment(
+            assays = setNames(SimpleList(mat), name)
+        )
+        warning("The columns of the transformed data do not match the ",
+                "original data. The transformed data is returned without the ",
+                "original data.", call. = FALSE)
+    }
+    return(x)
 }

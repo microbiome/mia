@@ -1,15 +1,18 @@
 #' Estimate divergence
 #'
 #' Estimate divergence against a given reference sample.
-#' 
+#'
 #' @inheritParams addDissimilarity
-#' 
-#' @param x a \code{\link{SummarizedExperiment}} object.
-#'   
+#'
+#' @param x a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object.
+#'
 #' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'
 #' @param reference \code{Character scalar}. A column name from
-#' \code{colData(x)} or either \code{"mean"} or \code{"median"}.
+#' \code{colData(x)} or either \code{"mean"} or \code{"median"}. If column name
+#' is specified, the column must include reference samples for each sample.
+#' If \code{"mean"} or \code{"median"} is specified, the mean or median of the
+#' entire dataset is calculated and used as the reference value.
 #' (Default: \code{"median"})
 #'
 #' @param ... optional arguments passed to
@@ -20,9 +23,10 @@
 #'   values are used to calculate divergence instead of the assay. Can be
 #'   disabled with \code{NULL}. (Default: \code{NULL})
 #' }
-#' 
-#' @return \code{x} with additional \code{\link{colData}} named \code{name}
-#' 
+#'
+#' @return \code{x} with additional
+#' \code{\link[SummarizedExperiment:colData]{colData}} named \code{name}
+#'
 #' @details
 #'
 #' Microbiota divergence (heterogeneity / spread) within a given sample
@@ -30,51 +34,44 @@
 #' diversity with respect to a given reference sample.
 #'
 #' The calculation makes use of the function \code{getDissimilarity()}. The
-#' divergence 
-#' measure is sensitive to sample size. Subsampling or bootstrapping can be 
+#' divergence
+#' measure is sensitive to sample size. Subsampling or bootstrapping can be
 #' applied to equalize sample sizes between comparisons.
-#' 
+#'
 #' @seealso
 #' \itemize{
 #'   \item \code{\link[=addAlpha]{addAlpha}}
 #'   \item \code{\link[=addDissimilarity]{addDissimilarity}}
 #'   \item \code{\link[scater:plotColData]{plotColData}}
 #' }
-#' 
+#'
 #' @name addDivergence
 #' @export
-#' 
+#'
 #' @examples
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
-#' 
+#'
 #' # By default, reference is median of all samples. The name of column where
-#' # results is "divergence" by default, but it can be specified. 
+#' # results is "divergence" by default, but it can be specified.
 #' tse <- addDivergence(tse)
-#' 
-#' # The method that are used to calculate distance in divergence and 
+#'
+#' # The method that are used to calculate distance in divergence and
 #' # reference can be specified. Here, euclidean distance is used. Reference is
 #' # the first sample. It is recommended # to add reference to colData.
 #' tse[["reference"]] <- rep(colnames(tse)[[1]], ncol(tse))
 #' tse <- addDivergence(
-#'     tse, name = "divergence_first_sample", 
+#'     tse, name = "divergence_first_sample",
 #'     reference = "reference",
 #'     method = "euclidean")
-#' 
+#'
 #' # Here we compare samples to global mean
 #' tse <- addDivergence(tse, name = "divergence_average", reference = "mean")
-#' 
+#'
 #' # All three divergence results are stored in colData.
 #' colData(tse)
-#' 
+#'
 NULL
-
-#' @rdname addDivergence
-#' @export
-setGeneric(
-    "addDivergence",signature = c("x"),
-    function(x, name = "divergence", ...)
-    standardGeneric("addDivergence"))
 
 #' @rdname addDivergence
 #' @export
@@ -96,17 +93,9 @@ setMethod("addDivergence", signature = c(x="SummarizedExperiment"),
 
 #' @rdname addDivergence
 #' @export
-setGeneric("getDivergence", signature = c("x"),
-    function(
-        x, assay.type = assay_name, assay_name = "counts", reference = "median",
-        method = "bray", ...)
-    standardGeneric("getDivergence"))
-
-#' @rdname addDivergence
-#' @export
 setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
     function(
-        x, assay.type = assay_name, assay_name = "counts", 
+        x, assay.type = assay_name, assay_name = "counts",
         reference = "median", method = "bray", ...){
         ################### Input check ###############
         # Get altExp if user has specified
@@ -197,7 +186,7 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
     } else{
         mat <- t(reducedDim(x, dimred))
     }
-    
+
     # If reference type is median or mean, calculate it
     if( ref_type %in% c("median", "mean") ){
         reference <- apply(mat, 1, ref_type)
@@ -218,7 +207,7 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
         reference <- rep(reference, ncol(mat))
     }
     # Check that all reference samples are included in the data
-    if( !all(reference %in% colnames(mat) | is.na(reference)) ){
+    if( !all(unlist(reference) %in% colnames(mat) | is.na(unlist(reference))) ){
         stop("All reference samples must be included in the data.",
             call. = FALSE)
     }
@@ -228,12 +217,21 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
 }
 
 # For each sample-pair, this function calculates dissimilarity.
-#' @importFrom dplyr mutate
+#' @importFrom dplyr group_by summarise
+#' @importFrom tidyr unnest
 .calc_divergence <- function(mat, reference, method, ...){
     # Create sample-pair data.frame
-    reference <- data.frame(sample = colnames(mat), reference = reference)
+    reference <- data.frame(
+        sample = colnames(mat), reference = I(unname(reference)))
+    # Check if there are multiple reference samples assigned for samples
+    if( any(lengths(reference[["reference"]]) > 1L) ){
+        reference <- reference |> unnest(cols = reference)
+        warning("Some samples are associated with multiple reference samples. ",
+                "In these cases, the reference time point includes multiple ",
+                "samples, and their average is used.", call. = FALSE)
+    }
     # Exclude NA values
-    reference <- reference[!is.na(reference$reference), ]
+    reference <- reference[!is.na(reference[["reference"]]), ]
     # For dissimilarity calculation, the samples must be in rows
     mat <- t(mat)
     # Loop through sample-pairs
@@ -246,8 +244,15 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
         temp <- temp[[1]]
         return(temp)
     })
-    # Add values to data.frame that holds sample pairs 
+    # Add values to data.frame that holds sample pairs
     temp <- unlist(temp)
     reference[["value"]] <- temp
+    # If there were multiple reference samples, take average
+    if( anyDuplicated(reference[["sample"]]) ){
+        reference <- reference |>
+            group_by(sample) |>
+            summarise(value = mean(value)) |>
+            as.data.frame()
+    }
     return(reference)
 }

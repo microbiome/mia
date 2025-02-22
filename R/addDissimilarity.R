@@ -1,106 +1,114 @@
 #' Calculate dissimilarities
 #'
-#' These functions are designed to calculate dissimilarities on data stored 
-#' within a 
+#' These functions are designed to calculate dissimilarities on data stored
+#' within a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#' object. For overlap, Unifrac, and Jensen-Shannon Divergence (JSD) 
-#' dissimilarities, the functions use mia internal functions, while for other 
+#' object. For overlap, Unifrac, and Jensen-Shannon Divergence (JSD)
+#' dissimilarities, the functions use mia internal functions, while for other
 #' types of dissimilarities, they rely on \code{\link[vegan:vegdist]{vegdist}}
 #' by default.
 #'
-#' @param x \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' @inheritParams addAlpha
+#'
+#' @param x
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' or \code{matrix}.
 #'
-#' @param method \code{Character scalar}. Specifies which dissimilarity to 
+#' @param method \code{Character scalar}. Specifies which dissimilarity to
 #' calculate. (Default: \code{"bray"})
-#' 
-#' @param name \code{Character scalar}. The name to be used to store the result 
+#'
+#' @param name \code{Character scalar}. The name to be used to store the result
 #' in metadata of the output. (Default: \code{method})
 #'
-#' @param assay.type \code{Character scalar}. Specifies which assay to use for 
-#' calculation. (Default: \code{"counts"})
-#' 
-#' @param niter The number of iterations performed. If \code{NULL},
-#' rarefaction is disabled. (Default: \code{NULL})
-#'   
 #' @param transposed \code{Logical scalar}. Specifies if x is transposed with
 #' cells in rows. (Default: \code{FALSE})
 #'
 #' @param ... other arguments passed into \code{\link[vegan:avgdist]{avgdist}},
 #' \code{\link[vegan:vegdist]{vegdist}}, or into mia internal functions:
-#' 
+#'
 #' \itemize{
 #'   \item \code{sample}: The sampling depth in rarefaction.
 #'   (Default: \code{min(rowSums2(x))})
-#'   
+#'
 #'   \item \code{dis.fun}: \code{Character scalar}. Specifies the dissimilarity
 #'   function to be used.
-#'   
+#'
+#'   \item \code{transf}: \code{Function}. Specifies the optional
+#'   transformation applied before calculating the dissimilarity matrix.
+#'
 #'   \item \code{tree.name}: (Unifrac)  \code{Character scalar}. Specifies the
 #'   name of the tree from \code{rowTree(x)} that is used in calculation.
 #'   Disabled when \code{tree} is specified. (Default: \code{"phylo"})
-#'   
+#'
 #'   \item \code{tree}: (Unifrac) \code{phylo}. A phylogenetic tree used in
 #'   calculation. (Default: \code{NULL})
-#'   
+#'
 #'   \item \code{weighted}: (Unifrac) \code{Logical scalar}. Should use
-#'   weighted-Unifrac calculation? 
+#'   weighted-Unifrac calculation?
 #'   Weighted-Unifrac takes into account the relative abundance of
 #'   species/taxa shared between samples, whereas unweighted-Unifrac only
 #'   considers presence/absence. Default is \code{FALSE}, meaning the
 #'   unweighted-Unifrac dissimilarity is calculated for all pairs of samples.
 #'   (Default: \code{FALSE})
-#'   
+#'
 #'   \item \code{node.label} (Unifrac) \code{character vector}. Used only if
-#'   \code{x} is a matrix. Specifies links between rows/columns and tips of 
-#'   \code{tree}. The length must equal the number of rows/columns of \code{x}. 
+#'   \code{x} is a matrix. Specifies links between rows/columns and tips of
+#'   \code{tree}. The length must equal the number of rows/columns of \code{x}.
 #'   Furthermore, all the node labs must be present in \code{tree}.
-#'   
+#'
 #'   \item \code{chunkSize}: (JSD) \code{Integer scalar}. Defines the size of
-#'   data  send to the individual worker. Only has an effect, if \code{BPPARAM} 
+#'   data  send to the individual worker. Only has an effect, if \code{BPPARAM}
 #'   defines more than one worker. (Default: \code{nrow(x)})
-#'   
+#'
 #'   \item \code{BPPARAM}: (JSD)
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}.
 #'   Specifies whether the calculation should be parallelized.
-#'   
+#'
 #'   \item \code{detection}: (Overlap) \code{Numeric scalar}.
-#'   Defines detection threshold for absence/presence of features. Feature that 
-#'   has abundance under threshold in either of samples, will be discarded when 
-#'   evaluating overlap between samples. (Default: \code{0}) 
+#'   Defines detection threshold for absence/presence of features. Feature that
+#'   has abundance under threshold in either of samples, will be discarded when
+#'   evaluating overlap between samples. (Default: \code{0})
 #' }
 #'
-#' @return 
+#' @return
 #' \code{getDissimilarity} returns a sample-by-sample dissimilarity matrix.
-#' 
-#' \code{addDissimilarity} returns \code{x} that includes dissimilarity matrix 
-#' in its metadata. 
-#'   
-#' @details 
-#' Overlap reflects similarity between sample-pairs. When overlap is 
-#' calculated using relative abundances, the higher the value the higher the 
-#' similarity is. When using relative abundances, overlap value 1 means that 
-#' all the abundances of features are equal between two samples, and 0 means 
-#' that samples have completely different relative abundances. 
-#'   
+#'
+#' \code{addDissimilarity} returns \code{x} that includes dissimilarity matrix
+#' in its metadata.
+#'
+#' @details
+#' Overlap reflects similarity between sample-pairs. When overlap is
+#' calculated using relative abundances, the higher the value the higher the
+#' similarity is. When using relative abundances, overlap value 1 means that
+#' all the abundances of features are equal between two samples, and 0 means
+#' that samples have completely different relative abundances.
+#'
 #' Unifrac is calculated with \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
-#' 
+#'
 #' If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
 #' utilized.
-#' 
-#' For JSD implementation:
-#' Susan Holmes \email{susan@@stat.stanford.edu}.
-#' Adapted for phyloseq by Paul J. McMurdie.
-#' Adapted for mia by Felix G.M. Ernst
-#'   
+#'
+#' Rarefaction can be used to control uneven sequencing depths. Although,
+#' it is highly debated method. Some think that it is the only option that
+#' successfully controls the variation caused by uneven sampling depths.
+#' The biggest argument against rarefaction is the fact that it omits data.
+#'
+#' Rarefaction works by sampling the counts randomly. This random sampling
+#' is done \code{niter} times. In each sampling iteration, \code{sample} number
+#' of random samples are drawn, and dissimilarity is calculated for this
+#' subset. After the iterative process, there are \code{niter} number of
+#' result that are then averaged to get the final result.
+#'
+#' Refer to Schloss (2024) for more details on rarefaction.
+#'
 #' @name getDissimilarity
-#' 
+#'
 #' @seealso
 #' \url{http://en.wikipedia.org/wiki/Jensen-Shannon_divergence}
-#' 
+#'
 #' @references
 #' For unifrac dissimilarity: \url{http://bmf.colorado.edu/unifrac/}
-#' 
+#'
 #' See also additional descriptions of Unifrac in the following articles:
 #'
 #' Lozupone, Hamady and Knight, ``Unifrac - An Online Tool for Comparing
@@ -113,53 +121,68 @@
 #'
 #' Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
 #' microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
-#' 
-#' For JSD dissimilarity: 
+#'
+#' For JSD dissimilarity:
 #' Jensen-Shannon Divergence and Hilbert space embedding.
 #' Bent Fuglede and Flemming Topsoe University of Copenhagen,
 #' Department of Mathematics
 #' \url{http://www.math.ku.dk/~topsoe/ISIT2004JSD.pdf}
+#'
+#' For rarefaction:
+#' Schloss PD (2024) Rarefaction is currently the best approach to control for
+#' uneven sequencing effort in amplicon sequence analyses. _mSphere_
+#' 28;9(2):e0035423. doi: 10.1128/msphere.00354-23
 #'
 #' @export
 #'
 #' @examples
 #' library(mia)
 #' library(scater)
-#' 
+#'
 #' # load dataset
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
-#' 
+#'
 #' ### Overlap dissimilarity
-#' 
+#'
 #' tse <- addDissimilarity(tse, method = "overlap", detection = 0.25)
 #' metadata(tse)[["overlap"]][1:6, 1:6]
-#' 
+#'
 #' ### JSD dissimilarity
-#' 
+#'
 #' tse <- addDissimilarity(tse, method = "jsd")
 #' metadata(tse)[["jsd"]][1:6, 1:6]
-#' 
+#'
 #' # Multi Dimensional Scaling applied to JSD dissimilarity matrix
-#' tse <- runMDS(tse, FUN = getDissimilarity, method = "overlap", 
-#'               assay.type = "counts")
-#' metadata(tse)[["MDS"]][1:6, ]
-#'               
+#' tse <- addMDS(tse, method = "overlap", assay.type = "counts")
+#' reducedDim(tse, "MDS") |> head()
+#'
 #' ### Unifrac dissimilarity
-#' 
+#'
 #' res <- getDissimilarity(tse, method = "unifrac", weighted = FALSE)
-#' dim(as.matrix((res)))
-#' 
+#' dim(as.matrix(res))
+#'
 #' tse <- addDissimilarity(tse, method = "unifrac", weighted = TRUE)
 #' metadata(tse)[["unifrac"]][1:6, 1:6]
-#' 
+#'
+#' ### Bray dissimilarity
+#'
+#' # Bray is usually applied to relative abundances so we have to apply
+#' # transformation first
+#' tse <- transformAssay(tse, method = "relabundance")
+#' res <- getDissimilarity(tse, method = "bray", assay.type = "relabundance")
+#' as.matrix(res)[1:6, 1:6]
+#'
+#' # If applying rarefaction, the input must be count matrix and transformation
+#' # method specified in function call (Note: increase niter)
+#' rclr <- function(x){
+#'     vegan::decostand(x, method="rclr")
+#' }
+#' res <- getDissimilarity(
+#'     tse, method = "euclidean", transf = rclr, niter = 2L)
+#' as.matrix(res)[1:6, 1:6]
+#'
 NULL
-
-#' @rdname getDissimilarity
-#' @export
-setGeneric(
-    "addDissimilarity", signature = c("x"), function(x, method, ...)
-    standardGeneric("addDissimilarity"))
 
 #' @rdname getDissimilarity
 #' @export
@@ -173,12 +196,6 @@ setMethod(
     return(x)
     }
 )
-
-#' @rdname getDissimilarity
-#' @export
-setGeneric(
-    "getDissimilarity", signature = c("x"), function(x, method, ...)
-        standardGeneric("getDissimilarity"))
 
 #' @rdname getDissimilarity
 #' @export
@@ -232,6 +249,7 @@ setMethod(
         args <- .get_tree_args(
             x,  method = method, assay.type = assay.type,
             transposed = transposed, ...)
+        args <- c(args, list(niter = niter))
     } else{
         # For other cases, do not fetch tree data from TreeSE
         mat <- assay(x, assay.type)
@@ -280,7 +298,7 @@ setMethod(
     # sample is only used when niter is specified
     if( !is.null(niter) && !.is_an_integer(sample) ){
         stop("'sample' must be an integer.", call. = FALSE)
-    } 
+    }
     #
     # If the dissimilarity function is not specified, get default choice
     if( is.null(dis.fun) ){
@@ -295,7 +313,7 @@ setMethod(
         }
     }
     # Initialize an argument list
-    args <- c(list(mat), list(...))
+    args <- c(list(x = mat), list(...))
     # If rarefaction is specified, calculate dissimilarity with vegan::avgdist
     # function that utilizes the specified dissimilarity function. Otherwise,
     # call the specified function directly.
@@ -335,7 +353,7 @@ setMethod(
         }
         tree_args <- list(x = mat, tree = tree)
     } else{
-        tree_args <- .get_tree_args_from_TreeSE(x, transposed = transposed, 
+        tree_args <- .get_tree_args_from_TreeSE(x, transposed = transposed,
             assay.type = assay.type, ...)
     }
     args <- c(args, tree_args)
@@ -375,7 +393,7 @@ setMethod(
     links <- links_FUN(x)
     links <- links[ , "nodeLab"]
     node.label <- links
-    
+
     # Get assay. By default, dissimilarity between samples is calculated. In
     # dissimilarity functions, features must be in columns and samples in rows
     # in this case.

@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.15.6
+Version: 1.15.23
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -75,7 +75,6 @@ Imports:
     IRanges,
     MASS,
     MatrixGenerics,
-    mediation,
     methods,
     rbiom,
     rlang,
@@ -83,6 +82,7 @@ Imports:
     scater,
     scuttle,
     stats,
+    stringr,
     tibble,
     tidyr,
     utils,
@@ -93,15 +93,16 @@ Suggests:
     biomformat,
     dada2,
     knitr,
+    mediation,
     miaViz,
     microbiomeDataSets,
     NMF,
     patchwork,
+    philr,
     phyloseq,
     reldist,
     rhdf5,
     rmarkdown,
-    stringr,
     testthat,
     topicdoc,
     topicmodels,
