@@ -501,14 +501,12 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 # that the names of nodes match with row/colnames.
 .rename_tree_nodes <- function(tse, tree.name, by){
     # Get correct functions based on MARGIN/by
-    names_FUN <- switch(by, rownames, colnames)
     links_FUN <- switch(by, rowLinks, colLinks)
     tree_FUN <- switch(by, rowTree, colTree)
     #
     # Get rowlinks for the tree
     links <- links_FUN(tse) |> DataFrame()
-    links <- links[links[["whichTree"]] == tree.name, ]
-    rownames(links) <- names_FUN(tse)
+    links <- links[links[["whichTree"]] == tree.name, , drop = FALSE]
     # The rownames must be unique in order to use them as names of the nodes.
     # Moreover, rows must have one-to-one matching.
     if( !is.null(rownames(links)) && !anyDuplicated(rownames(links)) &&
@@ -548,9 +546,11 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
             links[not_missing, ] <- new_labels[not_missing, ]
         }
         # Assign the tree back
-        args <- list(tse, tree, links[["nodeLab"]])
+        args <- list(tse, tree, links[["nodeLab"]], tree.name)
         names(args) <- c("x", paste0(
-            ifelse(by == 1L, "row", "col"), c("Tree", "NodeLab")))
+            ifelse(by == 1L, "row", "col"), c("Tree", "NodeLab")),
+            paste0("which", ifelse(by == 1L, "Row", "Col"), "Tree")
+        )
         tse <- do.call(changeTree, args)
     }
     return(tse)
