@@ -495,32 +495,11 @@ setMethod("mergeSEs", signature = c(x = "list"),
                 "is discarded.", call. = FALSE)
         return(tse)
     }
-    # If there are multiple trees, select non-duplicated trees; the largest
-    # take the precedence, remove duplicated rowlinks --> each row is presented
-    # in the set only once --> remove trees that do not have any values anymore.
-    # The aim is to subset the dataset so that it is easier to handle in tree
-    # binding step for instance. Otherwise, it would lead to huge tree that
-    # might exceed memory.
-    if( length(trees) > 1L ){
-        # Sort trees --> trees with highest number of taxa first
-        max_trees <- table(links$whichTree)
-        max_trees <- names(max_trees)[order(max_trees, decreasing = TRUE)]
-        # Order the link data frame, take largest trees first
-        links$whichTree <- factor(links$whichTree, levels = max_trees)
-        links <- links[order(links$whichTree), ]
-        # Remove factorization
-        links$whichTree <- unfactor(links$whichTree)
-        # Remove duplicated links
-        links <- links[!duplicated(links$names), ]
-        # Subset trees
-        trees <- trees[unique(links$whichTree)]
-    }
-    
     # Check that every tree has unique labels. We can only merge trees that
     # have labels.
-    dupl_nodes <- lapply(trees, function(tree){
-        duplicated(c(tree[["tip.label"]], tree[["node.label"]]))
-    }) |> unlist() |> any()
+    dupl_nodes <- vapply(trees, function(tree){
+        duplicated(c(tree[["tip.label"]], tree[["node.label"]])) |> any()
+    }, logical(1L)) |> any()
     # Merge trees if there are no duplicated node labels.
     if( !dupl_nodes ){
         # Combine trees into single tree.
