@@ -39,12 +39,7 @@
 #'   whether to remove internal nodes when Faith's index is calculated.
 #'   When \code{only.tips=TRUE}, those rows that are not tips of tree are
 #'   removed. (Default: \code{FALSE})
-#'
-#'   \item \code{fast.faith}: (Faith's index). \code{Logical scalar}. Specifies
-#'   whether to use a C++ implementation of the Stacked Faith algorithm for
-#'   calculating Faith's index. This can speed up calculation by several orders
-#'   of magnitude for large datasets. (Default: \code{TRUE})
-#'
+#'   
 #'   \item \code{threshold}: (Coverage and all evenness indices).
 #'   \code{Numeric scalar}.
 #'   From \code{0 to 1}, determines the threshold for coverage and evenness

@@ -121,82 +121,25 @@
 NULL
 
 #' @importFrom ape reorder.phylo
-.calc_faith <- function(mat, tree, only.tips = FALSE, fast.faith = TRUE, ...){
+.calc_faith <- function(mat, tree, only.tips = FALSE, ...){
     # Input check
     if( !.is_a_bool(only.tips) ){
         stop("'only.tips' must be TRUE or FALSE.", call. = FALSE)
-    }
-    if( !.is_a_bool(fast.faith) ){
-        stop("'fast.faith' must be TRUE or FALSE.", call. = FALSE)
     }
     # Remove internal nodes if specified
     if( only.tips ){
         mat <- mat[ rownames(mat) %in% tree$tip.label, ]
     }
+    
     # To ensure that the function works with NA also, convert NAs to 0.
     # Zero means that the taxon is not present --> same as NA (no information)
     mat[ is.na(mat) ] <- 0
     
-    # Use fast algorithm if requested
-    if( fast.faith ){
-        # The tree must be in cladewise order for the algorithm to work correctly
-        temp <- reorder.phylo(tree, "cladewise")
-        return(faith_cpp(mat, temp))
-    }
-
-    # Gets vector where number represent nth sample
-    samples <- seq_len(ncol(mat))
-
-    # Repeats taxa as many times there are samples, i.e. get all the
-    # taxa that are analyzed in each sample.
-    taxa <- rep(rownames(mat), length(samples))
-
-    # Gets those taxa that are present/absent in each sample.
-    # Gets one big list that combines
-    # taxa from all the samples.
-    present_combined <- taxa[ mat[, samples] > 0 ]
-
-    # Gets how many taxa there are in each sample.
-    # After that, determines indices of samples' first taxa with cumsum.
-    split_present <- as.vector(cumsum(colSums(mat > 0)))
-
-    # Determines which taxa belongs to which sample by first determining
-    # the splitting points,
-    # and after that giving every taxa number which tells their sample.
-    split_present <- as.factor(cumsum((seq_along(present_combined)-1) %in%
-                        split_present))
-
-    # Assigns taxa to right samples based on their number that they got from
-    # previous step, and deletes unnecessary names.
-    present <- unname(split(present_combined, split_present))
-
-    # If there were samples without any taxa present/absent, the length of the
-    # list is not the number of samples since these empty samples are missing.
-    # Add empty samples as NULL.
-    names(present) <- names(which(colSums2(mat) > 0))
-    present[names(which(colSums2(mat) == 0))] <- list(NULL)
-    present <- present[colnames(mat)]
-
-    # Assign NA to all samples
-    faiths <- rep(NA,length(samples))
-
-    # If there are no taxa present, then faith is 0
-    ind <- lengths(present) == 0
-    faiths[ind] <- 0
-
-    # If there are taxa present
-    ind <- lengths(present) > 0
-    # Loop through taxa that were found from each sample
-    faiths_for_taxa_present <- lapply(present[ind], function(x){
-        # Trim the tree
-        temp <- .prune_tree(tree, x, ...)
-        # Sum up all the lengths of edges
-        temp <- sum(temp$edge.length)
-        return(temp)
-    })
-    faiths_for_taxa_present <- unlist(faiths_for_taxa_present)
-    faiths[ind] <- faiths_for_taxa_present
-    return(faiths)
+    # The tree must be in cladewise order for the algorithm to work correctly
+    temp <- reorder.phylo(tree, "cladewise")
+    
+    # Call the C++ code
+    return(faith_cpp(mat, temp))
 }
 
 .calc_log_modulo_skewness <- function(mat, quantile = 0.5,
