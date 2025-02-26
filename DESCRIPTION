@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.15.24
+Version: 1.15.26
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -107,8 +107,6 @@ Suggests:
     topicdoc,
     topicmodels,
     yaml
-Remotes:
-    github::joey711/phyloseq
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
