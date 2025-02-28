@@ -78,7 +78,7 @@ setMethod("getReducedDimAttribute", "SingleCellExperiment",
     res <- res[ !names(res) %in% rm ]
     # Check that name is correct
     if( is.character(name) && !any(names(res) %in% name) ){
-        stop("'name' must be from the following following options: '",
+        stop("'name' must be from the following options: '",
             paste0(names(res), collapse = "', '"), "'", call. = FALSE)
     }
     if( .is_integer(name) && !all(name>0L & name<=length(res)) ){
