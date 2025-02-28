@@ -114,7 +114,7 @@
 #' plotCCA(tse, "CCA", colour_by = "ClinicalStatus")
 #'
 #' # Fetch significance results
-#' attr(reducedDim(tse, "CCA"), "significance")
+#' getReducedDimAttribute(tse, dimred = "CCA", name = "significance")
 #'
 #' tse <- transformAssay(tse, method = "relabundance")
 #'

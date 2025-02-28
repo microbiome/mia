@@ -169,4 +169,4 @@ Changes in version 1.15.x
 + Support rarefaction when applying unifrac
 + Added getMDS and addMDS: wrappers for scater::calculateMDS and scater::runMDS
 + Fix tree merging and agglomeration
-
++ getReducedDimAttribute: function for fetching elements from attributes of reducedDim
