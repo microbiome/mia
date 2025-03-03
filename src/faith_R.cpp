@@ -1,3 +1,12 @@
+/*
+ * BSD 3-Clause License
+ *
+ * Copyright (c) 2016-2021, UniFrac development team.
+ * All rights reserved.
+ *
+ * See LICENSE file for more details
+ */
+
 #include <iostream>
 #include <vector>
 
@@ -7,31 +16,47 @@
 #include "tree.h"
 #include "propmap.h"
 
-
-/* Access the C++ implementation of the fast Faith's PD algorithm from R
- *  
- * treeSE <const Rcpp::S4 &> an R TreeSummarizedExperiment object.
- * faith <Rcpp::NumericVector> the resulting vector of computed Faith PD values
- *
- * This functions makes several assumptions about treeSE:
- * 
- *  - It must contain a non-empty counts assay and a non-empty RowTree
- *  - The RowTree must be sorted in cladewise order
- *  - The RowTree must be rooted - Unrooted trees can be passed without error, but don't produce correct results
- *  
- // Check that tree and table are non-empty and match before calling the c++ code
- // shear the tree (to contain only the obs in the table?) - Also should be done before the call?
- // Assure that tree does not contain ids that are not in table
- * 
- */
-// [[Rcpp::export]]
-Rcpp::NumericVector faith_cpp(const Rcpp::NumericMatrix & assay, const Rcpp::List & rowTree){
-    
+//' Calculate Faith's PD 
+//' 
+//' This function calculates Faith's phylogenetic diversity for a given assay
+//' and rowTree, using a C++ implementation of the Stacked Faith's Phylogenetic
+//' Diversity (SFPhD) algorithm.
+//' 
+//' @details
+//' This function makes several assumptions about the contents of
+//' \code{assay} and \code{rowTree}, namely that:
+//' \itemize{
+//'  \item \code{assay} and \code{rowTree} are both non-empty.
+//'  \item \code{assay} has row and column names.
+//'  \item \code{rowTree}'s nodes are arranged in cladewise order.
+//' }
+//' These checks should all be handled in the surrounding R code.
+//' 
+//' The values returned by this function are equivalent to the values returned
+//' by \code{picante::pd()} with the parameter \code{include.root=TRUE}.
+//' 
+//' The C++ code was adapted from an implementation by the Unifrac team (see
+//' \url{https://genome.cshlp.org/content/31/11/2131} or
+//' \url{https://github.com/biocore/unifrac}), which is licensed under the BSD
+//' 3-Clause license. 
+//' 
+//' @param assay An R numeric matrix containing the assay of a \code{TreeSE}
+//' object.
+//' @param rowTree An \code{ape::phylo} object containing the rowTree of a
+//' \code{TreeSE} object.
+//' @return A vector containing Faith's PD values.
+//' 
+//' @export
+// [[Rcpp::export(.faith_cpp)]]
+Rcpp::NumericVector faith_cpp(const Rcpp::NumericMatrix & assay,
+                              const Rcpp::List & rowTree){
     
     su::BPTree tree = su::BPTree(rowTree);      
     su::Assay table = su::Assay(assay);
     
-    std::unordered_set<std::string> to_keep(table.obs_ids.begin(),table.obs_ids.end());
+    std::unordered_set<std::string> to_keep(table.obs_ids.begin(),
+                                            table.obs_ids.end());
+    
     su::BPTree tree_sheared = tree.shear(to_keep).collapse();
     
     su::PropMap propmap(table.n_samples);
@@ -51,11 +76,10 @@ Rcpp::NumericVector faith_cpp(const Rcpp::NumericMatrix & assay, const Rcpp::Lis
         length = tree_sheared.lengths[node];
         
         // get node proportions and set intermediate scores
-        node_proportions = set_proportions(tree_sheared, node, table, propmap, false); // this would probably be the most likely culprit for something going wrong
+        node_proportions = set_proportions(tree_sheared, node, table, propmap, false);
         
         for (unsigned int sample = 0; sample < table.n_samples; sample++){
             // calculate contribution of node to score
-            // Is it possible to somehow set the proportions to 0 if we're dealing with the root in a include.root=FALSE scenario?
             results[sample] += (node_proportions[sample] > 0) * length;
         }
     }

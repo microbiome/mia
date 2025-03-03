@@ -1,3 +1,12 @@
+/*
+ * BSD 3-Clause License
+ *
+ * Copyright (c) 2016-2021, UniFrac development team.
+ * All rights reserved.
+ *
+ * See LICENSE file for more details
+ */
+
 #include "tree.h"
 
 #include <stack>
