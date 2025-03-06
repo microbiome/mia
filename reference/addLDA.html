@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.26</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.27</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Latent Dirichlet Allocation</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/addLDA.R" class="external-link"><code>R/addLDA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_tree/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/fix_tree/R/addLDA.R" class="external-link"><code>R/addLDA.R</code></a></small>
     <div class="hidden name"><code>addLDA.Rd</code></div>
     </div>
 
@@ -137,12 +137,12 @@ feature loadings.</p>
 <span class="r-in"><span><span class="va">loadings</span> <span class="op">&lt;-</span> <span class="fu"><a href="utilization_functions.html">getReducedDimAttribute</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"LDA"</span>, <span class="st">"loadings"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">loadings</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                            1            2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AD3             1.749509e-07 0.0014590984</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Acidobacteria   2.666501e-05 0.0541249595</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  2.882016e-02 0.1677281640</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Armatimonadetes 1.215786e-05 0.0007686426</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BRC1            1.369608e-07 0.0001054269</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   2.917530e-01 0.0801485360</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AD3             1.001300e-09 9.979429e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Acidobacteria   6.391594e-03 3.281375e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  1.311213e-01 5.619413e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Armatimonadetes 5.350872e-04 1.838369e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BRC1            2.485537e-05 5.579974e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   8.976281e-02 2.805559e-01</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Estimate models with number of topics from 2 to 10</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addLDA</span><span class="op">(</span><span class="va">tse</span>, k <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">9</span>, <span class="fl">10</span><span class="op">)</span>, name <span class="op">=</span> <span class="st">"LDA_10"</span><span class="op">)</span></span></span>
