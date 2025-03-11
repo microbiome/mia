@@ -61,20 +61,20 @@ feature loadings.
 data(GlobalPatterns)
 tse <- GlobalPatterns
 
-# Reduce the number of features 
+# Reduce the number of features
 tse <- agglomerateByPrevalence(tse, rank="Phylum")
 
 # Run LDA and add the result to reducedDim(tse, "LDA")
 tse <- addLDA(tse)
 
 # Extract feature loadings
-loadings <- attr(reducedDim(tse, "LDA"), "loadings")
+loadings <- getReducedDimAttribute(tse, "LDA", "loadings")
 head(loadings)
 
 # Estimate models with number of topics from 2 to 10
 tse <- addLDA(tse, k = c(2, 3, 4, 5, 6, 7, 8, 9, 10), name = "LDA_10")
 # Get the evaluation metrics
-tab <- attr(reducedDim(tse, "LDA_10"),"eval_metrics")
+tab <- getReducedDimAttribute(tse, "LDA_10","eval_metrics")
 # Plot
 plot(tab[["k"]], tab[["perplexity"]], xlab = "k", ylab = "perplexity")
 }

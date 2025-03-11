@@ -495,18 +495,43 @@ setMethod("mergeSEs", signature = c(x = "list"),
                 "is discarded.", call. = FALSE)
         return(tse)
     }
-    # Combine trees into single tree.
-    tree <- .merge_trees(trees, links, ...)
-    # Order links so that the order matches with TreeSE
-    links <- links[match(rownames(tse), links[["names"]]), ]
-    # Add the data in correct slot based on MARGIN
-    args <- list(tse, tree, links[["nodeLab"]])
-    arg_names <- switch(
-        MARGIN,
-        "row" = c("x", "rowTree", "rowNodeLab"),
-        "col" = c("x", "colTree", "colNodeLab"))
-    names(args) <- arg_names
-    tse <- do.call(changeTree, args)
+    # Check that every tree has unique labels, we can only merge trees that
+    # have unique labels.
+    dupl_nodes <- vapply(trees, function(tree){
+        duplicated(c(tree[["tip.label"]], tree[["node.label"]])) |> any()
+    }, logical(1L)) |> any()
+    # Merge trees if all trees include nodes with unique labels.
+    if( !dupl_nodes ){
+        # Combine trees into single tree.
+        tree <- .merge_trees(trees, links, ...)
+        # Order links so that the order matches with TreeSE
+        links <- links[match(rownames(tse), links[["names"]]), , drop = FALSE]
+        # Add the merged tree to TreeSE
+        args <- list(tse, tree, links[["nodeLab"]])
+        arg_names <- switch(
+            MARGIN,
+            "row" = c("x", "rowTree", "rowNodeLab"),
+            "col" = c("x", "colTree", "colNodeLab"))
+        names(args) <- arg_names
+        tse <- do.call(changeTree, args)
+    } else{
+        # If there are duplicated labels, we cannot merge the trees. Give first
+        # warning.
+        warning("The phylogenetic trees must contain uniquely labeled nodes. ",
+                "Trees are not merged.", call. = FALSE)
+        # Create link data frame
+        links <- links[match(rownames(tse), links[["names"]]), , drop = FALSE]
+        df <- LinkDataFrame(
+            nodeLab = links[["nodeLab"]],
+            nodeNum = links[["nodeNum"]],
+            nodeLab_alias = links[["nodeLab_alias"]],
+            isLeaf = links[["isLeaf"]],
+            whichTree = links[["whichTree"]]
+        )
+        # Add link data frame and all the trees to TreeSE
+        tse@rowLinks <- df
+        tse@rowTree <- trees
+    }
     return(tse)
 }
 
@@ -518,45 +543,62 @@ setMethod("mergeSEs", signature = c(x = "list"),
 #' @importFrom ape bind.tree as.phylo
 #' @importFrom dplyr as_tibble
 .merge_trees <- function(trees, links, ...){
-    # Bind trees to combine one large tree
-    # Take first tree
+    # Start with the first tree and iterate through the rest to bind them
+    # together
     tree <- trees[[1]]
     trees[[1]] <- NULL
-    # Loop through trees and merge them. The merging is done incrementally to
-    # avoid creating huge trees that exceed memory.
     for( t in trees ){
-        # Bind from root node if available. If not, then bind from node 0.
+        # Bind trees at the root node if possible; otherwise, use node 0 as
+        # fallback.
         tree <- bind.tree(tree, t)
-        # Prune the tree so that it includes rows in tips. This step removes
-        # additional tips, i.e., only tips that are in rows are preserved. Also
-        # it simplifies the structure preserving the necessary information on
-        # the dataset. Moreover, it ensures that there are no duplicated
-        # tips which might be the case if the merged trees had shared taxa in
-        # addition to unique taxa.
-        tree <- .prune_tree(tree, links[["nodeLab"]], ...)
-        # The trees are bind without merging. This means that we can have
-        # duplicated nodes and branches. For instance, there can be a node
-        # "family x" which is present in two trees that were merged. Moreover,
-        # descendant nodes of these "family x" nodes can differ, which means
-        # that we cannot just remove duplicated nodes. Instead, we have to
-        # relink nodes so that each node label is present only one time and
-        # all its child nodes are preserved.
-        if( any(duplicated( c(tree$tip.label, tree$node.label) )) ){
-            # Convert to table so that we can modify the data
-            old_tree <- tree <- as_tibble(tree)
-            # Remove duplicated nodes
-            tree <- tree[ !duplicated(tree[["label"]]), ]
-            # Reindex nodes
-            tree[["node"]] <- seq_len(nrow(tree))
-            # Reorder the old tree to match new trees parent node order
-            old_tree <- old_tree[ match(tree[["parent"]], old_tree[["node"]]), ]
-            # Reindex parent nodes of new tree
-            parent <- tree[ match(old_tree[["label"]], tree[["label"]]), ]
-            parent <- parent[["node"]]
-            tree[["parent"]] <- parent
-            # Convert back to phylo object
-            tree <- as.phylo(tree)
-        }
+    }
+    # Prune the tree so that it includes rows in tips. This step removes
+    # additional tips, i.e., only tips that are in rows are preserved. Also
+    # it simplifies the structure preserving the necessary information on the
+    # dataset. Moreover, it ensures that there are no duplicated tips which
+    # might be the case if the merged trees had shared taxa in addition to
+    # unique taxa.
+    tree <- .prune_tree(tree, links[["nodeLab"]], ...)
+    # At this point, we have combined multiple trees into one large tree,
+    # but without merging overlapping structures. This can result in duplicate
+    # nodes and branches. For example, "family x" might appear in two trees,
+    # leading to its presence twice in the resulting tree.
+    #
+    # However, descendant nodes under these duplicates may be different,
+    # meaning we cannot simply remove duplicates. Instead, we need to
+    # re-link nodes so that each unique node label appears only once,
+    # while preserving all descendant relationships.
+    if( any(duplicated(c(tree[["tip.label"]], tree[["node.label"]])) ) ){
+        # Convert to table so that we can modify the data
+        tree <- as_tibble(tree)
+        # Preserve old columns to keep track on them
+        tree[["old_node"]] <- tree[["node"]]
+        tree[["old_parent"]] <- tree[["parent"]]
+
+        # Identify duplicated node labels, excluding empty ones.
+        dupl <- duplicated(tree[["label"]])
+        empty <- tree[["label"]] %in% c(NA)
+        tree[["duplicated_label"]] <- dupl & !empty
+        # Ensure unique labels for nodes that are not duplicates.
+        # Empty node labels are assigned unique names at this stage.
+        tree[!tree[["duplicated_label"]], "label"] <- tree[["label"]][
+            !tree[["duplicated_label"]] ] |> make.unique()
+
+        # Reindex nodes by mapping duplicate labels to a single node identifier,
+        # effectively collapsing redundant structures while preserving
+        # hierarchy.
+        mapping <- tree[["label"]] |> unique()
+        tree[["node"]] <- match(tree[["label"]], mapping)
+        # Update parent node indices to reflect the new node mappings.
+        tree[["parent"]] <- tree[["node"]][
+            match(tree[["old_parent"]], tree[["old_node"]]) ]
+
+        # Remove redundant duplicated labels from the dataset.
+        tree <- tree[!tree[["duplicated_label"]], ]
+        # Retain only essential columns for reconstructing the tree.
+        tree <- tree[ , c("parent", "node", "branch.length", "label")]
+        # Convert back to phylo object.
+        tree <- as.phylo(tree)
     }
     return(tree)
 }

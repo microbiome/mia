@@ -465,27 +465,19 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
     # Get right argument names for subsetByLeaf call
     args_names <- switch(
         by,
-        "1" = c("x", "rowLeaf", "whichRowTree", "updateTree"),
-        "2" = c("x", "colLeaf", "whichColTree", "updateTree"),
+        "1" = c("x", "rowLeaf", "updateTree"),
+        "2" = c("x", "colLeaf", "updateTree"),
         stop("."))
     # Get names of trees and links between trees and rows
     tree_names <- tree_names_FUN(x)
     row_links <- links_FUN(x)
-    # Loop through tree names
-    for( name in tree_names ){
-        # Get the tree that is being agglomerated
-        tree <- tree_FUN(x, name)
-        # Get row links that corresponds this specific tree
-        links_temp <- row_links[ row_links[["whichTree"]] == name, ]
-        # If the tree represents the data, agglomerate it
-        if( nrow(links_temp) > 0 ){
-            # Get names of nodes that are preserved
-            links_temp <- links_temp[["nodeLab"]]
-            # Agglomerate the tree
-            args <- list(x, links_temp, name, TRUE)
-            names(args) <- args_names
-            x <- do.call(subsetByLeaf, args)
-        }
+    if( !is.null(row_links) ){
+        # Agglomerate the tree(s). If whichRowTree is not specified,
+        # subsetByLeaf automatically subsets all trees by selecting nodes from
+        # the available tree(s). This approach naturally works even when there
+        # is only a single tree.
+        args <- setNames(list(x, row_links[["nodeLab"]], TRUE), args_names)
+        x <- do.call(subsetByLeaf, args)
     }
     # Rename all tree nodes
     x <- .rename_all_tree_nodes(x, by)
@@ -509,14 +501,12 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 # that the names of nodes match with row/colnames.
 .rename_tree_nodes <- function(tse, tree.name, by){
     # Get correct functions based on MARGIN/by
-    names_FUN <- switch(by, rownames, colnames)
     links_FUN <- switch(by, rowLinks, colLinks)
     tree_FUN <- switch(by, rowTree, colTree)
     #
     # Get rowlinks for the tree
     links <- links_FUN(tse) |> DataFrame()
-    links <- links[links[["whichTree"]] == tree.name, ]
-    rownames(links) <- names_FUN(tse)
+    links <- links[links[["whichTree"]] == tree.name, , drop = FALSE]
     # The rownames must be unique in order to use them as names of the nodes.
     # Moreover, rows must have one-to-one matching.
     if( !is.null(rownames(links)) && !anyDuplicated(rownames(links)) &&
@@ -556,9 +546,11 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
             links[not_missing, ] <- new_labels[not_missing, ]
         }
         # Assign the tree back
-        args <- list(tse, tree, links[["nodeLab"]])
+        args <- list(tse, tree, links[["nodeLab"]], tree.name)
         names(args) <- c("x", paste0(
-            ifelse(by == 1L, "row", "col"), c("Tree", "NodeLab")))
+            ifelse(by == 1L, "row", "col"), c("Tree", "NodeLab")),
+            paste0("which", ifelse(by == 1L, "Row", "Col"), "Tree")
+        )
         tse <- do.call(changeTree, args)
     }
     return(tse)
