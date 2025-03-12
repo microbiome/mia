@@ -34,7 +34,7 @@ addNotContaminantQC(x, name = "isNotContaminant", ...)
   control = NULL,
   threshold = 0.5,
   normalize = TRUE,
-  detailed = FALSE,
+  detailed = TRUE,
   ...
 )
 
