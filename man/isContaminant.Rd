@@ -18,7 +18,6 @@ addNotContaminantQC(x, name = "isNotContaminant", ...)
   seqtab,
   assay.type = assay_name,
   assay_name = "counts",
-  name = "isContaminant",
   concentration = NULL,
   control = NULL,
   batch = NULL,
@@ -32,7 +31,6 @@ addNotContaminantQC(x, name = "isNotContaminant", ...)
   seqtab,
   assay.type = assay_name,
   assay_name = "counts",
-  name = "isNotContaminant",
   control = NULL,
   threshold = 0.5,
   normalize = TRUE,
@@ -40,14 +38,14 @@ addNotContaminantQC(x, name = "isNotContaminant", ...)
   ...
 )
 
-\S4method{addContaminantQC}{SummarizedExperiment}(x, name = "isContaminant", ...)
+\S4method{addContaminantQC}{SummarizedExperiment}(x, name = "contaminant", ...)
 
-\S4method{addNotContaminantQC}{SummarizedExperiment}(x, name = "isNotContaminant", ...)
+\S4method{addNotContaminantQC}{SummarizedExperiment}(x, name = "not_contaminant", ...)
 }
 \arguments{
 \item{name}{\code{Character scalar}. A name for the column of the
 \code{colData} where results will be stored.
-(Default: \code{"isContaminant"})}
+(Default: \code{"contaminant"} or \code{"not_contaminant"})}
 
 \item{...}{\itemize{
 \item for \code{isContaminant}/ \code{isNotContaminant}: arguments
@@ -103,21 +101,26 @@ objects.
 }
 \examples{
 data(esophagus)
-# setup of some mock data
-colData(esophagus)$concentration <- c(1,2,3)
-colData(esophagus)$control <- c(FALSE,FALSE,TRUE)
+# setup of some mock data just for example
+colData(esophagus)$concentration <- c(1, 2, 3)
+colData(esophagus)$control <- c(FALSE, FALSE, TRUE)
 
-isContaminant(esophagus,
-              method = "frequency",
-              concentration = "concentration")
-esophagus <- addContaminantQC(esophagus,
-                              method = "frequency",
-                              concentration = "concentration")
-colData(esophagus)
+isContaminant(
+    esophagus,
+    method = "frequency",
+    concentration = "concentration"
+    )
+esophagus <- addContaminantQC(
+    esophagus,
+    method = "frequency",
+    concentration = "concentration"
+    )
+rowData(esophagus)
 
 isNotContaminant(esophagus, control = "control")
 esophagus <- addNotContaminantQC(esophagus, control = "control")
-colData(esophagus)
+rowData(esophagus)
+
 }
 \seealso{
 \code{\link[decontam:isContaminant]{decontam:isContaminant}},
