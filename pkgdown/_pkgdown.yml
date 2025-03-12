@@ -71,6 +71,7 @@ reference:
   - addLDA
   - addNMF
   - addMDS
+  - utilization_functions
 
 - title: Package
 - contents:

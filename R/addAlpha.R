@@ -723,5 +723,6 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     res <- FUN(x = x, mat = mat, index = index, ...)
     res <- as.matrix(res)
     colnames(res) <- paste0(name, colnames(res))
+    rownames(res) <- colnames(x)
     return(res)
 }
