@@ -5,19 +5,20 @@ test_that("decontam", {
     colData(esophagus)$concentration <- c(1,2,3)
     colData(esophagus)$control <- c(FALSE,FALSE,TRUE)
     #
-    esophagus <- addContaminantQC(
+    tse <- addContaminantQC(
         esophagus, method = "frequency", concentration = "concentration") |>
         expect_warning()
-    expect_is(rowData(esophagus)[,"contaminant_p"], "numeric")
+    expect_is(rowData(tse)[,"p"], "numeric")
     #
-    esophagus <- addNotContaminantQC(esophagus, control = "control") |>
+    tse <- addNotContaminantQC(
+        esophagus, control = "control", detailed = FALSE) |>
         expect_warning()
-    expect_is(rowData(esophagus)[, "not_contaminant"], "logical")
+    expect_is(rowData(tse)[, "not_contaminant"], "logical")
     #
-    esophagus <- addNotContaminantQC(
+    tse <- addNotContaminantQC(
         esophagus, control = "control", detailed = TRUE) |>
         expect_warning()
-    expect_is(rowData(esophagus)[, "not_contaminant_p"], "numeric")
+    expect_is(rowData(tse)[, "p"], "numeric")
     #
     res <- isContaminant(esophagus, control = "control") |> expect_warning()
     expect_s4_class(res, "DataFrame")
