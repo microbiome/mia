@@ -4,15 +4,25 @@ test_that("decontam", {
     # setup of some mock data
     colData(esophagus)$concentration <- c(1,2,3)
     colData(esophagus)$control <- c(FALSE,FALSE,TRUE)
-    expect_warning(esophagus <- addContaminantQC(esophagus,
-                                                 method = "frequency",
-                                                 concentration = "concentration"))
-    expect_s4_class(rowData(esophagus)[,"isContaminant"],"DataFrame")
-    expect_warning(esophagus <- addNotContaminantQC(esophagus,
-                                                    control = "control"))
-    expect_type(rowData(esophagus)[,"isNotContaminant"],"logical")
-    expect_warning(esophagus <- addNotContaminantQC(esophagus,
-                                                    control = "control",
-                                                    detailed = TRUE))
-    expect_s4_class(rowData(esophagus)[,"isNotContaminant"],"DataFrame")
+    #
+    esophagus <- addContaminantQC(
+        esophagus, method = "frequency", concentration = "concentration") |>
+        expect_warning()
+    expect_is(rowData(esophagus)[,"contaminant_p"], "numeric")
+    #
+    esophagus <- addNotContaminantQC(esophagus, control = "control") |>
+        expect_warning()
+    expect_is(rowData(esophagus)[, "not_contaminant"], "logical")
+    #
+    esophagus <- addNotContaminantQC(
+        esophagus, control = "control", detailed = TRUE) |>
+        expect_warning()
+    expect_is(rowData(esophagus)[, "not_contaminant_p"], "numeric")
+    #
+    res <- isContaminant(esophagus, control = "control") |> expect_warning()
+    expect_s4_class(res, "DataFrame")
+    #
+    res <- isNotContaminant(esophagus, control = "control", detailed = FALSE) |>
+        expect_warning()
+    expect_is(res, "logical")
 })
