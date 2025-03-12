@@ -46,6 +46,7 @@
 //' \code{TreeSE} object.
 //' @return A vector containing Faith's PD values.
 //' 
+//' @keywords internal
 //' @export
 // [[Rcpp::export(.faith_cpp)]]
 Rcpp::NumericVector faith_cpp(const Rcpp::NumericMatrix & assay,

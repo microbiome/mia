@@ -27,8 +27,6 @@ This function makes several assumptions about the contents of
 \itemize{
 \item \code{assay} and \code{rowTree} are both non-empty.
 \item \code{assay} has row and column names.
-\item \code{assay}'s rownames can all be found in \code{rowTree}'s
-metadata.
 \item \code{rowTree}'s nodes are arranged in cladewise order.
 }
 These checks should all be handled in the surrounding R code.
@@ -41,3 +39,4 @@ The C++ code was adapted from an implementation by the Unifrac team (see
 \url{https://github.com/biocore/unifrac}), which is licensed under the BSD
 3-Clause license.
 }
+\keyword{internal}
