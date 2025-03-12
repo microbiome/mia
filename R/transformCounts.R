@@ -660,10 +660,15 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 #' @importFrom ape is.rooted is.binary
 .apply_transformation_from_philr <- function(
         mat, method, MARGIN, x, tree.name = "phylo", tree = NULL,
-        node.label = NULL, ...){
+        node.label = NULL, return.all = FALSE, ...){
     # We have "soft dependency" for philr package, i.e., it is only required
     # in this function.
     .require_package("philr")
+    # Check return.all. We catch this parameter as it affects the handling of
+    # results
+    if( !.is_a_bool(return.all) ){
+        stop("'return.all' must be TRUE or FALSE.", call. = FALSE)
+    }
     # Get functions based on MARGIN
     tree_check_FUN <- switch(
         MARGIN, .check_rowTree_present, .check_colTree_present)
@@ -735,7 +740,15 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         mat <- t(mat)
     }
     # Check that the tree is phylo object and rows can be found from it.
-    mat <- philr::philr(mat, tree, ...)
+    mat <- philr::philr(x = mat, tree = tree, return.all = return.all, ...)
+    # If user wanted all the results, get abundance matrix and store other info
+    # to attributes.
+    if( return.all && is.list(mat) ){
+        transf_name <- "x.ilrp"
+        attrs <- mat[ !names(mat) %in% transf_name ]
+        mat <- mat[[transf_name]]
+        attributes(mat) <- c(attributes(mat), attrs)
+    }
     # Transpose back to original orientation
     if( MARGIN == 1L ){
         mat <- t(mat)
