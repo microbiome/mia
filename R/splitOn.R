@@ -150,9 +150,9 @@ NULL
                         silent = TRUE)
             # Give error if it cannot be found
             if(is(tmp,"try-error")){
-                stop("'group' is not found. ",
-                    "Please check that 'group' specifies a column from ",
-                    dim_name, ".", call. = FALSE)
+                stop("Column named '", group, "' is not found. ",
+                    "Please check that 'group' parameter specifies a column ",
+                    "from ", dim_name, ".", call. = FALSE)
             }
             # Get values
             group <- tmp$value
@@ -167,9 +167,9 @@ NULL
 
             # If it was not found
             if( is(tmp_row, "try-error") && is(tmp_col, "try-error") ){
-                stop("'group' is not found. ",
-                    "Please check that 'group' specifies a column from ",
-                    "rowData or colData.",
+                stop("Column named '", group, "' is not found. ",
+                    "Please check that 'group' parameter specifies a column ",
+                    "from rowData or colData.",
                     call. = FALSE)
                 # If group was found from both
             } else if( !is(tmp_row, "try-error") && !is(tmp_col, "try-error") ){
