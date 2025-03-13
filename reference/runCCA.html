@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.29</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.30</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Canonical Correspondence Analysis and Redundancy Analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/jaccard_binary/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/jaccard_binary/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/improve_rda/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/improve_rda/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
     <div class="hidden name"><code>runCCA.Rd</code></div>
     </div>
 
@@ -102,7 +102,8 @@ in a <code>SummarizedExperiment</code>.</p>
 <span>  test.signif <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
-<span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  exprs_values <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dis.name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -180,7 +181,7 @@ of multivariate homogeneity of group dispersions be performed.
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
 <dd><p><code>Character scalar</code>. Specifies the name of assay
-used in calculation. (Default: <code>"counts"</code>)</p></dd>
+used in calculation. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
@@ -199,6 +200,11 @@ alternative experiment containing the input data.</p></dd>
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
 <dd><p><code>Character scalar</code>. A name for the <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim()</a></code>
 where results will be stored. (Default: <code>"CCA"</code>)</p></dd>
+
+
+<dt id="arg-dis-name">dis.name<a class="anchor" aria-label="anchor" href="#arg-dis-name"></a></dt>
+<dd><p><code>Character scalar</code>. Specifies the name of dissimilarity
+matrix from <code>metadata</code> slot used in calculation. (Default: <code>NULL</code>)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -244,6 +250,7 @@ test specified by <code>homogeneity.test</code> parameter.</p>
 <span class="r-in"><span><span class="co"># Perform CCA and exclude any sample with missing ClinicalStatus</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addCCA</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
 <span class="r-in"><span>    formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
 <span class="r-in"><span>    na.action <span class="op">=</span> <span class="va">na.exclude</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
@@ -308,8 +315,10 @@ test specified by <code>homogeneity.test</code> parameter.</p>
 <span class="r-in"><span><span class="co"># A common choice along with PERMANOVA is ANOVA when statistical significance</span></span></span>
 <span class="r-in"><span><span class="co"># of homogeneity of groups is analysed. Moreover, full significance test</span></span></span>
 <span class="r-in"><span><span class="co"># results can be returned.</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"clr"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"clr"</span>,</span></span>
 <span class="r-in"><span>    formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
 <span class="r-in"><span>    homogeneity.test <span class="op">=</span> <span class="st">"anova"</span>,</span></span>
 <span class="r-in"><span>    full <span class="op">=</span> <span class="cn">TRUE</span></span></span>
@@ -319,8 +328,24 @@ test specified by <code>homogeneity.test</code> parameter.</p>
 <span class="r-in"><span><span class="co"># to anova.cca</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"clr"</span>,</span></span>
 <span class="r-in"><span>    formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
 <span class="r-in"><span>    permutations <span class="op">=</span> <span class="fl">500</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># In dbRDA, dissimilarity matrix is calculated internally which is</span></span></span>
+<span class="r-in"><span><span class="co"># computationally heavy operation. If you have large number of samples, and</span></span></span>
+<span class="r-in"><span><span class="co"># you want to fit multiple dbRDA models, you might want to consider</span></span></span>
+<span class="r-in"><span><span class="co"># pre-calculation of dissimilarity matrix as the same matrix will be used for</span></span></span>
+<span class="r-in"><span><span class="co"># all models. You can then run dbRDA with the pre-calculated dissimilarity</span></span></span>
+<span class="r-in"><span><span class="co"># avoiding redundant dissimilarity calculations.</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="getDissimilarity.html">addDissimilarity</a></span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"bray"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addRDA</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">ClinicalStatus</span>,</span></span>
+<span class="r-in"><span>    dis.name <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
+<span class="r-in"><span>    name <span class="op">=</span> <span class="st">"RDA_precalc_bray"</span>,</span></span>
+<span class="r-in"><span>    na.action <span class="op">=</span> <span class="va">na.exclude</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
