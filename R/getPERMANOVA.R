@@ -1,33 +1,33 @@
 #' @name
 #' getPERMANOVA
-#' 
+#'
 #' @title
 #' Calculate PERMANOVA (Permutational Multivariate Analysis of Variance)
-#' 
+#'
 #' @description
 #' These functions perform PERMANOVA to assess the significance of group
 #' differences based on a specified dissimilarity matrix. The results can be
 #' returned directly or added to metadata in an object of class
 #' \code{TreeSummarizedExperiment}.
-#' 
+#'
 #' @details
-#' PERMANOVA is a non-parametric method used to test whether the centroids of 
-#' different groups (as defined by the formula or covariates) are significantly 
+#' PERMANOVA is a non-parametric method used to test whether the centroids of
+#' different groups (as defined by the formula or covariates) are significantly
 #' different in terms of multivariate space.
-#' 
+#'
 #' PERMANOVA relies on the assumption of group homogeneity, meaning the groups
 #' should be distinct and have similar variances within each group. This
 #' assumption is essential as PERMANOVA is sensitive to differences in
 #' within-group dispersion, which can otherwise confound results.
 #' This is why the functions return homogeneity test results by default.
-#' 
+#'
 #' The functions utilize \code{\link[vegan:adonis2]{vegan::adonis2}} to compute
 #' PERMANOVA. For homogeneity testing,
 #' \code{\link[vegan:betadisper]{vegan::betadisper}} along
 #' with \code{\link[vegan:permutest]{vegan::permutest}} are utilized by default,
 #' which allow testing for equal dispersion across groups and validate the
 #' homogeneity assumption.
-#' 
+#'
 #' PERMANOVA and distance-based redundancy analysis (dbRDA) are closely related
 #' methods for analyzing multivariate data. PERMANOVA is non-parametric, making
 #' fewer assumptions about the data. In contrast, dbRDA assumes a linear
@@ -38,21 +38,22 @@
 #' relationships. However, when the underlying data structure is non-linear,
 #' the results from the two methods can differ significantly due to dbRDA's
 #' reliance on linear assumptions.
-#' 
+#'
 #' @return
 #' \code{getPERMANOVA} returns the PERMANOVA results or a list containing the
 #' PERMANOVA results and homogeneity test results if
 #' \code{test.homogeneity = TRUE}. \code{addPERMANOVA} adds these results to
 #' metadata of \code{x}.
-#' 
+#'
+#' @inheritParams addAlpha
 #' @inheritParams runCCA
-#' 
+#'
 #' @param name \code{Character scalar}. A name for the results that will be
 #' stored to metadata. (Default: \code{"permanova"})
-#' 
+#'
 #' @param method \code{Character scalar}. A dissimilarity metric used in
 #' PERMANOVA and group dispersion calculation. (Default: \code{"bray"})
-#' 
+#'
 #' @param test.homogeneity \code{Logical scalar}. Should the homogeneity of
 #' group dispersions be evaluated? (Default: \code{TRUE})
 #'
@@ -60,15 +61,15 @@
 #' \itemize{
 #'   \item \code{by}: \code{Character scalar}. Specifies how significance is
 #'   calculated. (Default: \code{"margin"})
-#'   
+#'
 #'   \item \code{na.action}: \code{function}. Action to take when missing
 #'   values for any of the variables in \code{formula} are encountered.
 #'   (Default: \code{na.fail})
-#'   
+#'
 #'   \item \code{full} \code{Logical scalar}. should all the results from the
 #'   homogeneity calculations be returned. When \code{FALSE}, only
 #'   summary tables are returned. (Default: \code{FALSE})
-#'   
+#'
 #'   \item \code{homogeneity.test}: \code{Character scalar}. Specifies
 #'   the significance test used to analyse
 #'   \code{\link[vegan:betadisper]{vegan::betadisper}} results.
@@ -80,10 +81,10 @@
 #' }
 #'
 #' @examples
-#' 
+#'
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
-#' 
+#'
 #' # Apply relative transformation
 #' tse <- transformAssay(tse, method = "relabundance")
 #' # Perform PERMANOVA
@@ -96,14 +97,14 @@
 #'     )
 #' # The results are stored to metadata
 #' metadata(tse)[["permanova"]]
-#' 
+#'
 #' # Calculate dbRDA
 #' rda_res <- getRDA(
 #'     tse, assay.type = "relabundance", method = "bray",
 #'     formula = x ~ SampleType, permutations = 99)
 #' # Significance results are similar to PERMANOVA
 #' attr(rda_res, "significance")
-#' 
+#'
 #' @seealso
 #' For more details on the actual implementation see
 #' \code{\link[vegan:adonis2]{vegan::adonis2}},
