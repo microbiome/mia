@@ -69,6 +69,11 @@
 #'   \item \code{subset.result}: \code{Logical result}. Specifies whether to
 #'   subset \code{x} to match the result if some samples were removed during
 #'   calculation. (Default: \code{TRUE})
+#'
+#'   \item \code{binary}: \code{Logical scalar}. Whether to perform
+#'   presence/absence transformation before dissimilarity calculation. For
+#'   Jaccard index the default is \code{TRUE}. For other dissimilarity metrics,
+#'   please see \code{\link[vegan:vegdist]{vegdist}}.
 #' }
 #'
 #' @details
@@ -508,6 +513,13 @@ setMethod("addRDA", "SingleCellExperiment",
     # dissimilarity metric
     if( ord.method == "RDA" ){
         args <- c(args, list(distance = method))
+        # If binary was not specified and user wants to calculate Jaccard
+        # index, we default the binary to TRUE as the standard Jaccard is
+        # calculated from presence/absence table. FALSE is the defualt in
+        # vegan: https://github.com/vegandevs/vegan/issues/153
+        if( method %in% c("jaccard") && !"binary" %in% names(args) ){
+            args[["binary"]] <- TRUE
+        }
     }
     # Perform CCA or RDA
     ord_FUN <- if (ord.method == "CCA") cca else dbrda
