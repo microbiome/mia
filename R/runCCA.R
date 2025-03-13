@@ -9,7 +9,7 @@
 #' @param assay.type \code{Character scalar}. Specifies the name of assay
 #' used in calculation. (Default: \code{NULL})
 #'
-#' @param diss.name \code{Character scalar}. Specifies the name of dissimilarity
+#' @param dis.name \code{Character scalar}. Specifies the name of dissimilarity
 #' matrix from \code{metadata} slot used in calculation. (Default: \code{NULL})
 #'
 #' @param formula \code{formula}. If \code{x} is a
@@ -186,7 +186,7 @@
 #' tse <- addRDA(
 #'     tse,
 #'     formula = data ~ ClinicalStatus,
-#'     diss.name = "bray",
+#'     dis.name = "bray",
 #'     name = "RDA_precalc_bray",
 #'     na.action = na.exclude
 #'     )
@@ -351,7 +351,7 @@ setMethod("getRDA", "SummarizedExperiment",
     function(
         x, formula = NULL, col.var = variables, variables = NULL,
         test.signif = TRUE, assay.type = assay_name, assay_name = exprs_values,
-        exprs_values = NULL, diss.name = NULL, ...){
+        exprs_values = NULL, dis.name = NULL, ...){
         ############################# Input check ##############################
         if( !(is.null(formula) || is(formula, "formula")) ){
             stop("'formula' must be formula or NULL.", call. = FALSE)
@@ -370,8 +370,8 @@ setMethod("getRDA", "SummarizedExperiment",
         }
         # User can specify either abundance matrix or dissimilarity matrix from
         # metadata.
-        if( sum(c(is.null(assay.type), is.null(diss.name))) != 1L ){
-            stop("Either 'assay.type' or 'diss.name' must be specified.",
+        if( sum(c(is.null(assay.type), is.null(dis.name))) != 1L ){
+            stop("Either 'assay.type' or 'dis.name' must be specified.",
                 call. = FALSE)
         }
         if( !is.null(assay.type) ){
@@ -380,8 +380,8 @@ setMethod("getRDA", "SummarizedExperiment",
             mat <- assay(x, assay.type)
         } else{
             # Get dissimilarity matrix
-            .check_metadata_present(diss.name, x)
-            mat <- metadata(x)[[diss.name]]
+            .check_metadata_present(dis.name, x)
+            mat <- metadata(x)[[dis.name]]
         }
 
         ########################### Input check end ############################

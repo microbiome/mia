@@ -156,7 +156,8 @@ test_that("CCA", {
         tse, assay.type = "counts", formula = data ~ ClinicalStatus,
         na.action = na.exclude)
     res2 <- getRDA(
-        tse, col.var = "Clinical status", na.action = na.exclude)
+        tse, assay.type = "counts", col.var = "Clinical status",
+        na.action = na.exclude)
     expect_equal(res1, res2, check.attributes = FALSE)
 
     # Test that dbRDA works with pre-calculated dissimilarity matrix
@@ -165,7 +166,7 @@ test_that("CCA", {
         tse, assay.type = "counts", formula = data ~ ClinicalStatus,
         method = "mahalanobis", na.action = na.exclude)
     res <- getRDA(
-        tse, diss.name = "mahalanobis", formula = data ~ ClinicalStatus,
+        tse, dis.name = "mahalanobis", formula = data ~ ClinicalStatus,
         na.action = na.exclude)
     expect_equal(res, ref, check.attributes = FALSE)
 })

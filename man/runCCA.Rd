@@ -60,7 +60,7 @@ runRDA(x, ...)
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = NULL,
-  diss.name = NULL,
+  dis.name = NULL,
   ...
 )
 
@@ -139,7 +139,7 @@ alternative experiment containing the input data.}
 \item{name}{\code{Character scalar}. A name for the \code{reducedDim()}
 where results will be stored. (Default: \code{"CCA"})}
 
-\item{diss.name}{\code{Character scalar}. Specifies the name of dissimilarity
+\item{dis.name}{\code{Character scalar}. Specifies the name of dissimilarity
 matrix from \code{metadata} slot used in calculation. (Default: \code{NULL})}
 }
 \value{
@@ -250,7 +250,7 @@ tse <- addDissimilarity(tse, assay.type = "relabundance", method = "bray")
 tse <- addRDA(
     tse,
     formula = data ~ ClinicalStatus,
-    diss.name = "bray",
+    dis.name = "bray",
     name = "RDA_precalc_bray",
     na.action = na.exclude
     )
