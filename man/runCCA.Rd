@@ -103,6 +103,11 @@ permutations for significance testing in \code{vegan::anova.cca}.
 \item \code{subset.result}: \code{Logical result}. Specifies whether to
 subset \code{x} to match the result if some samples were removed during
 calculation. (Default: \code{TRUE})
+
+\item \code{binary}: \code{Logical scalar}. Whether to perform
+presence/absence transformation before dissimilarity calculation. For
+Jaccard index the default is \code{TRUE}. For other dissimilarity metrics,
+please see \code{\link[vegan:vegdist]{vegdist}}.
 }}
 
 \item{formula}{\code{formula}. If \code{x} is a
