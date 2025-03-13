@@ -172,3 +172,4 @@ Changes in version 1.15.x
 + getReducedDimAttribute: function for fetching elements from attributes of reducedDim
 + Improve decontam functions
 + Support precalculated dissimilarity matrix in dbRDA
++ Calculate standard, binary Jaccard index by default
