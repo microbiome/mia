@@ -148,7 +148,7 @@ setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
         control = NULL,
         threshold = 0.5,
         normalize = TRUE,
-        detailed = FALSE,
+        detailed = TRUE,
         ...){
         # input check
         .check_assay_present(assay.type, seqtab)
@@ -274,7 +274,7 @@ setMethod("addNotContaminantQC", signature = c("SummarizedExperiment"),
     # Add to rowData. The result can be either a vector or DF.
     if( is(res, "DataFrame") ){
         values <- as.list(res)
-        name <- paste0(name, "_", names(values))
+        name <- names(values)
         x <- .add_values_to_colData(
             x, values = unname(values), name = name, MARGIN = 1L)
     } else{
