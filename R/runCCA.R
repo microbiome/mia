@@ -6,6 +6,12 @@
 #' @inheritParams getDominant
 #' @inheritParams getDissimilarity
 #'
+#' @param assay.type \code{Character scalar}. Specifies the name of assay
+#' used in calculation. (Default: \code{NULL})
+#'
+#' @param diss.name \code{Character scalar}. Specifies the name of dissimilarity
+#' matrix from \code{metadata} slot used in calculation. (Default: \code{NULL})
+#'
 #' @param formula \code{formula}. If \code{x} is a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' a formula can be supplied. Based on the right-hand side of the given formula
@@ -106,6 +112,7 @@
 #' # Perform CCA and exclude any sample with missing ClinicalStatus
 #' tse <- addCCA(
 #'     tse,
+#'     assay.type = "counts",
 #'     formula = data ~ ClinicalStatus,
 #'     na.action = na.exclude
 #'     )
@@ -151,8 +158,10 @@
 #' # A common choice along with PERMANOVA is ANOVA when statistical significance
 #' # of homogeneity of groups is analysed. Moreover, full significance test
 #' # results can be returned.
+#' tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 #' tse <- addRDA(
 #'     tse,
+#'     assay.type = "clr",
 #'     formula = data ~ ClinicalStatus,
 #'     homogeneity.test = "anova",
 #'     full = TRUE
@@ -162,8 +171,24 @@
 #' # to anova.cca
 #' tse <- addRDA(
 #'     tse,
+#'     assay.type = "clr",
 #'     formula = data ~ ClinicalStatus,
 #'     permutations = 500
+#'     )
+#'
+#' # In dbRDA, dissimilarity matrix is calculated internally which is
+#' # computationally heavy operation. If you have large number of samples, and
+#' # you want to fit multiple dbRDA models, you might want to consider
+#' # pre-calculation of dissimilarity matrix as the same matrix will be used for
+#' # all models. You can then run dbRDA with the pre-calculated dissimilarity
+#' # avoiding redundant dissimilarity calculations.
+#' tse <- addDissimilarity(tse, assay.type = "relabundance", method = "bray")
+#' tse <- addRDA(
+#'     tse,
+#'     formula = data ~ ClinicalStatus,
+#'     diss.name = "bray",
+#'     name = "RDA_precalc_bray",
+#'     na.action = na.exclude
 #'     )
 #'
 NULL
@@ -300,8 +325,8 @@ runRDA <- function(x, ...){
 #' @export
 #' @rdname runCCA
 setMethod("getRDA", "ANY", function(x, formula, data, ...){
-    if( !is.matrix(x) ){
-        stop("'x' must be matrix.", call. = FALSE)
+    if( !(is.matrix(x) || inherits(x, "dist")) ){
+        stop("'x' must be matrix or distance matrix.", call. = FALSE)
     }
     if( !is(formula, "formula") ){
         stop("'formula' must be formula or NULL.", call. = FALSE)
@@ -309,9 +334,10 @@ setMethod("getRDA", "ANY", function(x, formula, data, ...){
     if( !(is.data.frame(data) || is.matrix(data) || is(data, "DFrame")) ){
         stop("'data' must be data.frame or coarcible to one.", call. = FALSE)
     }
-    if( ncol(x) != nrow(data) ){
-        stop("Number of columns in 'x' should match with number of rows in ",
-            "'data'.", call. = FALSE)
+    if( !((inherits(x, "dist") && attr(dis, "Size") == nrow(data)) ||
+            (!inherits(x, "dist") && ncol(x) == nrow(data)) )  ){
+        stop("Number of columns (or length if distance matrix) in 'x' should ",
+            "match with number of rows in 'data'.", call. = FALSE)
     }
     #
     res <- .calculate_rda(
@@ -325,7 +351,7 @@ setMethod("getRDA", "SummarizedExperiment",
     function(
         x, formula = NULL, col.var = variables, variables = NULL,
         test.signif = TRUE, assay.type = assay_name, assay_name = exprs_values,
-        exprs_values = "counts", ...){
+        exprs_values = NULL, diss.name = NULL, ...){
         ############################# Input check ##############################
         if( !(is.null(formula) || is(formula, "formula")) ){
             stop("'formula' must be formula or NULL.", call. = FALSE)
@@ -339,13 +365,27 @@ setMethod("getRDA", "SummarizedExperiment",
         if( !is.null(formula) && !is.null(col.var) ){
             stop("Specify either 'formula' or 'col.var'.", call. = FALSE)
         }
-        .check_assay_present(assay.type, x)
         if( !.is_a_bool(test.signif) ){
             stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
         }
+        # User can specify either abundance matrix or dissimilarity matrix from
+        # metadata.
+        if( sum(c(is.null(assay.type), is.null(diss.name))) != 1L ){
+            stop("Either 'assay.type' or 'diss.name' must be specified.",
+                call. = FALSE)
+        }
+        if( !is.null(assay.type) ){
+            # Get assay
+            .check_assay_present(assay.type, x)
+            mat <- assay(x, assay.type)
+        } else{
+            # Get dissimilarity matrix
+            .check_metadata_present(diss.name, x)
+            mat <- metadata(x)[[diss.name]]
+        }
+
         ########################### Input check end ############################
-        # Get assay
-        mat <- assay(x, assay.type)
+
         # Get formula and variables
         temp <- .get_formula_and_covariates(x, formula, col.var)
         formula <- temp[["formula"]]
@@ -482,7 +522,9 @@ setMethod("addRDA", "SingleCellExperiment",
     #
     # Get data in correct orientation. Samples should be in rows in abundance
     # table.
-    x <- as.matrix(t(x))
+    if( !inherits(x, "dist") ){
+        x <- as.matrix(t(x))
+    }
     data <- data.frame(data, check.names = FALSE)
     # Instead of letting na.action pass through, give informative error
     # about missing values.
@@ -528,11 +570,16 @@ setMethod("addRDA", "SingleCellExperiment",
     # (in cca they are included). If we used na.action, some samples might be
     # removed. That is why we have to subset the abundance table first by
     # filtering missing values.
-    if( ord.method == "RDA" ){
+    if( ord.method == "RDA" && !inherits(x, "dist") ){
         if( !is.null(res_obj$na.action) ){
             x <- x[-res_obj$na.action, ]
         }
         sppscores(res_obj) <- x
+    } else if( ord.method == "RDA" ){
+        warning("Species scores are not included in result as dissimilarities ",
+                "do not have information on them. If you need them, you can ",
+                "either run the analysis with abundance matrix or add them ",
+                "manually (see vegan::sppscores).", call. = FALSE)
     }
 
     # Get eigenvalues from the object
