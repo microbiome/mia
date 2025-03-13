@@ -59,7 +59,8 @@ runRDA(x, ...)
   test.signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
-  exprs_values = "counts",
+  exprs_values = NULL,
+  dis.name = NULL,
   ...
 )
 
@@ -126,7 +127,7 @@ of multivariate homogeneity of group dispersions be performed.
 (Default: \code{TRUE})}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
-used in calculation. (Default: \code{"counts"})}
+used in calculation. (Default: \code{NULL})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -137,6 +138,9 @@ alternative experiment containing the input data.}
 
 \item{name}{\code{Character scalar}. A name for the \code{reducedDim()}
 where results will be stored. (Default: \code{"CCA"})}
+
+\item{dis.name}{\code{Character scalar}. Specifies the name of dissimilarity
+matrix from \code{metadata} slot used in calculation. (Default: \code{NULL})}
 }
 \value{
 For \code{getCCA} a matrix with samples as rows and CCA dimensions as
@@ -172,6 +176,7 @@ tse <- enterotype
 # Perform CCA and exclude any sample with missing ClinicalStatus
 tse <- addCCA(
     tse,
+    assay.type = "counts",
     formula = data ~ ClinicalStatus,
     na.action = na.exclude
     )
@@ -217,8 +222,10 @@ plotRDA(tse, "rda_scaled", colour_by = "ClinicalStatus")
 # A common choice along with PERMANOVA is ANOVA when statistical significance
 # of homogeneity of groups is analysed. Moreover, full significance test
 # results can be returned.
+tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 tse <- addRDA(
     tse,
+    assay.type = "clr",
     formula = data ~ ClinicalStatus,
     homogeneity.test = "anova",
     full = TRUE
@@ -228,8 +235,24 @@ tse <- addRDA(
 # to anova.cca
 tse <- addRDA(
     tse,
+    assay.type = "clr",
     formula = data ~ ClinicalStatus,
     permutations = 500
+    )
+
+# In dbRDA, dissimilarity matrix is calculated internally which is
+# computationally heavy operation. If you have large number of samples, and
+# you want to fit multiple dbRDA models, you might want to consider
+# pre-calculation of dissimilarity matrix as the same matrix will be used for
+# all models. You can then run dbRDA with the pre-calculated dissimilarity
+# avoiding redundant dissimilarity calculations.
+tse <- addDissimilarity(tse, assay.type = "relabundance", method = "bray")
+tse <- addRDA(
+    tse,
+    formula = data ~ ClinicalStatus,
+    dis.name = "bray",
+    name = "RDA_precalc_bray",
+    na.action = na.exclude
     )
 
 }
