@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.31</span>
       </span>
     </div>
 
@@ -146,6 +146,10 @@ permutations for significance testing in <code><a href="https://rdrr.io/pkg/vega
 <li><p><code>subset.result</code>: <code>Logical result</code>. Specifies whether to
 subset <code>x</code> to match the result if some samples were removed during
 calculation. (Default: <code>TRUE</code>)</p></li>
+<li><p><code>binary</code>: <code>Logical scalar</code>. Whether to perform
+presence/absence transformation before dissimilarity calculation. For
+Jaccard index the default is <code>TRUE</code>. For other dissimilarity metrics,
+please see <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code>.</p></li>
 </ul></dd>
 
 

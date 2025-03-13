@@ -23,7 +23,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.31</span>
       </span>
     </div>
 
@@ -145,6 +145,10 @@ Specifies whether the calculation should be parallelized.</p></li>
 Defines detection threshold for absence/presence of features. Feature that
 has abundance under threshold in either of samples, will be discarded when
 evaluating overlap between samples. (Default: <code>0</code>)</p></li>
+<li><p><code>binary</code>: <code>Logical scalar</code>. Whether to perform
+presence/absence transformation before dissimilarity calculation. For
+Jaccard index the default is <code>TRUE</code>. For other dissimilarity metrics,
+please see <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code>.</p></li>
 </ul></dd>
 
 
