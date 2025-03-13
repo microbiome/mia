@@ -35,10 +35,8 @@
 //' The values returned by this function are equivalent to the values returned
 //' by \code{picante::pd()} with the parameter \code{include.root=TRUE}.
 //' 
-//' The C++ code was adapted from an implementation by the Unifrac team (see
-//' \url{https://genome.cshlp.org/content/31/11/2131} or
-//' \url{https://github.com/biocore/unifrac}), which is licensed under the BSD
-//' 3-Clause license. 
+//' The C++ code was adapted from an implementation by the Unifrac team
+//' (Armstrong et al. 2021), which is licensed under the BSD 3-Clause license. 
 //' 
 //' @param assay An R numeric matrix containing the assay of a \code{TreeSE}
 //' object.
