@@ -87,6 +87,11 @@ Specifies whether the calculation should be parallelized.
 Defines detection threshold for absence/presence of features. Feature that
 has abundance under threshold in either of samples, will be discarded when
 evaluating overlap between samples. (Default: \code{0})
+
+\item \code{binary}: \code{Logical scalar}. Whether to perform
+presence/absence transformation before dissimilarity calculation. For
+Jaccard index the default is \code{TRUE}. For other dissimilarity metrics,
+please see \code{\link[vegan:vegdist]{vegdist}}.
 }}
 
 \item{name}{\code{Character scalar}. The name to be used to store the result

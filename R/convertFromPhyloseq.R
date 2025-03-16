@@ -1,15 +1,15 @@
 #' Create a \code{TreeSummarizedExperiment} object from a phyloseq object
-#' 
+#'
 #' @inheritParams convertFromBIOM
-#' 
-#' @details 
+#'
+#' @details
 #' \code{convertFromPhyloseq} converts \code{phyloseq}
-#' objects into 
+#' objects into
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} objects.
 #' All data stored in a \code{phyloseq} object is transferred.
 #'
-#' @return 
-#' \code{convertFromPhyloseq} returns an object of class 
+#' @return
+#' \code{convertFromPhyloseq} returns an object of class
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @importFrom S4Vectors SimpleList DataFrame make_zero_col_DFrame
@@ -20,7 +20,7 @@
 #' @rdname convertFromPhyloseq
 #'
 #' @examples
-#' 
+#'
 #' ### Coerce a phyloseq object to a TreeSE object
 #' if (requireNamespace("phyloseq")) {
 #'     data(GlobalPatterns, package="phyloseq")
@@ -38,14 +38,14 @@ convertFromPhyloseq <- function(x) {
     }
     #
     # Get the assay
-    counts <- phyloseq::otu_table(x)
+    counts <- phyloseq::otu_table(x) |> as.matrix() |> unclass()
     # Check the orientation, and transpose if necessary
     if( !phyloseq::taxa_are_rows(x) ){
         counts <- t(counts)
     }
     # Create a list of assays
     assays <- SimpleList(counts = counts)
-    
+
     rowData <- tryCatch(phyloseq::tax_table(x), error = function(e) NULL) |>
         data.frame() |> DataFrame()
     if( nrow(rowData) == 0L ){

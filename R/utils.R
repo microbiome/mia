@@ -183,6 +183,18 @@
     return(MARGIN)
 }
 
+# Check if metadata has the specified data.
+.check_metadata_present <- function(
+        data.type, x, name = .get_name_in_parent(assay.type)){
+    if( !.is_non_empty_string(data.type) ){
+        stop("'" ,name, "' must be a single non-empty character value.",
+            call. = FALSE)
+    }
+    if( !(data.type %in% names(metadata(x))) ){
+        stop("'",name,"' must be a valid name of metadata(x)", call. = FALSE)
+    }
+    return(data.type)
+}
 ################################################################################
 # Internal wrappers for getters
 
