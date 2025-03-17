@@ -1,11 +1,11 @@
 /*
- * BSD 3-Clause License
- *
- * Copyright (c) 2016-2021, UniFrac development team.
- * All rights reserved.
- *
- * See LICENSE file for more details
- */
+* BSD 3-Clause License
+*
+* Copyright (c) 2016-2021, UniFrac development team.
+* All rights reserved.
+*
+* See LICENSE file for more details
+*/
 
 #include "tree.h"
 
@@ -16,14 +16,15 @@
 
 using namespace su;
 
-BPTree::BPTree(std::vector<bool> input_structure, std::vector<double> input_lengths, std::vector<std::string> input_names) {
-    
+BPTree::BPTree(std::vector<bool> input_structure,
+                std::vector<double> input_lengths,
+                std::vector<std::string> input_names){
     structure = input_structure;
     lengths = input_lengths;
     names = input_names;
     
     nparens = structure.size();
-
+    
     openclose = std::vector<uint32_t>();
     select_0_index = std::vector<uint32_t>();
     select_1_index = std::vector<uint32_t>();
@@ -31,14 +32,14 @@ BPTree::BPTree(std::vector<bool> input_structure, std::vector<double> input_leng
     select_0_index.resize(nparens / 2);
     select_1_index.resize(nparens / 2);
     excess.resize(nparens);
-
+    
     structure_to_openclose();
     index_and_cache();
 }
 
-BPTree::BPTree(const Rcpp::List & rowTree) {
+BPTree::BPTree(const Rcpp::List & rowTree){
     
-    //Initialize vectors
+    // Initialize vectors
     openclose = std::vector<uint32_t>();
     lengths = std::vector<double>();
     names = std::vector<std::string>();
@@ -47,13 +48,13 @@ BPTree::BPTree(const Rcpp::List & rowTree) {
     select_0_index = std::vector<uint32_t>();
     select_1_index = std::vector<uint32_t>();
     
-    //Load the tree structure
+    // Load the tree structure
     structure = std::vector<bool>();
-    structure.reserve(500000);  // a fair sized tree... avoid reallocs, and its not _that_ much waste if this is wrong
-    rowTree_to_bp(rowTree); //Also sets the size of nparens
+    structure.reserve(500000); // A reasonably large initial allocation
+    rowTree_to_bp(rowTree); // Also sets the size of nparens
     
-    //Resize vectors
-    // resize is correct here as we are not performing a push_back
+    // Resize vectors
+    // Resize is correct here as we are not performing a push_back
     openclose.resize(nparens);
     lengths.resize(nparens);
     names.resize(nparens);
@@ -62,38 +63,39 @@ BPTree::BPTree(const Rcpp::List & rowTree) {
     select_0_index.resize(nparens / 2);
     select_1_index.resize(nparens / 2);
     
-    //Builds a vector that lets us find the corresponding indices for each true/false pair
+    // Build a vector that lets us find the corresponding indices for each
+    // true/false pair
     structure_to_openclose();
-    //Get metadata
+    // Get metadata
     rowTree_to_metadata(rowTree);
     
-    //Finalize
+    // Finalize
     index_and_cache();
 }
 
 
-BPTree BPTree::mask(std::vector<bool> topology_mask, std::vector<double> in_lengths) {
+BPTree BPTree::mask(std::vector<bool> topology_mask,
+                    std::vector<double> in_lengths){
     
     std::vector<bool> new_structure = std::vector<bool>();
     std::vector<double> new_lengths = std::vector<double>();
     std::vector<std::string> new_names = std::vector<std::string>();
-
+    
     uint32_t count = 0;
-    for(auto i = topology_mask.begin(); i != topology_mask.end(); i++) {
-        if(*i)
-            count++;
+    for( auto i = topology_mask.begin(); i != topology_mask.end(); i++ ){
+        if( *i ) count++;
     }
-
+    
     new_structure.resize(count);
     new_lengths.resize(count);
     new_names.resize(count);
-
+    
     auto mask_it = topology_mask.begin();
     auto base_it = this->structure.begin();
     uint32_t new_idx = 0;
     uint32_t old_idx = 0;
-    for(; mask_it != topology_mask.end(); mask_it++, base_it++, old_idx++) {
-        if(*mask_it) {
+    for( ; mask_it != topology_mask.end(); mask_it++, base_it++, old_idx++ ){
+        if( *mask_it ){
             new_structure[new_idx] = this->structure[old_idx];
             new_lengths[new_idx] = in_lengths[old_idx];
             new_names[new_idx] = this->names[old_idx];
@@ -104,55 +106,56 @@ BPTree BPTree::mask(std::vector<bool> topology_mask, std::vector<double> in_leng
     return BPTree(new_structure, new_lengths, new_names);
 }
 
-std::unordered_set<std::string> BPTree::get_tip_names() {
+std::unordered_set<std::string> BPTree::get_tip_names(){
     std::unordered_set<std::string> observed;
-	
-    for(unsigned int i = 0; i < this->nparens; i++) {
-        if(this->isleaf(i)) {
+    
+    for( unsigned int i = 0; i < this->nparens; i++ ){
+        if( this->isleaf(i) ){
             observed.insert(this->names[i]);
         }
     }
-
+    
     return observed;
 }
 
-BPTree BPTree::shear(std::unordered_set<std::string> to_keep) {
+BPTree BPTree::shear(std::unordered_set<std::string> to_keep){
     std::vector<bool> shearmask = std::vector<bool>(this->nparens);
     int32_t p;
-
-	for(unsigned int i = 0; i < this->nparens; i++) {
-        if(this->isleaf(i) && to_keep.count(this->names[i]) > 0) {
+    
+    for( unsigned int i = 0; i < this->nparens; i++ ){
+        if( this->isleaf(i) && to_keep.count(this->names[i]) > 0 ){
             shearmask[i] = true;
             shearmask[i+1] = true;
-
+            
             p = this->parent(i);
-            while(p != -1 && !shearmask[p]) {
+            while( p != -1 && !shearmask[p] ){
                 shearmask[p] = true;
                 shearmask[this->close(p)] = true;
                 p = this->parent(p);
             }
         }
     }
+    
     return this->mask(shearmask, this->lengths);
 }
 
 BPTree BPTree::collapse() {
     std::vector<bool> collapsemask = std::vector<bool>(this->nparens);
     std::vector<double> new_lengths = std::vector<double>(this->lengths);
-
+    
     uint32_t current, first, last;
-
-    for(uint32_t i = 0; i < this->nparens / 2; i++) {
+    
+    for( uint32_t i = 0; i < this->nparens / 2; i++ ){
         current = this->preorderselect(i);
-
-        if(this->isleaf(current) or (current == 0)) {  // 0 == root
+        
+        if( this->isleaf(current) or (current == 0) ){  // 0 == root
             collapsemask[current] = true;
             collapsemask[this->close(current)] = true;
         } else {
             first = this->leftchild(current);
             last = this->rightchild(current);
-
-            if(first == last) {
+            
+            if( first == last ) {
                 new_lengths[first] = new_lengths[first] + new_lengths[current];
             } else {
                 collapsemask[current] = true;
@@ -160,15 +163,15 @@ BPTree BPTree::collapse() {
             }
         }
     }
-
+    
     return this->mask(collapsemask, new_lengths);
 }
 
-BPTree::~BPTree() {
+BPTree::~BPTree(){
 }
 
-void BPTree::index_and_cache() {
-    // should probably do the open/close in here too
+void BPTree::index_and_cache(){
+    // Should probably do the open/close in here too
     unsigned int idx = 0;
     auto i = structure.begin();
     auto k0 = select_0_index.begin();
@@ -176,12 +179,11 @@ void BPTree::index_and_cache() {
     auto e_it = excess.begin();
     unsigned int e = 0;  
     
-    for(; i != structure.end(); i++, idx++ ) {
-        if(*i) {
+    for( ; i != structure.end(); i++, idx++ ){
+        if( *i ){
             *(k1++) = idx;
             *(e_it++) = ++e;
-        }
-        else {
+        } else {
             *(k0++) = idx;
             *(e_it++) = --e;
         }
@@ -209,30 +211,36 @@ bool BPTree::isleaf(unsigned int idx) const {
 }
 
 uint32_t BPTree::leftchild(uint32_t i) const {
-    // aka fchild
-    if(isleaf(i))
-        return 0;  // this is awkward, using 0 which is root, but a root cannot be a child. edge case
-    else
+    // Aka fchild
+    if( isleaf(i) ){
+        return 0;  
+    } else {
         return i + 1;
+    }
 }
 
 uint32_t BPTree::rightchild(uint32_t i) const {
-    // aka lchild
-    if(isleaf(i))
-        return 0;  // this is awkward, using 0 which is root, but a root cannot be a child. edge case
-    else
+    // Aka lchild
+    if( isleaf(i) ){
+        // This is awkward, using 0 which is root, but a root cannot be a child.
+        // Edge case.
+        return 0;
+    } else {
         return open(close(i) - 1);
+    }
 }
 
 uint32_t BPTree::rightsibling(uint32_t i) const {
-    // aka nsibling
+    // Aka nsibling
     uint32_t position = close(i) + 1;
-    if(position >= nparens)
-        return 0;  // will return 0 if no sibling as root cannot have a sibling
-    else if(structure[position])
-        return position;
-    else 
+    if( position >= nparens ){
+        // Will return 0 if no siblings, as root cannot have a sibling
         return 0;
+    } else if(structure[position]){
+        return position;
+    } else {
+        return 0;
+    }
 }
 
 int32_t BPTree::parent(uint32_t i) const {
@@ -240,28 +248,30 @@ int32_t BPTree::parent(uint32_t i) const {
 }
 
 int32_t BPTree::enclose(uint32_t i) const {
-    if(structure[i])
+    if(structure[i]){
         return bwd(i, -2) + 1;
-    else
-        return bwd(i - 1, -2) + 1; 
+    } else {
+        return bwd(i - 1, -2) + 1;
+    }
 }
 
 int32_t BPTree::bwd(uint32_t i, int d) const {
     uint32_t target_excess = excess[i] + d;
-    for(int current_idx = i - 1; current_idx >= 0; current_idx--) {
-        if(excess[current_idx] == target_excess)
+    for( int current_idx = i - 1; current_idx >= 0; current_idx-- ){
+        if( excess[current_idx] == target_excess ){
             return current_idx;
+        }
     }
     return -1;
 }
 
-// The algorithms that this class uses need the tree to be stored in a binary format
+// This class needs the tree to be stored in a binary format
 // In terms of the Newick format, an opening bracket corresponds to a TRUE,
 // a closing bracket to a FALSE, and a tip to a TRUE FALSE
 // This function assumes that the tree representation is in cladewise order -
 // Ensure this with ape's reorder.phylo() function
 // Seems to work whether or not the tree is rooted
-void BPTree::rowTree_to_bp(const Rcpp::List & phylo) {
+void BPTree::rowTree_to_bp(const Rcpp::List & phylo){
     Rcpp::NumericMatrix edge = phylo["edge"];
     Rcpp::StringVector tips = phylo["tip.label"];
     
@@ -274,51 +284,50 @@ void BPTree::rowTree_to_bp(const Rcpp::List & phylo) {
     unsigned int currentNode = 0;
     unsigned int nextNode = 0;
     
-    // Goal: Insert true when a branch starts, a false when it closes, and a true-false for each tip.
-    
-    for (int i = 0; i < edge.nrow(); i++){
+    for( int i = 0; i < edge.nrow(); i++ ){
         currentNode = edge(i, 0);
         nextNode = edge(i, 1);
         
-        if(nodes.size() > 0 && currentNode < nodes.top()) {
+        if( nodes.size() > 0 && currentNode < nodes.top() ){
             // We've exhausted the branch and moved backwards in the tree
             do {
                 nodes.pop();
                 structure.push_back(false);
-            } while(currentNode != nodes.top());
+            } while( currentNode != nodes.top() );
         }
         
-        if(nodes.size() == 0 || currentNode > nodes.top() ) {
+        if( nodes.size() == 0 || currentNode > nodes.top() ){
             // We are either at the root, or entering a new node
             nodes.push(currentNode);
             structure.push_back(true);
             
         }
         
-        if(nextNode <= ntips) {
+        if( nextNode <= ntips ){
             // We've found a tip
             structure.push_back(true);
             structure.push_back(false);
         }
         
-        if(i == edge.nrow() - 1) {
+        if( i == edge.nrow() - 1 ){
             // We've reached the end of the tree
             do {
                 nodes.pop();
                 structure.push_back(false);
-            } while(nodes.size() > 0);
+            } while( nodes.size() > 0 );
         }
     }
+    
     nparens = structure.size();
 }
 
-void BPTree::structure_to_openclose() {
+void BPTree::structure_to_openclose(){
     std::stack<unsigned int> oc;
     unsigned int open_idx;
     unsigned int i = 0;
-
-    for(auto it = structure.begin(); it != structure.end(); it++, i++) {
-        if(*it) {
+    
+    for( auto it = structure.begin(); it != structure.end(); it++, i++ ){
+        if( *it ) {
             oc.push(i);
         } else {
             open_idx = oc.top();
@@ -330,59 +339,63 @@ void BPTree::structure_to_openclose() {
 }
 
 // Add metadata (lengths and names) to the tree representation
-// Iterate through the structure, and whenever we hit a true decide if
-// it's a leaf or not, and then add the corresponding label/length
-// edge.length has (nodes + tips) elements - leaves at the start, nodes at the end
-// tip.label has (tips) elements
+// Iterate through the structure, and whenever we hit a true decide if it's a
+// leaf or not, and then add the corresponding label/length
+
+// edge.length has (nodes + tips) elements -
+// leaves at the start, nodes at the end.
+// tip.label has (tips) elements.
 // root.edge and node.labels are optional, giving the length of the root and
-// the internal node (including root) labels, respectively
-void BPTree::rowTree_to_metadata(const Rcpp::List & phylo) {
+// the internal node (including root) labels, respectively.
+void BPTree::rowTree_to_metadata(const Rcpp::List & phylo){
     Rcpp::NumericVector edgelength = phylo["edge.length"];
     Rcpp::NumericMatrix edges = phylo["edge"];
     Rcpp::StringVector tips = phylo["tip.label"];
     
     const uint32_t n_edges = edgelength.size();
     uint32_t ntips = tips.size();
-
-    //Used to find the correct lengths for the nodes - Includes the root
+    
+    // Used to find the correct lengths for the nodes - Includes the root
     std::vector<double> edge_v(n_edges + 1, 0.0);
     
-    for(unsigned int i = 0; i < n_edges; i++){
+    for( unsigned int i = 0; i < n_edges; i++ ){
         edge_v.at(edges(i,1) - 1) = edgelength[i];
     }
     
-    if(phylo.containsElementNamed("root.edge")) {
+    if( phylo.containsElementNamed("root.edge") ){
         edge_v.at(ntips) = phylo["root.edge"];
     }
     
     bool hasNodeLabels = false;
     Rcpp::StringVector nodes;
     
-    if(phylo.containsElementNamed("node.labels")) {
+    if( phylo.containsElementNamed("node.labels") ){
         hasNodeLabels = true;
         nodes = phylo["node.labels"];
     }
     
-    unsigned int tip_idx = 0; // tip indices run from 0 to ntips-1
-    unsigned int node_idx = 0; // node indices run from ntips to ntips + nnodes - 1
+    // Tip indices run from 0 to ntips-1
+    unsigned int tip_idx = 0; 
+    // Node indices run from ntips to ntips + nnodes - 1
+    unsigned int node_idx = 0; 
     
-    for(unsigned int i = 0; i < structure.size(); i++) {
-        if(structure[i]){
+    for( unsigned int i = 0; i < structure.size(); i++ ){
+        if( structure[i] ){
             std::string label = std::string();
             double length = 0.0;
             
-            if(isleaf(i)){
-                //Tips can be expected to have both a length and a label
+            if( isleaf(i) ){
+                // Tips can be expected to have both a length and a label
                 label =  Rcpp::as<std::string>(tips[tip_idx]);
                 length = edge_v[tip_idx];
                 tip_idx++;
-            }
-            
-            else{
-                //Nodes always have lengths (except the root, which may have it optionally, but defaults to 0.0)
-                //Nodes may also optionally have labels (which includes the root label)
+            } else {
+                // Nodes always have lengths (except the root, which may have it
+                // optionally, but defaults to 0.0)
+                // Nodes may also optionally have labels (which includes the
+                // root label)
                 length = edge_v[ntips + node_idx];
-                if(hasNodeLabels){
+                if( hasNodeLabels ){
                     label = Rcpp::as<std::string>(nodes[node_idx]);
                 }
                 node_idx++;
@@ -392,16 +405,17 @@ void BPTree::rowTree_to_metadata(const Rcpp::List & phylo) {
     }
 }
 
-//This takes a label and a length and assigns them to the correct places
-void BPTree::set_node_metadata(unsigned int open_idx, std::string name, double length) {
+// This takes a label and a length and assigns them to the correct places
+void BPTree::set_node_metadata(unsigned int open_idx, std::string name,
+                                double length){
     names[open_idx] = name;
     lengths[open_idx] = length;
 }
 
-std::vector<bool> BPTree::get_structure() {
+std::vector<bool> BPTree::get_structure(){
     return structure;
 }
 
-std::vector<uint32_t> BPTree::get_openclose() {
+std::vector<uint32_t> BPTree::get_openclose(){
     return openclose;
 }

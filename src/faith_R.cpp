@@ -1,11 +1,11 @@
 /*
- * BSD 3-Clause License
- *
- * Copyright (c) 2016-2021, UniFrac development team.
- * All rights reserved.
- *
- * See LICENSE file for more details
- */
+* BSD 3-Clause License
+*
+* Copyright (c) 2016-2021, UniFrac development team.
+* All rights reserved.
+*
+* See LICENSE file for more details
+*/
 
 #include <iostream>
 #include <vector>
@@ -47,8 +47,7 @@
 //' @keywords internal
 // [[Rcpp::export(.faith_cpp)]]
 Rcpp::NumericVector faith_cpp(const Rcpp::NumericMatrix & assay,
-                              const Rcpp::List & rowTree){
-    
+                                const Rcpp::List & rowTree){
     su::BPTree tree = su::BPTree(rowTree);      
     su::Assay table = su::Assay(assay);
     
@@ -65,26 +64,29 @@ Rcpp::NumericVector faith_cpp(const Rcpp::NumericMatrix & assay,
     
     std::vector<double> results = std::vector<double>(table.n_samples, 0.0);
     
-    // for node in postorderselect
-    const unsigned int max_k = (tree_sheared.nparens>1) ? ((tree_sheared.nparens / 2) - 1) : 0;
-    for(unsigned int k = 0; k < max_k; k++) {
+    // For node in postorderselect
+    const unsigned int max_k = (tree_sheared.nparens>1) ?
+                                ((tree_sheared.nparens / 2) - 1) : 0;
+    
+    for( unsigned int k = 0; k < max_k; k++ ){
         node = tree_sheared.postorderselect(k);
         
-        // get branch length
+        // Get branch length
         length = tree_sheared.lengths[node];
         
-        // get node proportions and set intermediate scores
-        node_proportions = set_proportions(tree_sheared, node, table, propmap, false);
+        // Get node proportions and set intermediate scores
+        node_proportions = set_proportions(tree_sheared, node, table, propmap,
+                                            false);
         
-        for (unsigned int sample = 0; sample < table.n_samples; sample++){
-            // calculate contribution of node to score
+        for( unsigned int sample = 0; sample < table.n_samples; sample++ ){
+            // Calculate contribution of node to score
             results[sample] += (node_proportions[sample] > 0) * length;
         }
     }
     
     Rcpp::NumericVector faith = Rcpp::NumericVector(results.size());
     
-    for(unsigned int i = 0; i < results.size(); i++){
+    for( unsigned int i = 0; i < results.size(); i++ ){
         faith[i] = results[i];
     }
     
