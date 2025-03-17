@@ -136,10 +136,10 @@ NULL
     mat[ is.na(mat) ] <- 0
     
     # The tree must be in cladewise order for the algorithm to work correctly
-    temp <- reorder.phylo(tree, "cladewise")
+    tree <- reorder.phylo(tree, "cladewise")
     
     # Call the C++ code
-    return(.faith_cpp(mat, temp))
+    return(.faith_cpp(mat, tree))
 }
 
 .calc_log_modulo_skewness <- function(mat, quantile = 0.5,
