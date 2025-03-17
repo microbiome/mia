@@ -22,7 +22,7 @@ addPERMANOVA(x, ...)
 \S4method{addPERMANOVA}{SummarizedExperiment}(x, name = "permanova", ...)
 }
 \arguments{
-\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
+\item{x}{a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object.}
 
 \item{...}{additional arguments passed to \code{vegan::adonis2}.
 \itemize{

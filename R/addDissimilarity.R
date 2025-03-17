@@ -68,6 +68,11 @@
 #'   Defines detection threshold for absence/presence of features. Feature that
 #'   has abundance under threshold in either of samples, will be discarded when
 #'   evaluating overlap between samples. (Default: \code{0})
+#'
+#'   \item \code{binary}: \code{Logical scalar}. Whether to perform
+#'   presence/absence transformation before dissimilarity calculation. For
+#'   Jaccard index the default is \code{TRUE}. For other dissimilarity metrics,
+#'   please see \code{\link[vegan:vegdist]{vegdist}}.
 #' }
 #'
 #' @return
@@ -300,6 +305,8 @@ setMethod(
         stop("'sample' must be an integer.", call. = FALSE)
     }
     #
+    # Initialize an argument list
+    args <- c(list(x = mat), list(...))
     # If the dissimilarity function is not specified, get default choice
     if( is.null(dis.fun) ){
         if( method %in% c("overlap") ){
@@ -310,10 +317,15 @@ setMethod(
             dis.fun <- .get_jsd
         } else{
             dis.fun <- vegdist
+            # If binary was not specified and user wants to calculate Jaccard
+            # index, we default the binary to TRUE as the standard Jaccard is
+            # calculated from presence/absence table. FALSE is the defualt in
+            # vegan: https://github.com/vegandevs/vegan/issues/153
+            if( method %in% c("jaccard") && !"binary" %in% names(args) ){
+                args[["binary"]] <- TRUE
+            }
         }
     }
-    # Initialize an argument list
-    args <- c(list(x = mat), list(...))
     # If rarefaction is specified, calculate dissimilarity with vegan::avgdist
     # function that utilizes the specified dissimilarity function. Otherwise,
     # call the specified function directly.
