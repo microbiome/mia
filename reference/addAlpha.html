@@ -18,7 +18,7 @@ rarefaction."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.33</span>
       </span>
     </div>
 
@@ -176,9 +176,12 @@ or evenness increase.</p>
 the ecosystem (50 percent by default). Tune this with the threshold
 argument.</p></li>
 <li><p>'faith': Faith's phylogenetic alpha diversity index measures how
-long the taxonomic distance is between taxa that are present in the sample.
-Larger values represent higher diversity. Using this index requires
-rowTree. (Faith 1992)</p>
+long the taxonomic distance is between taxa that are present in the sample
+(Faith 1992). Larger values represent higher diversity. The current
+implementation is based on the Stacked Faith's Phylogenetic Diversity (SFPhD)
+algorithm (Armstrong et al. 2021), which produces values equivalent to
+<code>picante::pd</code> with the parameter
+<code>include.root=TRUE</code>. Using this index requires a rowTree.</p>
 <p>If the data includes features that are not in tree's tips but in
 internal nodes, there are two options. First, you can keep those features,
 and prune the tree to match features so that each tip can be found from
@@ -389,7 +392,11 @@ result that are then averaged to get the final result.</p>
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Beisel J-N. et al. (2003)
+    <p>Armstrong G. et al. (2021)
+Efficient computation of Faith's phylogenetic diversity with applications
+in characterizing microbiomes.
+<em>Genome Res.</em> 31(11):2131-2137. doi: 10.1101/gr.275777.121</p>
+<p>Beisel J-N. et al. (2003)
 A Comparative Analysis of Diversity Index Sensitivity.
 <em>Internal Rev. Hydrobiol.</em> 88(1):3-15.
 <a href="https://portais.ufg.br/up/202/o/2003-comparative_evennes_index.pdf" class="external-link">https://portais.ufg.br/up/202/o/2003-comparative_evennes_index.pdf</a></p>
