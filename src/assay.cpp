@@ -24,21 +24,16 @@ Assay::Assay(const Rcpp::NumericMatrix & assay){
     sample_ids = std::vector<std::string>(); 
     obs_ids = std::vector<std::string>();
     
-    Rcpp::StringVector colnames = Rcpp::colnames(table);
-    sample_ids = Rcpp::as<std::vector<std::string>>(colnames);
-    
     Rcpp::StringVector rownames = Rcpp::rownames(table);
     obs_ids = Rcpp::as<std::vector<std::string>>(rownames);
     
-    n_samples = sample_ids.size();
+    n_samples = table.ncol();
     n_obs = obs_ids.size();
     
     /* Define a mapping between an ID and its corresponding offset */
     obs_id_index = std::unordered_map<std::string, uint32_t>();
-    sample_id_index = std::unordered_map<std::string, uint32_t>();
     
     create_id_index(obs_ids, obs_id_index);
-    create_id_index(sample_ids, sample_id_index);
     
     sample_counts = get_sample_counts();
 }

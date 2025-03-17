@@ -56,7 +56,6 @@ class Assay {
         * axis are defined
         */
         std::unordered_map<std::string, uint32_t> obs_id_index;
-        std::unordered_map<std::string, uint32_t> sample_id_index;
         
         /* Create an index mapping an ID to its corresponding index 
         * position.
