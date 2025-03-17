@@ -1,0 +1,17 @@
+api.o
+api_s.o
+biom.o
+biom_s.o
+propstack.o
+tree.o
+tree_s.o
+tse.o
+unifrac.o
+unifrac_internal.o
+unifrac_internal_s.o
+unifrac_s.o
+RcppExports.o
+assay.o
+faith_R.o
+propmap.o
+mia.dll
