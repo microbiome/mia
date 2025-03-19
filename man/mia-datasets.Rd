@@ -27,6 +27,8 @@ experiments (microbiota, metabolites and biomarkers)}
 features and 58 samples}
 \item{\code{\link{Tengeler2020}}: A TreeSummarizedExperiment with 151
 features and 27 samples}
+\item{\code{\link{Tito2024QMP}}: A TreeSummarizedExperiment with 676
+features and 589 samples}
 }
 }
 \examples{
