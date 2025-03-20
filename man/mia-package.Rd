@@ -53,6 +53,7 @@ Other contributors:
   \item Katariina Pärnänen [contributor]
   \item Pande Erawijantari [contributor]
   \item Danielle Callan [contributor]
+  \item Jesse Pasanen [contributor]
 }
 
 }

@@ -13,8 +13,8 @@ transformAssay(x, ...)
   assay.type = "counts",
   assay_name = NULL,
   method = c("alr", "chi.square", "clr", "css", "frequency", "hellinger", "log", "log10",
-    "log2", "max", "normalize", "pa", "philr", "range", "rank", "rclr", "relabundance",
-    "rrank", "standardize", "total", "z"),
+    "log2", "max", "normalize", "pa", "philr", "pseudocount", "range", "rank", "rclr",
+    "relabundance", "rrank", "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
@@ -129,6 +129,8 @@ the data.
 \deqn{log2 = \log_{2} x}{%
 log2 = log2(x)}
 where \eqn{x} is a single value of data.
+
+\item 'pseudocount': Adds only pseudocount.
 
 }
 }
