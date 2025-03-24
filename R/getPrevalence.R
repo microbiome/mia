@@ -476,6 +476,20 @@ setMethod("subsetByRare", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @rdname getPrevalence
 #' @export
+setMethod("addPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
+    function(x, name = "prevalent_abundance", ...){
+        if( !.is_a_string(name) ){
+            stop("'name' must be a single character value.", call. = FALSE)
+        }
+        res <- getPrevalentAbundance(x, ...)
+        res <- list(res) |> unname()
+        x <- .add_values_to_colData(x, res, name, MARGIN = 2L)
+        return(x)
+    }
+)
+
+#' @rdname getPrevalence
+#' @export
 setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
     function(x, ...){
         x <- .calc_rel_abund(x)

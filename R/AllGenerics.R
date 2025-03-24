@@ -165,6 +165,12 @@ setGeneric("getPrevalentAbundance", signature = "x",
     function(x, assay.type = assay_name, assay_name = "relabundance", ...)
     standardGeneric("getPrevalentAbundance"))
 
+#' @rdname getPrevalence
+#' @export
+setGeneric("addPrevalentAbundance", signature = "x",
+    function(x, ...)
+    standardGeneric("addPrevalentAbundance"))
+
 #'@rdname agglomerateByPrevalence
 #' @export
 setGeneric("agglomerateByPrevalence", signature = "x", function(x, ...)
