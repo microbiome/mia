@@ -7,6 +7,7 @@
 \alias{subsetByPrevalent}
 \alias{subsetByRare}
 \alias{getPrevalentAbundance}
+\alias{addPrevalentAbundance}
 \alias{addPrevalence}
 \alias{addPrevalence,SummarizedExperiment-method}
 \alias{getPrevalence,ANY-method}
@@ -19,6 +20,7 @@
 \alias{subsetByPrevalent,TreeSummarizedExperiment-method}
 \alias{subsetByRare,SummarizedExperiment-method}
 \alias{subsetByRare,TreeSummarizedExperiment-method}
+\alias{addPrevalentAbundance,SummarizedExperiment-method}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
 \title{Calculation prevalence information for features across samples}
@@ -39,6 +41,8 @@ getPrevalentAbundance(
   assay_name = "relabundance",
   ...
 )
+
+addPrevalentAbundance(x, ...)
 
 addPrevalence(x, ...)
 
@@ -103,6 +107,8 @@ addPrevalence(x, ...)
 \S4method{subsetByRare}{SummarizedExperiment}(x, rank = NULL, ...)
 
 \S4method{subsetByRare}{TreeSummarizedExperiment}(x, update.tree = TRUE, ...)
+
+\S4method{addPrevalentAbundance}{SummarizedExperiment}(x, name = "prevalent_abundance", ...)
 
 \S4method{getPrevalentAbundance}{ANY}(
   x,
