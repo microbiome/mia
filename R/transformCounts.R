@@ -96,6 +96,8 @@
 #' log2 = log2(x)}
 #' where \eqn{x} is a single value of data.
 #'
+#' \item 'pseudocount': Adds only pseudocount.
+#'
 #' }
 #'
 #' @return
@@ -187,12 +189,9 @@ NULL
 #' @rdname transformAssay
 #' @export
 setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
-    function(x,
+    function(
+        x, method,
         assay.type = "counts", assay_name = NULL,
-        method = c("alr", "chi.square", "clr", "css", "frequency",
-            "hellinger", "log", "log10", "log2", "max", "normalize",
-            "pa", "philr", "range", "rank", "rclr", "relabundance", "rrank",
-            "standardize", "total", "z"),
         MARGIN = "samples",
         name = method,
         pseudocount = FALSE,
@@ -244,8 +243,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         method = c(
             "alr", "chi.square", "clr", "css", "frequency",
             "hellinger", "log", "log10", "log2", "max", "normalize",
-            "pa", "philr", "range", "rank", "rclr", "relabundance", "rrank",
-            "standardize", "total", "z"),
+            "pa", "philr", "pseudocount", "range", "rank", "rclr",
+            "relabundance", "rrank", "standardize", "total", "z"),
         MARGIN = "samples",
         name = method,
         pseudocount = FALSE,
@@ -282,6 +281,11 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     # Get the method and abundance table
     method <- match.arg(method)
     assay <- assay(x, assay.type)
+    # If user specified "pseudocount" as method, enable automated pseudocount,
+    # if exact value is not specified
+    if( method == "pseudocount" && .is_a_bool(pseudocount) && !pseudocount ){
+        pseudocount <- TRUE
+    }
     # Apply pseudocount, if it is not 0 or FALSE
     assay <- .apply_pseudocount(assay, pseudocount, ...)
     # Store pseudocount value and set attr equal to NULL. The function above,
@@ -296,6 +300,9 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     } else if( method %in% c("philr") ){
         transformed_table <- .apply_transformation_from_philr(
             assay, method, MARGIN, x = x, ...)
+    } else if ( method %in% c("pseudocount") ){
+        transformed_table <- assay
+        attr(transformed_table, "mia") <- method
     } else {
         transformed_table <- .apply_transformation_from_vegan(
             assay, method, MARGIN, ...)
@@ -622,6 +629,12 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         if ( pseudocount && any(mat < 0, na.rm = TRUE) ){
             stop("The assay contains negative values. ",
                 "'pseudocount' must be specified manually.", call. = FALSE)
+        }
+        # If there are only positive, non-zero values, we do not add pseudocount
+        if( all(mat > 0, na.rm = TRUE) ){
+            pseudocount <- 0
+            message("The assay contains already only strictly positive ",
+                    "values. Pseudocount is not added.")
         }
         # If pseudocount TRUE, set it to half of non-zero minimum value
         # else set it to zero.

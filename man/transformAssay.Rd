@@ -10,11 +10,9 @@ transformAssay(x, ...)
 
 \S4method{transformAssay}{SummarizedExperiment}(
   x,
+  method,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "css", "frequency", "hellinger", "log", "log10",
-    "log2", "max", "normalize", "pa", "philr", "range", "rank", "rclr", "relabundance",
-    "rrank", "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
@@ -53,13 +51,13 @@ If \code{NULL}, the tree is retrieved from \code{x}.
 (Default: \code{NULL}).
 }}
 
+\item{method}{\code{Character scalar}. Specifies the transformation
+method.}
+
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
-\item{method}{\code{Character scalar}. Specifies the transformation
-method.}
 
 \item{MARGIN}{\code{Character scalar}. Determines whether the
 transformation is applied sample (column) or feature (row) wise.
@@ -129,6 +127,8 @@ the data.
 \deqn{log2 = \log_{2} x}{%
 log2 = log2(x)}
 where \eqn{x} is a single value of data.
+
+\item 'pseudocount': Adds only pseudocount.
 
 }
 }
