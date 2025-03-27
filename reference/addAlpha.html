@@ -18,7 +18,7 @@ rarefaction."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.34</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.35</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ rarefaction."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Estimate alpha diversity indices</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/addAlpha.R" class="external-link"><code>R/addAlpha.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/alpha_indices/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/alpha_indices/R/addAlpha.R" class="external-link"><code>R/addAlpha.R</code></a></small>
     <div class="hidden name"><code>addAlpha.Rd</code></div>
     </div>
 
@@ -66,13 +66,7 @@ rarefaction.</p>
 <span><span class="fu">getAlpha</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"coverage_diversity"</span>, <span class="st">"fisher_diversity"</span>, <span class="st">"faith_diversity"</span>,</span>
-<span>    <span class="st">"gini_simpson_diversity"</span>, <span class="st">"inverse_simpson_diversity"</span>,</span>
-<span>    <span class="st">"log_modulo_skewness_diversity"</span>, <span class="st">"shannon_diversity"</span>, <span class="st">"absolute_dominance"</span>,</span>
-<span>    <span class="st">"dbp_dominance"</span>, <span class="st">"core_abundance_dominance"</span>, <span class="st">"gini_dominance"</span>, <span class="st">"dmn_dominance"</span>,</span>
-<span>    <span class="st">"relative_dominance"</span>, <span class="st">"simpson_lambda_dominance"</span>, <span class="st">"camargo_evenness"</span>,</span>
-<span>    <span class="st">"pielou_evenness"</span>, <span class="st">"simpson_evenness"</span>, <span class="st">"evar_evenness"</span>, <span class="st">"bulla_evenness"</span>,</span>
-<span>    <span class="st">"ace_richness"</span>, <span class="st">"chao1_richness"</span>, <span class="st">"hill_richness"</span>, <span class="st">"observed_richness"</span><span class="op">)</span>,</span>
+<span>  index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"faith_diversity"</span>, <span class="st">"shannon_diversity"</span>, <span class="st">"dbp_dominance"</span>, <span class="st">"observed_richness"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">index</span>,</span>
 <span>  niter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  BPPARAM <span class="op">=</span> <span class="fu">SerialParam</span><span class="op">(</span><span class="op">)</span>,</span>
@@ -163,8 +157,12 @@ named <code>name</code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-
-<div class="section">
+    <p>Different diversity metrics considers different aspects of microbial
+community. Cassol et al. (2025) categorized alpha diversity metrics into four
+categories: richness, dominance, information, and phylogenetic. These
+categories provide complementary information, and by default, <code>*Alpha</code>
+function return indices from each category: observed richness, Berger-Parker
+dominance, Shannon index for "information", and Faith phylogenetic index.</p><div class="section">
 <h3 id="diversity">Diversity<a class="anchor" aria-label="anchor" href="#diversity"></a></h3>
 
 
@@ -410,6 +408,9 @@ An  index of diversity and its associated diversity measure.
 New diversity index for assessing structural alterations in aquatic
 communities.
 <em>Bull. Environ. Contam. Toxicol.</em> 48:428–434.</p>
+<p>Cassol, I. (2025) Key features and guidelines for the application of
+microbial alpha diversity metrics.
+<em>Sci. Rep.</em> 15:622. doi: 10.1038/s41598-024-77864-y</p>
 <p>Chao A. (1984)
 Non-parametric estimation of the number of classes in a population.
 <em>Scand J Stat.</em> 11:265–270.</p>
