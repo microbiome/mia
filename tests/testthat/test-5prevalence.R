@@ -179,6 +179,16 @@ test_that("getPrevalent", {
 
 })
 
+test_that("getPrevalentAbundance", {
+    data(GlobalPatterns)
+    tse <- GlobalPatterns
+    tse <- addPrevalentAbundance(
+        tse, rank = "Class", name = "res", prevalence = 0.35, detection = 2)
+    res <- getPrevalentAbundance(
+        tse, rank = "Class", prevalence = 0.35, detection = 2)
+    expect_equal(tse[["res"]], res)
+})
+
 test_that("getRare", {
 
     data(GlobalPatterns, package="mia")

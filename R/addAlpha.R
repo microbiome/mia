@@ -39,7 +39,7 @@
 #'   whether to remove internal nodes when Faith's index is calculated.
 #'   When \code{only.tips=TRUE}, those rows that are not tips of tree are
 #'   removed. (Default: \code{FALSE})
-#'
+#'   
 #'   \item \code{threshold}: (Coverage and all evenness indices).
 #'   \code{Numeric scalar}.
 #'   From \code{0 to 1}, determines the threshold for coverage and evenness
@@ -98,9 +98,12 @@
 #' argument.
 #'
 #' \item 'faith': Faith's phylogenetic alpha diversity index measures how
-#' long the taxonomic distance is between taxa that are present in the sample.
-#' Larger values represent higher diversity. Using this index requires
-#' rowTree. (Faith 1992)
+#' long the taxonomic distance is between taxa that are present in the sample
+#' (Faith 1992). Larger values represent higher diversity. The current
+#' implementation is based on the Stacked Faith's Phylogenetic Diversity (SFPhD)
+#' algorithm (Armstrong et al. 2021), which produces values equivalent to
+#' \code{\link[picante:pd]{picante::pd}} with the parameter
+#' \code{include.root=TRUE}. Using this index requires a rowTree. 
 #'
 #' If the data includes features that are not in tree's tips but in
 #' internal nodes, there are two options. First, you can keep those features,
@@ -348,6 +351,11 @@
 #' Refer to Schloss (2024) for more details on rarefaction.
 #'
 #' @references
+#' 
+#' Armstrong G. et al. (2021)
+#' Efficient computation of Faith's phylogenetic diversity with applications
+#' in characterizing microbiomes.
+#' _Genome Res._ 31(11):2131-2137. doi: 10.1101/gr.275777.121
 #'
 #' Beisel J-N. et al. (2003)
 #' A Comparative Analysis of Diversity Index Sensitivity.

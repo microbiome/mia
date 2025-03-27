@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.15.33
+Version: 1.15.35
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -42,7 +42,8 @@ Authors@R:
       person(given = "Rajesh", family = "Shigdel", role=c("ctb")),
       person(given = "Katariina", family = "Pärnänen", role=c("ctb")),
       person(given = "Pande", family = "Erawijantari", role=c("ctb")),
-      person(given = "Danielle", family = "Callan", role=c("ctb")))
+      person(given = "Danielle", family = "Callan", role=c("ctb")),
+      person(given = "Jesse", family = "Pasanen", role=c("ctb")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the
@@ -86,7 +87,8 @@ Imports:
     tibble,
     tidyr,
     utils,
-    vegan
+    vegan,
+    Rcpp
 Suggests:
     ade4,
     BiocStyle,
@@ -107,6 +109,8 @@ Suggests:
     topicdoc,
     topicmodels,
     yaml
+LinkingTo:
+    Rcpp
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
