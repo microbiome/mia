@@ -16,7 +16,7 @@ getAlpha(x, ...)
 \S4method{getAlpha}{SummarizedExperiment}(
   x,
   assay.type = "counts",
-  index = c("faith_diversity", "shannon_diversity", "dbp_dominance", "observed_richness"),
+  index = c("dbp_dominance", "faith_diversity", "observed_richness", "shannon_diversity"),
   name = index,
   niter = NULL,
   BPPARAM = SerialParam(),

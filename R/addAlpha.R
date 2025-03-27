@@ -39,7 +39,7 @@
 #'   whether to remove internal nodes when Faith's index is calculated.
 #'   When \code{only.tips=TRUE}, those rows that are not tips of tree are
 #'   removed. (Default: \code{FALSE})
-#'   
+#'
 #'   \item \code{threshold}: (Coverage and all evenness indices).
 #'   \code{Numeric scalar}.
 #'   From \code{0 to 1}, determines the threshold for coverage and evenness
@@ -103,7 +103,7 @@
 #' implementation is based on the Stacked Faith's Phylogenetic Diversity (SFPhD)
 #' algorithm (Armstrong et al. 2021), which produces values equivalent to
 #' \code{\link[picante:pd]{picante::pd}} with the parameter
-#' \code{include.root=TRUE}. Using this index requires a rowTree. 
+#' \code{include.root=TRUE}. Using this index requires a rowTree.
 #'
 #' If the data includes features that are not in tree's tips but in
 #' internal nodes, there are two options. First, you can keep those features,
@@ -351,7 +351,7 @@
 #' Refer to Schloss (2024) for more details on rarefaction.
 #'
 #' @references
-#' 
+#'
 #' Armstrong G. et al. (2021)
 #' Efficient computation of Faith's phylogenetic diversity with applications
 #' in characterizing microbiomes.
@@ -507,9 +507,8 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
 setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     function(
         x, assay.type = "counts",
-        index = c(
-            "faith_diversity", "shannon_diversity", "dbp_dominance",
-            "observed_richness"),
+        index = c("dbp_dominance", "faith_diversity", "observed_richness",
+            "shannon_diversity"),
         name = index, niter = NULL, BPPARAM = SerialParam(), ...){
         ############################## Input check #############################
         # Support altExp hiddenly
