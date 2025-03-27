@@ -39,7 +39,7 @@
 #'   whether to remove internal nodes when Faith's index is calculated.
 #'   When \code{only.tips=TRUE}, those rows that are not tips of tree are
 #'   removed. (Default: \code{FALSE})
-#'   
+#'
 #'   \item \code{threshold}: (Coverage and all evenness indices).
 #'   \code{Numeric scalar}.
 #'   From \code{0 to 1}, determines the threshold for coverage and evenness
@@ -76,6 +76,13 @@
 #'
 #' @details
 #'
+#' Different diversity metrics considers different aspects of microbial
+#' community. Cassol et al. (2025) categorized alpha diversity metrics into four
+#' categories: richness, dominance, information, and phylogenetic. These
+#' categories provide complementary information, and by default, \code{*Alpha}
+#' function return indices from each category: observed richness, Berger-Parker
+#' dominance, Shannon index for "information", and Faith phylogenetic index.
+#'
 #' ## Diversity
 #'
 #' Alpha diversity is a joint quantity that combines elements or community
@@ -96,7 +103,7 @@
 #' implementation is based on the Stacked Faith's Phylogenetic Diversity (SFPhD)
 #' algorithm (Armstrong et al. 2021), which produces values equivalent to
 #' \code{\link[picante:pd]{picante::pd}} with the parameter
-#' \code{include.root=TRUE}. Using this index requires a rowTree. 
+#' \code{include.root=TRUE}. Using this index requires a rowTree.
 #'
 #' If the data includes features that are not in tree's tips but in
 #' internal nodes, there are two options. First, you can keep those features,
@@ -344,7 +351,7 @@
 #' Refer to Schloss (2024) for more details on rarefaction.
 #'
 #' @references
-#' 
+#'
 #' Armstrong G. et al. (2021)
 #' Efficient computation of Faith's phylogenetic diversity with applications
 #' in characterizing microbiomes.
@@ -367,6 +374,10 @@
 #' New diversity index for assessing structural alterations in aquatic
 #' communities.
 #' _Bull. Environ. Contam. Toxicol._ 48:428--434.
+#'
+#' Cassol, I. (2025) Key features and guidelines for the application of
+#' microbial alpha diversity metrics.
+#' _Sci. Rep._ 15:622. doi: 10.1038/s41598-024-77864-y
 #'
 #' Chao A. (1984)
 #' Non-parametric estimation of the number of classes in a population.
@@ -496,17 +507,8 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
 setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     function(
         x, assay.type = "counts",
-        index = c(
-            "coverage_diversity", "fisher_diversity", "faith_diversity",
-            "gini_simpson_diversity", "inverse_simpson_diversity",
-            "log_modulo_skewness_diversity", "shannon_diversity",
-            "absolute_dominance", "dbp_dominance",
-            "core_abundance_dominance", "gini_dominance",
-            "dmn_dominance", "relative_dominance",
-            "simpson_lambda_dominance", "camargo_evenness",
-            "pielou_evenness", "simpson_evenness",
-            "evar_evenness", "bulla_evenness", "ace_richness",
-            "chao1_richness", "hill_richness", "observed_richness"),
+        index = c("dbp_dominance", "faith_diversity", "observed_richness",
+            "shannon_diversity"),
         name = index, niter = NULL, BPPARAM = SerialParam(), ...){
         ############################## Input check #############################
         # Support altExp hiddenly

@@ -16,13 +16,7 @@ getAlpha(x, ...)
 \S4method{getAlpha}{SummarizedExperiment}(
   x,
   assay.type = "counts",
-  index = c("coverage_diversity", "fisher_diversity", "faith_diversity",
-    "gini_simpson_diversity", "inverse_simpson_diversity",
-    "log_modulo_skewness_diversity", "shannon_diversity", "absolute_dominance",
-    "dbp_dominance", "core_abundance_dominance", "gini_dominance", "dmn_dominance",
-    "relative_dominance", "simpson_lambda_dominance", "camargo_evenness",
-    "pielou_evenness", "simpson_evenness", "evar_evenness", "bulla_evenness",
-    "ace_richness", "chao1_richness", "hill_richness", "observed_richness"),
+  index = c("dbp_dominance", "faith_diversity", "observed_richness", "shannon_diversity"),
   name = index,
   niter = NULL,
   BPPARAM = SerialParam(),
@@ -108,6 +102,12 @@ These functions estimates alpha diversity indices optionally using
 rarefaction.
 }
 \details{
+Different diversity metrics considers different aspects of microbial
+community. Cassol et al. (2025) categorized alpha diversity metrics into four
+categories: richness, dominance, information, and phylogenetic. These
+categories provide complementary information, and by default, \code{*Alpha}
+function return indices from each category: observed richness, Berger-Parker
+dominance, Shannon index for "information", and Faith phylogenetic index.
 \subsection{Diversity}{
 
 Alpha diversity is a joint quantity that combines elements or community
@@ -430,6 +430,10 @@ Camargo, JA. (1992)
 New diversity index for assessing structural alterations in aquatic
 communities.
 \emph{Bull. Environ. Contam. Toxicol.} 48:428--434.
+
+Cassol, I. (2025) Key features and guidelines for the application of
+microbial alpha diversity metrics.
+\emph{Sci. Rep.} 15:622. doi: 10.1038/s41598-024-77864-y
 
 Chao A. (1984)
 Non-parametric estimation of the number of classes in a population.
