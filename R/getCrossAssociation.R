@@ -244,7 +244,7 @@
 #' # col.var from colData.
 #' result <- getCrossAssociation(
 #'     mae[[1]], assay.type1 = "counts",
-#'     col.var2 = c("shannon_diversity", "coverage_diversity"),
+#'     col.var2 = c("shannon_diversity", "dbp_dominance"),
 #'     test.signif = TRUE, show.warnings = FALSE, verbose = FALSE)
 #'
 #' # If your data contains TreeSE with alternative experiment in altExp,
