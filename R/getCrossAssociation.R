@@ -271,6 +271,17 @@
 #'     show.warnings = FALSE, verbose = FALSE)
 #' head(res)
 #'
+#' # In ecological studies the association analyses are sometimes carried out
+#' # only for those samples that have observations. You can ignore zeroes by
+#' # replacing them with NA.
+#' mat <- assay(tse, "counts")
+#' mat[ mat == 0 ] <- NA
+#' assay(tse, "non_zero", withDimnames = FALSE) <- mat
+#' res2 <- getCrossAssociation(
+#'     tse, tse,
+#'     assay.type1 = "non_zero", assay.type2 = "non_zero"
+#' )
+#'
 NULL
 
 #' @rdname getCrossAssociation
