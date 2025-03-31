@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate correlations between features of two experiments.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/getCrossAssociation.R" class="external-link"><code>R/getCrossAssociation.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/zero_corr/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/zero_corr/R/getCrossAssociation.R" class="external-link"><code>R/getCrossAssociation.R</code></a></small>
     <div class="hidden name"><code>getCrossAssociation.Rd</code></div>
     </div>
 
@@ -477,6 +477,20 @@ faster solutions when running times are critical.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4       EU622687.1.1587    1  0.11111111</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5       KY646024.1.1591    1  0.34783280</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  JUOP01000215.81.1657    1  0.54433105</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># In ecological studies the association analyses are sometimes carried out</span></span></span>
+<span class="r-in"><span><span class="co"># only for those samples that have observations. You can ignore zeroes by</span></span></span>
+<span class="r-in"><span><span class="co"># replacing them with NA.</span></span></span>
+<span class="r-in"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"counts"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mat</span><span class="op">[</span> <span class="va">mat</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"non_zero"</span>, withDimnames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">mat</span></span></span>
+<span class="r-in"><span><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>, <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    assay.type1 <span class="op">=</span> <span class="st">"non_zero"</span>, assay.type2 <span class="op">=</span> <span class="st">"non_zero"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: non_zero, col.var1: -, dimred1: -, assay.type2: non_zero, col.var2: -, dimred2: -</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> by: 1, function: stats::cor, method: kendall, test.signif: FALSE, p.adj.method: -, paired: FALSE, show.warnings: TRUE</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
