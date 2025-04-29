@@ -360,7 +360,8 @@ setMethod("meltSE", signature = c(x = "SingleCellExperiment"),
 
 # This function adds dimred to data.frame. The inptu is already validated to
 # work.
-#' @importFrom dplyr rename rownames_to_column
+#' @importFrom dplyr rename
+#' @importFrom tibble rownames_to_column
 .add_dimred_to_melted_data <- function(
         df, x, dimred, col.name = sample_name, sample_name = "SampleID",...){
     # Loop through all dimreds and get the results
