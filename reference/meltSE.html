@@ -19,7 +19,7 @@ object into a long data.frame which can be used for tidyverse-tools."><!-- mathj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ object into a long data.frame which can be used for tidyverse-tools."><!-- mathj
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Converting a <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code> object into a long data.frame</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/meltAssay.R" class="external-link"><code>R/meltAssay.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/add.dimred/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/add.dimred/R/meltAssay.R" class="external-link"><code>R/meltAssay.R</code></a></small>
     <div class="hidden name"><code>meltSE.Rd</code></div>
     </div>
 
@@ -73,7 +73,10 @@ object into a long data.frame which can be used for <code>tidyverse</code>-tools
 <span>  col.name <span class="op">=</span> <span class="va">sample_name</span>,</span>
 <span>  sample_name <span class="op">=</span> <span class="st">"SampleID"</span>,</span>
 <span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
+<span><span class="fu">meltSE</span><span class="op">(</span><span class="va">x</span>, add.dimred <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -143,6 +146,15 @@ for the sample identifier. (Default: <code>"SampleID"</code>)</p></dd>
 
 <dt id="arg-sample-name">sample_name<a class="anchor" aria-label="anchor" href="#arg-sample-name"></a></dt>
 <dd><p>Deprecated. Use <code>col.name</code> instead.</p></dd>
+
+
+<dt id="arg-add-dimred">add.dimred<a class="anchor" aria-label="anchor" href="#arg-add-dimred"></a></dt>
+<dd><p><code>Logical scalar</code> or <code>Character vector</code>. To
+select information from the <code>reducedDim</code> to add to the molten assay
+data. If <code>add.dimred = NULL</code> no data will be added, if
+<code>add.dimred = TRUE</code> all data will be added and if
+<code>add.dimred</code> is a <code>character</code> vector, it will be used to subset
+to given names in <code>reducedDimNames(x)</code>. (Default: <code>NULL</code>)</p></dd>
 
 </dl></div>
     <div id="value">
