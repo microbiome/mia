@@ -173,3 +173,6 @@ Changes in version 1.15.x
 + Improve decontam functions
 + Support precalculated dissimilarity matrix in dbRDA
 + Calculate standard, binary Jaccard index by default
+
+Changes in version 1.17.x
++ Added add.dimred parameter to meltSE() (2025-04-29)
