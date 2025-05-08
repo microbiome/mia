@@ -53,7 +53,7 @@
 }
 
 .is_an_integer <- function(x){
-    .is_integer(x) && x%%1==0
+    .is_integer(x) && length(x) == 1L
 }
 
 .are_whole_numbers <- function(x){
