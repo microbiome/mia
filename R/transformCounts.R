@@ -44,10 +44,12 @@
 #'   \item \code{scaling}: \code{Numeric scalar}. Adjusts the normalization
 #'   scale  by dividing the calculated scaling factors, effectively changing
 #'   the magnitude of the normalized counts. (Default: \code{1000}).
-#'   \item \code{threshold}: \code{Numeric scalar}. Specifies relative
-#'   difference threshold and determines the first point where the relative
-#'   change in  differences between consecutive quantiles exceeds this
-#'   threshold. (Default: \code{0.1}).
+#'   \item \code{threshold}: \code{Numeric scalar}. For  \code{"css"},
+#'   specifies relative difference threshold and determines the first point
+#'   where the relative change in  differences between consecutive quantiles
+#'   exceeds this threshold. (Default: \code{0.1}) For \code{"cutoff"},
+#'   values less than or equal to the threshold are replaced with \code{NA}.
+#'   (Default: \code{0})
 #'   \item \code{tree}: \code{phylo}. Phylogeny used in PhILR transformation.
 #'   If \code{NULL}, the tree is retrieved from \code{x}.
 #'   (Default: \code{NULL}).
@@ -97,6 +99,10 @@
 #' where \eqn{x} is a single value of data.
 #'
 #' \item 'pseudocount': Adds only pseudocount.
+#'
+#' \item 'cutoff': In some ecological studies, only strictly positive values
+#' are taken into account. This method keeps only values greater than
+#' \code{threshold} and replaces all other values with \code{NA}.
 #'
 #' }
 #'
@@ -241,7 +247,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 .transform_assay <- function(
         x, assay.type = "counts", assay_name = NULL,
         method = c(
-            "alr", "chi.square", "clr", "css", "frequency",
+            "alr", "chi.square", "clr", "css", "cutoff", "frequency",
             "hellinger", "log", "log10", "log2", "max", "normalize",
             "pa", "philr", "pseudocount", "range", "rank", "rclr",
             "relabundance", "rrank", "standardize", "total", "z"),
@@ -278,8 +284,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
             "greater than 0.", call. = FALSE)
     }
     # Input check end
-    # Get the method and abundance table
-    method <- match.arg(method)
+    # Get the abundance table
     assay <- assay(x, assay.type)
     # If user specified "pseudocount" as method, enable automated pseudocount,
     # if exact value is not specified
@@ -303,6 +308,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     } else if ( method %in% c("pseudocount") ){
         transformed_table <- assay
         attr(transformed_table, "mia") <- method
+    } else if ( method %in% c("cutoff") ){
+        transformed_table <- .apply_cutoff(assay, ...)
     } else {
         transformed_table <- .apply_transformation_from_vegan(
             assay, method, MARGIN, ...)
@@ -803,4 +810,13 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
                 "original data.", call. = FALSE)
     }
     return(x)
+}
+
+# This function replaces values under or equal to threshold with NA
+.apply_cutoff <- function(mat, threshold = 0, ...){
+    if( !.is_a_numeric(threshold) ){
+        stop("'threshold' must be a single numierc value.", call. = FALSE)
+    }
+    mat[ mat <= threshold ] <- NA
+    return(mat)
 }
