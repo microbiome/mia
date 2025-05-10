@@ -39,10 +39,12 @@ calculating the portion of samples that exceed the \code{threshold}.
 \item \code{scaling}: \code{Numeric scalar}. Adjusts the normalization
 scale  by dividing the calculated scaling factors, effectively changing
 the magnitude of the normalized counts. (Default: \code{1000}).
-\item \code{threshold}: \code{Numeric scalar}. Specifies relative
-difference threshold and determines the first point where the relative
-change in  differences between consecutive quantiles exceeds this
-threshold. (Default: \code{0.1}).
+\item \code{threshold}: \code{Numeric scalar}. For  \code{"css"},
+specifies relative difference threshold and determines the first point
+where the relative change in  differences between consecutive quantiles
+exceeds this threshold. (Default: \code{0.1}) For \code{"cutoff"},
+values less than or equal to the threshold are replaced with \code{NA}.
+(Default: \code{0})
 \item \code{tree}: \code{phylo}. Phylogeny used in PhILR transformation.
 If \code{NULL}, the tree is retrieved from \code{x}.
 (Default: \code{NULL}).
@@ -129,6 +131,10 @@ log2 = log2(x)}
 where \eqn{x} is a single value of data.
 
 \item 'pseudocount': Adds only pseudocount.
+
+\item 'cutoff': In some ecological studies, only strictly positive values
+are taken into account. This method keeps only values greater than
+\code{threshold} and replaces all other values with \code{NA}.
 
 }
 }
