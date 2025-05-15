@@ -53,7 +53,7 @@
 }
 
 .is_an_integer <- function(x){
-    .is_integer(x) && x%%1==0
+    .is_integer(x) && length(x) == 1L
 }
 
 .are_whole_numbers <- function(x){
@@ -185,7 +185,7 @@
 
 # Check if metadata has the specified data.
 .check_metadata_present <- function(
-        data.type, x, name = .get_name_in_parent(assay.type)){
+        data.type, x, name = .get_name_in_parent(data.type)){
     if( !.is_non_empty_string(data.type) ){
         stop("'" ,name, "' must be a single non-empty character value.",
             call. = FALSE)

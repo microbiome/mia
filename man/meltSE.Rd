@@ -3,6 +3,7 @@
 \name{meltSE}
 \alias{meltSE}
 \alias{meltSE,SummarizedExperiment-method}
+\alias{meltSE,SingleCellExperiment-method}
 \title{Converting a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object into a long data.frame}
@@ -23,6 +24,8 @@ meltSE(x, ...)
   sample_name = "SampleID",
   ...
 )
+
+\S4method{meltSE}{SingleCellExperiment}(x, add.dimred = NULL, ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
@@ -67,6 +70,13 @@ for the feature identifier. (Default: \code{"FeatureID"})}
 for the sample identifier. (Default: \code{"SampleID"})}
 
 \item{sample_name}{Deprecated. Use \code{col.name} instead.}
+
+\item{add.dimred}{\code{Logical scalar} or \code{Character vector}. To
+select information from the \code{reducedDim} to add to the molten assay
+data. If \code{add.dimred = NULL} no data will be added, if
+\code{add.dimred = TRUE} all data will be added and if
+\code{add.dimred} is a \code{character} vector, it will be used to subset
+to given names in \code{reducedDimNames(x)}. (Default: \code{NULL})}
 }
 \value{
 A \code{tibble} with the molten data. The assay values are given in a
