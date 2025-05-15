@@ -24,12 +24,11 @@ Authors@R:
       person(given = "Domenick", family = "Braccia",
              email = "dbraccia@umd.edu", role=c("ctb")),
       person(given = "Basil", family = "Courbayre", role=c("ctb")),
-      person(given = "Muluh", family = "Muluh", role=c("ctb")),
+      person(given = "Geraldson", family = "Muluh", role=c("ctb")),
       person(given = "Giulio", family = "Benedetti", role=c("ctb")),
       person(given = c("Moritz", "Emanuel"), family = "Beber",
              email = "moritz.beber@igdore.org", role = c("ctb"),
              comment = c(ORCID = "0000-0003-2406-1978")),
-      person(given = "Nitesh", family = "Turaga", role=c("ctb")),
       person(given = "Chouaib", family = "Benchraka", role=c("ctb")),
       person(given = "Akewak", family = "Jeba", role=c("ctb")),
       person(given = "Himmi", family = "Lindgren", role=c("ctb")),
@@ -43,6 +42,7 @@ Authors@R:
       person(given = "Katariina", family = "Pärnänen", role=c("ctb")),
       person(given = "Pande", family = "Erawijantari", role=c("ctb")),
       person(given = "Danielle", family = "Callan", role=c("ctb")),
+      person(given = "Sam", family = "Hillman", role=c("ctb")),
       person(given = "Jesse", family = "Pasanen", role=c("ctb")))
 Title: Microbiome analysis
 Description:
