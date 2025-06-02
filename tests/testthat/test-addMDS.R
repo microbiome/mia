@@ -21,8 +21,8 @@ test_that("Compare addMDS with runMDS", {
     ref <- runMDS(tse, assay.type = "counts", method = "bray", FUN = getDissimilarity, name = "test")
     expect_equal(reducedDim(res, "test"), reducedDim(ref, "test"))
     #
-    res <- getMDS(tse, assay.type = "counts", method = "unifrac", name = "test")
-    ref <- calculateMDS(tse, assay.type = "counts", method = "unifrac", tree = rowTree(tse), FUN = getDissimilarity, name = "test")
+    res <- getMDS(tse, assay.type = "counts", method = "unifrac", name = "test") |> expect_warning()
+    ref <- calculateMDS(tse, assay.type = "counts", method = "unifrac", tree = rowTree(tse), FUN = getDissimilarity, name = "test") |> expect_warning()
     expect_equal(res, ref)
 })
 
@@ -37,4 +37,31 @@ test_that("Check rarefaction", {
     #
     res <- addMDS(tse, assay.type = "counts", method = "bray", niter = 2L, sample = sample, subset.result = FALSE) |> expect_warning()
     expect_true( ncol(res) == ncol(tse) )
+})
+
+test_that("Test named vector as node labels", {
+    data("GlobalPatterns")
+    tse <- GlobalPatterns
+    #
+    named_vector <- rowLinks(tse)[["nodeLab"]]
+    names(named_vector) <- rownames(tse)
+    #
+    tse <- tse[1:100, ]
+    vector <- rowLinks(tse)[["nodeLab"]]
+    #
+    res1 <- getMDS(
+        tse,
+        assay.type = "counts",
+        method = "unifrac",
+        tree = rowTree(tse),
+        node.label = named_vector
+    ) |> expect_warning()
+    res2 <- getMDS(
+        tse,
+        assay.type = "counts",
+        method = "unifrac",
+        tree = rowTree(tse),
+        node.label = named_vector
+    ) |> expect_warning()
+    expect_equal(res1, res2)
 })

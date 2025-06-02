@@ -21,26 +21,26 @@ summarization.
 
 Authors:
 \itemize{
-  \item Felix G.M. Ernst \email{felix.gm.ernst@outlook.com} (\href{https://orcid.org/0000-0001-5064-0928}{ORCID})
-  \item Sudarshan A. Shetty \email{sudarshanshetty9@gmail.com} (\href{https://orcid.org/0000-0001-7280-9915}{ORCID})
+  \item Felix G.M. Ernst (\href{https://orcid.org/0000-0001-5064-0928}{ORCID})
+  \item Sudarshan A. Shetty (\href{https://orcid.org/0000-0001-7280-9915}{ORCID})
   \item Leo Lahti \email{leo.lahti@iki.fi} (\href{https://orcid.org/0000-0001-5537-637X}{ORCID})
 }
 
 Other contributors:
 \itemize{
   \item Yang Cao [contributor]
-  \item Nathan D. Olson \email{nolson@nist.gov} [contributor]
+  \item Nathan D. Olson [contributor]
   \item Levi Waldron [contributor]
   \item Marcel Ramos [contributor]
   \item Héctor Corrada Bravo [contributor]
   \item Jayaram Kancherla [contributor]
-  \item Domenick Braccia \email{dbraccia@umd.edu} [contributor]
+  \item Domenick Braccia [contributor]
   \item Basil Courbayre [contributor]
   \item Geraldson Muluh [contributor]
   \item Giulio Benedetti [contributor]
-  \item Moritz Emanuel Beber \email{moritz.beber@igdore.org} (\href{https://orcid.org/0000-0003-2406-1978}{ORCID}) [contributor]
+  \item Moritz Emanuel Beber (\href{https://orcid.org/0000-0003-2406-1978}{ORCID}) [contributor]
   \item Chouaib Benchraka [contributor]
-  \item Akewak Jeba \email{akjeba@utu.fi} (\href{https://orcid.org/0009-0007-1347-7552}{ORCID}) [contributor]
+  \item Akewak Jeba (\href{https://orcid.org/0009-0007-1347-7552}{ORCID}) [contributor]
   \item Himmi Lindgren [contributor]
   \item Noah De Gunst [contributor]
   \item Théotime Pralas [contributor]
