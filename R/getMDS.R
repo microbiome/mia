@@ -128,14 +128,24 @@ setMethod("getMDS", signature = c(x = "TreeSummarizedExperiment"),
 # For TreeSE, we also feed rowTree and node.labels as default
 .get_mds_args_treese <- function(
         x, tree.name = "phylo", tree = NULL, node.label = NULL, ...){
-    # Get tree and corresponding node.labels
-    if( is.null(tree) ){
-        tree <- rowTree(x, tree.name)
+    if( !(.is_a_string(tree.name)) ){
+        stop("'tree.name' must specify a tree from rowTreeNames(x).",
+            call. = FALSE)
     }
-    if( is.null(node.label) ){
-        node.labels <- rowLinks(x)
-        node.labels <- node.labels[
-            node.labels[["whichTree"]] %in% tree.name, "nodeLab"]
+    # Get tree, subset TreeSE, and corresponding node.labels
+    if( is.null(tree) && tree.name %in% rowTreeNames(x) ){
+        tree <- rowTree(x, tree.name)
+        present <- rowLinks(x)[["whichTree"]] %in% tree.name
+        if( !all(present) ){
+            warning(
+                "Not all rows were present in the rowTree specified by ",
+                "'tree.name'. 'x' is subsetted.", call. = FALSE)
+            x <- x[present, ]
+        }
+    }
+    if( is.null(node.label) && tree.name %in% rowTreeNames(x) ){
+        node.label <- rowLinks(x)[["nodeLab"]]
+        names(node.label) <- rownames(x)
     }
     #
     args <- c(.get_mds_args(x, ...), list(tree = tree, node.label = node.label))

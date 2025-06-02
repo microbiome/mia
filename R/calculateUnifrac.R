@@ -22,12 +22,20 @@
     }
     # node.label should be NULL or character vector specifying links between 
     # rows and tree labels
-    if( !(is.null(node.label) ||
-            (is.character(node.label) && length(node.label) == nrow(x) &&
-            all(node.label[ !is.na(node.label) ] %in% tree$tip.label))) ){
+    node_for_each <- is.character(node.label) &&
+        length(node.label) == nrow(x) &&
+        all(node.label[ !is.na(node.label) ] %in% tree$tip.label)
+    named_vector <- is.character(node.label) && !is.null(names(node.label)) &&
+        all(rownames(x) %in% names(node.label))
+    if( !(is.null(node.label) || node_for_each || named_vector ) ){
         stop(
             "'node.label' must be NULL or character specifying links between ",
             "abundance table and tree labels.", call. = FALSE)
+    }
+    # If the labels were provided as named vector where names represent
+    # original rows and values represent tips.
+    if( named_vector ){
+        node.label <- node.label[ match(rownames(x), names(node.label)) ]
     }
     # check that matrix and tree are compatible
     if( is.null(node.label) && !all(rownames(x) %in% c(tree$tip.label)) ) {
