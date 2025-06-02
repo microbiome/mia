@@ -23,7 +23,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.4</span>
       </span>
     </div>
 
@@ -50,7 +50,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate dissimilarities</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_node_label/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/fix_node_label/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
     <div class="hidden name"><code>getDissimilarity.Rd</code></div>
     </div>
 
@@ -133,8 +133,11 @@ unweighted-Unifrac dissimilarity is calculated for all pairs of samples.
 (Default: <code>FALSE</code>)</p></li>
 <li><p><code>node.label</code> (Unifrac) <code>character vector</code>. Used only if
 <code>x</code> is a matrix. Specifies links between rows/columns and tips of
-<code>tree</code>. The length must equal the number of rows/columns of <code>x</code>.
-Furthermore, all the node labs must be present in <code>tree</code>.</p></li>
+<code>tree</code>. All the node labs must be present in <code>tree</code>. For the
+links, you can provide a vector with whose length equals to the number of
+rows/columns in <code>x</code>. Alternatively, you can provide a named vector
+where <code>names</code> represent names in abundance table and values their
+corresponding node in tree.</p></li>
 <li><p><code>chunkSize</code>: (JSD) <code>Integer scalar</code>. Defines the size of
 data  send to the individual worker. Only has an effect, if <code>BPPARAM</code>
 defines more than one worker. (Default: <code>nrow(x)</code>)</p></li>
@@ -332,7 +335,7 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>
