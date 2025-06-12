@@ -98,6 +98,14 @@
 #' log2 = log2(x)}
 #' where \eqn{x} is a single value of data.
 #'
+#' \item 'difference': Pairwise differences between features.
+#' Calculates \eqn{x - y} for all unique feature pairs across samples,
+#' where \eqn{x} and \eqn{y} are relative abundances or transformed values.
+#'
+#' \item 'division': Pairwise ratios between features.
+#' Calculates \eqn{x / y} for all unique feature pairs across samples,
+#' where \eqn{x} and \eqn{y} are relative abundances or transformed values.
+#'
 #' \item 'pseudocount': Adds only pseudocount.
 #'
 #' \item 'cutoff': In some ecological studies, only strictly positive values
@@ -247,9 +255,9 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 .transform_assay <- function(
         x, assay.type = "counts", assay_name = NULL,
         method = c(
-            "alr", "chi.square", "clr", "css", "cutoff", "frequency",
-            "hellinger", "log", "log10", "log2", "max", "normalize",
-            "pa", "philr", "pseudocount", "range", "rank", "rclr",
+            "alr", "chi.square", "clr", "css", "cutoff", "difference", 
+            "division", "frequency", "hellinger", "log", "log10", "log2", "max", 
+            "normalize", "pa", "philr", "pseudocount", "range", "rank", "rclr",
             "relabundance", "rrank", "standardize", "total", "z"),
         MARGIN = "samples",
         name = method,
@@ -305,6 +313,12 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     } else if( method %in% c("philr") ){
         transformed_table <- .apply_transformation_from_philr(
             assay, method, MARGIN, x = x, ...)
+    } else if (method == "difference") {
+      transformed_table <- .apply_transformation_difference(
+            assay, ...)
+    } else if (method == "division") {
+      transformed_table <- .apply_transformation_division(
+            assay, ...)
     } else if ( method %in% c("pseudocount") ){
         transformed_table <- assay
         attr(transformed_table, "mia") <- method
@@ -777,6 +791,52 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     attr(mat, "philr") <- "philr"
     attr(mat, "parameters")$margin <- MARGIN
     return(mat)
+}
+
+########################### .apply_transformation_difference ##################
+# Computes all pairwise differences (x - y) between features across samples.
+# Returns a matrix with one row per feature pair.
+.apply_transformation_difference <- function(mat, ...) {
+  # Get the feature (taxa) names
+  taxa <- rownames(mat)
+  
+  # Generate all unique pairwise combinations of taxa
+  combs <- utils::combn(taxa, 2, simplify = FALSE)
+  
+  # Compute pairwise differences: x - y for each taxa pair across samples
+  diffs <- lapply(combs, function(pair) {
+    t1 <- pair[1]; t2 <- pair[2]
+    name <- paste0("diff_", t1, "_", t2)
+    values <- mat[t1, ] - mat[t2, ]
+    matrix(values, nrow = 1, dimnames = list(name, colnames(mat)))
+  })
+  
+  # Combine all difference rows into a single matrix
+  result <- do.call(rbind, diffs)
+  
+  # Add metadata
+  attr(result, "mia") <- "diff"
+  
+  return(result)
+}
+
+############################ .apply_transformation_division ############################
+# Computes all pairwise ratios (x / y) between features across samples.
+# Returns a matrix with one row per feature pair.
+.apply_transformation_division <- function(mat, ...) {
+  taxa <- rownames(mat)
+  combs <- utils::combn(taxa, 2, simplify = FALSE)
+  
+  ratios <- lapply(combs, function(pair) {
+    t1 <- pair[1]; t2 <- pair[2]
+    name <- paste0("div_", t1, "_over_", t2)
+    values <- mat[t1, ] / mat[t2, ]
+    matrix(values, nrow = 1, dimnames = list(name, colnames(mat)))
+  })
+  
+  result <- do.call(rbind, ratios)
+  attr(result, "mia") <- "division"
+  return(result)
 }
 
 # This function is used to add transformed table back to TreeSE. With most of
