@@ -100,11 +100,11 @@
 #'
 #' \item 'difference': Pairwise differences between features.
 #' Calculates \eqn{x - y} for all unique feature pairs across samples,
-#' where \eqn{x} and \eqn{y} are relative abundances or transformed values.
+#' where \eqn{x} and \eqn{y} are entries of the specified assay.type.
 #'
 #' \item 'division': Pairwise ratios between features.
 #' Calculates \eqn{x / y} for all unique feature pairs across samples,
-#' where \eqn{x} and \eqn{y} are relative abundances or transformed values.
+#' where \eqn{x} and \eqn{y} are entries of the specified assay.type.
 #'
 #' \item 'pseudocount': Adds only pseudocount.
 #'
@@ -797,22 +797,32 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 # Computes all pairwise differences (x - y) between features across samples.
 # Returns a matrix with one row per feature pair.
 .apply_transformation_difference <- function(mat, ...) {
+  # Check that rownames are present
+  if (is.null(rownames(mat))) {
+    warning("No rownames found in the matrix — generated names will be used.")
+    rownames(mat) <- paste0("Feature", seq_len(nrow(mat)))
+  }
+  
   # Get the feature (taxa) names
   taxa <- rownames(mat)
   
-  # Generate all unique pairwise combinations of taxa
+  # Generate all unique pairwise combinations
   combs <- utils::combn(taxa, 2, simplify = FALSE)
   
-  # Compute pairwise differences: x - y for each taxa pair across samples
-  diffs <- lapply(combs, function(pair) {
+  # Compute differences: x - y for each pair
+  diff_matrix <- vapply(combs, function(pair) {
     t1 <- pair[1]; t2 <- pair[2]
-    name <- paste0("diff_", t1, "_", t2)
-    values <- mat[t1, ] - mat[t2, ]
-    matrix(values, nrow = 1, dimnames = list(name, colnames(mat)))
-  })
+    mat[t1, ] - mat[t2, ]
+  }, FUN.VALUE = numeric(ncol(mat)))
   
-  # Combine all difference rows into a single matrix
-  result <- do.call(rbind, diffs)
+  # Transpose so rows = comparisons, columns = samples
+  result <- t(diff_matrix)
+  
+  # Assign row and column names
+  rownames(result) <- vapply(combs, function(pair) {
+    paste0("diff_", pair[1], "_", pair[2])
+  }, FUN.VALUE = character(1))
+  colnames(result) <- colnames(mat)
   
   # Add metadata
   attr(result, "mia") <- "diff"
@@ -820,30 +830,59 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
   return(result)
 }
 
-############################ .apply_transformation_division ############################
+############################ .apply_transformation_division ###################
 # Computes all pairwise ratios (x / y) between features across samples.
 # Returns a matrix with one row per feature pair.
-.apply_transformation_division <- function(mat, ...) {
+.apply_transformation_division <- function(mat, pseudocount = 1e-6, ...) {
+  # Check that rownames are present
+  if (is.null(rownames(mat))) {
+    warning("No rownames found in the matrix, generated names will be used.")
+    rownames(mat) <- paste0("Feature", seq_len(nrow(mat)))
+  }
+  
+  # Warn if any zero values are present before pseudocount addition
+  if (any(mat == 0, na.rm = TRUE)) {
+    warning("Zero values detected in input matrix. Pseudocount will be added to 
+            avoid division by zero.")
+  }
+  
+  # Add pseudocount, if specified
+  if (pseudocount > 0) {
+    mat <- mat + pseudocount
+  }
+  
+  # Get feature (taxa) names
   taxa <- rownames(mat)
+  
+  # Generate all unique pairwise combinations
   combs <- utils::combn(taxa, 2, simplify = FALSE)
   
-  ratios <- lapply(combs, function(pair) {
+  # Compute ratios: x / y for each pair
+  ratio_matrix <- vapply(combs, function(pair) {
     t1 <- pair[1]; t2 <- pair[2]
-    name <- paste0("div_", t1, "_over_", t2)
-    values <- mat[t1, ] / mat[t2, ]
-    matrix(values, nrow = 1, dimnames = list(name, colnames(mat)))
-  })
+    mat[t1, ] / mat[t2, ]
+  }, FUN.VALUE = numeric(ncol(mat)))
   
-  result <- do.call(rbind, ratios)
+  # Transpose so rows = comparisons, columns = samples
+  result <- t(ratio_matrix)
+  
+  # Assign row and column names
+  rownames(result) <- vapply(combs, function(pair) {
+    paste0("div_", pair[1], "_over_", pair[2])
+  }, FUN.VALUE = character(1))
+  colnames(result) <- colnames(mat)
+  
+  # Add metadata
   attr(result, "mia") <- "division"
+  
   return(result)
 }
 
 # This function is used to add transformed table back to TreeSE. With most of
-# the methods it is simple: it is added to assay. However, with philr, the
-# features do not match with original ones, so we add philr-transformed data
-# to altExp. If philr was, applied to columns, we cannot use altExp so
-# we return only the transformed data.
+# the methods it is simple: it is added to assay. However, with transformations 
+# that change the dimensionality (e.g. philr, difference, division), the 
+# transformed table is added to altExp instead. If transformation was, applied 
+# to columns, we cannot use altExp so we return only the transformed data.
 #' @importFrom stats setNames
 .add_transformed_data <- function(x, mat, name){
     rnames_ok <- nrow(x) == nrow(mat)
