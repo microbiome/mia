@@ -7,17 +7,17 @@
 #'   rownames, or a single \code{character} value defining the file
 #'   path of the sample metadata file. The file must be in \code{tsv} format
 #'   (Default: \code{NULL}).
-#' 
+#'
 #' @param colData Deprecated. use \code{col.data} instead.
-#'   
+#'
 #' @param sample_meta Deprecated. Use \code{col.data} instead.
-#' 
+#'
 #' @param tree.file \code{Character scalar}. Defines the file
 #'   path of the phylogenetic tree.
 #'   (Default: \code{NULL}).
-#' 
+#'
 #' @param phy_tree Deprecated. Use \code{tree.file} instead.
-#'   
+#'
 #' @param ... additional arguments:
 #' \itemize{
 #'   \item \code{assay.type}: \code{Character scalar}. Specifies the name of
@@ -41,11 +41,11 @@
 #' (See
 #' \href{https://github.com/biobakery/MetaPhlAn/wiki/MetaPhlAn-4#merging-tables}{
 #' the Metaphlan documentation and \code{merge_metaphlan_tables} method.})
-#' Data is imported so that data at the lowest rank is imported as a 
+#' Data is imported so that data at the lowest rank is imported as a
 #' \code{TreeSummarizedExperiment} object. Data at higher rank is imported as a
 #' \code{SummarizedExperiment} objects which are stored to \code{altExp} of
 #' \code{TreeSummarizedExperiment} object.
-#' 
+#'
 #' Currently Metaphlan versions 2, 3, and 4 are supported.
 #'
 #' @return  A
@@ -61,19 +61,19 @@
 #' \code{\link[=importMothur]{importMothur}}
 #'
 #' @export
-#' 
+#'
 #' @references
 #' Beghini F, McIver LJ, Blanco-Míguez A, Dubois L, Asnicar F, Maharjan S,
 #' Mailyan A, Manghi P, Scholz M, Thomas AM, Valles-Colomer M, Weingart G,
 #' Zhang Y, Zolfo M, Huttenhower C, Franzosa EA, & Segata N (2021)
-#' Integrating taxonomic, functional, 
+#' Integrating taxonomic, functional,
 #' and strain-level profiling of diverse microbial communities with bioBakery 3.
 #' \emph{eLife}. 10:e65088. doi: 10.7554/eLife.65088
 #'
 #' @examples
 #' # (Data is from tutorial
 #' # https://github.com/biobakery/biobakery/wiki/metaphlan3#merge-outputs)
-#' 
+#'
 #' # File path
 #' file_path <- system.file(
 #'     "extdata", "merged_abundance_table.txt", package = "mia")
@@ -85,13 +85,13 @@
 #' altExps(tse)
 #' # Higher rank data is in SE format, for example, Phylum rank
 #' altExp(tse, "phylum")
-#' 
+#'
 NULL
 
 importMetaPhlAn <- function(
         file, col.data = colData, colData = sample_meta,
         sample_meta = NULL, tree.file = phy_tree, phy_tree = NULL, ...){
-    
+
     ################################ Input check ###############################
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
@@ -124,7 +124,7 @@ importMetaPhlAn <- function(
     se_objects <- lapply(tables, function(x){
         .create_se_from_metaphlan(x, rowdata_col, ...)
         })
-    
+
     # Get the object with lowest rank
     tse <- se_objects[[ length(se_objects) ]]
     # Convert it to TreeSE so that it has altExp
@@ -140,19 +140,19 @@ importMetaPhlAn <- function(
     }
     # Set taxonomy ranks using .set_taxonomy_ranks
     .set_ranks_based_on_rowdata(tse,...)
-    
+
     # Load sample meta data if it is provided
     if( !is.null(col.data) ) {
         tse <- .add_coldata(tse, col.data)
     }
-    
-    
+
+
     # Load tree if it is provided
     if (!is.null(tree.file)) {
         tree <- ape::read.tree(tree.file)
         rowTree(tse) <- tree
-    } 
-    
+    }
+
     return(tse)
 }
 
@@ -197,9 +197,9 @@ importMetaPhlAn <- function(
     rowdata_columns <- data[ , rowdata_id, drop = FALSE]
     # Get columns that go to assay
     assay_columns <- data[ , -rowdata_id, drop = FALSE]
-    # Initialize result 
+    # Initialize result
     result <- TRUE
-    
+
     # Check rowdata column names that they contain right information, and check
     # that rest of the columns represents abundances in samples.
     # If these requirements are met, give FALSE. Otherwise, give TRUE.
@@ -219,7 +219,6 @@ importMetaPhlAn <- function(
         stop("Cannot parse Metaphlan file.", call. = FALSE)
     }
     # Get the lowest level of each row
-    
     levels <- lapply(table[ , col], FUN = .get_lowest_taxonomic_level)
     # Convert list to vector
     levels <- unlist(levels)
@@ -229,10 +228,20 @@ importMetaPhlAn <- function(
     # Get the order
     metaphlan_tax <- names(.taxonomy_rank_prefixes)
     indices <- match(tolower(metaphlan_tax), tolower(names(tables)))
-    # Remove NAs which occurs if rank is not included
+    # Remove NAs which occurs if rank is not included in the dataset
     indices <- indices[!is.na(indices)]
-    # Order tables 
+    # Order tables based on taxonomy ranks
     tables <- tables[indices]
+    # As the "lowest-level" we add features that are in lowest taxonomy rank or
+    # do not have detected taxonomy rank. For instance, Metaphlan can output
+    # features that are not detected. By including only features with detected
+    # ranks, we would discard them.
+    lowest_rank <- match(levels, names(.taxonomy_rank_prefixes)) |>
+        max(na.rm = TRUE)
+    lowest_rank <- names(.taxonomy_rank_prefixes)[[lowest_rank]]
+    lowest_features <- is.na(levels) | levels %in% lowest_rank
+    lowest_table <- table[lowest_features, , drop = FALSE]
+    tables <- c(tables, list(lowest_features = lowest_table))
     return(tables)
 }
 
@@ -242,7 +251,7 @@ importMetaPhlAn <- function(
 .get_lowest_taxonomic_level <- function(string){
     # List all ranks and what prefix they correspond
     ranks <- .taxonomy_rank_prefixes
-    # Get indices that specify location of rank prefixes 
+    # Get indices that specify location of rank prefixes
     ranks_pattern <- paste(ranks, collapse = "|")
     ranks_pattern <- paste0("(", ranks_pattern, ")__")
     levels <- gregexpr(ranks_pattern, string)[[1]]
@@ -251,7 +260,7 @@ importMetaPhlAn <- function(
     # Get the lowest rank that was found
     lowest_level <- substr(
         string, start = lowest_level_ind, stop = lowest_level_ind)
-    
+
     # Convert prefix into full rank name
     lowest_level <- names(ranks[ match(lowest_level, ranks) ])
     return(lowest_level)
@@ -280,13 +289,13 @@ importMetaPhlAn <- function(
     rowdata <- cbind(taxonomy, rowdata)
     # Ensure that rowData is DataFrame
     rowdata <- DataFrame(rowdata, check.names = FALSE)
-    
+
     # Ensure that assay is matrix
     assay <- as.matrix(assay)
     # Create assays list and add assay with specific name
     assays <- S4Vectors::SimpleList()
     assays[[assay.type]] <- assay
-    
+
     # Create TreeSE
     se <- TreeSummarizedExperiment(
         assays = assays, rowData = rowdata)
@@ -366,7 +375,7 @@ importMetaPhlAn <- function(
             })
         altexps <- SimpleList(altexps)
         altExps(tse) <- altexps
-        
+
     }
     return(tse)
 }

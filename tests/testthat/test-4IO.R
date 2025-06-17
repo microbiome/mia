@@ -563,3 +563,26 @@ test_that("Import HUMAnN file", {
     # colData should not change the result
     expect_equal(tse, tse2)
 })
+
+test_that("Import MetaPhlAn file", {
+    file_path <- system.file("extdata", "merged_abundance_table.txt", package = "mia")
+    tse <- importMetaPhlAn(file_path)
+    # Check dimensions
+    expect_true( length(taxonomyRanks(tse)) == 7L )
+    expect_true( altExps(tse) == 7L )
+    # All experiments should have same number of samples
+    expect_true( sapply(altExps(tse), function(x) ncol(x) == 6L) |> all() )
+    # The last experiment should equal to the "lowest level" as there are
+    # non-detected features.
+    expect_equal( dim(altExp(tse, length(altExps(tse)))), dim(tse))
+
+    # Check that the function works with features that are not detected
+    df <- read.table(file_path, header = TRUE, sep = "\t", check.names = FALSE)
+    random_species <- sample(which(grepl("s__", df[["clade_name"]])), 4)
+    df[random_species, "clade_name"] <- "not_detected"
+    # Save to a temporary file
+    temp_path <- tempfile(fileext = ".txt")
+    write.table(df, file = temp_path, sep = "\t", quote = FALSE, row.names = FALSE)
+    tse <- importMetaPhlAn(temp_path)
+    expect_true( nrow(altExp(tse, length(altExps(tse)))) < nrow(tse))
+})
