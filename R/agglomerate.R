@@ -389,6 +389,29 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+#' @rdname agglomerate-methods
+#' @export
+setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
+    function(x, by, group){
+        # Check by
+        by <- .check_MARGIN(by)
+        # Extract module adjacency matrix
+        modulesTF <- as.matrix(rowData(x)[ , group])
+        # Convert Boolean adjacency matrix to numeric binary
+        modules01 <- matrix(as.numeric(modulesTF), nrow = nrow(x))
+        # Compute module-wise assays by cross-product
+        module_assays <- lapply(assays(x), function(k) crossprod(modules01, k))
+        # Construct module-wise experiment
+        x <- SummarizedExperiment(
+            assays = module_assays,
+            colData = colData(x),
+            rowData = DataFrame(row.names = group),
+            metadata = metadata(x)
+        )
+        return(x)
+    }
+)
+
 ################################ HELP FUNCTIONS ################################
 
 # This functions subset the data so that rows that do not have taxonomy

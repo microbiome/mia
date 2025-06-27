@@ -71,6 +71,11 @@ setGeneric("agglomerateByRank", signature = "x", function(x, ...)
 setGeneric("agglomerateByVariable", signature = "x", function(x, ...)
     standardGeneric("agglomerateByVariable"))
 
+#' @rdname agglomerate-methods
+#' @export
+setGeneric("agglomerateByModule", signature = "x", function(x, ...)
+  standardGeneric("agglomerateByModule"))
+
 #' @rdname calculateDMN
 #' @export
 setGeneric("calculateDMN", signature = c("x"), function(x, ...)
