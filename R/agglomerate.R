@@ -392,23 +392,53 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
-    function(x, by, group){
-        # Check by
+    function(x, by, group, na.rm = FALSE){
+        # Check margin
         by <- .check_MARGIN(by)
+        # Select side information based on margin
+        FUN <- switch(by, rowData, colData)
+        # Check group
+        if( !all(group %in% names(FUN(x))) ){
+            stop("'group' contained elements that did not match with any",
+                "column of rowData", call. = FALSE)
+        }
         # Extract module adjacency matrix
-        modulesTF <- as.matrix(rowData(x)[ , group])
-        # Convert Boolean adjacency matrix to numeric binary
-        modules01 <- matrix(as.numeric(modulesTF), nrow = nrow(x))
-        # Compute module-wise assays by cross-product
-        module_assays <- lapply(assays(x), function(k) crossprod(modules01, k))
+        modules <- as.matrix(FUN(x)[ , group, drop = FALSE])
+        # Check module type
+        is_bool <- all(modules == TRUE | modules == FALSE)
+        is_num <- all(modules == 0 | modules == 1)
+        # Check validity of module type
+        if( !is_bool && !is_num ){
+            stop("'groups' variables are not binary.", call. = FALSE)
+        }
+        if( is_bool ){
+            # Convert Boolean adjacency matrix to numeric binary
+            modules <- matrix(as.numeric(modules), nrow = nrow(modules))
+        }
+        # Zero out NA modules
+        modules[is.na(modules)] <- 0
+        # Merge assays by module
+        assays <- mapply(.agglomerate_module_assay, assayNames(x), assays(x),
+            MoreArgs = list(by = by, modules = modules, na.rm = na.rm),
+            SIMPLIFY = FALSE)
+        # Convert to SimpleList
+        assays <- assays |> SimpleList()
         # Construct module-wise experiment
-        x <- SummarizedExperiment(
-            assays = module_assays,
-            colData = colData(x),
-            rowData = DataFrame(row.names = group),
-            metadata = metadata(x)
+        x_new <- SummarizedExperiment(
+            assays = assays,
+            #metadata = metadata(x)
         )
-        return(x)
+        # Add side information
+        if( by == 1L ){
+            colData(x_new) <- colData(x)
+            rowData(x_new) <- DataFrame(row.names = group)
+            rownames(x_new) <- group
+        }else{
+            rowData(x_new) <- rowData(x)
+            colData(x_new) <- DataFrame(row.names = group)
+            colnames(x_new) <- group
+        }
+        return(x_new)
     }
 )
 

@@ -4,6 +4,7 @@
 \name{agglomerateByRank}
 \alias{agglomerateByRank}
 \alias{agglomerateByVariable}
+\alias{agglomerateByModule}
 \alias{agglomerateByRanks}
 \alias{unsplitByRanks}
 \alias{agglomerate-methods}
@@ -12,6 +13,7 @@
 \alias{agglomerateByRank,SummarizedExperiment-method}
 \alias{agglomerateByVariable,TreeSummarizedExperiment-method}
 \alias{agglomerateByVariable,SummarizedExperiment-method}
+\alias{agglomerateByModule,SummarizedExperiment-method}
 \alias{agglomerateByRanks,SummarizedExperiment-method}
 \alias{agglomerateByRanks,SingleCellExperiment-method}
 \alias{agglomerateByRanks,TreeSummarizedExperiment-method}
@@ -23,6 +25,8 @@
 agglomerateByRank(x, ...)
 
 agglomerateByVariable(x, ...)
+
+agglomerateByModule(x, ...)
 
 agglomerateByRanks(x, ...)
 
@@ -65,6 +69,8 @@ unsplitByRanks(x, ...)
 )
 
 \S4method{agglomerateByVariable}{SummarizedExperiment}(x, by, group = f, f, ...)
+
+\S4method{agglomerateByModule}{SummarizedExperiment}(x, by, group, na.rm = FALSE)
 
 \S4method{agglomerateByRanks}{SummarizedExperiment}(
   x,
@@ -159,11 +165,11 @@ returned unchanged.}
 
 \item{mergeTree}{Deprecated. Use \code{update.tree} instead.}
 
-\item{ranks}{\code{Character vector}. Defines taxonomic ranks. Must all be
-values of \code{taxonomyRanks()} function.}
-
 \item{na.rm}{\code{Logical scalar}. Should NA values be omitted?
 (Default: \code{TRUE})}
+
+\item{ranks}{\code{Character vector}. Defines taxonomic ranks. Must all be
+values of \code{taxonomyRanks()} function.}
 
 \item{as.list}{\code{Logical scalar}. Should the list of
 \code{SummarizedExperiment} objects be returned by the function

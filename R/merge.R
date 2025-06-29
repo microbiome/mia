@@ -172,6 +172,26 @@
     return(assay)
 }
 
+.agglomerate_module_assay <- function(assay.type, assay, by, modules, na.rm) {
+  # Check assay
+  .check_assay_for_merge(assay.type, assay)
+  # Replace NAs with 0
+  if( na.rm ){
+      assay[is.na(assay)] <- 0
+  }
+  # Transpose if we are merging columns
+  if( by == 2L ){
+      assay <- t(assay)
+  }
+  # Compute module-wise assay by cross-product
+  assay <- crossprod(modules, assay)
+  # Transpose back to original orientation
+  if( by == 2L ){
+      assay <- t(assay)
+  }
+  return(assay)
+}
+
 
 #' @importFrom Biostrings DNAStringSetList
 .merge_refseq_list <- function(sequences_list, f, names, ...){
