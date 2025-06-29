@@ -391,6 +391,8 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname agglomerate-methods
 #' @export
+#' @importFrom S4Vectors SimpleList
+#' @importFrom Matrix Matrix
 setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
     function(x, by, group, na.rm = FALSE){
         # Check margin
@@ -400,23 +402,32 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
         # Check group
         if( !all(group %in% names(FUN(x))) ){
             stop("'group' contained elements that did not match with any",
-                "column of rowData", call. = FALSE)
+                "column of ", as.character(substitute(rowData)), call. = FALSE)
         }
-        # Extract module adjacency matrix
+        # Extract module adjacency matrix as sparse array
         modules <- as.matrix(FUN(x)[ , group, drop = FALSE])
-        # Check module type
-        is_bool <- all(modules == TRUE | modules == FALSE)
+        # Check modules
+        is_logical <- is.logical(modules)
         is_num <- all(modules == 0 | modules == 1)
+        is_na <- is.na(modules)
         # Check validity of module type
-        if( !is_bool && !is_num ){
+        if( !is_logical && !is_num ){
             stop("'groups' variables are not binary.", call. = FALSE)
         }
-        if( is_bool ){
-            # Convert Boolean adjacency matrix to numeric binary
-            modules <- matrix(as.numeric(modules), nrow = nrow(modules))
+        # Convert modules to sparse array after necessary checks
+        modules <- Matrix(modules, sparse = TRUE)
+        # Convert to numeric binary to Boolean adjacency matrix
+        if( is_num ){
+            modules <- modules != 0
         }
-        # Zero out NA modules
-        modules[is.na(modules)] <- 0
+        # Replace NAs
+        if( any(is_na) ){
+            warning("NAs were found in 'groups' variables and were removed",
+                "before agglomerating the experiment.", call. = FALSE)
+            # Zero out NA modules
+            modules[is.na(modules)] <- FALSE
+        }
+        
         # Merge assays by module
         assays <- mapply(.agglomerate_module_assay, assayNames(x), assays(x),
             MoreArgs = list(by = by, modules = modules, na.rm = na.rm),
@@ -424,21 +435,19 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
         # Convert to SimpleList
         assays <- assays |> SimpleList()
         # Construct module-wise experiment
-        x_new <- SummarizedExperiment(
+        x <- SummarizedExperiment(
             assays = assays,
-            #metadata = metadata(x)
+            colData = if (by == 1L) colData(x) else DataFrame(row.names = group),
+            rowData = if (by == 1L) DataFrame(row.names = group) else rowData(x),
+            metadata = metadata(x)
         )
-        # Add side information
-        if( by == 1L ){
-            colData(x_new) <- colData(x)
-            rowData(x_new) <- DataFrame(row.names = group)
-            rownames(x_new) <- group
-        }else{
-            rowData(x_new) <- rowData(x)
-            colData(x_new) <- DataFrame(row.names = group)
-            colnames(x_new) <- group
+        # Add new names to agglomerated dimension
+        if (by == 1L) {
+            rownames(x) <- group
+        } else {
+            colnames(x) <- group
         }
-        return(x_new)
+        return(x)
     }
 )
 

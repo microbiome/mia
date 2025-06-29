@@ -71,6 +71,7 @@ Imports:
     dplyr,
     IRanges,
     MASS,
+    Matrix,
     MatrixGenerics,
     methods,
     rbiom,
