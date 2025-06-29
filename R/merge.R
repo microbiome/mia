@@ -140,7 +140,7 @@
 }
 
 #' @importFrom DelayedArray DelayedArray type rowsum
-#' @import scuttle sumCountsAcrossFeatures
+#' @importFrom scuttle sumCountsAcrossFeatures
 .agglomerate_assay <- function(
     assay.type, assay, by, ids, na.rm, average, BPPARAM
     ){
