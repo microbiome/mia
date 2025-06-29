@@ -5,11 +5,9 @@
     if(!.is_a_bool(empty.rm)){
         stop("'empty.rm' must be TRUE or FALSE.", call. = FALSE)
     }
-    dim.type <- match.arg(dim.type)
     if(!is.character(f) && !is.factor(f)){
         stop("'f' must be a factor or character vector coercible to a ",
-            "meaningful factor.",
-            call. = FALSE)
+            "meaningful factor.", call. = FALSE)
     }
     if(i != length(f)){
         stop("'f' must have the same number of ",dim.type," as 'x'",
@@ -82,7 +80,6 @@
     if( !.is_a_bool(na.rm) ){
         stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
     }
-    #
     # Get correct functions based on whether we agglomerate rows or cols
     rowData_FUN <- switch(by, rowData, colData)
     nrow_FUN <- switch(by, nrow, ncol)
@@ -102,34 +99,14 @@
     # can control this behavior; it can specify the preserved rows for every
     # group or index.
     archetype <- .norm_archetype(f, archetype)
-    
     # Get assays
     assays <- assays(x)
-    # We check whether the assays include values that cannot be summed. For
-    # instance, summing negative values do not make sense.
-    if( check.assays ){
-        temp <- lapply(seq_len(length(assays)), function(i)
-            .check_assays_for_merge(names(assays)[[i]], assays[[i]]))
-    }
-    
-    # Transpose if we are merging columns
-    if( by == 2L ){
-        assays <- lapply(assays, function(mat) t(mat))
-    }
-    # Get the aggregation function based on whether user wants to exclude NAs
-    # and if there are any NAs. scuttle::sumCountsAcrossFeatures cannot handle
-    # NAs so if user wants to exclude them, we use own implementation.
-    FUN <- if( na.rm && anyNA(assays[[1]])) .sum_counts_accross_features_na else
-        sumCountsAcrossFeatures
-    # Agglomerate assays
-    assays <- lapply(assays, FUN, average = average, ids = f, BPPARAM = BPPARAM)
-    # Transpose back to original orientation
-    if( by == 2L ){
-        assays <- lapply(assays, function(mat) t(mat))
-    }
+    # Merge assays
+    assays <- mapply(.agglomerate_assay, assayNames(x), assays, MoreArgs = list(
+        ids = f, by = by, na.rm = na.rm, average = average, BPPARAM = BPPARAM),
+        SIMPLIFY = FALSE)
     # Convert to SimpleList
     assays <- assays |> SimpleList()
-    
     # Now we have agglomerated assays, but TreeSE has still the original form.
     # We take specified rows/columns from the TreeSE.
     idx <- .get_element_pos(f, archetype = archetype)
@@ -138,7 +115,6 @@
     } else{
         x <- x[ , idx]
     }
-    
     # Add assays back to TreeSE
     assays(x, withDimnames = FALSE) <- assays
     # Change row/colnames. Currently, they have same names as in original data
@@ -147,42 +123,55 @@
     return(x)
 }
 
-# This function works similarly to scuttle::sumCountsAcrossFeatures but this
-# excludes NAs from the data. The scuttle function cannot handle NAs.
-#' @importFrom DelayedArray DelayedArray type rowsum
-.sum_counts_accross_features_na <- function(x, average, ids, ...){
-    # Which cell is not NA?
-    is_not_na <- !is.na(x)
-    type(is_not_na) <- "integer"
-    # Aggregate data to certain groups
-    x <- rowsum(x, ids, na.rm = TRUE)
-    # Calculate average if specified
-    if( average ){
-        x <- x/rowsum(is_not_na, ids)
-    }
-    return(x)
-}
-
-# This functions checks if assay has negative or binary values. It does not
-# make sense to sum them, so we give warning to user.
-.check_assays_for_merge <- function(assay.type, assay){
-    # Check if assays include binary or negative values
+.check_assay_for_merge <- function(assay.type, assay){
+    value.warning <- paste(c("\nAgglomeration of it might lead to meaningless",
+        "values.\nCheck the assay, and consider doing transformation again",
+        "manually with agglomerated data."))
+    # Check if assay includes binary values
     if( all(assay == 0 | assay == 1) ){
         warning("'", assay.type, "'", " includes binary values.",
-                "\nAgglomeration of it might lead to meaningless values.",
-                "\nCheck the assay, and consider doing transformation again",
-                "manually with agglomerated data.",
-                call. = FALSE)
+                value.warning, call. = FALSE)
     }
-    if( !all( assay >= 0 | is.na(assay) ) ){
+    # Check if assay includes negative values
+    if( !all(assay >= 0 | is.na(assay)) ){
         warning("'", assay.type, "'", " includes negative values.",
-                "\nAgglomeration of it might lead to meaningless values.",
-                "\nCheck the assay, and consider doing transformation again",
-                "manually with agglomerated data.",
-                call. = FALSE)
+                value.warning, call. = FALSE)
+    }
+}
+
+#' @importFrom DelayedArray DelayedArray type rowsum
+#' @import scuttle sumCountsAcrossFeatures
+.agglomerate_assay <- function(
+    assay.type, assay, by, ids, na.rm, average, BPPARAM
+    ){
+    # Check assay
+    .check_assay_for_merge(assay.type, assay)
+    # Transpose if we are merging columns
+    if( by == 2L ){
+        assay <- t(assay)
+    }
+    # Check if NAs are present
+    is_not_na <- !is.na(assay)
+    if( na.rm && any(!is_not_na) ){
+        type(is_not_na) <- "integer"
+        # Aggregate data to certain groups
+        assay <- rowsum(assay, ids, na.rm = TRUE)
+        # Calculate average if specified
+        if( average ){
+            assay <- assay / rowsum(is_not_na, ids)
+        }
+    }else{
+        assay <- sumCountsAcrossFeatures(
+            assay, ids, average = average, BPPARAM = BPPARAM
+        )
+    }
+    # Transpose back to original orientation
+    if( by == 2L ){
+        assay <- t(assay)
     }
     return(assay)
 }
+
 
 #' @importFrom Biostrings DNAStringSetList
 .merge_refseq_list <- function(sequences_list, f, names, ...){
