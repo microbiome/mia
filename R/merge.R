@@ -5,6 +5,7 @@
     if(!.is_a_bool(empty.rm)){
         stop("'empty.rm' must be TRUE or FALSE.", call. = FALSE)
     }
+    dim.type <- match.arg(dim.type)
     if(!is.character(f) && !is.factor(f)){
         stop("'f' must be a factor or character vector coercible to a ",
             "meaningful factor.", call. = FALSE)
