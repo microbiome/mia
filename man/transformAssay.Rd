@@ -130,6 +130,14 @@ the data.
 log2 = log2(x)}
 where \eqn{x} is a single value of data.
 
+\item 'difference': Pairwise differences between features.
+Calculates \eqn{x - y} for all unique feature pairs across samples,
+where \eqn{x} and \eqn{y} are entries of the specified assay.type.
+
+\item 'division': Pairwise ratios between features.
+Calculates \eqn{x / y} for all unique feature pairs across samples,
+where \eqn{x} and \eqn{y} are entries of the specified assay.type.
+
 \item 'pseudocount': Adds only pseudocount.
 
 \item 'cutoff': In some ecological studies, only strictly positive values
