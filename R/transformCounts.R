@@ -313,11 +313,11 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     } else if( method %in% c("philr") ){
         transformed_table <- .apply_transformation_from_philr(
             assay, method, MARGIN, x = x, ...)
-    } else if (method == "difference") {
-      transformed_table <- .apply_transformation_difference(
+    } else if( method %in% c("difference") ) {
+        transformed_table <- .apply_transformation_difference(
             assay, ...)
-    } else if (method == "division") {
-      transformed_table <- .apply_transformation_division(
+    } else if( method %in% c("division") ) {
+        transformed_table <- .apply_transformation_division(
             assay, ...)
     } else if ( method %in% c("pseudocount") ){
         transformed_table <- assay
