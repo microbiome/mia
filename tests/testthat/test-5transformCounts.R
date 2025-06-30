@@ -440,6 +440,67 @@ test_that("transformAssay", {
             check.attributes = FALSE
         )
         expect_equal(colData(tse), colData(altExp(tse, "philr")))
+
+	############################## DIFFERENCE #############################
+        # Test that difference transformation works on GlobalPatterns subset
+        # Load data
+        data("GlobalPatterns")
+        tse <- GlobalPatterns
+        
+        # Subset: 50 taxa, 10 samples
+        tse_sub <- tse[1:50, 1:10]
+        
+        # Apply difference transformation
+        tse_sub <- transformAssay(
+          tse_sub, method = "difference", assay.type = "counts", name = "diff"
+        )
+        
+        # Check that altExp exists
+        expect_true("diff" %in% altExpNames(tse_sub))
+        
+        # Extract result
+        diff <- assay(altExp(tse_sub, "diff"))
+        
+        # Expected dimensions
+        expect_equal(nrow(diff), choose(nrow(tse_sub), 2))
+        expect_equal(ncol(diff), ncol(tse_sub))
+        
+        # Check values
+        expect_type(diff, "double")
+        expect_false(any(is.na(diff)))
+        expect_false(any(is.infinite(diff)))
+        
+        # Metadata
+        expect_equal(attr(diff, "mia"), "diff")
+        
+        ############################## DIVISION ###############################
+        # Test that division transformation works on GlobalPatterns subset
+        # Reset subset again (fresh counts)
+        tse_sub <- GlobalPatterns[1:50, 1:10]
+        
+        # Apply division transformation
+        tse_sub <- transformAssay(
+          tse_sub, method = "division", assay.type = "counts", 
+          pseudocount = TRUE, name = "division"
+        )
+        
+        # Check that altExp exists
+        expect_true("division" %in% altExpNames(tse_sub))
+        
+        # Extract result
+        div <- assay(altExp(tse_sub, "division"))
+        
+        # Expected dimensions
+        expect_equal(nrow(div), choose(nrow(tse_sub), 2))
+        expect_equal(ncol(div), ncol(tse_sub))
+        
+        # Check values
+        expect_type(div, "double")
+        expect_false(any(is.na(div)))
+        expect_false(any(is.infinite(div)))
+        
+        # Metadata
+        expect_equal(attr(div, "mia"), "division")
     }
 
     # TSE object
