@@ -125,8 +125,8 @@
 }
 
 .check_assay_for_merge <- function(assay.type, assay){
-    value.warning <- paste(c("\nAgglomeration of it might lead to meaningless",
-        "values.\nCheck the assay, and consider doing transformation again",
+    value.warning <- paste(c("\nAgglomeration of it might lead to meaningless ",
+        "values.\nCheck the assay, and consider doing transformation again ",
         "manually with agglomerated data."))
     # Check if assay includes binary values
     if( all(assay == 0 | assay == 1) ){
@@ -173,6 +173,7 @@
     return(assay)
 }
 
+#' @importFrom Matrix crossprod
 .agglomerate_module_assay <- function(assay.type, assay, by, modules, na.rm) {
     # Check assay
     .check_assay_for_merge(assay.type, assay)
@@ -185,7 +186,7 @@
         assay <- t(assay)
     }
     # Compute module-wise assay by cross-product
-    assay <- crossprod(modules, assay)
+    assay <- as.matrix(crossprod(modules, assay))
     # Transpose back to original orientation
     if( by == 2L ){
         assay <- t(assay)

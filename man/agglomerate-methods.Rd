@@ -157,9 +157,11 @@ Must be \code{'rows'} or \code{'cols'}.}
 \code{factor vector}. A column name from \code{rowData(x)} or
 \code{colData(x)} or alternatively a vector specifying how the merging is
 performed. If vector, the value must be the same length as
-\code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
-merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
-returned unchanged.}
+\code{nrow(x)/ncol(x)}. Rows or columns corresponding to the same level will
+be merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will
+be returned unchanged. For \code{agglomerateByModule}, \code{group} should
+specify one or several names of logical or numeric binary variables from the
+\code{rowData(x)/colData(x)} by which to agglomerate rows or columns.}
 
 \item{f}{Deprecated. Use \code{group} instead.}
 
@@ -188,8 +190,10 @@ breaks the link between the data used to calculate the reduced dims.
 optionally-pruned object of the same class as \code{x}.
 \code{agglomerateByVariable} returns an object of the same class as \code{x}
 with the specified entries merged into one entry in all relevant components.
-\code{agglomerateByRank} returns a taxonomically-agglomerated,
-optionally-pruned object of the same class as \code{x}.
+\code{agglomerateByModule} returns a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment},
+class regardless of the class of \code{x}, because other information is lost
+when agglomerating by modules.
 
 For \code{agglomerateByRanks}:
 If \code{as.list = TRUE} : \code{SummarizedExperiment} objects in a
@@ -211,10 +215,10 @@ such as taxonomic ranks, variables or prevalence.
 with certain taxonomic ranks, as defined in \code{rowData}. Only available
 \code{\link{taxonomyRanks}} can be used.
 
-\code{agglomerateByVariable} merges data on rows or columns of a
-\code{SummarizedExperiment} as defined by a \code{factor} alongside the
-chosen dimension. This function allows agglomeration of data based on other
-variables than taxonomy ranks.
+\code{agglomerateByVariable} and \code{agglomerateByModule} merge data on
+rows or columns of a \code{SummarizedExperiment} as defined by a
+\code{factor} alongside the chosen dimension. This function allows
+agglomeration of data based on other variables than taxonomy ranks.
 Metadata from the \code{rowData} or \code{colData} are
 retained as defined by \code{archetype}.
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are
@@ -239,9 +243,14 @@ agglomeration first, and then applying the transformation afterwards.
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
 However, additional support for \code{TreeSummarizedExperiment} was added and
 science field agnostic names were used. In addition the \code{archetype}
-argument lets the user select how to preserve row or column data.
+argument lets the user select how to preserve row or column data. For merge
+data of assays the function from \code{scuttle} are used.
 
-For merge data of assays the function from \code{scuttle} are used.
+\code{agglomerateByModule} allows to agglomerate features or samples based
+on one or multiple variables of logical or numeric binary (0/1) type. It is
+particularly useful for agglomerating by functional modules, each specified
+by a logical or binary variable in the \code{rowData}, as one feature can
+belong to several modules.
 
 \code{agglomerateByRanks} will use by default all available taxonomic ranks,
 but
@@ -342,6 +351,26 @@ GlobalPatterns
 merged <- agglomerateByVariable(
     GlobalPatterns, by = "cols", colData(GlobalPatterns)$SampleType)
 merged
+
+## Agglomerate by multiple modules
+
+# Generate 30 random modules
+N_module <- 30L
+modules <- sample(c(TRUE, FALSE),
+                  size = nrow(tse) * N_module,
+                  prob = c(0.2, 0.8),
+                  replace = TRUE)
+
+# Add modules to rowData
+modules <- modules |> matrix(nrow = nrow(tse))
+colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
+rowData(tse) <- cbind(rowData(tse), modules)
+
+# Extract module columns
+module_columns <- grep("module_", colnames(rowData(tse)), value = TRUE)
+
+# Agglomerate based on modules
+tse_module <- agglomerateByModule(tse, by = 1, group = module_columns)
 
 data(GlobalPatterns)
 # print the available taxonomic ranks

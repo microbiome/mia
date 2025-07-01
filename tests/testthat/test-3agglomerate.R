@@ -153,6 +153,42 @@ test_that("agglomerate", {
     expect_true( !any( duplicated(rownames(uniq)) ) )
     expect_true( any( duplicated(rownames(not_uniq)) ) )
     
+    ## START test agglomerateByModule ##
+    
+    # Generate random modules
+    N_module <- 30L
+    modules <- sample(c(TRUE, FALSE),
+                      size = nrow(tse) * N_module,
+                      prob = c(0.2, 0.8),
+                      replace = TRUE)
+    # Add modules to rowData
+    modules <- modules |> matrix(nrow = nrow(tse))
+    colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
+    rowData(tse) <- cbind(rowData(tse), modules)
+    # Extract module columns
+    module_columns <- grep("module_", colnames(rowData(tse)), value = TRUE)
+    # Add pseudocount assay
+    tse <- transformAssay(tse, assay.type = "counts", method = "pseudocount")
+    # Introduce NA to pseudocount assay
+    assay(tse, "pseudocount")[1, 1] <- NA
+    # Agglomerate based on modules
+    tse_module <- agglomerateByModule(
+        tse, by = 1, group = module_columns, na.rm = TRUE
+    )
+    # Compute reference for counts assay
+    module_counts <- crossprod(modules, assay(tse, "counts"))
+    # Simulate NA removal by replacing it with 0
+    assay(tse, "pseudocount")[1, 1] <- 0
+    # Compute reference for pseudocount assay
+    module_pseudocount <- crossprod(modules, assay(tse, "pseudocount"))
+    # Compare output of agglomerateByModule with reference assays
+    expect_equal(assay(tse_module, "counts"), module_counts,
+        check.attributes = FALSE)
+    expect_equal(assay(tse_module, "pseudocount"), module_pseudocount,
+                 check.attributes = FALSE)
+    
+    ## END test agglomerateByModule ##
+    
     # Load data from miaTime package
     skip_if_not(require("miaTime", quietly = TRUE))
     data(SilvermanAGutData)
