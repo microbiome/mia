@@ -146,7 +146,6 @@ importMetaPhlAn <- function(
         tse <- .add_coldata(tse, col.data)
     }
 
-
     # Load tree if it is provided
     if (!is.null(tree.file)) {
         tree <- ape::read.tree(tree.file)

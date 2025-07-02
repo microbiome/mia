@@ -569,20 +569,21 @@ test_that("Import MetaPhlAn file", {
     tse <- importMetaPhlAn(file_path)
     # Check dimensions
     expect_true( length(taxonomyRanks(tse)) == 7L )
-    expect_true( altExps(tse) == 7L )
+    expect_true( length(altExps(tse)) == 7L )
     # All experiments should have same number of samples
     expect_true( sapply(altExps(tse), function(x) ncol(x) == 6L) |> all() )
-    # The last experiment should equal to the "lowest level" as there are
-    # non-detected features.
+    # The last experiment in altExp should equal to the "lowest level" as there
+    # are no undetected features.
     expect_equal( dim(altExp(tse, length(altExps(tse)))), dim(tse))
 
     # Check that the function works with features that are not detected
     df <- read.table(file_path, header = TRUE, sep = "\t", check.names = FALSE)
-    random_species <- sample(which(grepl("s__", df[["clade_name"]])), 4)
+    num_missing <- 4L
+    random_species <- sample(which(grepl("s__", df[["clade_name"]])), num_missing)
     df[random_species, "clade_name"] <- "not_detected"
-    # Save to a temporary file
+    # Save to a temporary file that will be next read by the function
     temp_path <- tempfile(fileext = ".txt")
     write.table(df, file = temp_path, sep = "\t", quote = FALSE, row.names = FALSE)
     tse <- importMetaPhlAn(temp_path)
-    expect_true( nrow(altExp(tse, length(altExps(tse)))) < nrow(tse))
+    expect_true( nrow(altExp(tse, length(altExps(tse))))+num_missing == nrow(tse))
 })
