@@ -188,12 +188,9 @@ breaks the link between the data used to calculate the reduced dims.
 \value{
 \code{agglomerateByRank} returns a taxonomically-agglomerated,
 optionally-pruned object of the same class as \code{x}.
-\code{agglomerateByVariable} returns an object of the same class as \code{x}
-with the specified entries merged into one entry in all relevant components.
-\code{agglomerateByModule} returns a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment},
-class regardless of the class of \code{x}, because other information is lost
-when agglomerating by modules.
+\code{agglomerateByVariable} and \code{agglomerateByModule} return an object
+of the same class as \code{x} with the specified entries merged into one
+entry in all relevant components.
 
 For \code{agglomerateByRanks}:
 If \code{as.list = TRUE} : \code{SummarizedExperiment} objects in a
@@ -356,10 +353,12 @@ merged
 
 # Generate 30 random modules
 N_module <- 30L
-modules <- sample(c(TRUE, FALSE),
-                  size = nrow(tse) * N_module,
-                  prob = c(0.2, 0.8),
-                  replace = TRUE)
+modules <- sample(
+    c(TRUE, FALSE),
+    size = nrow(tse) * N_module,
+    prob = c(0.2, 0.8),
+    replace = TRUE
+)
 
 # Add modules to rowData
 modules <- modules |> matrix(nrow = nrow(tse))

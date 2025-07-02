@@ -44,12 +44,9 @@
 #' @return
 #' \code{agglomerateByRank} returns a taxonomically-agglomerated,
 #' optionally-pruned object of the same class as \code{x}.
-#' \code{agglomerateByVariable} returns an object of the same class as \code{x}
-#' with the specified entries merged into one entry in all relevant components.
-#' \code{agglomerateByModule} returns a
-#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment},
-#' class regardless of the class of \code{x}, because other information is lost
-#' when agglomerating by modules.
+#' \code{agglomerateByVariable} and \code{agglomerateByModule} return an object
+#' of the same class as \code{x} with the specified entries merged into one
+#' entry in all relevant components.
 #'
 #' @inheritParams getPrevalence
 #'
@@ -226,10 +223,12 @@
 #' 
 #' # Generate 30 random modules
 #' N_module <- 30L
-#' modules <- sample(c(TRUE, FALSE),
-#'                   size = nrow(tse) * N_module,
-#'                   prob = c(0.2, 0.8),
-#'                   replace = TRUE)
+#' modules <- sample(
+#'     c(TRUE, FALSE),
+#'     size = nrow(tse) * N_module,
+#'     prob = c(0.2, 0.8),
+#'     replace = TRUE
+#' )
 #'
 #' # Add modules to rowData
 #' modules <- modules |> matrix(nrow = nrow(tse))
@@ -421,7 +420,6 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 #' @importFrom S4Vectors DataFrame SimpleList
-#' @importFrom Matrix Matrix
 setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
     function(x, by, group, na.rm = FALSE){
         # Check margin
@@ -430,32 +428,13 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
         FUN <- switch(by, rowData, colData)
         # Check group
         if( !all(group %in% names(FUN(x))) ){
-            stop("'group' contained elements that did not match with any",
-                "column of ", as.character(substitute(rowData)), call. = FALSE)
+            stop("'group' contained elements that did not match with any ",
+                "column of ", as.character(substitute(FUN)), call. = FALSE)
         }
         # Extract module adjacency matrix as sparse array
         modules <- as.matrix(FUN(x)[ , group, drop = FALSE])
-        # Check modules
-        is_logical <- is.logical(modules)
-        is_num <- all(modules == 0 | modules == 1)
-        is_na <- is.na(modules)
-        # Check validity of module type
-        if( !is_logical && !is_num ){
-            stop("'groups' variables are not binary.", call. = FALSE)
-        }
-        # Convert modules to sparse array after necessary checks
-        modules <- Matrix(modules, sparse = TRUE)
-        # Convert to numeric binary to Boolean adjacency matrix
-        if( is_num ){
-            modules <- modules != 0
-        }
-        # Replace NAs
-        if( any(is_na) ){
-            warning("NAs were found in 'groups' variables and were removed",
-                "before agglomerating the experiment.", call. = FALSE)
-            # Zero out NA modules
-            modules[is.na(modules)] <- FALSE
-        }
+        # Check and process modules
+        modules <- .check_and_process_modules(modules)
         # Merge assays by module
         assays <- mapply(.agglomerate_module_assay, assayNames(x), assays(x),
             MoreArgs = list(by = by, modules = modules, na.rm = na.rm),
@@ -463,14 +442,14 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
         # Convert to SimpleList
         assays <- assays |> SimpleList()
         # Construct module-wise experiment
-        x <- SummarizedExperiment(
+        x <- do.call(class(x), list(
             assays = assays,
             colData = if (by == 1L) colData(x) else DataFrame(row.names = group),
             rowData = if (by == 1L) DataFrame(row.names = group) else rowData(x),
-            metadata = metadata(x)
+            metadata = metadata(x))
         )
         # Add new names to agglomerated dimension
-        if (by == 1L) {
+        if( by == 1L ){
             rownames(x) <- group
         } else {
             colnames(x) <- group

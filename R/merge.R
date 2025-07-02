@@ -173,6 +173,33 @@
     return(assay)
 }
 
+#' @importFrom Matrix Matrix
+.check_and_process_modules <- function(modules){
+    # Check modules
+    is_logical <- is.logical(modules)
+    is_num <- all(modules == 0 | modules == 1)
+    # Check validity of module type
+    if( !is_logical && !is_num ){
+        stop("'groups' variables are not binary.", call. = FALSE)
+    }
+    # Convert modules to sparse array after necessary checks
+    modules <- Matrix(modules, sparse = TRUE)
+    # Convert to numeric binary to Boolean adjacency matrix
+    if( is_num ){
+        modules <- modules != 0
+    }
+    # Find NAs
+    is_na <- is.na(modules)
+    # Replace NAs
+    if( any(is_na) ){
+        warning("NAs were found in 'groups' variables and were removed",
+            "before agglomerating the experiment.", call. = FALSE)
+        # Zero out NA modules
+        modules[is.na(modules)] <- FALSE
+    }
+    return(modules)
+}
+
 #' @importFrom Matrix crossprod
 .agglomerate_module_assay <- function(assay.type, assay, by, modules, na.rm) {
     # Check assay
