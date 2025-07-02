@@ -452,14 +452,14 @@ test_that("transformAssay", {
         
         # Apply difference transformation
         tse_sub <- transformAssay(
-          tse_sub, method = "difference", assay.type = "counts", name = "diff"
+          tse_sub, method = "difference", assay.type = "counts", name = "difference"
         )
         
         # Check that altExp exists
-        expect_true("diff" %in% altExpNames(tse_sub))
+        expect_true("difference" %in% altExpNames(tse_sub))
         
         # Extract result
-        diff <- assay(altExp(tse_sub, "diff"))
+        diff <- assay(altExp(tse_sub, "difference"))
         
         # Expected dimensions
         expect_equal(nrow(diff), choose(nrow(tse_sub), 2))
@@ -471,7 +471,7 @@ test_that("transformAssay", {
         expect_false(any(is.infinite(diff)))
         
         # Metadata
-        expect_equal(attr(diff, "mia"), "diff")
+        expect_equal(attr(diff, "mia"), "difference")
         
         ############################## DIVISION ###############################
         # Test that division transformation works on GlobalPatterns subset
