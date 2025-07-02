@@ -255,10 +255,10 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 .transform_assay <- function(
         x, assay.type = "counts", assay_name = NULL,
         method = c(
-            "alr", "chi.square", "clr", "css", "cutoff", "difference", 
-            "division", "frequency", "hellinger", "log", "log10", "log2", "max", 
-            "normalize", "pa", "philr", "pseudocount", "range", "rank", "rclr",
-            "relabundance", "rrank", "standardize", "total", "z"),
+            "alr", "chi.square", "clr", "css", "cutoff", "difference", "-",
+            "division", "/", "frequency", "hellinger", "log", "log10", "log2", 
+            "max", "normalize", "pa", "philr", "pseudocount", "range", "rank", 
+            "rclr", "relabundance", "rrank", "standardize", "total", "z"),
         MARGIN = "samples",
         name = method,
         pseudocount = FALSE,
@@ -313,10 +313,10 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     } else if( method %in% c("philr") ){
         transformed_table <- .apply_transformation_from_philr(
             assay, method, MARGIN, x = x, ...)
-    } else if( method %in% c("difference") ) {
+    } else if( method %in% c("-", "difference") ){
         transformed_table <- .apply_transformation_difference(
             assay, ...)
-    } else if( method %in% c("division") ) {
+    } else if( method %in% c("/", "division") ){
         transformed_table <- .apply_transformation_division(
             assay, ...)
     } else if ( method %in% c("pseudocount") ){
@@ -796,21 +796,31 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 ########################### .apply_transformation_difference ##################
 # Computes all pairwise differences (x - y) between features across samples.
 # Returns a matrix with one row per feature pair.
-.apply_transformation_difference <- function(mat, ...) {
+#' @importFrom stats combn
+.apply_transformation_difference <- function(mat, ...){
     # Check that rownames are present
-    if( is.null(rownames(mat)) ) {
-        warning("No rownames found in the matrix — generated names will be used.")
+    if( is.null(rownames(mat)) ){
+        warning("No rownames found in the matrix, ",
+                "generated names will be used.")
         rownames(mat) <- paste0("Feature", seq_len(nrow(mat)))
     }
   
-    # Get the feature (taxa) names
-    taxa <- rownames(mat)
+    # Warn if the number of features exceeds the recommended limit
+    max_features <- 1000
+    if( nrow(mat) > max_features ){
+        warning("The input matrix has over 1000 features, which may ", 
+                "cause memory or performance issues. Consider subsetting or ",
+                "using fewer features.")
+    }
+  
+    # Get the feature (taxa) indices
+    taxa_idx <- seq_len(nrow(mat))
   
     # Generate all unique pairwise combinations
-    combs <- utils::combn(taxa, 2, simplify = FALSE)
+    combs <- combn(taxa_idx, 2, simplify = FALSE)
   
     # Compute differences: x - y for each pair
-    diff_matrix <- vapply(combs, function(pair) {
+    diff_matrix <- vapply(combs, function(pair){
         t1 <- pair[1]; t2 <- pair[2]
         mat[t1, ] - mat[t2, ]
     }, FUN.VALUE = numeric(ncol(mat)))
@@ -819,13 +829,13 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     result <- t(diff_matrix)
   
     # Assign row and column names
-    rownames(result) <- vapply(combs, function(pair) {
+    rownames(result) <- vapply(combs, function(pair){
         paste0("diff_", pair[1], "_", pair[2])
     }, FUN.VALUE = character(1))
     colnames(result) <- colnames(mat)
   
     # Add metadata
-    attr(result, "mia") <- "diff"
+    attr(result, "mia") <- "difference"
   
     return(result)
 }
@@ -833,29 +843,39 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 ############################ .apply_transformation_division ###################
 # Computes all pairwise ratios (x / y) between features across samples.
 # Returns a matrix with one row per feature pair.
-.apply_transformation_division <- function(mat, pseudocount = 1e-6, ...) {
+#' @importFrom stats combn
+.apply_transformation_division <- function(mat, pseudocount = 1e-6, ...){
     # Check that rownames are present
-    if( is.null(rownames(mat)) ) {
-        warning("No rownames found in the matrix, generated names will be used.")
+    if( is.null(rownames(mat)) ){
+        warning("No rownames found in the matrix, ", 
+                "generated names will be used.")
         rownames(mat) <- paste0("Feature", seq_len(nrow(mat)))
     }
 
     # Warn if any zero values are present before pseudocount addition
-    if( any(mat == 0, na.rm = TRUE) ) {
-        warning("Zero values detected in input matrix. 
-                Pseudocount will be added to avoid division by zero.")
+    if( any(mat == 0, na.rm = TRUE) ){
+        warning("Zero values detected in input matrix. ",
+                "Pseudocount will be added to avoid division by zero.")
     }
-
+    
+    # Warn if the number of features exceeds the recommended limit
+    max_features <- 1000
+    if( nrow(mat) > max_features ){
+        warning("The input matrix has over 1000 features, which may ", 
+                "cause memory or performance issues. Consider subsetting or ",
+                "using fewer features.")
+    }
+  
     # Add pseudocount, if specified
     if( pseudocount > 0 ) {
         mat <- mat + pseudocount
     }
 
-    # Get feature (taxa) names
-    taxa <- rownames(mat)
-
+    # Get feature (taxa) indices
+    taxa_idx <- seq_len(nrow(mat))
+  
     # Generate all unique pairwise combinations
-    combs <- utils::combn(taxa, 2, simplify = FALSE)
+    combs <- combn(taxa_idx, 2, simplify = FALSE)
 
     # Compute ratios: x / y for each pair
     ratio_matrix <- vapply(combs, function(pair) {
@@ -877,7 +897,6 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 
     return(result)
 }
-
 # This function is used to add transformed table back to TreeSE. With most of
 # the methods it is simple: it is added to assay. However, with transformations 
 # that change the dimensionality (e.g. philr, difference, division), the 
