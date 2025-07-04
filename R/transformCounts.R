@@ -795,8 +795,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 
 ########################### .apply_transformation_difference ##################
 # Computes all pairwise differences (x - y) between features across samples.
-# Returns a matrix with one row per feature pair.
-#' @importFrom stats combn
+# Returns a sparse matrix with one row per feature pair.
+#' @importFrom Matrix sparseMatrix
 .apply_transformation_difference <- function(mat, ...){
     # Check that rownames are present
     if( is.null(rownames(mat)) ){
@@ -813,26 +813,48 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
                 "using fewer features.")
     }
   
-    # Get the feature (taxa) indices
-    taxa_idx <- seq_len(nrow(mat))
-  
-    # Generate all unique pairwise combinations
-    combs <- combn(taxa_idx, 2, simplify = FALSE)
-  
-    # Compute differences: x - y for each pair
-    diff_matrix <- vapply(combs, function(pair){
-        t1 <- pair[1]; t2 <- pair[2]
-        mat[t1, ] - mat[t2, ]
-    }, FUN.VALUE = numeric(ncol(mat)))
-  
-    # Transpose so rows = comparisons, columns = samples
-    result <- t(diff_matrix)
-  
-    # Assign row and column names
-    rownames(result) <- vapply(combs, function(pair){
-        paste0("diff_", pair[1], "_", pair[2])
-    }, FUN.VALUE = character(1))
-    colnames(result) <- colnames(mat)
+    n_features <- nrow(mat)
+    n_samples  <- ncol(mat)
+    n_pairs    <- choose(n_features, 2)
+    
+    # Preallocate components
+    row_idx <- integer()
+    col_idx <- integer()
+    values  <- numeric()
+    row_names <- character(n_pairs)
+    
+    # Row names
+    pair_idx <- 1
+    for (i in 1:(n_features - 1)) {
+      for (j in (i + 1):n_features) {
+        row_names[pair_idx] <- paste0("diff_", i, "_", j)
+        pair_idx <- pair_idx + 1
+      }
+    }
+    
+    # Compute differences
+    pair_idx <- 1
+    for (i in 1:(n_features - 1)) {
+      for (j in (i + 1):n_features) {
+        diff_vec <- mat[i, ] - mat[j, ]
+        nz <- which(diff_vec != 0)
+        if (length(nz) > 0) {
+          row_idx <- c(row_idx, rep(pair_idx, length(nz)))
+          col_idx <- c(col_idx, nz)
+          values  <- c(values, diff_vec[nz])
+        }
+        pair_idx <- pair_idx + 1
+      }
+    }
+    
+    # Construct sparse matrix
+    result <- sparseMatrix(
+      i = row_idx,
+      j = col_idx,
+      x = values,
+      dims = c(n_pairs, n_samples),
+      dimnames = list(row_names, colnames(mat))
+    )
   
     # Add metadata
     attr(result, "mia") <- "difference"
@@ -842,8 +864,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 
 ############################ .apply_transformation_division ###################
 # Computes all pairwise ratios (x / y) between features across samples.
-# Returns a matrix with one row per feature pair.
-#' @importFrom stats combn
+# Returns a sparse matrix with one row per feature pair.
+#' @importFrom Matrix sparseMatrix
 .apply_transformation_division <- function(mat, pseudocount = 1e-6, ...){
     # Check that rownames are present
     if( is.null(rownames(mat)) ){
@@ -871,32 +893,55 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         mat <- mat + pseudocount
     }
 
-    # Get feature (taxa) indices
-    taxa_idx <- seq_len(nrow(mat))
-  
-    # Generate all unique pairwise combinations
-    combs <- combn(taxa_idx, 2, simplify = FALSE)
-
+    n_features <- nrow(mat)
+    n_samples  <- ncol(mat)
+    n_pairs    <- choose(n_features, 2)
+    
+    # Preallocate components
+    row_idx <- integer()
+    col_idx <- integer()
+    values  <- numeric()
+    row_names <- character(n_pairs)
+    
+    # Row names
+    pair_idx <- 1
+    for (i in 1:(n_features - 1)) {
+      for (j in (i + 1):n_features) {
+        row_names[pair_idx] <- paste0("div_", i, "_over_", j)
+        pair_idx <- pair_idx + 1
+      }
+    }
+    
     # Compute ratios: x / y for each pair
-    ratio_matrix <- vapply(combs, function(pair) {
-        t1 <- pair[1]; t2 <- pair[2]
-        mat[t1, ] / mat[t2, ]
-    }, FUN.VALUE = numeric(ncol(mat)))
-
-    # Transpose so rows = comparisons, columns = samples
-    result <- t(ratio_matrix)
-
-    # Assign row and column names
-    rownames(result) <- vapply(combs, function(pair) {
-        paste0("div_", pair[1], "_over_", pair[2])
-    }, FUN.VALUE = character(1))
-    colnames(result) <- colnames(mat)
-
+    pair_idx <- 1
+    for (i in 1:(n_features - 1)) {
+      for (j in (i + 1):n_features) {
+        ratio_vec <- mat[i, ] / mat[j, ]
+        nz <- which(ratio_vec != 0 & is.finite(ratio_vec))
+        if (length(nz) > 0) {
+          row_idx <- c(row_idx, rep(pair_idx, length(nz)))
+          col_idx <- c(col_idx, nz)
+          values  <- c(values, ratio_vec[nz])
+        }
+        pair_idx <- pair_idx + 1
+      }
+    }
+    
+    # Construct sparse matrix
+    result <- sparseMatrix(
+      i = row_idx,
+      j = col_idx,
+      x = values,
+      dims = c(n_pairs, n_samples),
+      dimnames = list(row_names, colnames(mat))
+    )
+    
     # Add metadata
     attr(result, "mia") <- "division"
-
+    
     return(result)
 }
+
 # This function is used to add transformed table back to TreeSE. With most of
 # the methods it is simple: it is added to assay. However, with transformations 
 # that change the dimensionality (e.g. philr, difference, division), the 
