@@ -465,10 +465,12 @@ test_that("transformAssay", {
         expect_equal(nrow(diff), choose(nrow(tse_sub), 2))
         expect_equal(ncol(diff), ncol(tse_sub))
         
-        # Check values
-        expect_type(diff, "double")
-        expect_false(any(is.na(diff)))
-        expect_false(any(is.infinite(diff)))
+        # Check that result is a sparse matrix
+        expect_s4_class(diff, "dgCMatrix")
+        
+        # Check values (non-zero entries in sparse matrix)
+        expect_false(any(is.na(diff@x)))
+        expect_false(any(is.infinite(diff@x)))
         
         # Metadata
         expect_equal(attr(diff, "mia"), "difference")
@@ -494,10 +496,12 @@ test_that("transformAssay", {
         expect_equal(nrow(div), choose(nrow(tse_sub), 2))
         expect_equal(ncol(div), ncol(tse_sub))
         
-        # Check values
-        expect_type(div, "double")
-        expect_false(any(is.na(div)))
-        expect_false(any(is.infinite(div)))
+        # Check that result is a sparse matrix
+        expect_s4_class(div, "dgCMatrix")
+        
+        # Check values (non-zero entries in sparse matrix)
+        expect_false(any(is.na(div@x)))
+        expect_false(any(is.infinite(div@x)))
         
         # Metadata
         expect_equal(attr(div, "mia"), "division")
