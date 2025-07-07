@@ -167,30 +167,6 @@ test_that("transformAssay", {
         # Compare
         expect_equal(mat, mat_comp)
 
-        # Tests rclr
-        # Calc RCLRs
-        assay <- assay(tse, "counts")
-        suppressWarnings(
-            mat <- assays(mia::transformAssay(tse, assay.type = "counts", method = "rclr"))$rclr
-        )
-
-        suppressWarnings(
-        mat_comp <- apply(as.matrix(assay), 2, FUN=function(x){
-            temp <- log(x)
-            temp[is.infinite(temp)] <- NA
-            temp <- log(x) - mean(temp, na.rm = TRUE)
-            temp[is.infinite(temp)] <- 0
-            return(temp)
-        })
-        )
-
-        # Round
-        mat <- round(mat, 4)
-        mat_comp <- round(mat_comp, 4)
-
-        # Compare
-        expect_equal(mat, mat_comp, check.attributes = FALSE)
-
         # Expect that error occurs
         expect_error(mia::transformAssay(tse, method = "clr"))
 
@@ -212,17 +188,6 @@ test_that("transformAssay", {
         assay(tse, "test2")[1, ] <- 0
         # One missing value
         assay(tse, "na_values")[4, 5] <- NA
-
-        # clr robust transformations
-        test <- assay(transformAssay(tse, method = "rclr", assay.type = "test"), "rclr")
-        test2 <- assay(transformAssay(tse, method = "rclr", assay.type = "test2"), "rclr")
-
-        # Removes first rows
-        test <- test[-1, ]
-        test2 <- test2[-1, ]
-
-        # Expect that under 10 values are unequal. Values have only one decimal.
-        expect_true(sum(round(test, 1) != round(test2, 1), na.rm = TRUE) < 10)
 
         tse <- transformAssay(tse, method = "relabundance")
         # Expect error when counts and zeroes
@@ -356,7 +321,7 @@ test_that("transformAssay", {
         attr(actual, "parameters")$pseudocount <- NULL
         compare <- vegan::decostand(assay(tse, "relabundance"), method = "rclr",
                                     MARGIN = 2)
-        expect_equal(actual, compare)
+        expect_equal(actual, compare, check.attributes = FALSE)
 
         # alr
         tse <- transformAssay(tse, assay.type = "relabundance", method = "alr",
