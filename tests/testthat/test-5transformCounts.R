@@ -157,10 +157,9 @@ test_that("transformAssay", {
         # Tests clr
         # Calc CLRs
         mat <- assays(mia::transformAssay(tse, assay.type = "relabundance",
-                                           method = "clr", pseudocount = pseudonumber))$clr
-        mat_comp <- apply(as.matrix(relative), 2, FUN=function(x){
-            log(x) - mean(log(x))
-        })
+                                          method = "clr", pseudocount = pseudonumber))$clr
+        mat_comp <- vegan::decostand(assay(tse, "relabundance"), method = "clr",
+                                     MARGIN = 2, pseudocount = pseudonumber)
         # Remove attributes since vegan adds additional ones
         attributes(mat) <- NULL
         attributes(mat_comp) <- NULL
