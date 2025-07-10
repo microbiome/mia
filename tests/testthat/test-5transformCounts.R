@@ -178,8 +178,6 @@ test_that("transformAssay", {
         # Compare
         expect_equal(rmat, rmat_comp)
 
-        # Tests that clr robust gives values that are approximately same if only
-        # one value per sample are changed to zero
         tse <- transformAssay(tse, method = "relabundance")
         # Adds pseudocount
         assay(tse, "test") <- assay(tse, "relabundance") + 1
@@ -191,6 +189,13 @@ test_that("transformAssay", {
         # One missing value
         assay(tse, "na_values")[4, 5] <- NA
         
+        # Tests that clr robust gives values that are approximately same if only
+        # one value per sample are changed to zero
+        expect_equal(assays(mia::transformAssay(tse, assay.type = "test",
+                                                method = "rclr")),
+                     assays(mia::transformAssay(tse, assay.type = "test2",
+                                                method = "rclr")),
+                     check.attributes = FALSE)
         
 
         tse <- transformAssay(tse, method = "relabundance")
