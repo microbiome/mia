@@ -151,9 +151,6 @@ test_that("transformAssay", {
         pseudonumber <- runif(1, 1, 100)
 
         tse <- transformAssay(tse, method = "relabundance")
-        # Calculates relative abundance table
-        relative <- assay(tse, "relabundance")
-        relative <- relative + pseudonumber
         # Tests clr
         # Calc CLRs
         mat <- assays(mia::transformAssay(tse, assay.type = "relabundance",
@@ -171,6 +168,9 @@ test_that("transformAssay", {
 
         # Tests transformAssay, tries to calculate clr. Should be an error, because of zeros.
         expect_error(mia::transformAssay(tse, method = "clr"))
+        
+        # Test robust CLR
+        
 
         # Tests that clr robust gives values that are approximately same if only
         # one value per sample are changed to zero
@@ -184,6 +184,8 @@ test_that("transformAssay", {
         assay(tse, "test2")[1, ] <- 0
         # One missing value
         assay(tse, "na_values")[4, 5] <- NA
+        
+        
 
         tse <- transformAssay(tse, method = "relabundance")
         # Expect error when counts and zeroes
