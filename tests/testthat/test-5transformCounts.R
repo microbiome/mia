@@ -167,8 +167,16 @@ test_that("transformAssay", {
         # Tests transformAssay, tries to calculate clr. Should be an error, because of zeros.
         expect_error(mia::transformAssay(tse, method = "clr"))
         
-        # Test robust CLR
-        
+        # Test robust clr
+        rmat <- assays(mia::transformAssay(tse, assay.type = "relabundance",
+                                           method = "rclr"))$rclr
+        rmat_comp <- vegan::decostand(assay(tse, "relabundance"), method = "rclr",
+                                      MARGIN = 2)
+        # Remove attributes added by vegan
+        attributes(rmat) <- NULL
+        attributes(rmat_comp) <- NULL
+        # Compare
+        expect_equal(rmat, rmat_comp)
 
         # Tests that clr robust gives values that are approximately same if only
         # one value per sample are changed to zero
