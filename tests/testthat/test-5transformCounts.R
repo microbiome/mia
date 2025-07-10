@@ -249,18 +249,6 @@ test_that("transformAssay", {
         # Expect that assay contains count and rank table
         expect_true(all(c("counts", "rank") %in% assayNames(tse_rank)))
 
-        for(i in c(1:10)){
-            # Gets columns from 'rank' table
-            ranks <- assay(tse_rank, "rank")[,i]
-            # Gets columns from 'counts' table, and calculates ranks
-            counts_compare <- assay(tse_rank, "counts")[,i]
-            counts_compare[counts_compare == 0] <- NA
-            ranks_compare <- rank(counts_compare, na.last = "keep")
-            ranks_compare[is.na(ranks_compare)] <- 0
-            # Expect that they are equal
-            expect_equal(ranks, ranks_compare, check.attributes = FALSE)
-        }
-
         # Calculates rank with pseudocount
         tse_rank_pseudo <- transformAssay(tse, method = "rank", pseudocount = runif(1, 0, 1000))
         # Pseudocount should not change the rank
@@ -281,7 +269,7 @@ test_that("transformAssay", {
         expect_equal(max(abs(z_assay - xx), na.rm=TRUE), 0,
                      tolerance = 1e-14, check.attributes = FALSE)
 
-        ####################### Test equality to vegan##########################
+        ####################### Test equality to vegan #########################
         # Test that transformations are equal to ones directly from vegan
         # clr
         tse <- transformAssay(tse, method = "relabundance")
@@ -329,6 +317,16 @@ test_that("transformAssay", {
                                     MARGIN = 2)
         compare <- t(compare)
         expect_equal(na.omit(actual), na.omit(compare))
+        
+        # rank
+        tse <- transformAssay(tse, assay.type = "counts", method = "rank")
+        actual <- assay(tse, "rank")
+        attr(actual, "parameters")$pseudocount <- NULL
+        compare <- vegan::decostand(assay(tse, "counts"), method = "rank",
+                                    MARGIN = 2)
+        expect_equal(actual, compare)
+        
+      
 
         # Check that transformation is applied to altExps
         expect_error(transformAssay(tse, altexp = "Phylum"))
@@ -350,7 +348,7 @@ test_that("transformAssay", {
         test <- altExp(test, "Genus")
         expect_equal(assay(test, "relabundance"), assay(ref, "relabundance"))
 
-        # Check that philt transformation works
+        # Check that philr transformation works
         skip_if_not_installed("philr")
         data("GlobalPatterns")
         tse <- GlobalPatterns
