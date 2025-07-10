@@ -136,13 +136,11 @@ test_that("transformAssay", {
 
         ######################## HELLINGER #####################################
         # Calculates Hellinger transformation. Should be equal.
-        # Calculates relative abundance table
-        relative <- assays(mia::transformAssay(tse, method = "relabundance", name = "relative"))$relative
-
-        expect_equal(as.matrix(assays(mia::transformAssay(tse, method = "hellinger", name = "test_123"))$test_123),
-                     apply(as.matrix(relative), 2, FUN=function(x){
-                         sqrt(x)
-                     }), check.attributes = FALSE)
+        expect_equal(as.matrix(assays(mia::transformAssay(tse, method = "hellinger",
+                                                          name = "test_123"))$test_123),
+                     as.matrix(vegan::decostand(assay(tse, "counts"), method = "hellinger",
+                                                MARGIN = 2)),
+                     check.attributes = FALSE)
 
         ############################### CLR ####################################
         # Calculates clr-transformation. Should be equal.
