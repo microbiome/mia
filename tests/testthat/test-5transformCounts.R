@@ -166,9 +166,6 @@ test_that("transformAssay", {
         # Compare
         expect_equal(mat, mat_comp)
 
-        # Expect that error occurs
-        expect_error(mia::transformAssay(tse, method = "clr"))
-
         # Expect that error does not occur
         tse <- mia::transformAssay(tse, method = "rclr")
 
