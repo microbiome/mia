@@ -134,49 +134,17 @@ test_that("transformAssay", {
         expect_equal(typeof(actual),"double")
         expect_true(all(actual == 1 | actual == 0))
 
-        ######################## HELLINGER #####################################
-        # Calculates Hellinger transformation. Should be equal.
-        expect_equal(as.matrix(assays(mia::transformAssay(tse, method = "hellinger",
-                                                          name = "test_123"))$test_123),
-                     as.matrix(vegan::decostand(assay(tse, "counts"), method = "hellinger",
-                                                MARGIN = 2)),
-                     check.attributes = FALSE)
-
         ############################### CLR ####################################
-        # Calculates clr-transformation. Should be equal.
-
         # Random pseudocount
         pseudonumber <- runif(1, 1, 100)
 
         tse <- transformAssay(tse, method = "relabundance")
-        # Tests clr
-        # Calc CLRs
-        mat <- assays(mia::transformAssay(tse, assay.type = "relabundance",
-                                          method = "clr", pseudocount = pseudonumber))$clr
-        mat_comp <- vegan::decostand(assay(tse, "relabundance"), method = "clr",
-                                     MARGIN = 2, pseudocount = pseudonumber)
-        # Remove attributes since vegan adds additional ones
-        attributes(mat) <- NULL
-        attributes(mat_comp) <- NULL
-        # Compare
-        expect_equal(mat, mat_comp)
 
         # Expect that error does not occur
         tse <- mia::transformAssay(tse, method = "rclr")
 
         # Tests transformAssay, tries to calculate clr. Should be an error, because of zeros.
         expect_error(mia::transformAssay(tse, method = "clr"))
-        
-        # Test robust clr
-        rmat <- assays(mia::transformAssay(tse, assay.type = "relabundance",
-                                           method = "rclr"))$rclr
-        rmat_comp <- vegan::decostand(assay(tse, "relabundance"), method = "rclr",
-                                      MARGIN = 2)
-        # Remove attributes added by vegan
-        attributes(rmat) <- NULL
-        attributes(rmat_comp) <- NULL
-        # Compare
-        expect_equal(rmat, rmat_comp)
 
         tse <- transformAssay(tse, method = "relabundance")
         # Adds pseudocount
@@ -190,7 +158,7 @@ test_that("transformAssay", {
         assay(tse, "na_values")[4, 5] <- NA
         
         # Tests that clr robust gives values that are approximately same if only
-        # one value per sample are changed to zero
+        # one value per sample is changed to zero
         expect_equal(assays(mia::transformAssay(tse, assay.type = "test",
                                                 method = "rclr")),
                      assays(mia::transformAssay(tse, assay.type = "test2",
@@ -313,6 +281,7 @@ test_that("transformAssay", {
         expect_equal(max(abs(z_assay - xx), na.rm=TRUE), 0,
                      tolerance = 1e-14, check.attributes = FALSE)
 
+        ####################### Test equality to vegan##########################
         # Test that transformations are equal to ones directly from vegan
         # clr
         tse <- transformAssay(tse, method = "relabundance")
@@ -322,9 +291,9 @@ test_that("transformAssay", {
         compare <- vegan::decostand(assay(tse, "relabundance"), method = "clr",
                                     pseudocount = 4, MARGIN = 2)
         expect_equal(actual, compare)
+        
         # rclr
         tse <- transformAssay(tse, assay.type = "relabundance", method = "rclr")
-
         actual <- assay(tse, "rclr")
         # mia has additional pseudocount parameter for all methods
         attr(actual, "parameters")$pseudocount <- NULL
