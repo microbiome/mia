@@ -177,22 +177,23 @@
     # Select side information based on margin
     FUN <- switch(by, rowData, colData)
     # Check modules matrix (could use any existing utility function
-    if( !is.matrix(modules) ){
-        stop("Modules not matrix", call. = FALSE)
+    if( !inherits(modules, c("matrix", "Matrix")) ){
+        stop("Modules are not of type matrix or Matrix.", call. = FALSE)
     }
     if( nrow(modules) != nrow(FUN(x)) ){
         stop("Number of rows in modules table differs from that of experiment.",
             call. = FALSE)
     }
     if( !all(rownames(modules) %in% rownames(FUN(x))) ){
-        stop("Fure or sample names do not match with experiment.", call. = FALSE)
+        stop("Feature or sample names do not match with those of experiment.",
+            call. = FALSE)
     }
     if( identical(rownames(FUN(x)), rownames(modules)) ){
-        warning("feature or sample order not matching with x", call. = FALSE)
+        warning("Feature or sample order do not match with that of experiment.",
+            call. = FALSE)
         new_order <- match(rownames(FUN(x)), rownames(modules))
         modules <- modules[new_order, , drop = FALSE]
     }
-    # 
     is_logical <- is.logical(modules)
     is_num <- all(modules == 0 | modules == 1)
     # Check validity of module type
@@ -215,7 +216,6 @@
     return(modules)
 }
 
-#' @importFrom Matrix crossprod
 .agglomerate_module_assay <- function(assay.type, assay, by, modules, na.rm) {
     # Check assay
     .check_assay_for_merge(assay.type, assay)

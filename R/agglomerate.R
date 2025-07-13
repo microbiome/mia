@@ -425,14 +425,14 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
         # Check margin
         by <- .check_MARGIN(by)
         # Check group
-        if( group %in% names(metadata(x)) ){
+        if( !group %in% names(metadata(x)) ){
             stop("'group' does not match any element in the metadata",
                 call. = FALSE)
         }
         # Extract modules from metadata
         modules <- metadata(x)[[group]]
         # Check and process modules
-        modules <- .check_and_process_modules(modules, x)
+        modules <- .check_and_process_modules(modules, x, by)
         # Merge assays by module
         assays <- mapply(.agglomerate_module_assay, assayNames(x), assays(x),
             MoreArgs = list(by = by, modules = modules, na.rm = na.rm),
@@ -442,15 +442,15 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
         # Construct module-wise experiment
         x <- do.call(class(x), list(
             assays = assays,
-            colData = if (by == 1L) colData(x) else DataFrame(row.names = group),
-            rowData = if (by == 1L) DataFrame(row.names = group) else rowData(x),
+            colData = if (by == 1L) colData(x) else DataFrame(row.names = colnames(modules)),
+            rowData = if (by == 1L) DataFrame(row.names = colnames(modules)) else rowData(x),
             metadata = metadata(x))
         )
         # Add new names to agglomerated dimension
         if( by == 1L ){
-            rownames(x) <- group
+            rownames(x) <- colnames(modules)
         } else {
-            colnames(x) <- group
+            colnames(x) <- colnames(modules)
         }
         return(x)
     }

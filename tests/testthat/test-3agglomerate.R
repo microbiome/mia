@@ -157,23 +157,27 @@ test_that("agglomerate", {
     
     # Generate random modules
     N_module <- 30L
-    modules <- sample(c(TRUE, FALSE),
-                      size = nrow(tse) * N_module,
-                      prob = c(0.2, 0.8),
-                      replace = TRUE)
+    modules <- sample(
+        c(TRUE, FALSE),
+        size = nrow(tse) * N_module,
+        prob = c(0.2, 0.8),
+        replace = TRUE
+    )
     # Add modules to rowData
-    modules <- modules |> matrix(nrow = nrow(tse))
+    modules <- modules |>
+        matrix(nrow = nrow(tse))
+    # Add row and column names
+    rownames(modules) <- rownames(tse)
     colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
-    rowData(tse) <- cbind(rowData(tse), modules)
-    # Extract module columns
-    module_columns <- grep("module_", colnames(rowData(tse)), value = TRUE)
+    # Store modules in metadata slot
+    metadata(tse)$modules <- modules
     # Add pseudocount assay
     tse <- transformAssay(tse, assay.type = "counts", method = "pseudocount")
     # Introduce NA to pseudocount assay
     assay(tse, "pseudocount")[1, 1] <- NA
     # Agglomerate based on modules
     tse_module <- agglomerateByModule(
-        tse, by = 1, group = module_columns, na.rm = TRUE
+        tse, by = 1, group = "modules", na.rm = TRUE
     )
     # Compute reference for counts assay
     module_counts <- crossprod(modules, assay(tse, "counts"))
@@ -195,7 +199,7 @@ test_that("agglomerate", {
     se <- SilvermanAGutData
     
     # checking reference consensus sequence generation
-    actual <- agglomerateByRank(se,"Genus", update.refseq = FALSE)
+    actual <- agglomerateByRank(se, "Genus", update.refseq = FALSE)
     # There should be only one exact match for each sequence
     seqs_test <- as.character( referenceSeq(actual) )
     seqs_ref <- as.character( referenceSeq(se) )
