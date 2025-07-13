@@ -424,17 +424,15 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
     function(x, by, group, na.rm = FALSE){
         # Check margin
         by <- .check_MARGIN(by)
-        # Select side information based on margin
-        FUN <- switch(by, rowData, colData)
         # Check group
-        if( !all(group %in% names(FUN(x))) ){
-            stop("'group' contained elements that did not match with any ",
-                "column of ", as.character(substitute(FUN)), call. = FALSE)
+        if( group %in% names(metadata(x)) ){
+            stop("'group' does not match any element in the metadata",
+                call. = FALSE)
         }
-        # Extract module adjacency matrix as sparse array
-        modules <- as.matrix(FUN(x)[ , group, drop = FALSE])
+        # Extract modules from metadata
+        modules <- metadata(x)[[group]]
         # Check and process modules
-        modules <- .check_and_process_modules(modules)
+        modules <- .check_and_process_modules(modules, x)
         # Merge assays by module
         assays <- mapply(.agglomerate_module_assay, assayNames(x), assays(x),
             MoreArgs = list(by = by, modules = modules, na.rm = na.rm),

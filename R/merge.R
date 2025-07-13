@@ -173,17 +173,32 @@
     return(assay)
 }
 
-#' @importFrom Matrix Matrix
-.check_and_process_modules <- function(modules){
-    # Check modules
+.check_and_process_modules <- function(modules, x, by){
+    # Select side information based on margin
+    FUN <- switch(by, rowData, colData)
+    # Check modules matrix (could use any existing utility function
+    if( !is.matrix(modules) ){
+        stop("Modules not matrix", call. = FALSE)
+    }
+    if( nrow(modules) != nrow(FUN(x)) ){
+        stop("Number of rows in modules table differs from that of experiment.",
+            call. = FALSE)
+    }
+    if( !all(rownames(modules) %in% rownames(FUN(x))) ){
+        stop("Fure or sample names do not match with experiment.", call. = FALSE)
+    }
+    if( identical(rownames(FUN(x)), rownames(modules)) ){
+        warning("feature or sample order not matching with x", call. = FALSE)
+        new_order <- match(rownames(FUN(x)), rownames(modules))
+        modules <- modules[new_order, , drop = FALSE]
+    }
+    # 
     is_logical <- is.logical(modules)
     is_num <- all(modules == 0 | modules == 1)
     # Check validity of module type
     if( !is_logical && !is_num ){
         stop("'groups' variables are not binary.", call. = FALSE)
     }
-    # Convert modules to sparse array after necessary checks
-    modules <- Matrix(modules, sparse = TRUE)
     # Convert to numeric binary to Boolean adjacency matrix
     if( is_num ){
         modules <- modules != 0
