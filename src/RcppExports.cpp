@@ -22,6 +22,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// apply_transformation_difference
+S4 apply_transformation_difference(NumericMatrix mat);
+RcppExport SEXP _mia_apply_transformation_difference(SEXP matSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type mat(matSEXP);
+    rcpp_result_gen = Rcpp::wrap(apply_transformation_difference(mat));
+    return rcpp_result_gen;
+END_RCPP
+}
+// apply_transformation_division
+S4 apply_transformation_division(NumericMatrix mat, double pseudocount);
+RcppExport SEXP _mia_apply_transformation_division(SEXP matSEXP, SEXP pseudocountSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< double >::type pseudocount(pseudocountSEXP);
+    rcpp_result_gen = Rcpp::wrap(apply_transformation_division(mat, pseudocount));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mia_faith_cpp", (DL_FUNC) &_mia_faith_cpp, 2},
