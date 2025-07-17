@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.5</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate correlations between features of two experiments.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/getCrossAssociation.R" class="external-link"><code>R/getCrossAssociation.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/rw/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/rw/R/getCrossAssociation.R" class="external-link"><code>R/getCrossAssociation.R</code></a></small>
     <div class="hidden name"><code>getCrossAssociation.Rd</code></div>
     </div>
 
@@ -118,7 +118,7 @@ corresponding variable-pair. This decreases the number of calculations in
 (dis-)similarity between features. Function must take matrix as an input
 and give numeric values as an output. Adjust <code>method</code> and other
 parameters correspondingly. Supported functions are, for example,
-<code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">stats::dist</a></code> and <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegan::vegdist</a></code>.</p></li>
+<code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">stats::dist</a></code> and <code><a href="https://vegandevs.github.io/vegan/reference/vegdist.html" class="external-link">vegan::vegdist</a></code>.</p></li>
 <li><p><code>dimred1</code> <code>Character scalar</code> or <code>numeric scalar</code>.
 Specifies reduced dimensionality from the <code>reducedDim</code> of experiment</p><ol><li><p>(Default: <code>NULL</code>)</p></li>
 </ol></li>
@@ -471,12 +471,12 @@ faster solutions when running times are critical.</p>
 <span class="r-in"><span>    show.warnings <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    Var1 Var2         cor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  CVJT01000011.50.2173    1  0.64450339</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 AYSG01000002.292.2076    1 -0.14907120</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 CCPS01000022.154.1916    1 -0.07161149</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       EU622687.1.1587    1  0.11111111</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       KY646024.1.1591    1  0.34783280</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  JUOP01000215.81.1657    1  0.54433105</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  CVJT01000011.50.2173    1 -0.37777778</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 AYSG01000002.292.2076    1 -0.60000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 CCPS01000022.154.1916    1  0.55555556</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       EU622687.1.1587    1  0.06666667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       KY646024.1.1591    1 -0.91111111</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  JUOP01000215.81.1657    1 -0.42222222</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># In ecological studies the association analyses are sometimes carried out</span></span></span>
 <span class="r-in"><span><span class="co"># only for those samples that have observations. You can ignore zeroes by</span></span></span>

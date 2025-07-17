@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.5</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Canonical Correspondence Analysis and Redundancy Analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/rw/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/rw/R/runCCA.R" class="external-link"><code>R/runCCA.R</code></a></small>
     <div class="hidden name"><code>runCCA.Rd</code></div>
     </div>
 
@@ -134,14 +134,14 @@ significance calculations be returned. When <code>FALSE</code>, only
 summary tables are returned. (Default: <code>FALSE</code>)</p></li>
 <li><p><code>homogeneity.test</code>: <code>Character scalar</code>. Specifies
 the significance test used to analyse
-<code><a href="https://rdrr.io/pkg/vegan/man/betadisper.html" class="external-link">vegan::betadisper</a></code> results.
+<code><a href="https://vegandevs.github.io/vegan/reference/betadisper.html" class="external-link">vegan::betadisper</a></code> results.
 Options include 'permanova'
-(<code><a href="https://rdrr.io/pkg/vegan/man/anova.cca.html" class="external-link">vegan::permutest</a></code>), 'anova'
+(<code><a href="https://vegandevs.github.io/vegan/reference/anova.cca.html" class="external-link">vegan::permutest</a></code>), 'anova'
 (<code><a href="https://rdrr.io/r/stats/anova.html" class="external-link">stats::anova</a></code>) and 'tukeyhsd'
 (<code><a href="https://rdrr.io/r/stats/TukeyHSD.html" class="external-link">stats::TukeyHSD</a></code>).
 (Default: <code>"permanova"</code>)</p></li>
 <li><p><code>permutations</code>: <code>Integer scalar</code>. Specifies the number of
-permutations for significance testing in <code><a href="https://rdrr.io/pkg/vegan/man/anova.cca.html" class="external-link">vegan::anova.cca</a></code>.
+permutations for significance testing in <code><a href="https://vegandevs.github.io/vegan/reference/anova.cca.html" class="external-link">vegan::anova.cca</a></code>.
 (Default: <code>999</code>)</p></li>
 <li><p><code>subset.result</code>: <code>Logical result</code>. Specifies whether to
 subset <code>x</code> to match the result if some samples were removed during
@@ -149,7 +149,7 @@ calculation. (Default: <code>TRUE</code>)</p></li>
 <li><p><code>binary</code>: <code>Logical scalar</code>. Whether to perform
 presence/absence transformation before dissimilarity calculation. For
 Jaccard index the default is <code>TRUE</code>. For other dissimilarity metrics,
-please see <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code>.</p></li>
+please see <code><a href="https://vegandevs.github.io/vegan/reference/vegdist.html" class="external-link">vegdist</a></code>.</p></li>
 </ul></dd>
 
 
@@ -214,7 +214,7 @@ matrix from <code>metadata</code> slot used in calculation. (Default: <code>NULL
     <div id="value">
     <h2>Value</h2>
     <p>For <code>getCCA</code> a matrix with samples as rows and CCA dimensions as
-columns. Attributes include output from <code><a href="https://rdrr.io/pkg/vegan/man/scores.html" class="external-link">scores</a></code>,
+columns. Attributes include output from <code><a href="https://vegandevs.github.io/vegan/reference/scores.html" class="external-link">scores</a></code>,
 eigenvalues, the <code>cca</code>/<code>rda</code> object and significance analysis
 results.</p>
 <p>For <code>addCCA</code> a modified <code>x</code> with the results stored in
@@ -228,7 +228,7 @@ is equivalent to RDA. <code>col.var</code> and <code>formula</code> can be missi
 which turns the CCA analysis into a CA analysis and dbRDA into PCoA/MDS.</p>
 <p>Significance tests are done with <code>vegan:anova.cca</code> (PERMANOVA). Group
 dispersion, i.e., homogeneity within groups is analyzed with
-<code><a href="https://rdrr.io/pkg/vegan/man/betadisper.html" class="external-link">vegan::betadisper</a></code>
+<code><a href="https://vegandevs.github.io/vegan/reference/betadisper.html" class="external-link">vegan::betadisper</a></code>
 (multivariate homogeneity of groups dispersions
 (variances)) and statistical significance of homogeneity is tested with a
 test specified by <code>homogeneity.test</code> parameter.</p>
@@ -236,7 +236,7 @@ test specified by <code>homogeneity.test</code> parameter.</p>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>For more details on the actual implementation see
-<code><a href="https://rdrr.io/pkg/vegan/man/cca.html" class="external-link">cca</a></code> and <code><a href="https://rdrr.io/pkg/vegan/man/dbrda.html" class="external-link">dbrda</a></code></p></div>
+<code><a href="https://vegandevs.github.io/vegan/reference/cca.html" class="external-link">cca</a></code> and <code><a href="https://vegandevs.github.io/vegan/reference/dbrda.html" class="external-link">dbrda</a></code></p></div>
     </div>
 
     <div id="ref-examples">

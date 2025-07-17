@@ -18,7 +18,7 @@ rarefaction."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.5</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ rarefaction."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Estimate alpha diversity indices</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/addAlpha.R" class="external-link"><code>R/addAlpha.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/rw/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/rw/R/addAlpha.R" class="external-link"><code>R/addAlpha.R</code></a></small>
     <div class="hidden name"><code>addAlpha.Rd</code></div>
     </div>
 
@@ -186,12 +186,12 @@ and prune the tree to match features so that each tip can be found from
 the features. Other option is to remove all features that are not tips.
 (See <code>only.tips</code> parameter)</p></li>
 <li><p>'fisher': Fisher's alpha; as implemented in
-<code><a href="https://rdrr.io/pkg/vegan/man/diversity.html" class="external-link">vegan::fisher.alpha</a></code>. (Fisher et al. 1943)</p></li>
+<code><a href="https://vegandevs.github.io/vegan/reference/diversity.html" class="external-link">vegan::fisher.alpha</a></code>. (Fisher et al. 1943)</p></li>
 <li><p>'gini_simpson': Gini-Simpson diversity i.e. \(1 - lambda\),
 where \(lambda\) is the
 Simpson index, calculated as the sum of squared relative abundances.
 This corresponds to the diversity index
-'simpson' in <code><a href="https://rdrr.io/pkg/vegan/man/diversity.html" class="external-link">vegan::diversity</a></code>.
+'simpson' in <code><a href="https://vegandevs.github.io/vegan/reference/diversity.html" class="external-link">vegan::diversity</a></code>.
 This is also called Gibbs–Martin, or Blau index in sociology,
 psychology and management studies. The Gini-Simpson index (1-lambda)
 should not be
@@ -341,18 +341,18 @@ based on the assumption that the abundant species are observed regardless
 of their
 exact abundance. We use here the bias-corrected version
 (O'Hara 2005, Chiu et al. 2014) implemented in
-<code><a href="https://rdrr.io/pkg/vegan/man/specpool.html" class="external-link">estimateR</a></code>.
-For an exact formulation, see <code><a href="https://rdrr.io/pkg/vegan/man/specpool.html" class="external-link">estimateR</a></code>.
+<code><a href="https://vegandevs.github.io/vegan/reference/specpool.html" class="external-link">estimateR</a></code>.
+For an exact formulation, see <code><a href="https://vegandevs.github.io/vegan/reference/specpool.html" class="external-link">estimateR</a></code>.
 Note that this index comes with an additional column with standard
 error information.</p></li>
 <li><p>'chao1': This is a nonparametric estimator of species richness. It
 assumes that rare species carry information about the (unknown) number
 of unobserved species. We use here the bias-corrected version
 (O'Hara 2005, Chiu et al. 2014) implemented in
-<code><a href="https://rdrr.io/pkg/vegan/man/specpool.html" class="external-link">estimateR</a></code>. This index implicitly
+<code><a href="https://vegandevs.github.io/vegan/reference/specpool.html" class="external-link">estimateR</a></code>. This index implicitly
 assumes that every taxa has equal probability of being observed. Note
 that it gives a lower bound to species richness. The bias-corrected
-for an exact formulation, see <code><a href="https://rdrr.io/pkg/vegan/man/specpool.html" class="external-link">estimateR</a></code>.
+for an exact formulation, see <code><a href="https://vegandevs.github.io/vegan/reference/specpool.html" class="external-link">estimateR</a></code>.
 This estimator uses only the singleton and doubleton counts, and
 hence it gives more weight to the low abundance species.
 Note that this index comes with an additional column with standard
@@ -467,8 +467,8 @@ species richness, species diversity and the ‘Shannon–Wiener’ Index.
     <h2>See also</h2>
     <div class="dont-index">
 <ul><li><p><code><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></code></p></li>
-<li><p><code><a href="https://rdrr.io/pkg/vegan/man/specpool.html" class="external-link">estimateR</a></code></p></li>
-<li><p><code><a href="https://rdrr.io/pkg/vegan/man/diversity.html" class="external-link">diversity</a></code></p></li>
+<li><p><code><a href="https://vegandevs.github.io/vegan/reference/specpool.html" class="external-link">estimateR</a></code></p></li>
+<li><p><code><a href="https://vegandevs.github.io/vegan/reference/diversity.html" class="external-link">diversity</a></code></p></li>
 </ul></div>
     </div>
 
@@ -497,8 +497,8 @@ species richness, species diversity and the ‘Shannon–Wiener’ Index.
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Shows the estimated observed richness</span></span></span>
 <span class="r-in"><span><span class="va">tse</span><span class="op">$</span><span class="va">observed_richness</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 3527 3864 2792  731  620 1323 2275 1813  516 1568  791  932 2278 1995 2275</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16]  959 1173  885 2995 2127 2449  867  710  914  719  677</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 3508 3838 2862  740  584 1355 2271 1786  540 1603  777  896 2256 2052 2243</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16]  960 1190  892 2995 2136 2447  859  716  891  703  653</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># One can also calculate the indices and get the results without adding</span></span></span>
 <span class="r-in"><span><span class="co"># them to colData</span></span></span>

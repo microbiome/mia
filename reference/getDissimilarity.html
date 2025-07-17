@@ -23,7 +23,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.5</span>
       </span>
     </div>
 
@@ -50,7 +50,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate dissimilarities</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/rw/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/rw/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
     <div class="hidden name"><code>getDissimilarity.Rd</code></div>
     </div>
 
@@ -60,7 +60,7 @@ within a
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>
 object. For overlap, Unifrac, and Jensen-Shannon Divergence (JSD)
 dissimilarities, the functions use mia internal functions, while for other
-types of dissimilarities, they rely on <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code>
+types of dissimilarities, they rely on <code><a href="https://vegandevs.github.io/vegan/reference/vegdist.html" class="external-link">vegdist</a></code>
 by default.</p>
     </div>
 
@@ -111,8 +111,8 @@ calculate. (Default: <code>"bray"</code>)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>other arguments passed into <code><a href="https://rdrr.io/pkg/vegan/man/avgdist.html" class="external-link">avgdist</a></code>,
-<code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code>, or into mia internal functions:</p>
+<dd><p>other arguments passed into <code><a href="https://vegandevs.github.io/vegan/reference/avgdist.html" class="external-link">avgdist</a></code>,
+<code><a href="https://vegandevs.github.io/vegan/reference/vegdist.html" class="external-link">vegdist</a></code>, or into mia internal functions:</p>
 <ul><li><p><code>sample</code>: The sampling depth in rarefaction.
 (Default: <code>min(rowSums2(x))</code>)</p></li>
 <li><p><code>dis.fun</code>: <code>Character scalar</code>. Specifies the dissimilarity
@@ -151,7 +151,7 @@ evaluating overlap between samples. (Default: <code>0</code>)</p></li>
 <li><p><code>binary</code>: <code>Logical scalar</code>. Whether to perform
 presence/absence transformation before dissimilarity calculation. For
 Jaccard index the default is <code>TRUE</code>. For other dissimilarity metrics,
-please see <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code>.</p></li>
+please see <code><a href="https://vegandevs.github.io/vegan/reference/vegdist.html" class="external-link">vegdist</a></code>.</p></li>
 </ul></dd>
 
 
@@ -190,7 +190,7 @@ similarity is. When using relative abundances, overlap value 1 means that
 all the abundances of features are equal between two samples, and 0 means
 that samples have completely different relative abundances.</p>
 <p>Unifrac is calculated with <code><a href="https://cmmr.github.io/rbiom/reference/rbiom-deprecated.html" class="external-link">rbiom:unifrac()</a></code>.</p>
-<p>If rarefaction is enabled, <code><a href="https://rdrr.io/pkg/vegan/man/avgdist.html" class="external-link">vegan:avgdist()</a></code> is
+<p>If rarefaction is enabled, <code><a href="https://vegandevs.github.io/vegan/reference/avgdist.html" class="external-link">vegan:avgdist()</a></code> is
 utilized.</p>
 <p>Rarefaction can be used to control uneven sequencing depths. Although,
 it is highly debated method. Some think that it is the only option that
@@ -308,18 +308,19 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-in"><span><span class="co"># If applying rarefaction, the input must be count matrix and transformation</span></span></span>
 <span class="r-in"><span><span class="co"># method specified in function call (Note: increase niter)</span></span></span>
 <span class="r-in"><span><span class="va">rclr</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span></span>
-<span class="r-in"><span>    <span class="fu">vegan</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"rclr"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu">vegan</span><span class="fu">::</span><span class="fu"><a href="https://vegandevs.github.io/vegan/reference/decostand.html" class="external-link">decostand</a></span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"rclr"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">getDissimilarity</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>, method <span class="op">=</span> <span class="st">"euclidean"</span>, transf <span class="op">=</span> <span class="va">rclr</span>, niter <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The following sampling units were removed because they were below sampling depth: CL3, CC1, SV1, M31Fcsw, M11Fcsw, M31Plmr, M11Plmr, F21Plmr, M31Tong, M11Tong, LMEpi24M, SLEpi20M, AQC1cm, AQC4cm, AQC7cm, NP2, NP3, NP5, TRRsed1, TRRsed2, TRRsed3, TS28, TS29, Even1, Even2, Even3</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               CL3       CC1       SV1   M31Fcsw  M11Fcsw   M31Plmr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3       0.00000  92.41533 111.91988 100.26503 96.37790 104.02765</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      92.41533   0.00000 107.63145 101.04726 96.98399 105.23199</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1     111.91988 107.63145   0.00000  97.99801 94.11056 102.95526</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw 100.26503 101.04726  97.99801   0.00000 53.73290  80.20711</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw  96.37790  96.98399  94.11056  53.73290  0.00000  75.98772</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr 104.02765 105.23199 102.95526  80.20711 75.98772   0.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           1         2         3          4          5         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0.00000  13.95258  48.65163 119.623078 112.508530 143.65528</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  13.95258   0.00000  43.54083 125.343910 118.143560 140.58705</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  48.65163  43.54083   0.00000 108.001891 101.579286 105.12154</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 119.62308 125.34391 108.00189   0.000000   8.304836  89.18377</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 112.50853 118.14356 101.57929   8.304836   0.000000  88.47285</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 143.65528 140.58705 105.12154  89.183766  88.472851   0.00000</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
