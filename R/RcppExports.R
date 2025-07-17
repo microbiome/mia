@@ -5,3 +5,10 @@
     .Call('_mia_faith_cpp', PACKAGE = 'mia', assay, rowTree)
 }
 
+.apply_transformation_difference <- function(mat) {
+    .Call(`_mia_apply_transformation_difference`, mat)
+}
+
+.apply_transformation_division <- function(mat, pseudocount = 1e-6) {
+    .Call(`_mia_apply_transformation_division`, mat, pseudocount)
+}
