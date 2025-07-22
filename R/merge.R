@@ -178,24 +178,26 @@
     FUN <- switch(by, rowData, colData)
     # Check modules matrix (could use any existing utility function
     if( !inherits(modules, c("matrix", "Matrix")) ){
-        stop("Modules are not of type matrix or Matrix.", call. = FALSE)
+        stop("Modules table is not a matrix.", call. = FALSE)
     }
     if( nrow(modules) != nrow(FUN(x)) ){
-        stop("Number of rows in modules table differs from that of experiment.",
-            call. = FALSE)
+        stop("Modules table and experiment assays do not have the same number ",
+        "of rows.", call. = FALSE)
     }
     if( !all(rownames(modules) %in% rownames(FUN(x))) ){
-        stop("Feature or sample names do not match with those of experiment.",
+        stop("Modules table does not have the same names as experiment assays.",
             call. = FALSE)
     }
-    if( identical(rownames(FUN(x)), rownames(modules)) ){
-        warning("Feature or sample order do not match with that of experiment.",
-            call. = FALSE)
+    if( !identical(rownames(FUN(x)), rownames(modules)) ){
+        warning("Modules table order does not match with experiment assays. ",
+            "Rows of modules table were reordered accordingly.", call. = FALSE)
         new_order <- match(rownames(FUN(x)), rownames(modules))
         modules <- modules[new_order, , drop = FALSE]
     }
+    # Determine class type and NAs
     is_logical <- is.logical(modules)
     is_num <- all(modules == 0 | modules == 1)
+    is_na <- is.na(modules)
     # Check validity of module type
     if( !is_logical && !is_num ){
         stop("'groups' variables are not binary.", call. = FALSE)
@@ -204,8 +206,6 @@
     if( is_num ){
         modules <- modules != 0
     }
-    # Find NAs
-    is_na <- is.na(modules)
     # Replace NAs
     if( any(is_na) ){
         warning("NAs were found in 'groups' variables and were removed",

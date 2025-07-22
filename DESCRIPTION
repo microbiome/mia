@@ -91,7 +91,6 @@ Suggests:
     biomformat,
     dada2,
     knitr,
-    Matrix,
     mediation,
     miaViz,
     microbiomeDataSets,

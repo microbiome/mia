@@ -230,16 +230,18 @@
 #'     replace = TRUE
 #' )
 #'
-#' # Add modules to rowData
-#' modules <- modules |> matrix(nrow = nrow(tse))
+#' # Convert modules to matrix
+#' modules <- modules |>
+#'     matrix(nrow = nrow(tse))
+#' # Add feature names as rownames
+#' rownames(modules) <- rownames(tse)
+#' # Add module names as colnames
 #' colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
-#' rowData(tse) <- cbind(rowData(tse), modules)
-#'
-#' # Extract module columns
-#' module_columns <- grep("module_", colnames(rowData(tse)), value = TRUE)
-#'
+#' # Store modules table in metadata slot
+#' metadata(tse)$modules <- modules
+#' 
 #' # Agglomerate based on modules
-#' tse_module <- agglomerateByModule(tse, by = 1, group = module_columns)
+#' tse_module <- agglomerateByModule(tse, by = 1, group = "modules")
 #'
 #' @seealso
 #' \code{\link[=splitOn]{splitOn}}
