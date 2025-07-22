@@ -66,7 +66,7 @@ test_that("getMediation", {
   fit_dv <- glm(Outcome ~ Treatment + Mediator, data = df)
 
   set.seed(123)
-  med_out <- mediate(fit_m, fit_dv, treat = "Treatment", mediator = "Mediator",
+  med_out <- mediation::mediate(fit_m, fit_dv, treat = "Treatment", mediator = "Mediator",
                      treat.value = "Scandinavia", control.value = "CentralEurope",
                      boot = TRUE, sims = 1)
 
