@@ -13,17 +13,17 @@ S4 apply_transformation_difference(NumericMatrix mat) {
                       "cause memory or performance issues. Consider subsetting "
                       "or using fewer features.");
     }
-    
+  
     // Generate default rownames if not present
     CharacterVector original_rownames = rownames(mat);
-    if( original_rownames.isNULL() ){
-        Rcpp::warning("No rownames found in the matrix, "
-                      "generated names will be used.");
-        original_rownames = CharacterVector(n_features);
-        for( int i = 0; i < n_features; ++i )
-            original_rownames[i] = "Feature" + std::to_string(i + 1);
+    bool has_valid_rownames = !Rf_isNull(original_rownames) && 
+         original_rownames.size() == n_features;
+  
+    if( !has_valid_rownames ){
+        Rcpp::warning("No rownames found in the matrix. "
+                      "Generated labels like Feature1 will be used.");
     }
-    
+  
     // Prepare output vectors
     std::vector<int> i_vec, j_vec;
     std::vector<double> x_vec;
@@ -40,12 +40,16 @@ S4 apply_transformation_difference(NumericMatrix mat) {
                     x_vec.push_back(diff);
                 }
             }
-            // Row name for this pair
-            rownames[pair_idx] =
-                std::string("diff_") +
-                std::to_string(i + 1) +
-                "_-_" +
-                std::to_string(j + 1);
+            // Rownames
+            std::string name_i = has_valid_rownames
+                ? as<std::string>(original_rownames[i])
+                : "Feature" + std::to_string(i + 1);
+          
+            std::string name_j = has_valid_rownames
+                ? as<std::string>(original_rownames[j])
+                : "Feature" + std::to_string(j + 1);
+          
+            rownames[pair_idx] = "diff_" + name_i + "-" + name_j;
             ++pair_idx;
         }
     }
@@ -61,11 +65,12 @@ S4 apply_transformation_difference(NumericMatrix mat) {
     // Convert dgTMatrix to dgCMatrix
     Function as("as");
     S4 cmat = as(tmat, "CsparseMatrix");
-    
+  
     // Add attribute
     cmat.attr("mia") = "difference";
     return cmat;
 }
+
 
 
 // [[Rcpp::export(name = ".apply_transformation_division")]]
@@ -98,16 +103,16 @@ S4 apply_transformation_division(NumericMatrix mat, double pseudocount = 1e-6) {
                 mat(i, j) += pseudocount;
     }
     
-    // Generate rownames if missing
+    // Generate default rownames if not present
     CharacterVector original_rownames = rownames(mat);
-    if( original_rownames.isNULL() ){
-        Rcpp::warning("No rownames found in the matrix, generated names "
-                      "will be used.");
-        original_rownames = CharacterVector(n_features);
-        for( int i = 0; i < n_features; ++i )
-            original_rownames[i] = "Feature" + std::to_string(i + 1);
-    }
-  
+    bool has_valid_rownames = !Rf_isNull(original_rownames) && 
+        original_rownames.size() == n_features;
+    
+        if( !has_valid_rownames ){
+            Rcpp::warning("No rownames found in the matrix. "
+                          "Generated labels like Feature1 will be used.");
+        }
+    
     // Prepare output vectors
     std::vector<int> i_vec, j_vec;
     std::vector<double> x_vec;
@@ -127,12 +132,16 @@ S4 apply_transformation_division(NumericMatrix mat, double pseudocount = 1e-6) {
                     }
                 }
             }
-            // Row name for this pair
-            rownames[pair_idx] =
-                std::string("div_") +
-                std::to_string(i + 1) +
-                "_over_" +
-                std::to_string(j + 1);
+            // Rownames
+            std::string name_i = has_valid_rownames
+                ? as<std::string>(original_rownames[i])
+                : "Feature" + std::to_string(i + 1);
+          
+            std::string name_j = has_valid_rownames
+                ? as<std::string>(original_rownames[j])
+                : "Feature" + std::to_string(j + 1);
+          
+            rownames[pair_idx] = "div_" + name_i + "/" + name_j;
             ++pair_idx;
         }
     }
