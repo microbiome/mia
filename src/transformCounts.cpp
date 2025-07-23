@@ -42,11 +42,11 @@ S4 apply_transformation_difference(NumericMatrix mat) {
             }
             // Row name for this pair
             rownames[pair_idx] =
-                std::string("div_") +
+                std::string("diff_") +
                 std::to_string(i + 1) +
-                "_over_" +
+                "_-_" +
                 std::to_string(j + 1);
-          ++pair_idx;
+            ++pair_idx;
         }
     }
   
