@@ -657,6 +657,11 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
             message("The assay contains already only strictly positive ",
                     "values. Pseudocount is not added.")
         }
+        # If there are zeroes, add pseudocount
+        if( any(mat == 0, na.rm = TRUE) ){
+            message("Zero values detected in the matrix. A pseudocount will ",
+                    "be added.")
+        }
         # If pseudocount TRUE, set it to half of non-zero minimum value
         # else set it to zero.
         # Get min value
@@ -797,14 +802,63 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 # Computes all pairwise differences (x - y) between features across samples.
 # Returns a sparse matrix with one row per feature pair.
 # Uses C++ to improve performance on large input matrices.
+#' @useDynLib mia, .registration = TRUE
+#' @importFrom Rcpp evalCpp
+NULL
+#' @keywords internal
+.apply_transformation_difference <- function(mat) {
+  
+    if( nrow(mat) > 1000 ){
+        warning("The input matrix has over 1000 features, which may cause ",
+                "performance issues.")
+    }
+  
+    if( is.null(rownames(mat)) ){
+        warning("No rownames found in the matrix. Generated labels like ",
+                "Feature1 will be used.")
+        rownames(mat) <- paste0("Feature", seq_len(nrow(mat)))
+    }
+  
+    res <- .Call(`_mia_apply_transformation_difference`, mat)
+  
+    # Add rownames
+    pairs <- combn(rownames(mat), 2, FUN = function(x) 
+                   paste0("diff_", x[1], "-", x[2]))
+    rownames(res) <- pairs
+  
+    return(res)
+}
+
 ############################ .apply_transformation_division ###################
 # Computes all pairwise ratios (x / y) between features across samples.
 # Returns a sparse matrix with one row per feature pair.
 # Uses C++ to improve performance on large input matrices.
-#' @useDynLib mia, .registration = TRUE
-#' @importFrom Rcpp evalCpp
-NULL
-
+#' @keywords internal
+.apply_transformation_division <- function(mat, pseudocount = 1e-6) {
+  
+    if( nrow(mat) > 1000 ){
+        warning("The input matrix has over 1000 features, which may cause ",
+                "performance issues.")
+    }
+  
+    mat <- .apply_pseudocount(mat, pseudocount)
+  
+    if( is.null(rownames(mat)) ){
+        warning("No rownames found in the matrix. Generated labels like ",
+                "Feature1 will be used.")
+        rownames(mat) <- paste0("Feature", seq_len(nrow(mat)))
+    }
+  
+    res <- .Call(`_mia_apply_transformation_division`, mat, pseudocount)
+  
+    # Add rownames
+    pairs <- combn(rownames(mat), 2, FUN = function(x) 
+                   paste0("div_", x[1], "/", x[2]))
+    rownames(res) <- pairs
+  
+    return(res)
+}
+                   
 # This function is used to add transformed table back to TreeSE. With most of
 # the methods it is simple: it is added to assay. However, with transformations 
 # that change the dimensionality (e.g. philr, difference, division), the 
