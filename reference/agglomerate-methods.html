@@ -4,10 +4,10 @@ such as taxonomic ranks, variables or prevalence.
 agglomerateByRank can be used to sum up data based on associations
 with certain taxonomic ranks, as defined in rowData. Only available
 taxonomyRanks can be used.
-agglomerateByVariable merges data on rows or columns of a
-SummarizedExperiment as defined by a factor alongside the
-chosen dimension. This function allows agglomeration of data based on other
-variables than taxonomy ranks.
+agglomerateByVariable and agglomerateByModule merge data on
+rows or columns of a SummarizedExperiment as defined by a
+factor alongside the chosen dimension. This function allows
+agglomeration of data based on other variables than taxonomy ranks.
 Metadata from the rowData or colData are
 retained as defined by archetype.
 assay are
@@ -37,7 +37,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.6</span>
       </span>
     </div>
 
@@ -64,7 +64,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Agglomerate data using taxonomic information or other grouping</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/rw/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/rw/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/rw/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/giulio/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/giulio/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/giulio/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
     <div class="hidden name"><code>agglomerate-methods.Rd</code></div>
     </div>
 
@@ -74,10 +74,10 @@ such as taxonomic ranks, variables or prevalence.</p>
 <p><code>agglomerateByRank</code> can be used to sum up data based on associations
 with certain taxonomic ranks, as defined in <code>rowData</code>. Only available
 <code><a href="taxonomy-methods.html">taxonomyRanks</a></code> can be used.</p>
-<p><code>agglomerateByVariable</code> merges data on rows or columns of a
-<code>SummarizedExperiment</code> as defined by a <code>factor</code> alongside the
-chosen dimension. This function allows agglomeration of data based on other
-variables than taxonomy ranks.
+<p><code>agglomerateByVariable</code> and <code>agglomerateByModule</code> merge data on
+rows or columns of a <code>SummarizedExperiment</code> as defined by a
+<code>factor</code> alongside the chosen dimension. This function allows
+agglomeration of data based on other variables than taxonomy ranks.
 Metadata from the <code>rowData</code> or <code>colData</code> are
 retained as defined by <code>archetype</code>.
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> are
@@ -96,6 +96,8 @@ experiments and flattens them again into a single
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">agglomerateByModule</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">agglomerateByRanks</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -143,6 +145,9 @@ experiments and flattens them again into a single
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">x</span>, <span class="va">by</span>, group <span class="op">=</span> <span class="va">f</span>, <span class="va">f</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
+<span><span class="fu">agglomerateByModule</span><span class="op">(</span><span class="va">x</span>, <span class="va">by</span>, <span class="va">group</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">agglomerateByRanks</span><span class="op">(</span></span>
@@ -263,9 +268,11 @@ Must be <code>'rows'</code> or <code>'cols'</code>.</p></dd>
 <code>factor vector</code>. A column name from <code>rowData(x)</code> or
 <code>colData(x)</code> or alternatively a vector specifying how the merging is
 performed. If vector, the value must be the same length as
-<code>nrow(x)/ncol(x)</code>. Rows/Cols corresponding to the same level will be
-merged. If <code>length(levels(group)) == nrow(x)/ncol(x)</code>, <code>x</code> will be
-returned unchanged.</p></dd>
+<code>nrow(x)/ncol(x)</code>. Rows or columns corresponding to the same level will
+be merged. If <code>length(levels(group)) == nrow(x)/ncol(x)</code>, <code>x</code> will
+be returned unchanged. For <code>agglomerateByModule</code>, <code>group</code> should
+specify one or several names of logical or numeric binary variables from the
+<code>rowData(x)/colData(x)</code> by which to agglomerate rows or columns.</p></dd>
 
 
 <dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
@@ -276,14 +283,14 @@ returned unchanged.</p></dd>
 <dd><p>Deprecated. Use <code>update.tree</code> instead.</p></dd>
 
 
-<dt id="arg-ranks">ranks<a class="anchor" aria-label="anchor" href="#arg-ranks"></a></dt>
-<dd><p><code>Character vector</code>. Defines taxonomic ranks. Must all be
-values of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
-
-
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
 <dd><p><code>Logical scalar</code>. Should NA values be omitted?
 (Default: <code>TRUE</code>)</p></dd>
+
+
+<dt id="arg-ranks">ranks<a class="anchor" aria-label="anchor" href="#arg-ranks"></a></dt>
+<dd><p><code>Character vector</code>. Defines taxonomic ranks. Must all be
+values of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
 
 
 <dt id="arg-as-list">as.list<a class="anchor" aria-label="anchor" href="#arg-as-list"></a></dt>
@@ -308,10 +315,9 @@ breaks the link between the data used to calculate the reduced dims.
     <h2>Value</h2>
     <p><code>agglomerateByRank</code> returns a taxonomically-agglomerated,
 optionally-pruned object of the same class as <code>x</code>.
-<code>agglomerateByVariable</code> returns an object of the same class as <code>x</code>
-with the specified entries merged into one entry in all relevant components.
-<code>agglomerateByRank</code> returns a taxonomically-agglomerated,
-optionally-pruned object of the same class as <code>x</code>.</p>
+<code>agglomerateByVariable</code> and <code>agglomerateByModule</code> return an object
+of the same class as <code>x</code> with the specified entries merged into one
+entry in all relevant components.</p>
 <p>For <code>agglomerateByRanks</code>:
 If <code>as.list = TRUE</code> : <code>SummarizedExperiment</code> objects in a
 <code>SimpleList</code>
@@ -333,8 +339,13 @@ agglomeration first, and then applying the transformation afterwards.</p>
 <code><a href="https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html" class="external-link">sumCountsAcrossFeatures</a></code>.
 However, additional support for <code>TreeSummarizedExperiment</code> was added and
 science field agnostic names were used. In addition the <code>archetype</code>
-argument lets the user select how to preserve row or column data.</p>
-<p>For merge data of assays the function from <code>scuttle</code> are used.</p>
+argument lets the user select how to preserve row or column data. For merge
+data of assays the function from <code>scuttle</code> are used.</p>
+<p><code>agglomerateByModule</code> allows to agglomerate features or samples based
+on one or multiple variables of logical or numeric binary (0/1) type. It is
+particularly useful for agglomerating by functional modules, each specified
+by a logical or binary variable in the <code>rowData</code>, as one feature can
+belong to several modules.</p>
 <p><code>agglomerateByRanks</code> will use by default all available taxonomic ranks,
 but
 this can be controlled by setting <code>ranks</code> manually. <code>NA</code> values
@@ -550,6 +561,33 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Agglomerate by multiple modules</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Generate 30 random modules</span></span></span>
+<span class="r-in"><span><span class="va">N_module</span> <span class="op">&lt;-</span> <span class="fl">30L</span></span></span>
+<span class="r-in"><span><span class="va">modules</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">*</span> <span class="va">N_module</span>,</span></span>
+<span class="r-in"><span>    prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.8</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    replace <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Convert modules to matrix</span></span></span>
+<span class="r-in"><span><span class="va">modules</span> <span class="op">&lt;-</span> <span class="va">modules</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Add feature names as rownames</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">modules</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Add module names as colnames</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">modules</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"module_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">modules</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Store modules table in metadata slot</span></span></span>
+<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">modules</span> <span class="op">&lt;-</span> <span class="va">modules</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Agglomerate based on modules</span></span></span>
+<span class="r-in"><span><span class="va">tse_module</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByModule</span><span class="op">(</span><span class="va">tse</span>, by <span class="op">=</span> <span class="fl">1</span>, group <span class="op">=</span> <span class="st">"modules"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'pa' includes binary values.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> Agglomeration of it might lead to meaningless values.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> Check the assay, and consider doing transformation againmanually with agglomerated data.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># print the available taxonomic ranks</span></span></span>
