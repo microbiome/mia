@@ -447,8 +447,7 @@ test_that("transformAssay", {
         
         # Apply division transformation
         tse_sub <- transformAssay(
-          tse_sub, method = "division", assay.type = "counts", 
-          pseudocount = TRUE, name = "division"
+          tse_sub, method = "division", assay.type = "counts", name = "division"
         )
         
         # Check that altExp exists
