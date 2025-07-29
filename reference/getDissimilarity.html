@@ -50,7 +50,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate dissimilarities</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/giulio/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/giulio/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/co/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/co/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
     <div class="hidden name"><code>getDissimilarity.Rd</code></div>
     </div>
 
@@ -314,13 +314,13 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-in"><span>    <span class="va">tse</span>, method <span class="op">=</span> <span class="st">"euclidean"</span>, transf <span class="op">=</span> <span class="va">rclr</span>, niter <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The following sampling units were removed because they were below sampling depth: CL3, CC1, SV1, M31Fcsw, M11Fcsw, M31Plmr, M11Plmr, F21Plmr, M31Tong, M11Tong, LMEpi24M, SLEpi20M, AQC1cm, AQC4cm, AQC7cm, NP2, NP3, NP5, TRRsed1, TRRsed2, TRRsed3, TS28, TS29, Even1, Even2, Even3</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           1         2         3         4         5         6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0.00000  18.91211  56.61105 122.83058 112.14053 134.94832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  18.91211   0.00000  45.98824 127.87625 116.45978 129.18737</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  56.61105  45.98824   0.00000 108.33852  96.92338  92.90449</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 122.83058 127.87625 108.33852   0.00000  12.47208  77.54683</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 112.14053 116.45978  96.92338  12.47208   0.00000  71.20355</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 134.94832 129.18737  92.90449  77.54683  71.20355   0.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           1         2         3          4          5         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0.00000  13.95258  48.65163 119.623078 112.508530 143.65528</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  13.95258   0.00000  43.54083 125.343910 118.143560 140.58705</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  48.65163  43.54083   0.00000 108.001891 101.579286 105.12154</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 119.62308 125.34391 108.00189   0.000000   8.304836  89.18377</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 112.50853 118.14356 101.57929   8.304836   0.000000  88.47285</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 143.65528 140.58705 105.12154  89.183766  88.472851   0.00000</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
