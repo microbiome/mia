@@ -34,7 +34,7 @@
 #' science field agnostic names were used. In addition the \code{archetype}
 #' argument lets the user select how to preserve row or column data. For merge
 #' data of assays the function from \code{scuttle} are used.
-#' 
+#'
 #' \code{agglomerateByModule} allows to agglomerate features or samples based
 #' on one or multiple variables of logical or numeric binary (0/1) type. It is
 #' particularly useful for agglomerating by functional modules, each specified
@@ -218,9 +218,9 @@
 #' merged <- agglomerateByVariable(
 #'     GlobalPatterns, by = "cols", colData(GlobalPatterns)$SampleType)
 #' merged
-#' 
+#'
 #' ## Agglomerate by multiple modules
-#' 
+#'
 #' # Generate 30 random modules
 #' N_module <- 30L
 #' modules <- sample(
@@ -239,7 +239,7 @@
 #' colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
 #' # Store modules table in metadata slot
 #' metadata(tse)$modules <- modules
-#' 
+#'
 #' # Agglomerate based on modules
 #' tse_module <- agglomerateByModule(tse, by = 1, group = "modules")
 #'
@@ -444,8 +444,10 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
         # Construct module-wise experiment
         x <- do.call(class(x), list(
             assays = assays,
-            colData = if (by == 1L) colData(x) else DataFrame(row.names = colnames(modules)),
-            rowData = if (by == 1L) DataFrame(row.names = colnames(modules)) else rowData(x),
+            colData = if (by == 1L)
+                colData(x) else DataFrame(row.names = colnames(modules)),
+            rowData = if (by == 1L)
+                DataFrame(row.names = colnames(modules)) else rowData(x),
             metadata = metadata(x))
         )
         # Add new names to agglomerated dimension

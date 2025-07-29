@@ -187,6 +187,10 @@
     return(assay)
 }
 
+# This function checks that modules are in correct format, i.e., there should
+# be module information for each row/column. Columns should represent modules
+# and rows features. Each cell specifies the membership of feature to the
+# specific module.
 .check_and_process_modules <- function(modules, x, by){
     # Select side information based on margin
     FUN <- switch(by, rowData, colData)
@@ -230,7 +234,8 @@
     return(modules)
 }
 
-.agglomerate_module_assay <- function(assay.type, assay, by, modules, na.rm) {
+# This function agglomerates an abundance table based on modules.
+.agglomerate_module_assay <- function(assay.type, assay, by, modules, na.rm){
     # Check assay
     .check_assay_for_merge(assay.type, assay)
     # Replace NAs with 0
