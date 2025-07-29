@@ -820,7 +820,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     if( !.is_a_numeric(threshold) ){
         stop("'threshold' must be a single numeric value.", call. = FALSE)
     }
-    if( !(.is_a_numeric(value) || is.na(value)) ){
+    if( length(value) != 1L || (!is.numeric(value) && !is.na(value)) ){
         stop("'value' must be a single numeric value or NA.", call. = FALSE)
     }
     mat[ mat <= threshold ] <- value
