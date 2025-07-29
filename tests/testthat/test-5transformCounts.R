@@ -405,6 +405,23 @@ test_that("transformAssay", {
             check.attributes = FALSE
         )
         expect_equal(colData(tse), colData(altExp(tse, "philr")))
+        ################################# CUTOFF ###############################
+        # Basic cutoff with NA value
+        expect_identical(
+            .apply_cutoff(c(0, 1, 2, 3, 0.5), 1), 
+            c(NA, NA, 2, 3, NA)
+        )
+        # Basic cutoff with numeric replacement
+        expect_identical(
+            .apply_cutoff(c(0, 1, 2, 3, 0.5), 2, value = 999), 
+            c(999, 999, 999, 3, 999)
+        )
+        # Error on non-length-1 value
+        expect_error(
+            .apply_cutoff(c(1, 2, 3), 1, value = c(1, 2)),
+            "'value' must be a single numeric value or NA"
+        )
+        
     }
 
     # TSE object

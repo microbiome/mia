@@ -43,8 +43,11 @@ the magnitude of the normalized counts. (Default: \code{1000}).
 specifies relative difference threshold and determines the first point
 where the relative change in  differences between consecutive quantiles
 exceeds this threshold. (Default: \code{0.1}) For \code{"cutoff"},
-values less than or equal to the threshold are replaced with \code{NA}.
+values less than or equal to the threshold are replaced with \code{value}.
 (Default: \code{0})
+\item \code{value}: \code{Numeric scalar}. For  \code{"cutoff"}, specifies
+the replacement value for counts less than or equal to the threshold.
+(Default: \code{NA})
 \item \code{tree}: \code{phylo}. Phylogeny used in PhILR transformation.
 If \code{NULL}, the tree is retrieved from \code{x}.
 (Default: \code{NULL}).
@@ -134,7 +137,7 @@ where \eqn{x} is a single value of data.
 
 \item 'cutoff': In some ecological studies, only strictly positive values
 are taken into account. This method keeps only values greater than
-\code{threshold} and replaces all other values with \code{NA}.
+\code{threshold} and replaces all other values with \code{value}.
 
 }
 }

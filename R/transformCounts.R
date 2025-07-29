@@ -48,8 +48,11 @@
 #'   specifies relative difference threshold and determines the first point
 #'   where the relative change in  differences between consecutive quantiles
 #'   exceeds this threshold. (Default: \code{0.1}) For \code{"cutoff"},
-#'   values less than or equal to the threshold are replaced with \code{NA}.
+#'   values less than or equal to the threshold are replaced with \code{value}.
 #'   (Default: \code{0})
+#'   \item \code{value}: \code{Numeric scalar}. For  \code{"cutoff"}, specifies
+#'   the replacement value for counts less than or equal to the threshold. 
+#'   (Default: \code{NA})
 #'   \item \code{tree}: \code{phylo}. Phylogeny used in PhILR transformation.
 #'   If \code{NULL}, the tree is retrieved from \code{x}.
 #'   (Default: \code{NULL}).
@@ -102,7 +105,7 @@
 #'
 #' \item 'cutoff': In some ecological studies, only strictly positive values
 #' are taken into account. This method keeps only values greater than
-#' \code{threshold} and replaces all other values with \code{NA}.
+#' \code{threshold} and replaces all other values with \code{value}.
 #'
 #' }
 #'
@@ -813,10 +816,13 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 }
 
 # This function replaces values under or equal to threshold with NA
-.apply_cutoff <- function(mat, threshold = 0, ...){
+.apply_cutoff <- function(mat, threshold = 0, value = NA, ...){
     if( !.is_a_numeric(threshold) ){
-        stop("'threshold' must be a single numierc value.", call. = FALSE)
+        stop("'threshold' must be a single numeric value.", call. = FALSE)
     }
-    mat[ mat <= threshold ] <- NA
+    if( length(value) != 1L || (!is.numeric(value) && !is.na(value)) ){
+        stop("'value' must be a single numeric value or NA.", call. = FALSE)
+    }
+    mat[ mat <= threshold ] <- value
     return(mat)
 }
