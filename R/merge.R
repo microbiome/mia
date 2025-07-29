@@ -124,20 +124,42 @@
     return(x)
 }
 
+
+# This function works similarly to scuttle::sumCountsAcrossFeatures but this
+# excludes NAs from the data. The scuttle function cannot handle NAs.
+#' @importFrom DelayedArray DelayedArray type rowsum
+.sum_counts_accross_features_na <- function(x, average, ids, ...){
+    # Which cell is not NA?
+    is_not_na <- !is.na(x)
+    type(is_not_na) <- "integer"
+    # Aggregate data to certain groups
+    x <- rowsum(x, ids, na.rm = TRUE)
+    # Calculate average if specified
+    if( average ){
+        x <- x/rowsum(is_not_na, ids)
+    }
+    return(x)
+}
+
+# This functions checks if assay has negative or binary values. It does not
+# make sense to sum them, so we give warning to user.
 .check_assay_for_merge <- function(assay.type, assay){
-    value.warning <- paste(c("\nAgglomeration of it might lead to meaningless ",
-        "values.\nCheck the assay, and consider doing transformation again ",
-        "manually with agglomerated data."))
-    # Check if assay includes binary values
+    # Check if assays include binary or negative values
     if( all(assay == 0 | assay == 1) ){
         warning("'", assay.type, "'", " includes binary values.",
-                value.warning, call. = FALSE)
+                "\nAgglomeration of it might lead to meaningless values.",
+                "\nCheck the assay, and consider doing transformation again",
+                "manually with agglomerated data.",
+                call. = FALSE)
     }
-    # Check if assay includes negative values
-    if( !all(assay >= 0 | is.na(assay)) ){
+    if( !all( assay >= 0 | is.na(assay) ) ){
         warning("'", assay.type, "'", " includes negative values.",
-                value.warning, call. = FALSE)
+                "\nAgglomeration of it might lead to meaningless values.",
+                "\nCheck the assay, and consider doing transformation again",
+                "manually with agglomerated data.",
+                call. = FALSE)
     }
+    return(assay)
 }
 
 #' @importFrom DelayedArray DelayedArray type rowsum
@@ -153,19 +175,12 @@
     }
     # Check if NAs are present
     is_not_na <- !is.na(assay)
-    if( na.rm && any(!is_not_na) ){
-        type(is_not_na) <- "integer"
-        # Aggregate data to certain groups
-        assay <- rowsum(assay, ids, na.rm = TRUE)
-        # Calculate average if specified
-        if( average ){
-            assay <- assay / rowsum(is_not_na, ids)
-        }
-    }else{
-        assay <- sumCountsAcrossFeatures(
-            assay, ids, average = average, BPPARAM = BPPARAM
-        )
-    }
+    # Get the aggregation function based on whether user wants to exclude NAs
+    # and if there are any NAs. scuttle::sumCountsAcrossFeatures cannot handle
+    # NAs so if user wants to exclude them, we use own implementation.
+    FUN <- if( na.rm && any(!is_not_na) ) .sum_counts_accross_features_na else
+        sumCountsAcrossFeatures
+    assay <- FUN(assay, ids, average = average, BPPARAM = BPPARAM)
     # Transpose back to original orientation
     if( by == 2L ){
         assay <- t(assay)
