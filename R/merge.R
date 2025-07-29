@@ -124,7 +124,6 @@
     return(x)
 }
 
-
 # This function works similarly to scuttle::sumCountsAcrossFeatures but this
 # excludes NAs from the data. The scuttle function cannot handle NAs.
 #' @importFrom DelayedArray DelayedArray type rowsum
