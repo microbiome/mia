@@ -2,13 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 .faith_cpp <- function(assay, rowTree) {
-    .Call('_mia_faith_cpp', PACKAGE = 'mia', assay, rowTree)
+    .Call(`_mia_faith_cpp`, assay, rowTree)
 }
 
-.apply_transformation_difference <- function(mat) {
-    .Call(`_mia_apply_transformation_difference`, mat)
+.apply_transformation_difference_or_division <- function(mat, method = "difference") {
+    .Call(`_mia_apply_transformation_difference_or_division`, mat, method)
 }
 
-.apply_transformation_division <- function(mat, pseudocount = 1e-6) {
-    .Call(`_mia_apply_transformation_division`, mat, pseudocount)
-}

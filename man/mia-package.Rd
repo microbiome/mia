@@ -54,6 +54,7 @@ Other contributors:
   \item Danielle Callan [contributor]
   \item Sam Hillman [contributor]
   \item Jesse Pasanen [contributor]
+  \item Eetu Tammi [contributor]
 }
 
 }
