@@ -309,10 +309,14 @@ setMethod("addPairwiseTest", signature(x = "SummarizedExperiment"),
         FUN <- rstatix::pairwise_t_test
         effect_fun <- rstatix::cohens_d
     } else if ( significance.method %in% c("kruskal", "kruskal.test") ) {
+        
+        if (paired) {
+            stop("Kruskal-Wallis does not support paired comparisons.", call. = FALSE)
+        }
+        
         global <- rstatix::kruskal_test(formula, data = df, ...)
-        pw <- rstatix::pairwise_wilcox_test(
-            formula, data = df, p.adjust.method = p.adjust.method,
-            paired = paired, ...
+        pw <- rstatix::dunn_test(
+            formula, data = df, p.adjust.method = p.adjust.method, ...
         )
         effect_fun <- rstatix::kruskal_effsize
         pw <- .add_group_means_log2fc(df, group, pw, y)
@@ -341,7 +345,6 @@ setMethod("addPairwiseTest", signature(x = "SummarizedExperiment"),
                     res_test,
                     df_group %>% select(all_of(grouping_vars)) %>% distinct()
                 )
-                
                 if ( include.effect ) {
                     # Calculate effect sizes for this group
                     res_eff <- effect_fun(
