@@ -37,9 +37,10 @@
 #'
 #' \code{agglomerateByModule} allows to agglomerate features or samples based
 #' on one or multiple variables of logical or numeric binary (0/1) type. It is
-#' particularly useful for agglomerating by functional modules, each specified
-#' by a logical or binary variable in the \code{rowData}, as one feature can
-#' belong to several modules.
+#' particularly useful for agglomerating by taxonomic or functional modules,
+#' stored in a \code{metadata} slot of choice as a \code{matrix} with logical or
+#' numeric binary values, where rows correspond to features (or samples) and
+#' columns reflect modules.
 #'
 #' @return
 #' \code{agglomerateByRank} returns a taxonomically-agglomerated,
@@ -242,6 +243,8 @@
 #'
 #' # Agglomerate based on modules
 #' tse_module <- agglomerateByModule(tse, by = 1, group = "modules")
+#' # Optionally, store results into altExp slot
+#' altExp(tse, "modules") <- tse_module
 #'
 #' @seealso
 #' \code{\link[=splitOn]{splitOn}}

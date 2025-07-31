@@ -104,8 +104,8 @@
     assays <- assays(x)
     # Merge assays
     assays <- mapply(.agglomerate_assay, assayNames(x), assays, MoreArgs = list(
-        ids = f, by = by, na.rm = na.rm, average = average, BPPARAM = BPPARAM),
-        SIMPLIFY = FALSE)
+        ids = f, by = by, na.rm = na.rm, average = average, BPPARAM = BPPARAM,
+        check.assay = check.assays), SIMPLIFY = FALSE)
     # Convert to SimpleList
     assays <- assays |> SimpleList()
     # Now we have agglomerated assays, but TreeSE has still the original form.
@@ -164,10 +164,12 @@
 #' @importFrom DelayedArray DelayedArray type rowsum
 #' @importFrom scuttle sumCountsAcrossFeatures
 .agglomerate_assay <- function(
-    assay.type, assay, by, ids, na.rm, average, BPPARAM
+    assay.type, assay, by, ids, na.rm, average, BPPARAM, check.assay
     ){
     # Check assay
-    .check_assay_for_merge(assay.type, assay)
+    if( check.assay ){
+        .check_assay_for_merge(assay.type, assay)
+    }
     # Transpose if we are merging columns
     if( by == 2L ){
         assay <- t(assay)
