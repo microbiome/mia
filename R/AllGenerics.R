@@ -398,6 +398,16 @@ setGeneric("getMDS", signature = "x", function(x, ...)
 setGeneric("addMDS", signature = "x", function(x, ...)
     standardGeneric("addMDS"))
 
+#' @rdname getPairwiseTest
+#' @export
+setGeneric("getPairwiseTest", signature = "x", function( x, ...) 
+    standardGeneric("getPairwiseTest"))
+
+#' @rdname addPairwiseTest
+#' @export
+setGeneric("addPairwiseTest", signature = "x", function( x, ...) 
+    standardGeneric("addPairwiseTest"))
+
 #' @rdname utilization_functions
 #' @export
 setGeneric("getReducedDimAttribute", signature = "x", function(x, ...)
