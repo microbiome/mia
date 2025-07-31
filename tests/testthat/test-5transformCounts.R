@@ -405,6 +405,113 @@ test_that("transformAssay", {
             check.attributes = FALSE
         )
         expect_equal(colData(tse), colData(altExp(tse, "philr")))
+
+        ################################# CUTOFF ###############################
+        # Basic cutoff with NA value
+        expect_identical(
+            .apply_cutoff(c(0, 1, 2, 3, 0.5), 1),
+            c(NA, NA, 2, 3, NA)
+        )
+        # Basic cutoff with numeric replacement
+        expect_identical(
+            .apply_cutoff(c(0, 1, 2, 3, 0.5), 2, value = 999),
+            c(999, 999, 999, 3, 999)
+        )
+        # Error on non-length-1 value
+        expect_error(
+            .apply_cutoff(c(1, 2, 3), 1, value = c(1, 2)),
+            "'value' must be a single numeric value or NA"
+        )
+
+	      ############################## DIFFERENCE #############################
+        # Test that difference transformation works on GlobalPatterns subset
+        # Load data
+        data("GlobalPatterns")
+        tse <- GlobalPatterns
+
+        # Subset: 50 taxa, 10 samples
+        tse_sub <- tse[1:50, 1:10]
+
+        # Apply difference transformation
+        tse_sub <- transformAssay(
+            tse_sub, method = "difference", assay.type = "counts",
+            name = "difference", MARGIN = 1L
+        )
+
+        # Check that altExp exists
+        expect_true("difference" %in% altExpNames(tse_sub))
+
+        # Extract result
+        diff <- assay(altExp(tse_sub, "difference"))
+
+        # Expected dimensions
+        expect_equal(nrow(diff), choose(nrow(tse_sub), 2))
+        expect_equal(ncol(diff), ncol(tse_sub))
+
+        # Check that result is a sparse matrix
+        expect_s4_class(diff, "dgCMatrix")
+
+        # Check values (non-zero entries in sparse matrix)
+        expect_false(any(is.na(diff@x)))
+        expect_false(any(is.infinite(diff@x)))
+
+        # Metadata
+        expect_equal(attr(diff, "mia"), "difference")
+
+        # Check values
+        mat <- assay(tse_sub, "counts")
+        # Run a check across all feature pairs
+        feature_pairs <- rownames(diff)
+        all_correct <- sapply(feature_pairs, function(pair){
+            features <- unlist(strsplit(pair, "-", fixed = TRUE))
+            all(diff[pair, ] == (mat[features[1], ] - mat[features[2], ]))
+        })
+        all_correct |> all() |> expect_true()
+
+        ############################### DIVISION ###############################
+        # Test that division transformation works on GlobalPatterns subset
+        # Reset subset again (fresh counts)
+        tse_sub <- GlobalPatterns[1:50, 1:10]
+
+        # Apply division transformation
+        tse_sub <- transformAssay(
+            tse_sub, method = "division", assay.type = "counts",
+            name = "division", MARGIN = 1L
+        ) |> expect_warning() # Expect warning for 0 values
+
+        # Check that altExp exists
+        expect_true("division" %in% altExpNames(tse_sub))
+
+        # Extract result
+        div <- assay(altExp(tse_sub, "division"))
+
+        # Expected dimensions
+        expect_equal(nrow(div), choose(nrow(tse_sub), 2))
+        expect_equal(ncol(div), ncol(tse_sub))
+
+        # Check that result is a sparse matrix
+        expect_s4_class(div, "dgCMatrix")
+
+        # Check values (non-zero entries in sparse matrix)
+        expect_false(any(is.na(div@x)))
+        expect_false(any(is.infinite(div@x)))
+
+        # Metadata
+        expect_equal(attr(div, "mia"), "division")
+
+        # Check values
+        mat <- assay(tse_sub, "counts")
+        # Run a check across all feature pairs
+        feature_pairs <- rownames(div)
+        all_correct <- sapply(feature_pairs, function(pair){
+            features <- unlist(strsplit(pair, "-", fixed = TRUE))
+            ref <- (mat[features[1], ] / mat[features[2], ])
+            # The function does not store infinite numbers caused by zero
+            # division, which make them 0
+            ref[ mat[features[2], ] == 0 ] <- 0
+            all(div[pair, ] == ref)
+        })
+        all_correct |> all() |> expect_true()
     }
 
     # TSE object

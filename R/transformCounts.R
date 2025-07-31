@@ -48,8 +48,11 @@
 #'   specifies relative difference threshold and determines the first point
 #'   where the relative change in  differences between consecutive quantiles
 #'   exceeds this threshold. (Default: \code{0.1}) For \code{"cutoff"},
-#'   values less than or equal to the threshold are replaced with \code{NA}.
+#'   values less than or equal to the threshold are replaced with \code{value}.
 #'   (Default: \code{0})
+#'   \item \code{value}: \code{Numeric scalar}. For  \code{"cutoff"}, specifies
+#'   the replacement value for counts less than or equal to the threshold.
+#'   (Default: \code{NA})
 #'   \item \code{tree}: \code{phylo}. Phylogeny used in PhILR transformation.
 #'   If \code{NULL}, the tree is retrieved from \code{x}.
 #'   (Default: \code{NULL}).
@@ -98,11 +101,19 @@
 #' log2 = log2(x)}
 #' where \eqn{x} is a single value of data.
 #'
+#' \item 'difference': Pairwise differences between features.
+#' Calculates \eqn{x - y} for all unique feature pairs across samples,
+#' where \eqn{x} and \eqn{y} are entries of the specified assay.type.
+#'
+#' \item 'division': Pairwise ratios between features.
+#' Calculates \eqn{x / y} for all unique feature pairs across samples,
+#' where \eqn{x} and \eqn{y} are entries of the specified assay.type.
+#'
 #' \item 'pseudocount': Adds only pseudocount.
 #'
 #' \item 'cutoff': In some ecological studies, only strictly positive values
 #' are taken into account. This method keeps only values greater than
-#' \code{threshold} and replaces all other values with \code{NA}.
+#' \code{threshold} and replaces all other values with \code{value}.
 #'
 #' }
 #'
@@ -247,10 +258,10 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 .transform_assay <- function(
         x, assay.type = "counts", assay_name = NULL,
         method = c(
-            "alr", "chi.square", "clr", "css", "cutoff", "frequency",
-            "hellinger", "log", "log10", "log2", "max", "normalize",
-            "pa", "philr", "pseudocount", "range", "rank", "rclr",
-            "relabundance", "rrank", "standardize", "total", "z"),
+            "alr", "chi.square", "clr", "css", "cutoff", "difference", "-",
+            "division", "/", "frequency", "hellinger", "log", "log10", "log2",
+            "max", "normalize", "pa", "philr", "pseudocount", "range", "rank",
+            "rclr", "relabundance", "rrank", "standardize", "total", "z"),
         MARGIN = "samples",
         name = method,
         pseudocount = FALSE,
@@ -275,6 +286,9 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
             call. = FALSE)
     }
     method <- match.arg(method, several.ok = FALSE)
+    # Division and difference methods have aliases
+    method <- if( method %in% c("-") ) "difference" else method
+    method <- if( method %in% c("/") ) "division" else method
     # Check that MARGIN is 1 or 2
     MARGIN <- .check_MARGIN(MARGIN)
     # Check pseudocount
@@ -299,7 +313,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     attr(assay, "pseudocount") <- NULL
     # Calls help function that does the transformation
     # Help function is different for mia and vegan transformations
-    if( method %in% c("log10", "log2", "css") ){
+    if( method %in% c("log10", "log2", "css", "difference", "division") ){
         transformed_table <- .apply_transformation(
             assay, method, MARGIN, ...)
     } else if( method %in% c("philr") ){
@@ -335,19 +349,21 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         method,
         log10 = .calc_log,
         log2 = .calc_log,
-        css = .calc_css
+        css = .calc_css,
+        difference = .apply_transformation_difference_or_division,
+        division = .apply_transformation_difference_or_division
     )
     # Get transformed table
-    transformed_table <- do.call(
+    assay <- do.call(
         FUN, list(mat = assay, method = method, MARGIN = MARGIN, ...) )
     # Transpose back to normal if MARGIN is row
     if( MARGIN == 1L ){
-        transformed_table <- t(transformed_table)
+        assay <- t(assay)
     }
     # Add method and margin to attributes
-    attr(transformed_table, "mia") <- method
-    attr(transformed_table, "parameters")$margin <- MARGIN
-    return(transformed_table)
+    attr(assay, "mia") <- method
+    attr(assay, "parameters")$margin <- MARGIN
+    return(assay)
 }
 
 ########################.apply_transformation_from_vegan########################
@@ -779,11 +795,42 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     return(mat)
 }
 
+################# .apply_transformation_difference_or_division #################
+# Computes all pairwise differences (x - y) or ration (x / y) between features
+# across samples. Returns a sparse matrix with one row per feature pair.
+# Uses C++ to improve performance on large input matrices.
+#' @useDynLib mia, .registration = TRUE
+#' @importFrom Rcpp evalCpp
+NULL
+#' @keywords internal
+.apply_transformation_difference_or_division <- function(
+        mat, method, MARGIN, ...){
+    # To harmonize transformations, the matrix contains features as columns.
+    # This orientation is used in other transformations such as in vegan.
+    if( ncol(mat) > 1000L ){
+        warning("The input matrix has over 1000 features, which may cause ",
+                "performance issues.", call. = FALSE)
+    }
+    if( is.null(colnames(mat)) ){
+        warning("No names found in the matrix. Generated labels.",
+                call. = FALSE)
+        colnames(mat) <- ncol(mat) |> seq_len() |> as.character()
+    }
+    if( method %in% "division" && any(!is.na(mat) & mat == 0 ) ){
+        warning("The assay contains zero values. Consider adding pseudocount.",
+                call. = FALSE)
+    }
+    # Calculate pairwise difference or division
+    mat <- .Call(
+        `_mia_apply_transformation_difference_or_division`, mat, method)
+    return(mat)
+}
+
 # This function is used to add transformed table back to TreeSE. With most of
-# the methods it is simple: it is added to assay. However, with philr, the
-# features do not match with original ones, so we add philr-transformed data
-# to altExp. If philr was, applied to columns, we cannot use altExp so
-# we return only the transformed data.
+# the methods it is simple: it is added to assay. However, with transformations
+# that change the dimensionality (e.g. philr, difference, division), the
+# transformed table is added to altExp instead. If transformation was, applied
+# to columns, we cannot use altExp so we return only the transformed data.
 #' @importFrom stats setNames
 .add_transformed_data <- function(x, mat, name){
     rnames_ok <- nrow(x) == nrow(mat)
@@ -813,10 +860,13 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 }
 
 # This function replaces values under or equal to threshold with NA
-.apply_cutoff <- function(mat, threshold = 0, ...){
+.apply_cutoff <- function(mat, threshold = 0, value = NA, ...){
     if( !.is_a_numeric(threshold) ){
-        stop("'threshold' must be a single numierc value.", call. = FALSE)
+        stop("'threshold' must be a single numeric value.", call. = FALSE)
     }
-    mat[ mat <= threshold ] <- NA
+    if( length(value) != 1L || (!is.numeric(value) && !is.na(value)) ){
+        stop("'value' must be a single numeric value or NA.", call. = FALSE)
+    }
+    mat[ mat <= threshold ] <- value
     return(mat)
 }
