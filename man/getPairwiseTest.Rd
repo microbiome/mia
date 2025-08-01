@@ -116,19 +116,23 @@ Effect sizes are calculated using \code{rstatix}:
 }
 
 \examples{
+Library(dplyr)
 # Load example data
 data(GlobalPatterns, package = "mia")
 tse <- GlobalPatterns
 
 # Transform to relative abundances
-tse <- transformAssay(tse, method = "relabundance") 
+tse <- transformAssay(tse, method = "relabundance")
+
+tse <- tse[1:100, ]
+tse <- agglomerateByRank(tse, rank = "Genus") 
 
 # Pairwise test on assay data grouped by sample type
 result <- getPairwiseTest(
     tse, 
     assay.type = "relabundance",
     group = "SampleType",
-    method = "wilcoxon"
+    method = "kruskal"
 )
 
 # Add results to metadata
@@ -136,7 +140,7 @@ tse <- addPairwiseTest(
     tse,
     assay.type = "relabundance", 
     group = "SampleType",
-    name = "sample_type_comparison"
+    name = "kruskal_test"
 )
 
 }

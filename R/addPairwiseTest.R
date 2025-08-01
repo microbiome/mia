@@ -97,6 +97,7 @@
 #' \code{\link[rstatix]{cohens_d}}
 #'
 #' @examples
+#' Library(dplyr)
 #' # Load example data
 #' data(GlobalPatterns, package = "mia")
 #' tse <- GlobalPatterns
