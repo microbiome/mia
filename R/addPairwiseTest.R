@@ -2,14 +2,15 @@
 #' 
 #' @title Get Pairwise Statistical Test
 #' 
-#' @description 
-#' \code{getPairwiseTest()} performs pairwise comparisons between the levels of a
-#' grouping variable using either Wilcoxon rank-sum, Student's \emph{t} test or
-#' Kruskal–Wallis \emph{H} test (with optional pairwise follow-ups).  
-#' It automatically pulls the response variable from assays, \code{rowData}, or
-#' \code{colData} of a \link[TreeSummarizedExperiment]{TreeSummarizedExperiment}
-#' (or base \link[SummarizedExperiment]{SummarizedExperiment}) object, returning
-#' a tidy data frame of statistics and effect sizes.
+#' @description
+#' \code{getPairwiseTest()} performs statistical comparisons between groups 
+#' using Wilcoxon rank-sum, Student's \emph{t}-test, Kruskal–Wallis \emph{H} 
+#' test, or the Friedman test (for paired multi-group comparisons).
+#'
+#' It automatically detects the type of comparison and handles pairwise 
+#' follow-up tests where applicable. The function supports testing within 
+#' facets or stratified subgroups, and returns a tidy result table with 
+#' p-values, effect sizes, and group means or log2 fold changes.
 #' 
 #' @param x
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.
@@ -25,20 +26,26 @@
 #' from \code{colData(x)} to test. (Default: \code{NULL})
 #'
 #' @param group \code{character scalar}. Specifies a grouping variable, 
-#' either from \code{rowData(x)} or \code{colData(x)} depending on the input mode.
+#' either from \code{rowData(x)} or \code{colData(x)}.
+#' 
+#' @param comp.by \code{NULL} or \code{character scalar}. Specifies a
+#' variable from \code{colData(x)} or \code{rowData(x)} which is used to
+#' compare observations. (Default: \code{NULL})
+#' 
+#' @param facet.by \code{NULL} or \code{character scalar}. Specifies a
+#' variable from \code{colData(x)} or \code{rowData(x)} which is used to facet
+#' or group observations. (Default: \code{NULL})
+#' 
+#' @param pair.by \code{NULL} or \code{character scalar}.Specifies a
+#' variable from \code{colData(x)} which identifies paired observations 
+#' (e.g., subject ID). (Default: \code{"NULL"})
 #'
 #' @param significance.method \code{character scalar}. Statistical method to 
-#' use: one of \code{"wilcoxon"}, \code{"t.test"}, or \code{"kruskal"}. 
-#' (Default: \code{"wilcoxon"})
+#' use: one of \code{"wilcoxon"}, \code{"t.test"}, \code{"kruskal"}, 
+#' or \code{"Friedman"}. (Default: \code{"wilcoxon"})
 #'
 #' @param p.adjust.method \code{character scalar}. Method for p-value adjustment. 
 #' Must be one of \code{p.adjust.methods}. (Default: \code{"fdr"})
-#'
-#' @param paired \code{logical scalar}. Whether to perform a paired test. 
-#' (Default: \code{FALSE})
-#'
-#' @param return.type \code{character scalar}. Specifies the format of the result: 
-#' one of \code{"full"}, \code{"summary"}, or \code{"both"}. (Default: \code{"full"})
 #'
 #' @param include.effect \code{logical scalar}. Whether to compute effect sizes. 
 #' (Default: \code{TRUE})
@@ -46,31 +53,48 @@
 #' @param ... Additional arguments passed to the test function (e.g. 
 #' \code{alternative = "greater"}).
 #'
-#' @section Effect Sizes:
-#' Effect sizes are computed with \code{rstatix} helpers:
+#' @section Supported Methods:
 #' \itemize{
-#'   \item Wilcoxon → \code{rstatix::wilcox_effsize()} (rank-biserial $r$)
-#'   \item t-test  → \code{rstatix::cohens_d()} (Hedges-adjusted $g$)
-#'   \item Kruskal → \code{rstatix::kruskal_effsize()} (eta-squared $\eta^{2}$)
+#'   \item \strong{Wilcoxon}: Mann–Whitney U test (unpaired or paired)
+#'   \item \strong{t-test}: Student or Welch t-test (unpaired or paired)
+#'   \item \strong{Kruskal–Wallis}: non-parametric one-way ANOVA 
+#'   (unpaired, \code{>2} groups)
+#'   \item \strong{Friedman}: non-parametric repeated-measures ANOVA 
+#'   (paired, \code{>2} groups)
+#' }
+#'
+#' @section Effect Sizes:
+#' Effect sizes are calculated using \code{rstatix}:
+#' \itemize{
+#'   \item Wilcoxon → \code{wilcox_effsize()} (rank-biserial $r$)
+#'   \item t-test  → \code{cohens_d()} (Hedges-adjusted $g$)
+#'   \item Kruskal → \code{kruskal_effsize()} (η²)
+#'   \item Friedman → \code{wilcox_effsize()} (pairwise rank-based effect sizes)
 #' }
 #'
 #' @return
-#' \strong{If \code{method != "kruskal"}} a single
-#' \code{tibble} with one row per comparison, containing:
+#' A \code{tibble} containing pairwise results with the following columns:
 #' \itemize{
-#'   \item \code{group1}, \code{group2} – compared levels  
-#'   \item \code{n1}, \code{n2} – sample sizes  
-#'   \item \code{p}, \code{p.adj} – raw and adjusted P-values  
-#'   \item \code{statistic}, \code{df} (for t-test)  
-#'   \item \code{mean_group1}, \code{mean_group2}, \code{log2FC}  
-#'   \item \code{effsize}, \code{magnitude} (if \code{include.effect = TRUE})
+#'   \item \code{group1}, \code{group2}: levels being compared
+#'   \item \code{p}, \code{p.adj}: raw and adjusted p-values
+#'   \item \code{statistic}, \code{n1}, \code{n2}, \code{df} (for t-test)
+#'   \item \code{mean_group1}, \code{mean_group2}, \code{log2FC}
+#'   \item \code{effsize}, \code{magnitude} (if applicable)
+#'   \item \code{.y.}, \code{grouping/facet} variables
+#' }
+#' 
+#' If the method is Kruskal or Friedman, the returned object has:
+#' \itemize{
+#'   \item The pairwise results as the main tibble (return value)
+#'   \item A \code{"global"} attribute with the omnibus test result
+#'   \item An \code{"effect"} attribute if \code{include.effect = TRUE}
 #' }
 #'
-#' \strong{If \code{method == "kruskal"}} a list with:
-#' \itemize{
-#'   \item \code{$global} – one-row tibble from \code{kruskal_test()}  
-#'   \item \code{$pairwise} – pairwise Wilcoxon tests as above
-#' }
+#' @seealso 
+#' \code{\link[rstatix]{pairwise_wilcox_test}}
+#' \code{\link[rstatix]{kruskal_test}}
+#' \code{\link[rstatix]{friedman_test}}
+#' \code{\link[rstatix]{cohens_d}}
 #'
 #' @examples
 #' # Load example data
@@ -78,14 +102,17 @@
 #' tse <- GlobalPatterns
 #' 
 #' # Transform to relative abundances
-#' tse <- transformAssay(tse, method = "relabundance") 
+#' tse <- transformAssay(tse, method = "relabundance")
+#' 
+#' tse <- tse[1:100, ]
+#' tse <- agglomerateByRank(tse, rank = "Genus") 
 #' 
 #' # Pairwise test on assay data grouped by sample type
 #' result <- getPairwiseTest(
 #'     tse, 
 #'     assay.type = "relabundance",
 #'     group = "SampleType",
-#'     method = "wilcoxon"
+#'     method = "kruskal"
 #' )
 #' 
 #' # Add results to metadata
@@ -93,7 +120,7 @@
 #'     tse,
 #'     assay.type = "relabundance", 
 #'     group = "SampleType",
-#'     name = "sample_type_comparison"
+#'     name = "kruskal_test"
 #' )
 #' 
 #' @seealso
@@ -260,19 +287,21 @@ setMethod("addPairwiseTest", signature(x = "SummarizedExperiment"),
     return(df)
 }
 
-.calculate_pairwise_test <- function(df, y, group, facet.by, pair.by, comp.by, features,
-                                     significance.method = "wilcoxon", 
-    p.adjust.method = "fdr", paired = !is.null(pair.by),
-       include.effect = TRUE, mark.significance = FALSE,
-       digits = 3, ...) {
+.calculate_pairwise_test <- function(df, y, group, facet.by, pair.by, comp.by, 
+    features,  significance.method = "wilcoxon", p.adjust.method = "fdr", 
+    paired = !is.null(pair.by), include.effect = TRUE, mark.significance = FALSE,
+    digits = 3, ...) {
     # Basic validation
     if (!.is_a_bool(paired)) {
         stop("'paired' must be TRUE or FALSE.", call. = FALSE)
     }
+    # Standardize method name
+    significance.method <- tolower(significance.method)
     
     supported_methods <- c("wilcoxon", "wilcox.test", "wilcoxon_test","wilcox-test",
                            "ttest", "t.test", "t_test", "t-test",
-                           "kruskal", "kruskal.test", "kruskal_test", "kruskal-test")
+                           "kruskal", "kruskal.test", "kruskal_test", "kruskal-test",
+                           "friedman", "friedman.test", "friedman_test", "friedman-test")
     if ( !(.is_a_string(significance.method) && significance.method %in% supported_methods) ) {
         stop("'significance.method' must be one of: ",
              paste0("'", supported_methods, "'", collapse = ", "), call. = FALSE)
@@ -300,103 +329,151 @@ setMethod("addPairwiseTest", signature(x = "SummarizedExperiment"),
     }
     grouping_vars <- grouping_vars[ !grouping_vars %in% comparison_vars ]
     
-    formula <- as.formula(paste(y, "~", comparison_vars))
+    formula <- as.formula(paste(y, "~", paste(comparison_vars, collapse = "+")))
     
-    if ( significance.method %in% c("wilcoxon", "wilcox.test") ) {
-        FUN <- rstatix::pairwise_wilcox_test
-        effect_fun <- rstatix::wilcox_effsize
-    } else if ( significance.method %in% c("t.test", "ttest") ) {
-        FUN <- rstatix::pairwise_t_test
-        effect_fun <- rstatix::cohens_d
-    } else if ( significance.method %in% c("kruskal", "kruskal.test") ) {
-        
-        if (paired) {
-            stop("Kruskal-Wallis does not support paired comparisons.", call. = FALSE)
+    res <-  global <- effect <- NULL
+    .require_package("dplyr")
+    
+    # ----------------------------- Friedman Test ------------------------------
+    if (significance.method %in% c("friedman", "friedman.test", 
+                                   "friedman_test", "friedman_test")) { 
+        if ( !paired ) {
+            stop("Friedman test requires a 'pair.by' variable.", call. = FALSE)
         }
         
-        global <- rstatix::kruskal_test(formula, data = df, ...)
-        pw <- rstatix::dunn_test(
-            formula, data = df, p.adjust.method = p.adjust.method, ...
+        friedman_formula <- as.formula(paste(y, "~", 
+                                             paste(comparison_vars, 
+                                                   collapse = "+"), "|", pair.by))
+        global <- rstatix::friedman_test(formula = friedman_formula, data = df, ...)
+        
+        pw <- rstatix::pairwise_wilcox_test(
+            formula = formula,
+            data = df,
+            paired = TRUE,
+            p.adjust.method = p.adjust.method,
+            ...
         )
-        effect_fun <- rstatix::kruskal_effsize
-        pw <- .add_group_means_log2fc(df, group, pw, y)
-        return(list(global = global, pairwise = pw))
-    }
+        
+        if (include.effect) {
+            effect <- rstatix::friedman_effsize(formula, data = df, ...)
+            pw_eff <- rstatix::wilcox_effsize(formula, data = df, ...)
+        } else NULL
+        
+    # ------------------------------ Kruskal-Wallis ----------------------------
+    }  else if (significance.method %in% c("kruskal", "kruskal.test", 
+                                   "kruskal_test", "kruskal-test")) {
+        if (paired) stop("Kruskal-Wallis test does not support paired designs.", call. = FALSE)
+        
+        global <- rstatix::kruskal_test(formula, data = df, ...)
+        
+        pw <- rstatix::dunn_test(
+            formula = formula,
+            data = df,
+            p.adjust.method = p.adjust.method,
+            ...
+        )
+        
+        if (include.effect) {
+            effect <- rstatix::kruskal_effsize(formula, data = df, ...)
+            pw_eff <- rstatix::wilcox_effsize(formula, data = df, ...)
+        } else NULL
+        
+        pw <- merge(pw, pw_eff, 
+                            by = intersect(names(pw), names(pw_eff)))
+        
+    # -------------------------- Wilcoxon or t-test ----------------------------    
+    } else if (significance.method %in% c("wilcoxon", "wilcox.test", 
+                                          "wilcoxon_test", "wilcox-test",
+                                          "ttest", "t.test", 
+                                          "t_test", "t-test")) {
     
-    res <- df |>
-        as.data.frame() |>
-        # Create grouping to test these groups separately
-        dplyr::group_split(across(all_of(grouping_vars))) |>
-        purrr::map_df(function(df_group) {
-            tryCatch({
-                # If we calculate paired analysis, sort data so that correct
-                # samples are matched with correct subjects.
-                df_group <- df_group %>% arrange(across(all_of(pair.by)))
-                # This runs pairwise comparisons automatically if there are more
-                # than 2 groups
-                res_test <- FUN(
-                    formula = as.formula(paste0(y, " ~ ", comparison_vars)),
-                    data = df_group,
-                    paired = paired,
-                    p.adjust.method = "none"
-                )
-                # Add grouping cols back to pairwise test results
-                res_test <- dplyr::bind_cols(
-                    res_test,
-                    df_group %>% select(all_of(grouping_vars)) %>% distinct()
-                )
-                if ( include.effect ) {
-                    # Calculate effect sizes for this group
-                    res_eff <- effect_fun(
-                        formula,
+        if ( significance.method %in% c("wilcoxon", "wilcox.test", 
+                                        "wilcoxon_test", "wilcox-test") ) {
+            FUN <- rstatix::pairwise_wilcox_test
+            effect_fun <- rstatix::wilcox_effsize
+        } else if ( significance.method %in% c("t.test", "ttest", 
+                                               "t_test", "t-test") ) {
+            FUN <- rstatix::pairwise_t_test
+            effect_fun <- rstatix::cohens_d
+        } 
+        pw <- df |>
+            as.data.frame() |>
+            # Create grouping to test these groups separately
+            dplyr::group_split(across(all_of(grouping_vars))) |>
+            purrr::map_df(function(df_group) {
+                tryCatch({
+                    # If we calculate paired analysis, sort data so that correct
+                    # samples are matched with correct subjects.
+                    df_group <- df_group %>% arrange(across(all_of(pair.by)))
+                    # This runs pairwise comparisons automatically if there are more
+                    # than 2 groups
+                    res_test <- FUN(
+                        formula = formula,
                         data = df_group,
                         paired = paired,
-                        ...
+                        p.adjust.method = "none"
                     )
-                    # Add grouping cols back to effect size results
-                    res_eff <- dplyr::bind_cols(
-                        res_eff,
+                    # Add grouping cols back to pairwise test results
+                    res_test <- dplyr::bind_cols(
+                        res_test,
                         df_group %>% select(all_of(grouping_vars)) %>% distinct()
                     )
-                    # Merge effect sizes into pairwise test results by group1/group2
-                    res_merged <- merge(res_test, res_eff, 
-                        by = intersect(names(res_test), names(res_eff)))
-                    return(res_merged)
-                } else {
-                    return(res_test)
-                }
-            }, error = function(e) NULL)
-        }) |>
-        rstatix::adjust_pvalue(method = p.adjust.method)
+                    if ( include.effect ) {
+                        # Calculate effect sizes for this group
+                        res_eff <- effect_fun(
+                            formula,
+                            data = df_group,
+                            paired = paired,
+                            ...
+                        )
+                        # Add grouping cols back to effect size results
+                        res_eff <- dplyr::bind_cols(
+                            res_eff,
+                            df_group %>% select(all_of(grouping_vars)) %>% distinct()
+                        )
+                        # Merge effect sizes into pairwise test results by group1/group2
+                        res_merged <- merge(res_test, res_eff, 
+                            by = intersect(names(res_test), names(res_eff)))
+                        return(res_merged)
+                    } else {
+                        return(res_test)
+                    }
+                }, error = function(e) NULL)
+            }) |>
+            rstatix::adjust_pvalue(method = p.adjust.method)
+    }
     
-    res <- .add_group_means_log2fc(df, c(grouping_vars, comparison_vars), res, y)
+    pw <- .add_group_means_log2fc(df, c(grouping_vars, comparison_vars), pw, y)
     
     # Mark or round significance
     if (mark.significance) {
-        res <- rstatix::add_significance(res)
+        pw <- rstatix::add_significance(pw)
     } else {
-        res <- rstatix::p_round(res, digits = digits)
+        pw <- rstatix::p_round(pw, digits = digits)
     }
     
     # Subset to relevant features if needed
     if (!is.null(features)) {
         if (!is.null(group)) {
-            res <- res[res[["rownames"]] %in% features, , drop = FALSE]
-            attr_data <- attributes(res)[["args"]][["data"]]
+            pw <- pw[pw[["rownames"]] %in% features, , drop = FALSE]
+            attr_data <- attributes(pw)[["args"]][["data"]]
             attr_data <- attr_data[attr_data[["rownames"]] %in% features, , drop = FALSE]
-            attributes(res)[["args"]][["data"]] <- attr_data
-        } else if ("FeatureID" %in% colnames(res)) {
-            res <- res[
-                res$group1 %in% features & res$group2 %in% features,
+            attributes(pw)[["args"]][["data"]] <- attr_data
+        } else if ("FeatureID" %in% colnames(pw)) {
+            pw <- pw[
+                pw$group1 %in% features & pw$group2 %in% features,
                 , drop = FALSE
             ]
-            attr_data <- attributes(res)[["args"]][["data"]]
+            attr_data <- attributes(pw)[["args"]][["data"]]
             attr_data <- attr_data[attr_data[["FeatureID"]] %in% features, , drop = FALSE]
-            attributes(res)[["args"]][["data"]] <- attr_data
+            attributes(pw)[["args"]][["data"]] <- attr_data
         }
     }
     
-    return(res)
+    attr(pw, "global") <- global
+    attr(pw, "effect") <- effect
+    class(pw) <- c("stat_test_result", class(pw))
+    return(pw)
 }
 
 .add_group_means_log2fc <- function(df, group, res, y) {

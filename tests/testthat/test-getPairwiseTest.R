@@ -63,9 +63,8 @@ test_that("PairwiseTest", {
     s
     # Kruskal should return list with global and pairwise results
     kruskal_results <- metadata(result_kruskal)$kruskal_test
-    expect_type(kruskal_results, "list")
-    expect_true("global" %in% names(kruskal_results))
-    expect_true("pairwise" %in% names(kruskal_results))
+    expect_true("global" %in% attributes(kruskal_results))
+    expect_true("effect" %in% attributes(kruskal_results))
     
     ## Test 3: P-value adjustment methods
     p_adjust_methods <- c("fdr", "bonferroni", "holm", "none")

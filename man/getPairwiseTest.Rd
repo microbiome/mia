@@ -11,14 +11,13 @@ getPairwiseTest(x, ...)
 \S4method{getPairwiseTest}{SummarizedExperiment}(
   x,
   assay.type = NULL,
+  features = NULL,
   row.var = NULL,
   col.var = NULL,
   group,
-  significance.method = "wilcoxon",
-  p.adjust.method = "fdr",
-  paired = FALSE,
-  return.type = c("full", "summary", "both"),
-  include.effect = TRUE,
+  facet.by = NULL,
+  comp.by = NULL,
+  pair.by = NULL,
   ...
 )
 
@@ -41,58 +40,78 @@ from \code{rowData(x)} to test. (Default: \code{NULL})}
 from \code{colData(x)} to test. (Default: \code{NULL})}
 
 \item{group}{\code{character scalar}. Specifies a grouping variable,
-either from \code{rowData(x)} or \code{colData(x)} depending on the input mode.}
+either from \code{rowData(x)} or \code{colData(x)}.}
+
+\item{facet.by}{\code{NULL} or \code{character scalar}. Specifies a
+variable from \code{colData(x)} or \code{rowData(x)} which is used to facet
+or group observations. (Default: \code{NULL})}
+
+\item{comp.by}{\code{NULL} or \code{character scalar}. Specifies a
+variable from \code{colData(x)} or \code{rowData(x)} which is used to
+compare observations. (Default: \code{NULL})}
+
+\item{pair.by}{\code{NULL} or \code{character scalar}.Specifies a
+variable from \code{colData(x)} which identifies paired observations
+(e.g., subject ID). (Default: \code{"NULL"})}
 
 \item{significance.method}{\code{character scalar}. Statistical method to
-use: one of \code{"wilcoxon"}, \code{"t.test"}, or \code{"kruskal"}.
-(Default: \code{"wilcoxon"})}
+use: one of \code{"wilcoxon"}, \code{"t.test"}, \code{"kruskal"},
+or \code{"Friedman"}. (Default: \code{"wilcoxon"})}
 
 \item{p.adjust.method}{\code{character scalar}. Method for p-value adjustment.
 Must be one of \code{p.adjust.methods}. (Default: \code{"fdr"})}
-
-\item{paired}{\code{logical scalar}. Whether to perform a paired test.
-(Default: \code{FALSE})}
-
-\item{return.type}{\code{character scalar}. Specifies the format of the result:
-one of \code{"full"}, \code{"summary"}, or \code{"both"}. (Default: \code{"full"})}
 
 \item{include.effect}{\code{logical scalar}. Whether to compute effect sizes.
 (Default: \code{TRUE})}
 }
 \value{
-\strong{If \code{method != "kruskal"}} a single
-\code{tibble} with one row per comparison, containing:
+A \code{tibble} containing pairwise results with the following columns:
 \itemize{
-\item \code{group1}, \code{group2} – compared levels
-\item \code{n1}, \code{n2} – sample sizes
-\item \code{p}, \code{p.adj} – raw and adjusted P-values
-\item \code{statistic}, \code{df} (for t-test)
+\item \code{group1}, \code{group2}: levels being compared
+\item \code{p}, \code{p.adj}: raw and adjusted p-values
+\item \code{statistic}, \code{n1}, \code{n2}, \code{df} (for t-test)
 \item \code{mean_group1}, \code{mean_group2}, \code{log2FC}
-\item \code{effsize}, \code{magnitude} (if \code{include.effect = TRUE})
+\item \code{effsize}, \code{magnitude} (if applicable)
+\item \code{.y.}, \code{grouping/facet} variables
 }
 
-\strong{If \code{method == "kruskal"}} a list with:
+If the method is Kruskal or Friedman, the returned object has:
 \itemize{
-\item \code{$global} – one-row tibble from \code{kruskal_test()}
-\item \code{$pairwise} – pairwise Wilcoxon tests as above
+\item The pairwise results as the main tibble (return value)
+\item A \code{"global"} attribute with the omnibus test result
+\item An \code{"effect"} attribute if \code{include.effect = TRUE}
 }
 }
 \description{
-\code{getPairwiseTest()} performs pairwise comparisons between the levels of a
-grouping variable using either Wilcoxon rank-sum, Student's \emph{t} test or
-Kruskal–Wallis \emph{H} test (with optional pairwise follow-ups).
-It automatically pulls the response variable from assays, \code{rowData}, or
-\code{colData} of a \link[TreeSummarizedExperiment]{TreeSummarizedExperiment}
-(or base \link[SummarizedExperiment]{SummarizedExperiment}) object, returning
-a tidy data frame of statistics and effect sizes.
+\code{getPairwiseTest()} performs statistical comparisons between groups
+using Wilcoxon rank-sum, Student's \emph{t}-test, Kruskal–Wallis \emph{H}
+test, or the Friedman test (for paired multi-group comparisons).
+
+It automatically detects the type of comparison and handles pairwise
+follow-up tests where applicable. The function supports testing within
+facets or stratified subgroups, and returns a tidy result table with
+p-values, effect sizes, and group means or log2 fold changes.
 }
+\section{Supported Methods}{
+
+\itemize{
+\item \strong{Wilcoxon}: Mann–Whitney U test (unpaired or paired)
+\item \strong{t-test}: Student or Welch t-test (unpaired or paired)
+\item \strong{Kruskal–Wallis}: non-parametric one-way ANOVA
+(unpaired, \code{>2} groups)
+\item \strong{Friedman}: non-parametric repeated-measures ANOVA
+(paired, \code{>2} groups)
+}
+}
+
 \section{Effect Sizes}{
 
-Effect sizes are computed with \code{rstatix} helpers:
+Effect sizes are calculated using \code{rstatix}:
 \itemize{
-\item Wilcoxon → \code{rstatix::wilcox_effsize()} (rank-biserial $r$)
-\item t-test  → \code{rstatix::cohens_d()} (Hedges-adjusted $g$)
-\item Kruskal → \code{rstatix::kruskal_effsize()} (eta-squared $\eta^{2}$)
+\item Wilcoxon → \code{wilcox_effsize()} (rank-biserial $r$)
+\item t-test  → \code{cohens_d()} (Hedges-adjusted $g$)
+\item Kruskal → \code{kruskal_effsize()} (η²)
+\item Friedman → \code{wilcox_effsize()} (pairwise rank-based effect sizes)
 }
 }
 
@@ -122,6 +141,11 @@ tse <- addPairwiseTest(
 
 }
 \seealso{
+\code{\link[rstatix]{pairwise_wilcox_test}}
+\code{\link[rstatix]{kruskal_test}}
+\code{\link[rstatix]{friedman_test}}
+\code{\link[rstatix]{cohens_d}}
+
 \code{\link[rstatix]{pairwise_wilcox_test}},
 \code{\link[rstatix]{pairwise_t_test}},
 \code{\link[rstatix]{kruskal_test}}
