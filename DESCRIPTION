@@ -85,7 +85,8 @@ Imports:
     tidyr,
     utils,
     vegan,
-    Rcpp
+    Rcpp,
+    rstatix
 Suggests:
     ade4,
     BiocStyle,
