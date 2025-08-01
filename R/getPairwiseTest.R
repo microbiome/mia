@@ -1,5 +1,3 @@
-#' @name getPairwiseTest
-#' 
 #' @title Get Pairwise Statistical Test
 #' 
 #' @description
@@ -96,8 +94,11 @@
 #' \code{\link[rstatix]{friedman_test}}
 #' \code{\link[rstatix]{cohens_d}}
 #'
+#' @name getPairwiseTest
+#' @export
+#'
 #' @examples
-#' Library(dplyr)
+#' library(dplyr)
 #' # Load example data
 #' data(GlobalPatterns, package = "mia")
 #' tse <- GlobalPatterns

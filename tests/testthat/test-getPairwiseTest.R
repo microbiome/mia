@@ -1,7 +1,7 @@
 context("PairwiseTest")
 
 test_that("PairwiseTest", {
-    Library(dplyr)
+    library(dplyr)
     # Data setup - reused throughout all tests
     data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns[1:100, ]  # Subset for faster testing
