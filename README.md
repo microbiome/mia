@@ -24,6 +24,8 @@ More information and example workflows are provided in the online
 manual [Orchestrating Microbiome Analysis with
 Bioconductor](https://microbiome.github.io/OMA).
 
+> **Note**: The `rCLR` and `rAitchison` methods require the `vegan` R package version **2.7-1** (released on 2026-06-05) or later.
+
 
 ## Installation
 
