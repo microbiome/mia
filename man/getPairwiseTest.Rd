@@ -3,6 +3,7 @@
 \name{getPairwiseTest}
 \alias{getPairwiseTest}
 \alias{getPairwiseTest,SummarizedExperiment-method}
+\alias{addPairwiseTest,SummarizedExperiment-method}
 \title{Get Pairwise Statistical Test}
 \usage{
 getPairwiseTest(x, ...)
@@ -133,6 +134,7 @@ result <- getPairwiseTest(
     group = "SampleType",
     method = "kruskal"
 )
+head(result)
 
 # Add results to metadata
 tse <- addPairwiseTest(
@@ -141,6 +143,9 @@ tse <- addPairwiseTest(
     group = "SampleType",
     name = "kruskal_test"
 )
+
+result <- metadata(tse)[["kruskal_test"]]
+head(result)
 
 }
 \seealso{

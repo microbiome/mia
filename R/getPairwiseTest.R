@@ -116,6 +116,7 @@
 #'     group = "SampleType",
 #'     method = "kruskal"
 #' )
+#' head(result)
 #' 
 #' # Add results to metadata
 #' tse <- addPairwiseTest(
@@ -124,6 +125,9 @@
 #'     group = "SampleType",
 #'     name = "kruskal_test"
 #' )
+#' 
+#' result <- metadata(tse)[["kruskal_test"]]
+#' head(result)
 #' 
 #' @seealso
 #' \code{\link[rstatix]{pairwise_wilcox_test}},

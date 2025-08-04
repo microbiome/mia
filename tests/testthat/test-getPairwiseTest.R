@@ -4,9 +4,9 @@ test_that("PairwiseTest", {
     library(dplyr)
     # Data setup - reused throughout all tests
     data(GlobalPatterns, package="mia")
-    tse <- GlobalPatterns[1:100, ]  # Subset for faster testing
+    tse <- GlobalPatterns
     tse <- transformAssay(tse, method = "relabundance")
-    tse <- agglomerateByRank(tse, "Genus")
+    tse <- agglomerateByRank(tse, "Phylum")
     
     ## Test 1: Basic functionality with assay data
     result_tse <- addPairwiseTest(
