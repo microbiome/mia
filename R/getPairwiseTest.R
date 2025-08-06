@@ -105,9 +105,7 @@
 #' 
 #' # Transform to relative abundances
 #' tse <- transformAssay(tse, method = "relabundance")
-#' 
-#' tse <- tse[1:100, ]
-#' tse <- agglomerateByRank(tse, rank = "Genus") 
+#' tse <- tse[690:700, ]
 #' 
 #' # Pairwise test on assay data grouped by sample type
 #' result <- getPairwiseTest(
