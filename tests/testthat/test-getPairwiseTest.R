@@ -6,7 +6,7 @@ test_that("PairwiseTest", {
     data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns
     tse <- transformAssay(tse, method = "relabundance")
-    tse <- agglomerateByRank(tse, "Phylum")
+    tse <- tse[690:700, ]
     
     ## Test 1: Basic functionality with assay data
     result_tse <- addPairwiseTest(
@@ -87,9 +87,9 @@ test_that("PairwiseTest", {
 
     
     ## Test 5: colData variables
-    tse <- addAlpha(tse, assay.type = "counts", index = "shannon")
+    tse2 <- addAlpha(GlobalPatterns, assay.type = "counts", index = "shannon")
     result_col <- addPairwiseTest(
-        tse,
+        tse2,
         col.var = "shannon",
         group = "SampleType", 
         name = "col_test"
