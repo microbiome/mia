@@ -344,9 +344,8 @@ data of assays the function from <code>scuttle</code> are used.</p>
 <p><code>agglomerateByModule</code> allows to agglomerate features or samples based
 on one or multiple variables of logical or numeric binary (0/1) type. It is
 particularly useful for agglomerating by taxonomic or functional modules,
-stored in a <code>metadata</code> slot of choice as a <code>matrix</code> with logical or
-numeric binary values, where rows correspond to features (or samples) and
-columns reflect modules.</p>
+each defined by a logical or binary variable in the <code>rowData</code>, as
+features can belong to several modules.</p>
 <p><code>agglomerateByRanks</code> will use by default all available taxonomic ranks,
 but
 this can be controlled by setting <code>ranks</code> manually. <code>NA</code> values
@@ -575,20 +574,23 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Convert modules to matrix</span></span></span>
-<span class="r-in"><span><span class="va">modules</span> <span class="op">&lt;-</span> <span class="va">modules</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Add feature names as rownames</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">modules</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">modules</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">modules</span>, nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add module names as colnames</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">modules</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"module_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">modules</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Store modules table in metadata slot</span></span></span>
-<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">modules</span> <span class="op">&lt;-</span> <span class="va">modules</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Add modules to rowData</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="va">modules</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Extract module columns</span></span></span>
+<span class="r-in"><span><span class="va">module_columns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"module_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span>, value <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Agglomerate based on modules</span></span></span>
-<span class="r-in"><span><span class="va">tse_module</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByModule</span><span class="op">(</span><span class="va">tse</span>, by <span class="op">=</span> <span class="fl">1</span>, group <span class="op">=</span> <span class="st">"modules"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse_module</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByModule</span><span class="op">(</span><span class="va">tse</span>, by <span class="op">=</span> <span class="fl">1</span>, group <span class="op">=</span> <span class="va">module_columns</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'pa' includes binary values.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Agglomeration of it might lead to meaningless values.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Check the assay, and consider doing transformation againmanually with agglomerated data.</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Optionally, store results into altExp slot</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"modules"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">tse_module</span></span></span>
 <span class="r-in"><span></span></span>
