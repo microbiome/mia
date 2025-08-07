@@ -38,9 +38,8 @@
 #' \code{agglomerateByModule} allows to agglomerate features or samples based
 #' on one or multiple variables of logical or numeric binary (0/1) type. It is
 #' particularly useful for agglomerating by taxonomic or functional modules,
-#' stored in a \code{metadata} slot of choice as a \code{matrix} with logical or
-#' numeric binary values, where rows correspond to features (or samples) and
-#' columns reflect modules.
+#' each defined by a logical or binary variable in the \code{rowData}, as
+#' features can belong to several modules.
 #'
 #' @return
 #' \code{agglomerateByRank} returns a taxonomically-agglomerated,
@@ -232,17 +231,20 @@
 #' )
 #'
 #' # Convert modules to matrix
-#' modules <- modules |>
-#'     matrix(nrow = nrow(tse))
-#' # Add feature names as rownames
-#' rownames(modules) <- rownames(tse)
+#' modules <- matrix(modules, nrow = nrow(tse))
+#' 
 #' # Add module names as colnames
 #' colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
-#' # Store modules table in metadata slot
-#' metadata(tse)$modules <- modules
+#' 
+#' # Add modules to rowData
+#' rowData(tse) <- cbind(rowData(tse), modules)
+#' 
+#' # Extract module columns
+#' module_columns <- grep("module_", colnames(rowData(tse)), value = TRUE)
 #'
 #' # Agglomerate based on modules
-#' tse_module <- agglomerateByModule(tse, by = 1, group = "modules")
+#' tse_module <- agglomerateByModule(tse, by = 1, group = module_columns)
+#' 
 #' # Optionally, store results into altExp slot
 #' altExp(tse, "modules") <- tse_module
 #'
@@ -429,15 +431,17 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
     function(x, by, group, na.rm = FALSE){
         # Check margin
         by <- .check_MARGIN(by)
+        # Select side information based on margin
+        FUN <- switch(by, rowData, colData)
         # Check group
-        if( !group %in% names(metadata(x)) ){
-            stop("'group' does not match any element in the metadata",
-                call. = FALSE)
+        if( !all(group %in% names(FUN(x))) ){
+            stop("some elements in 'group' did not match with any column of ",
+                as.character(substitute(FUN)), call. = FALSE)
         }
-        # Extract modules from metadata
-        modules <- metadata(x)[[group]]
+        # Extract modules table
+        modules <- as.matrix(FUN(x)[ , group, drop = FALSE])
         # Check and process modules
-        modules <- .check_and_process_modules(modules, x, by)
+        modules <- .check_and_process_modules(modules)
         # Merge assays by module
         assays <- mapply(.agglomerate_module_assay, assayNames(x), assays(x),
             MoreArgs = list(by = by, modules = modules, na.rm = na.rm),

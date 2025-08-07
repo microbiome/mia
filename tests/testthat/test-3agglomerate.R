@@ -164,20 +164,20 @@ test_that("agglomerate", {
         replace = TRUE
     )
     # Add modules to rowData
-    modules <- modules |>
-        matrix(nrow = nrow(tse))
+    modules <- modules |> matrix(nrow = nrow(tse))
     # Add row and column names
-    rownames(modules) <- rownames(tse)
     colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
-    # Store modules in metadata slot
-    metadata(tse)$modules <- modules
+    # Add modules to rowData
+    rowData(tse) <- cbind(rowData(tse), modules)
+    # Extract module columns
+    module_columns <- grep("module_", colnames(rowData(tse)), value = TRUE)
     # Add pseudocount assay
     tse <- transformAssay(tse, assay.type = "counts", method = "pseudocount")
     # Introduce NA to pseudocount assay
     assay(tse, "pseudocount")[1, 1] <- NA
     # Agglomerate based on modules
     tse_module <- agglomerateByModule(
-        tse, by = 1, group = "modules", na.rm = TRUE
+        tse, by = 1, group = module_columns, na.rm = TRUE
     )
     # Compute reference for counts assay
     module_counts <- crossprod(modules, assay(tse, "counts"))

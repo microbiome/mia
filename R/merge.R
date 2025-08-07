@@ -193,27 +193,7 @@
 # be module information for each row/column. Columns should represent modules
 # and rows features. Each cell specifies the membership of feature to the
 # specific module.
-.check_and_process_modules <- function(modules, x, by){
-    # Select side information based on margin
-    FUN <- switch(by, rowData, colData)
-    # Check modules matrix (could use any existing utility function
-    if( !inherits(modules, c("matrix", "Matrix")) ){
-        stop("Modules table is not a matrix.", call. = FALSE)
-    }
-    if( nrow(modules) != nrow(FUN(x)) ){
-        stop("Modules table and experiment assays do not have the same number ",
-        "of rows.", call. = FALSE)
-    }
-    if( !all(rownames(modules) %in% rownames(FUN(x))) ){
-        stop("Modules table does not have the same names as experiment assays.",
-            call. = FALSE)
-    }
-    if( !identical(rownames(FUN(x)), rownames(modules)) ){
-        warning("Modules table order does not match with experiment assays. ",
-            "Rows of modules table were reordered accordingly.", call. = FALSE)
-        new_order <- match(rownames(FUN(x)), rownames(modules))
-        modules <- modules[new_order, , drop = FALSE]
-    }
+.check_and_process_modules <- function(modules){
     # Determine class type and NAs
     is_logical <- is.logical(modules)
     is_num <- all(modules == 0 | modules == 1)

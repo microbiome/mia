@@ -246,9 +246,8 @@ data of assays the function from \code{scuttle} are used.
 \code{agglomerateByModule} allows to agglomerate features or samples based
 on one or multiple variables of logical or numeric binary (0/1) type. It is
 particularly useful for agglomerating by taxonomic or functional modules,
-stored in a \code{metadata} slot of choice as a \code{matrix} with logical or
-numeric binary values, where rows correspond to features (or samples) and
-columns reflect modules.
+each defined by a logical or binary variable in the \code{rowData}, as
+features can belong to several modules.
 
 \code{agglomerateByRanks} will use by default all available taxonomic ranks,
 but
@@ -362,17 +361,20 @@ modules <- sample(
 )
 
 # Convert modules to matrix
-modules <- modules |>
-    matrix(nrow = nrow(tse))
-# Add feature names as rownames
-rownames(modules) <- rownames(tse)
+modules <- matrix(modules, nrow = nrow(tse))
+
 # Add module names as colnames
 colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
-# Store modules table in metadata slot
-metadata(tse)$modules <- modules
+
+# Add modules to rowData
+rowData(tse) <- cbind(rowData(tse), modules)
+
+# Extract module columns
+module_columns <- grep("module_", colnames(rowData(tse)), value = TRUE)
 
 # Agglomerate based on modules
-tse_module <- agglomerateByModule(tse, by = 1, group = "modules")
+tse_module <- agglomerateByModule(tse, by = 1, group = module_columns)
+
 # Optionally, store results into altExp slot
 altExp(tse, "modules") <- tse_module
 
