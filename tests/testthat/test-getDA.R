@@ -1,6 +1,6 @@
-context("PairwiseTest")
+context("getDA")
 
-test_that("PairwiseTest", {
+test_that("getDA", {
     library(dplyr)
     # Data setup - reused throughout all tests
     data(GlobalPatterns, package="mia")
@@ -9,7 +9,7 @@ test_that("PairwiseTest", {
     tse <- tse[690:700, ]
     
     ## Test 1: Basic functionality with assay data
-    result_tse <- addPairwiseTest(
+    result_tse <- addPairwiseDA(
         tse,
         assay.type = "relabundance",
         group = "SampleType",
@@ -33,31 +33,31 @@ test_that("PairwiseTest", {
     
     ## Test 2: Different statistical methods
     # Wilcoxon method
-    result_wilcox <- addPairwiseTest(
+    result_wilcox <- addPairwiseDA(
         tse,
         assay.type = "relabundance",
         group = "SampleType",
-        significance.method = "wilcoxon",
+        da.method = "wilcoxon",
         name = "wilcox_test"
     )
     expect_true("wilcox_test" %in% names(metadata(result_wilcox)))
     
     # t-test method
-    result_ttest <- addPairwiseTest(
+    result_ttest <- addPairwiseDA(
         tse,
         assay.type = "relabundance", 
         group = "SampleType",
-        significance.method = "t.test",
+        da.method = "t.test",
         name = "t_test"
     )
     expect_true("t_test" %in% names(metadata(result_ttest)))
     
     # Kruskal-Wallis method
-    result_kruskal <- addPairwiseTest(
+    result_kruskal <- addPairwiseDA(
         tse,
         assay.type = "relabundance",
         group = "SampleType", 
-        significance.method = "kruskal",
+        da.method = "kruskal",
         name = "kruskal_test"
     )
     expect_true("kruskal_test" %in% names(metadata(result_kruskal)))
@@ -70,7 +70,7 @@ test_that("PairwiseTest", {
     ## Test 3: P-value adjustment methods
     p_adjust_methods <- c("fdr", "bonferroni", "holm", "none")
     for(method in p_adjust_methods) {
-        result_p_adj <- addPairwiseTest(
+        result_p_adj <- addPairwiseDA(
             tse,
             assay.type = "relabundance",
             group = "SampleType",
@@ -88,7 +88,7 @@ test_that("PairwiseTest", {
     
     ## Test 5: colData variables
     tse2 <- addAlpha(GlobalPatterns, assay.type = "counts", index = "shannon")
-    result_col <- addPairwiseTest(
+    result_col <- addPairwiseDA(
         tse2,
         col.var = "shannon",
         group = "SampleType", 
@@ -100,7 +100,7 @@ test_that("PairwiseTest", {
     
     ## Test 6: Effect size calculations
     # With effect sizes
-    result_with_effect <- addPairwiseTest(
+    result_with_effect <- addPairwiseDA(
         tse,
         assay.type = "relabundance",
         group = "SampleType",
@@ -112,7 +112,7 @@ test_that("PairwiseTest", {
     expect_true("magnitude" %in% colnames(result_eff))
     
     # Without effect sizes
-    result_no_effect <- addPairwiseTest(
+    result_no_effect <- addPairwiseDA(
         tse,
         assay.type = "relabundance",
         group = "SampleType",
@@ -124,7 +124,7 @@ test_that("PairwiseTest", {
     expect_false("magnitude" %in% colnames(result_no_eff))
     
     ## Test 7: Paired analysis
-    # result_paired <- addPairwiseTest(
+    # result_paired <- addPairwiseDA(
     #     tse,
     #     assay.type = "relabundance",
     #     group = "Timepoint",
@@ -138,7 +138,7 @@ test_that("PairwiseTest", {
     
     ## Test 8: Features parameter
     selected_features <- rownames(tse)[1:2]
-    result_features <- addPairwiseTest(
+    result_features <- addPairwiseDA(
         tse,
         assay.type = "relabundance",
         group = "SampleType",
@@ -150,43 +150,43 @@ test_that("PairwiseTest", {
     expect_true(all(unique(result_feat_data$rownames) %in% selected_features))
     
     ## Test 9: Default name parameter
-    result_default <- addPairwiseTest(
+    result_default <- addPairwiseDA(
         tse,
         assay.type = "relabundance",
         group = "SampleType"
     )
-    expect_true("pairwiseTest" %in% names(metadata(result_default)))
+    expect_true("getDA" %in% names(metadata(result_default)))
     
     ## Test 8: Input validation - error conditions
     # No variables specified
     expect_error(
-        addPairwiseTest(tse, group = "SampleType"),
+        addPairwiseDA(tse, group = "SampleType"),
         "Please specify either 'assay.type', 'row.var', or 'col.var'"
     )
     
     # Multiple variables specified
     expect_error(
-        addPairwiseTest(tse, assay.type = "counts", row.var = "Kingdom", 
+        addPairwiseDA(tse, assay.type = "counts", row.var = "Kingdom", 
                         group = "SampleType"),
         "Please specify either 'assay.type', 'row.var', or 'col.var'"
     )
     
     # Invalid grouping variable
     expect_error(
-        addPairwiseTest(tse, assay.type = "counts", group = "nonexistent"),
+        addPairwiseDA(tse, assay.type = "counts", group = "nonexistent"),
         "must be.*character value from the following options"
     )
     
     # Invalid statistical method
     expect_error(
-        addPairwiseTest(tse, assay.type = "counts", group = "SampleType",
-                        significance.method = "invalid"),
-        "'significance.method' must be one of"
+        addPairwiseDA(tse, assay.type = "counts", group = "SampleType",
+                        da.method = "invalid"),
+        "'da.method' must be one of"
     )
     
     # Invalid p.adjust.method
     expect_error(
-        addPairwiseTest(tse, assay.type = "counts", group = "SampleType",
+        addPairwiseDA(tse, assay.type = "counts", group = "SampleType",
                         p.adjust.method = 123),
         "'p.adjust.method' must be a character string"
     )

@@ -398,15 +398,45 @@ setGeneric("getMDS", signature = "x", function(x, ...)
 setGeneric("addMDS", signature = "x", function(x, ...)
     standardGeneric("addMDS"))
 
-#' @rdname getPairwiseTest
+#' @rdname getDA
 #' @export
-setGeneric("getPairwiseTest", signature = "x", function( x, ...) 
-    standardGeneric("getPairwiseTest"))
+setGeneric("getPairwiseDA", signature = "x", function(x, ...) 
+    standardGeneric("getPairwiseDA"))
 
-#' @rdname addPairwiseTest
+#' @rdname getDA
 #' @export
-setGeneric("addPairwiseTest", signature = "x", function( x, ...) 
-    standardGeneric("addPairwiseTest"))
+setGeneric("addPairwiseDA", signature = "x", function(x, ...) 
+    standardGeneric("addPairwiseDA"))
+
+#' @rdname getDA
+#' @export
+setGeneric("getOmnibusDA", signature = "x", function(x, ...) 
+    standardGeneric("getOmnibusDA"))
+
+#' @rdname getDA
+#' @export
+setGeneric("addOmnibusDA", signature = "x", function(x, ...) 
+    standardGeneric("addOmnibusDA"))
+
+#' @rdname getDA
+#' @export
+setGeneric("getPosthocDA", signature = "x", function(x, ...) 
+    standardGeneric("getPosthocDA"))
+
+#' @rdname getDA
+#' @export
+setGeneric("addPosthocDA", signature = "x", function(x, ...) 
+    standardGeneric("addPosthocDA"))
+
+#' @rdname getDA
+#' @export
+setGeneric("getDA", signature = "x", function(x, ...) 
+    standardGeneric("getDA"))
+
+#' @rdname getDA
+#' @export
+setGeneric("addDA", signature = "x", function(x, ...) 
+    standardGeneric("addDA"))
 
 #' @rdname utilization_functions
 #' @export
