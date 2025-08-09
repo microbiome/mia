@@ -47,13 +47,13 @@ test_that("getDA", {
         tse,
         assay.type = "relabundance", 
         group = "SampleType",
-        da.method = "t.test",
+        da.method = "ttest",
         name = "t_test"
     )
     expect_true("t_test" %in% names(metadata(result_ttest)))
     
     # Kruskal-Wallis method
-    result_kruskal <- addPairwiseDA(
+    result_kruskal <- addPosthocDA(
         tse,
         assay.type = "relabundance",
         group = "SampleType", 
@@ -122,19 +122,6 @@ test_that("getDA", {
     result_no_eff <- metadata(result_no_effect)$no_effect
     expect_false("effsize" %in% colnames(result_no_eff))
     expect_false("magnitude" %in% colnames(result_no_eff))
-    
-    ## Test 7: Paired analysis
-    # result_paired <- addPairwiseDA(
-    #     tse,
-    #     assay.type = "relabundance",
-    #     group = "Timepoint",
-    #     pair.by = "Subject",
-    #     paired = TRUE,
-    #     name = "paired_test"
-    # )
-    # expect_true("paired_test" %in% names(metadata(result_paired)))
-    # result_paired_data <- metadata(result_paired)$paired_test
-    # expect_s3_class(result_paired_data, "data.frame")
     
     ## Test 8: Features parameter
     selected_features <- rownames(tse)[1:2]

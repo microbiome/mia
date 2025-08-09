@@ -426,6 +426,8 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
 #' @importFrom rstatix pairwise_wilcox_test wilcox_effsize pairwise_t_test cohens_d
 #' @importFrom rstatix friedman_test friedman_effsize kruskal_test kruskal_effsize
 #' @importFrom rstatix dunn_test adjust_pvalue add_significance p_round
+#' @importFrom dplyr across all_of distinct group_by summarise left_join 
+#' @importFrom dplyr rename arrange select
 .calc_DA <- function(
     df, y, group, facet.by, pair.by, comp.by, features, 
     da.method, p.adjust.method = "fdr", 
@@ -558,8 +560,8 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
 }
 
 .calc_omnibus <- function(
-    df, formula, grouping_vars, comparison_vars, pair.by, 
-    p.adjust.method, include.effect, y, 
+    df, formula, grouping_vars, comparison_vars, pair.by, p.adjust.method,
+    paired, include.effect, y, 
     da.method, ...
 ) {
     effect <- NULL
@@ -614,8 +616,8 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
 }
 
 .calc_posthoc <- function(
-    df, formula, grouping_vars, comparison_vars, pair.by, 
-    p.adjust.method, paired, include.effect, y, 
+    df, formula, grouping_vars, comparison_vars, pair.by, p.adjust.method,
+    paired, include.effect, y, 
     da.method, ...
 ) {
     # ----------------------------- Friedman Test with Posthoc -----------------
@@ -624,8 +626,8 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
             paste(y, "~", paste(comparison_vars, collapse = "+"), "|", pair.by)
         )
         global <- .calc_omnibus(
-            df, formula, grouping_vars, comparison_vars, pair.by, 
-            p.adjust.method, include.effect, y, 
+            df, friedman_formula, grouping_vars, comparison_vars, pair.by, 
+            p.adjust.method, paired, include.effect, y, 
             da.method = "friedman", ...
         )
 
@@ -639,7 +641,7 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
     } else {
         global <- .calc_omnibus(
             df, formula, grouping_vars, comparison_vars, pair.by = NULL, 
-            p.adjust.method, include.effect, y, 
+            p.adjust.method, paired, include.effect, y, 
             da.method = "kruskal", ...
         )
 
