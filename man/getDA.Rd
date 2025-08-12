@@ -212,10 +212,8 @@ tse <- GlobalPatterns
 tse <- transformAssay(tse, method = "relabundance")
 tse <- tse[690:700, ]
 
-# Two-group comparison
-tse_two <- tse[, tse$SampleType \%in\% c("Feces", "Skin")]
 result_pairwise <- getPairwiseDA(
-    tse_two,
+    tse,
     assay.type = "relabundance",
     group = "SampleType",
     da.method = "wilcoxon"

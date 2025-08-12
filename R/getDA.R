@@ -134,10 +134,8 @@
 #' tse <- transformAssay(tse, method = "relabundance")
 #' tse <- tse[690:700, ]
 #' 
-#' # Two-group comparison
-#' tse_two <- tse[, tse$SampleType %in% c("Feces", "Skin")]
 #' result_pairwise <- getPairwiseDA(
-#'     tse_two,
+#'     tse,
 #'     assay.type = "relabundance",
 #'     group = "SampleType",
 #'     da.method = "wilcoxon"
@@ -271,7 +269,7 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
 .check_input_for_DA <- function(
     tse, assay.type, features, row.var, col.var, x, group,
     pair.by = NULL, facet.by = NULL, comp.by = NULL, da.method,
-    mark.significance = FALSE, paired = !is.null(pair.by), ...
+    paired = !is.null(pair.by), ...
 ) {
     # Either assay.type. row.var or col.var must be specified
     if( sum(c(is.null(assay.type), is.null(row.var), is.null(col.var))) != 2L ){
@@ -296,9 +294,6 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
     # If assay was specified, check that it is correct.
     if( !is.null(assay.type) ){
         .check_assay_present(assay.type, tse)
-    }
-    if( !.is_a_bool(mark.significance) ){
-        stop("'mark.significance' must be TRUE or FALSE.", call. = FALSE)
     }
     # validate method
     da.method <- .check_method(da.method)
@@ -435,7 +430,7 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
     df, y, group, facet.by, pair.by, comp.by, features, 
     da.method, p.adjust.method = "fdr", 
     paired = !is.null(pair.by), include.effect = TRUE, 
-    mark.significance = FALSE, digits = 3, ...
+    digits = 3, ...
 ) {
     # Basic validation
     if (!.is_a_bool(paired)) {
@@ -444,10 +439,6 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
     
     if ( !.is_a_string(p.adjust.method) ) {
         stop("'p.adjust.method' must be a character string.", call. = FALSE)
-    }
-    
-    if ( !.is_a_bool(mark.significance) ) {
-        stop("'mark.significance' must be TRUE or FALSE.", call. = FALSE)
     }
     
     if ( !.is_an_integer(digits) ) {
@@ -493,12 +484,6 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
                 "\n- Inappropriate test for the data structure",
                 call. = FALSE)
         return(res)  # Return empty result early
-    }
-    # Mark or round significance
-    if (mark.significance) {
-        res <- add_significance(res)
-    } else {
-        res <- p_round(res, digits = digits)
     }
     
     # Subset to relevant features if needed
@@ -558,11 +543,15 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
                     # Add grouping cols back to effect size results
                     res_eff <- dplyr::bind_cols(
                         res_eff,
-                        df_group %>% select(all_of(grouping_vars)) %>% distinct()
+                        df_group %>% 
+                            select(all_of(grouping_vars)) %>% 
+                            distinct()
                     )
-                    # Merge effect sizes into pairwise test results by group1/group2
+                    # Merge effect sizes into pairwise test results by 
+                    # group1/group2
                     res_merged <- merge(res_test, res_eff, 
-                                        by = intersect(names(res_test), names(res_eff)))
+                                        by = intersect(names(res_test), 
+                                                       names(res_eff)))
                     return(res_merged)
                 } else {
                     return(res_test)
@@ -697,7 +686,8 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
     
     # Safety check for means calculation
     if (nrow(means_df) == 0) {
-        warning("Could not calculate group means. Check data structure.", call. = FALSE)
+        warning("Could not calculate group means. Check data structure.", 
+                call. = FALSE)
         return(res)
     }
     
@@ -791,36 +781,32 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
         return(res)
     }
     
-    # Determine test type from method
+    # Save attributes before modifying
+    attr_list <- attributes(res)
+    
     if (da.method %in% c("wilcoxon", "ttest", "dunns")) {
-        # Pairwise/posthoc methods - remove unwanted columns
         res <- res[, !names(res) %in% c("statistic", "magnitude"), drop = FALSE]
-        
-        # Define desired column order with effsize and log2FC together
-        desired_order <- c("rownames", "group1", "group2", "p", "p.adj", 
+        desired_order <- c(".y.", "group1", "group2", "p", "p.adj", 
                            "effsize", "log2FC", "mean_group1", "mean_group2", 
                            "n1", "n2", "df", "method")
         
     } else if (da.method %in% c("kruskal", "friedman")) {
-        # Omnibus methods - remove unwanted columns
         res <- res[, !names(res) %in% c("magnitude"), drop = FALSE]
-        
-        # Define omnibus column order
         desired_order <- c(".y.", "n", "statistic", 
                            "df", "p", "method", "effsize")
         
     } else {
-        # Default: no cleaning
-        return(res)
+        return(res)  # no cleaning
     }
     
-    # Get columns that actually exist
     existing_cols <- intersect(desired_order, names(res))
     remaining_cols <- setdiff(names(res), existing_cols)
-    
-    # Reorder: desired columns first, then any remaining
     final_order <- c(existing_cols, remaining_cols)
     res <- res[, final_order, drop = FALSE]
     
+    # Restore original attributes (except dimensions)
+    attributes(res) <- modifyList(attr_list, attributes(res))
+    
     return(res)
 }
+
