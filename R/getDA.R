@@ -355,6 +355,7 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
     return(NULL)
 }
 
+# This function checks validity of method from user
 .check_method <- function(method) {
     supported <- c("wilcoxon", "ttest", "kruskal", "dunns", "friedman")
     method <- tolower(method)
@@ -404,6 +405,7 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
     return(df)
 }
 
+# internal wrapper to run DA
 .run_DA <- function(x, assay.type, features, row.var, col.var, group,
                     facet.by, comp.by, pair.by, da.method, ...) {
     
@@ -428,6 +430,7 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
 #' @importFrom rstatix dunn_test adjust_pvalue add_significance p_round
 #' @importFrom dplyr across all_of distinct group_by summarise left_join 
 #' @importFrom dplyr rename arrange select
+# Actual function calling various statistical tests
 .calc_DA <- function(
     df, y, group, facet.by, pair.by, comp.by, features, 
     da.method, p.adjust.method = "fdr", 
@@ -481,6 +484,16 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
         paired, include.effect, y, 
         da.method, ...
     )
+    # Safety check: handle empty results
+    if (is.null(res) || nrow(res) == 0) {
+        warning("Statistical test returned empty results. This may be due to:",
+                "\n- Insufficient sample size",
+                "\n- All values being identical", 
+                "\n- Missing data",
+                "\n- Inappropriate test for the data structure",
+                call. = FALSE)
+        return(res)  # Return empty result early
+    }
     # Mark or round significance
     if (mark.significance) {
         res <- add_significance(res)
@@ -493,9 +506,11 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
         res <- .subset_features(res, features)
     }
     
+    res <- .clean_DA_results(res, da.method)
     return(res)
 }
 
+# Calculates pairwise statistics
 .calc_pairwise <- function(
     df, formula, grouping_vars, comparison_vars, pair.by, 
     p.adjust.method, paired, include.effect, y, 
@@ -559,6 +574,7 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
     return(pw)
 }
 
+# Calculates omnibus statistics
 .calc_omnibus <- function(
     df, formula, grouping_vars, comparison_vars, pair.by, p.adjust.method,
     paired, include.effect, y, 
@@ -591,12 +607,14 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
     
     if (!is.null(effect)) {
         attr(global, "effect") <- effect
+        global <- dplyr::left_join(global, effect, by = c("n", ".y."))
     }
     class(global) <- c("stat_test_result", class(global))
     
     return(global)
 }
 
+# Calculates dunn's posthoc
 .calc_dunns <- function(df, formula, grouping_vars, comparison_vars,
     p.adjust.method, include.effect,
     y, ...
@@ -605,16 +623,17 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
                              p.adjust.method = p.adjust.method)
     
     if (include.effect) {
-        eff_pw <- wilcox_effsize(formula = formula, data = df, ...)
+        eff_pw <- wilcox_effsize(formula = formula, data = df)
         pw <- merge(pw, eff_pw, by = intersect(names(pw), names(eff_pw)))
     }
     
-    pw <- .add_group_means_log2fc(df, grouping_vars, pw, y)
+    pw <- .add_group_means_log2fc(df, c(grouping_vars, comparison_vars), pw, y)
     
     class(pw) <- c("stat_test_result", class(pw))
     return(pw)
 }
 
+# Calculates general posthoc
 .calc_posthoc <- function(
     df, formula, grouping_vars, comparison_vars, pair.by, p.adjust.method,
     paired, include.effect, y, 
@@ -656,32 +675,59 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
     return(pw)
 }
 
+# Calculates group means and fold change
 .add_group_means_log2fc <- function(df, group, res, y) {
+    # Safety check for empty results
+    if (is.null(res) || nrow(res) == 0) {
+        return(res)
+    }
+    
+    # Safety check for required columns
+    if (!all(c("group1", "group2") %in% colnames(res))) {
+        warning("Results missing required 'group1' and 'group2' columns. ",
+                "Skipping mean and log2FC calculations.", call. = FALSE)
+        return(res)
+    }
+    
     # Compute means for every group (can be 1 or multiple columns)
     means_df <- df |>
         as.data.frame() |>
         dplyr::group_by(across(all_of(group))) |>
         dplyr::summarise(mean = mean(.data[[y]], na.rm = TRUE), .groups = "drop")
     
+    # Safety check for means calculation
+    if (nrow(means_df) == 0) {
+        warning("Could not calculate group means. Check data structure.", call. = FALSE)
+        return(res)
+    }
+    
     comparison_vars <- setdiff(group, colnames(res))
     grouping_vars <- setdiff(group, comparison_vars)
     
-    res <- dplyr::left_join(res, means_df, 
-        by = c(grouping_vars, setNames(comparison_vars, "group1"))) %>%
-        dplyr::rename(mean_group1 = mean)
-    
-    res <- dplyr::left_join(res, means_df, 
-        by = c(grouping_vars, setNames(comparison_vars, "group2"))) %>%
-        dplyr::rename(mean_group2 = mean)
-    
-    # Handle zero values in log2FC calculation
-    res$log2FC <- with(res, {
-        ifelse(mean_group1 == 0 | mean_group2 == 0, 
-               NA_real_,
-               log2((mean_group2 + 1e-8) / (mean_group1 + 1e-8)))
+    # Safely join means
+    tryCatch({
+        res <- dplyr::left_join(res, means_df, 
+            by = c(grouping_vars, setNames(comparison_vars, "group1"))) %>%
+            dplyr::rename(mean_group1 = mean)
+        
+        res <- dplyr::left_join(res, means_df, 
+            by = c(grouping_vars, setNames(comparison_vars, "group2"))) %>%
+            dplyr::rename(mean_group2 = mean)
+        
+        # Handle zero values in log2FC calculation
+        res$log2FC <- with(res, {
+            ifelse(mean_group1 == 0 | mean_group2 == 0, 
+                   NA_real_,
+                   log2((mean_group2 + 1e-8) / (mean_group1 + 1e-8)))
+        })
+    }, error = function(e) {
+        warning("Error calculating group means and log2FC: ", e$message, 
+                ". Results returned without these columns.", call. = FALSE)
     })
+    
     return(res)
 }
+
 
 # This function checks whether variable can be found from colData or rowData.
 .check_metadata_variable <- function(
@@ -707,6 +753,7 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
     return(NULL)
 }
 
+# Useful to subset features entered by user
 .subset_features <- function(res, features) {
     if (!is.null(features) && nrow(res) > 0) {
         if ("rownames" %in% colnames(res)) {
@@ -734,5 +781,46 @@ setMethod("addPosthocDA", signature(x = "SummarizedExperiment"),
             }
         }
     }
+    return(res)
+}
+
+# Clean DA results before returning
+.clean_DA_results <- function(res, da.method) {
+    # Safety check for empty or null results
+    if (is.null(res) || nrow(res) == 0) {
+        return(res)
+    }
+    
+    # Determine test type from method
+    if (da.method %in% c("wilcoxon", "ttest", "dunns")) {
+        # Pairwise/posthoc methods - remove unwanted columns
+        res <- res[, !names(res) %in% c("statistic", "magnitude"), drop = FALSE]
+        
+        # Define desired column order with effsize and log2FC together
+        desired_order <- c("rownames", "group1", "group2", "p", "p.adj", 
+                           "effsize", "log2FC", "mean_group1", "mean_group2", 
+                           "n1", "n2", "df", "method")
+        
+    } else if (da.method %in% c("kruskal", "friedman")) {
+        # Omnibus methods - remove unwanted columns
+        res <- res[, !names(res) %in% c("magnitude"), drop = FALSE]
+        
+        # Define omnibus column order
+        desired_order <- c(".y.", "n", "statistic", 
+                           "df", "p", "method", "effsize")
+        
+    } else {
+        # Default: no cleaning
+        return(res)
+    }
+    
+    # Get columns that actually exist
+    existing_cols <- intersect(desired_order, names(res))
+    remaining_cols <- setdiff(names(res), existing_cols)
+    
+    # Reorder: desired columns first, then any remaining
+    final_order <- c(existing_cols, remaining_cols)
+    res <- res[, final_order, drop = FALSE]
+    
     return(res)
 }
