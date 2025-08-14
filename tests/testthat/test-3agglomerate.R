@@ -62,22 +62,22 @@ test_that("agglomerate", {
     # the same dimensionality is retained
     data(enterotype, package="mia")
     expect_equal(length(unique(rowData(enterotype)[,"Genus"])),
-                 nrow(agglomerateByRank(enterotype,"Genus", ignore.taxonomy = FALSE, 
+                 nrow(agglomerateByRank(enterotype,"Genus", ignore.taxonomy = FALSE,
                  empty.rm = FALSE)))
 
     # agglomeration in all its forms
     data(GlobalPatterns, package="mia")
     se <- GlobalPatterns
-    actual <- agglomerateByRank(se, rank = "Family", 
+    actual <- agglomerateByRank(se, rank = "Family",
         ignore.taxonomy = FALSE, empty.rm = FALSE, update.tree = FALSE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label),
                  length(rowTree(se)$tip.label))
-    actual <- agglomerateByRank(se, rank = "Family", 
+    actual <- agglomerateByRank(se, rank = "Family",
         ignore.taxonomy = FALSE, empty.rm = FALSE, update.tree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label), 603)
-    actual <- agglomerateByRank(se, rank = "Family", 
+    actual <- agglomerateByRank(se, rank = "Family",
         ignore.taxonomy = FALSE, empty.rm = FALSE, update.tree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label), nrow(actual))
@@ -87,7 +87,7 @@ test_that("agglomerate", {
     assay(se2, "pa")[1, 1] <- -1
     expect_warning(agglomerateByRank(se1, rank = "Phylum"))
     expect_warning(agglomerateByRank(se1, rank = "Order"))
-    
+
     # Load data
     data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns
@@ -95,34 +95,34 @@ test_that("agglomerate", {
     # Check that empty.rm works
     # Get all phyla
     all_phyla <- unique( rowData(tse)$Phylum )
-    
+
     # When empty.rm = FALSE, then phyla should also include NA --> one extra row
     test0 <- agglomerateByVariable(tse, by = 1, group = "Phylum", empty.rm = FALSE)
     test1 <- agglomerateByRank(tse, rank = "Phylum", empty.rm = FALSE)
-    
+
     # Test that dimentionality is the same for merging object by agglomerateByRank
     # and agglomerateByVariable.
     expect_equal(nrow(test0), length(all_phyla))
     expect_equal(nrow(test1), length(all_phyla))
-    
+
     # When empty.rm = TRUE, there should be as many rows as there are non-NA phyla
     test0 <- agglomerateByVariable(tse, by = 1, group = "Phylum", empty.rm = TRUE)
     test1 <- agglomerateByRank(tse, rank = "Phylum", empty.rm = TRUE)
-    
+
     # Test that dimensionality is the same when NA values are removed.
     expect_equal(nrow(test0), length( all_phyla[!is.na(all_phyla)] ))
     expect_equal(nrow(test1), length( all_phyla[!is.na(all_phyla)] ))
-    
+
     # Check that the names of tree tips correspond to rownames
     expect_true( all(rowTree(test0)$tip %in% rownames(test0)) )
     expect_true( all(rowTree(test1)$tip %in% rownames(test1)) )
-    
+
     # Check that there are more taxa when agglomeration is to "Species" level
     test0 <- agglomerateByVariable(tse, by = 1, group = "Species", empty.rm = FALSE)
     test1 <- agglomerateByRank(tse, rank = "Species", empty.rm = FALSE)
     expect_equal(nrow(test0), 945)
     expect_equal(nrow(test1), 2307)
-    
+
     # Test that empty.ranks.rm work
     expect_error(
         agglomerateByRank(tse, rank = "Class", empty.ranks.rm = NULL))
@@ -133,7 +133,7 @@ test_that("agglomerate", {
     expect_error(
         agglomerateByRank(
             tse, rank = "Class", empty.ranks.rm = c(TRUE, TRUE)))
-    
+
     # Add a column to rowData(se) to test that only NA rank columns are removed
     # when empty.ranks.rm = TRUE
     rank <- "Class"
@@ -152,14 +152,54 @@ test_that("agglomerate", {
         tse, rank = "Species", make.unique = FALSE, empty.rm = FALSE)
     expect_true( !any( duplicated(rownames(uniq)) ) )
     expect_true( any( duplicated(rownames(not_uniq)) ) )
-    
+
+    ## START test agglomerateByModule ##
+
+    # Generate random modules
+    N_module <- 30L
+    modules <- sample(
+        c(TRUE, FALSE),
+        size = nrow(tse) * N_module,
+        prob = c(0.2, 0.8),
+        replace = TRUE
+    )
+    # Add modules to rowData
+    modules <- modules |> matrix(nrow = nrow(tse))
+    # Add row and column names
+    colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
+    # Add modules to rowData
+    rowData(tse) <- cbind(rowData(tse), modules)
+    # Extract module columns
+    module_columns <- grep("module_", colnames(rowData(tse)), value = TRUE)
+    # Add pseudocount assay
+    tse <- transformAssay(tse, assay.type = "counts", method = "pseudocount")
+    # Introduce NA to pseudocount assay
+    assay(tse, "pseudocount")[1, 1] <- NA
+    # Agglomerate based on modules
+    tse_module <- agglomerateByModule(
+        tse, by = 1, group = module_columns, na.rm = TRUE
+    )
+    # Compute reference for counts assay
+    module_counts <- crossprod(modules, assay(tse, "counts"))
+    # Simulate NA removal by replacing it with 0
+    assay(tse, "pseudocount")[1, 1] <- 0
+    # Compute reference for pseudocount assay
+    module_pseudocount <- crossprod(modules, assay(tse, "pseudocount"))
+    # Compare output of agglomerateByModule with reference assays
+    expect_equal(assay(tse_module, "counts"), module_counts,
+        check.attributes = FALSE)
+    expect_equal(assay(tse_module, "pseudocount"), module_pseudocount,
+                 check.attributes = FALSE)
+
+    ## END test agglomerateByModule ##
+
     # Load data from miaTime package
     skip_if_not(require("miaTime", quietly = TRUE))
     data(SilvermanAGutData)
     se <- SilvermanAGutData
-    
+
     # checking reference consensus sequence generation
-    actual <- agglomerateByRank(se,"Genus", update.refseq = FALSE)
+    actual <- agglomerateByRank(se, "Genus", update.refseq = FALSE)
     # There should be only one exact match for each sequence
     seqs_test <- as.character( referenceSeq(actual) )
     seqs_ref <- as.character( referenceSeq(se) )
@@ -181,7 +221,7 @@ test_that("agglomerate", {
         threshold = th)
     seqs_test <- seqs_test[ names(seqs_test) %in% feature ]
     expect_equal(seqs_test, seqs_ref)
-    
+
     # checking reference consensus sequence generation using 'Genus:Alistipes'
     actual <- agglomerateByRank(se,"Genus", update.refseq = FALSE)
     expect_equal(as.character(referenceSeq(actual)[["Alistipes"]]),
