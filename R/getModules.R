@@ -8,6 +8,10 @@
 #'
 #' @param sigs \code{Character list}. List of microbial signatures output of
 #' bugsigdbr getSignatures in the metaphlan format.
+#'
+#' @param exact.tax.level \code{Logical scalar}. Should only the last
+#' taxonomic rank be used to determine whether a feature belongs to a module?
+#' if \code{FALSE}, all ranks are considered. (Default: \code{FALSE}).
 #' 
 #' @param ... additional parameters.
 #' 
@@ -32,8 +36,15 @@ NULL
 #' @export
 #' @importFrom SummarizedExperiment rowData
 setMethod("addModules", signature = c(x = "SummarizedExperiment"),
-    function(x, sigs, ...){
-        modules <- getModules(x, sigs, ...)
+    function(x, sigs, exact.tax.level = FALSE, ...){
+      
+        modules <- getModules(
+            x,
+            sigs,
+            exact.tax.level = exact.tax.level,
+            ...
+        )
+        
         rowData(x) <- cbind(rowData(x), modules)
         return(x)
     }
@@ -42,34 +53,38 @@ setMethod("addModules", signature = c(x = "SummarizedExperiment"),
 #' @rdname getModules
 #' @export
 setMethod("getModules", signature = c(x = "SummarizedExperiment"),
-    function(x, sigs, ...){
-        modules <- .make_modules_table(x, sigs, ...)
+    function(x, sigs, exact.tax.level = FALSE, ...){
+        
+        modules <- .make_modules_table(
+            x,
+            sigs,
+            exact.tax.level = exact.tax.level,
+            ...
+        )
+        
         return(modules)
     }
 )
 
+#' @importFrom stringr str_detect
 # Define function to construct modules table based on bugsigdb signatures
-.make_modules_table <- function(x, sigs, ...){
+.make_modules_table <- function(x, sigs, exact.tax.level = FALSE, ...){
     # Retrieve prefixes for taxonomic ranks
     tax.ranks <- getTaxonomyRankPrefixes()
     # Retrieve taxonomic labels for features
-    tax.labs <- x |>
-        getTaxonomyLabels(make.unique = FALSE, with.rank = TRUE) |>
-        tolower()
+    tax.labs <- .rowdata2taxonomy(x)
+    # Reduce to deepest rank if exact.tax.level is on
+    if( exact.tax.level ){
+        tax.labs <- gsub(".*\\|", "", tax.labs)
+    }
     # Initialise empty list for signatures
     sig.list <- list()
     # For every signature in output from bugsigdbr::getSignatures
     for( i in seq_along(sigs) ){
         # Extract deepest taxonomic rank
         sig <- gsub(".*\\|", "", sigs[[i]])
-        # Get letter for taxonomic rank
-        sig.labs <- substr(sig, 1, 1)
-        # Match letter to taxonomic rank
-        sig.ranks <- names(tax.ranks)[match(sig.labs, tax.ranks)]
-        # Replace letter with taxonomic rank in signature name
-        sig.labs <- tolower(paste(sig.ranks, gsub(".*\\w__", "", sig), sep = ":"))
         # Find which features belong to the current signature
-        sig.list[[i]] <- tax.labs %in% sig.labs
+        sig.list[[i]] <- unlist(lapply(tax.labs, function(x) any(str_detect(x, sig))))
     }
     # Build modules table from signature list
     modules <- do.call(cbind, sig.list)
@@ -77,4 +92,30 @@ setMethod("getModules", signature = c(x = "SummarizedExperiment"),
     rownames(modules) <- rownames(x)
     colnames(modules) <- names(sigs)
     return(modules)
+}
+
+### HELPER FUNCTIONS ###
+
+#' @importFrom SummarizedExperiment rowData
+.rowdata2taxonomy <- function(x){
+  
+    taxa.prefix <- paste0(getTaxonomyRankPrefixes()[tolower(taxonomyRanks(x))], "__")
+    full.tax <- rowData(x)[ , taxonomyRanks(x)]
+    full.tax <- mapply(function(rank, prefix) paste0(prefix, rank), full.tax, taxa.prefix)
+    full.tax <- apply(full.tax, 1L, function(row) paste(row, collapse = "|"))
+    full.tax <- gsub("\\|\\w__NA", "", full.tax)
+    
+    return(full.tax)
+}
+
+.add_prefix_to_rowdata <- function(x){
+  
+    taxa.prefix <- paste0(getTaxonomyRankPrefixes()[tolower(taxonomyRanks(x))], "__")
+    
+    full.tax <- rowData(x)[ , taxonomyRanks(x)]
+    
+    full.tax <- mapply(function(rank, prefix)
+      ifelse(is.na(rank), NA, paste0(prefix, rank)), full.tax, taxa.prefix)
+    
+    return(full.tax)
 }

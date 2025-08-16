@@ -11,9 +11,9 @@ getModules(x, sigs, ...)
 
 addModules(x, sigs, ...)
 
-\S4method{addModules}{SummarizedExperiment}(x, sigs, ...)
+\S4method{addModules}{SummarizedExperiment}(x, sigs, exact.tax.level = FALSE, ...)
 
-\S4method{getModules}{SummarizedExperiment}(x, sigs, ...)
+\S4method{getModules}{SummarizedExperiment}(x, sigs, exact.tax.level = FALSE, ...)
 }
 \arguments{
 \item{x}{a
@@ -23,6 +23,10 @@ addModules(x, sigs, ...)
 bugsigdbr getSignatures in the metaphlan format.}
 
 \item{...}{additional parameters.}
+
+\item{exact.tax.level}{\code{Logical scalar}. Should only the last
+taxonomic rank be used to determine whether a feature belongs to a module?
+if \code{FALSE}, all ranks are considered. (Default: \code{FALSE}).}
 }
 \value{
 \code{getModules} returns a modules table where rows and columns represent
