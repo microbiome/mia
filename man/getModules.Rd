@@ -3,26 +3,24 @@
 \name{getModules}
 \alias{getModules}
 \alias{addModules}
-\alias{addModules,SummarizedExperiment-method}
-\alias{getModules,SummarizedExperiment-method}
+\alias{addModules,TreeSummarizedExperiment-method}
+\alias{getModules,TreeSummarizedExperiment-method}
 \title{Add information on microbial modules}
 \usage{
 getModules(x, sigs, ...)
 
 addModules(x, sigs, ...)
 
-\S4method{addModules}{SummarizedExperiment}(x, sigs, exact.tax.level = FALSE, ...)
+\S4method{addModules}{TreeSummarizedExperiment}(x, sigs, exact.tax.level = FALSE)
 
-\S4method{getModules}{SummarizedExperiment}(x, sigs, exact.tax.level = FALSE, ...)
+\S4method{getModules}{TreeSummarizedExperiment}(x, sigs, exact.tax.level = FALSE)
 }
 \arguments{
 \item{x}{a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.}
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}.}
 
-\item{sigs}{\code{Character list}. List of microbial signatures output of
-bugsigdbr getSignatures in the metaphlan format.}
-
-\item{...}{additional parameters.}
+\item{sigs}{\code{Character list}. List of microbial signatures in the
+metaphlan taxonomy format.}
 
 \item{exact.tax.level}{\code{Logical scalar}. Should only the last
 taxonomic rank be used to determine whether a feature belongs to a module?
@@ -31,18 +29,37 @@ if \code{FALSE}, all ranks are considered. (Default: \code{FALSE}).}
 \value{
 \code{getModules} returns a modules table where rows and columns represent
 features and modules, respectively. \code{addModules} returns an updated
-object of the same class as \code{x} with the modules table in the
-\code{rowData} slot.
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
+object with the modules table in the \code{rowData} slot.
 }
 \description{
 \code{getModules} and \code{addModules} generate a modules table from a list
 of microbial signatures.
 }
 \details{
-text
+\code{getModules} and \code{addModules} allow to integrate information on
+microbial modules into \code{rowData(x)} from databases like BugSigDB or
+custom tables of microbes like \code{butyrate}. \code{sigs} must be a single
+character vector or a list of character vectors, where each vector
+corresponds to a module. Each microbial signature should follow the metaphlan
+taxonomy format, e.g.,
+\code{"k__Bacteria|p__Actinobacteria|c__Actinomycetia|o__Corynebacteriales"}.
 }
 \examples{
+# Load butyrate module
+data("butyrate", package = "mia")
+
+# Load dataset
 data("Tengeler2020", package = "mia")
 tse <- Tengeler2020
+
+# Convert taxonomy to fulltax labels (add to getTaxonomyLabels?)
+sigs <- mia:::.tax_table2label(butyrate)
+
+# Generate modules table
+modules <- getModules(tse, sigs)
+
+# Generate & store modules table
+tse <- addModules(tse, sigs)
 
 }
