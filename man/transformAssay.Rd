@@ -141,6 +141,17 @@ where \eqn{x} and \eqn{y} are entries of the specified assay.type.
 Calculates \eqn{x / y} for all unique feature pairs across samples,
 where \eqn{x} and \eqn{y} are entries of the specified assay.type.
 
+\item 'invnorm': Inverse rank normalisation. Ranks values per
+sample/feature and maps them to standard normal quantiles.
+\deqn{
+z = \Phi^{-1}\!\left(
+  \frac{r - \mathrm{offset}}{\,n + 1 - 2\,\mathrm{offset}\,}
+\right)
+}
+Controlled by \code{offset} (default \code{0.5}; also
+\code{0.375}=Blom, \code{0}=van der Waerden) and \code{ties.method}
+(passed to \code{base::rank}, default \code{"average"}).
+
 \item 'pseudocount': Adds only pseudocount.
 
 \item 'cutoff': In some ecological studies, only strictly positive values
