@@ -512,6 +512,52 @@ test_that("transformAssay", {
             all(div[pair, ] == ref)
         })
         all_correct |> all() |> expect_true()
+
+		
+		############################## INVNORM #################################
+        tse <- GlobalPatterns
+        
+        # Manual IRNT for comparison
+        invnorm_one <- function(v, offset = 0.5, ties.method = "average") {
+            ok <- !is.na(v)
+            n  <- sum(ok)
+            out <- rep(NA_real_, length(v))
+            if( n > 0L ){
+                r <- rank(v[ok], ties.method = ties.method)
+                p <- (r - offset) / (n + 1 - 2 * offset)
+                p[p <= 0] <- .Machine$double.eps
+                p[p >= 1] <- 1 - .Machine$double.eps
+                out[ok] <- qnorm(p)
+            }
+            out
+        }
+        
+        # Per-sample (columns) IRNT matches manual implementation
+        res_samp <- mia::transformAssay(tse, method = "invnorm", MARGIN = "samples")
+        inv_samp <- assay(res_samp, "invnorm")
+        exp_samp <- apply(as.matrix(assay(tse, "counts")), 2, invnorm_one)
+        expect_equal(as.matrix(inv_samp), as.matrix(exp_samp), check.attributes = FALSE)
+        
+        # Per-feature (rows) IRNT matches manual implementation
+        res_feat <- mia::transformAssay(tse, method = "invnorm", MARGIN = "features")
+        inv_feat <- assay(res_feat, "invnorm")
+        exp_feat <- t(apply(t(as.matrix(assay(tse, "counts"))), 2, invnorm_one))
+        expect_equal(as.matrix(inv_feat), as.matrix(exp_feat), check.attributes = FALSE)
+        
+        # Changing the offset should change results
+        res_off0 <- mia::transformAssay(tse, method = "invnorm", offset = 0)
+        expect_false(identical(as.matrix(assay(res_off0, "invnorm")),
+                               as.matrix(assay(res_samp, "invnorm"))))
+        
+        # Invalid parameter values should error
+        expect_error(mia::transformAssay(tse, method = "invnorm", offset = 0.75))
+        expect_error(mia::transformAssay(tse, method = "invnorm", offset = -0.01))
+        expect_error(mia::transformAssay(tse, method = "invnorm", ties.method = "nope"))
+        
+        # Parameters are recorded in attributes
+        pars <- attr(inv_samp, "parameters")
+        expect_equal(pars$margin, 2L)
+        expect_equal(pars$offset, 0.5)
     }
 
     # TSE object
