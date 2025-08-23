@@ -73,12 +73,14 @@ setGeneric("agglomerateByVariable", signature = "x", function(x, ...)
 
 #' @rdname getModules
 #' @export
-setGeneric("getModules", signature = "x", function(x, sigs, ...)
+setGeneric("getModules", signature = "x",
+    function(x, sigs, exact.tax.level = FALSE)
     standardGeneric("getModules"))
 
 #' @rdname getModules
 #' @export
-setGeneric("addModules", signature = "x", function(x, sigs, ...)
+setGeneric("addModules", signature = "x",
+    function(x, sigs, exact.tax.level = FALSE)
     standardGeneric("addModules"))
 
 #' @rdname agglomerate-methods

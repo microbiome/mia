@@ -31,8 +31,9 @@
 #' @name getModules
 #'
 #' @examples
+#' \dontrun{
 #' # Load butyrate module
-#' data("butyrate", package = "mia")
+#' data("butyrate", package = "ariadne")
 #' 
 #' # Load dataset
 #' data("Tengeler2020", package = "mia")
@@ -46,7 +47,7 @@
 #' 
 #' # Generate & store modules table
 #' tse <- addModules(tse, sigs)
-#' 
+#' }
 NULL
 
 #' @rdname getModules
