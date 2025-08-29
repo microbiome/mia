@@ -83,6 +83,8 @@ setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
         # Input check
         # Check assay.type
         .check_assay_present(assay.type, x)
+        if (!is.null(rank))
+            .check_taxonomic_rank(rank, x)
         # group check
         if(!is.null(group)){
             if(!.is_a_string(group)){

@@ -403,6 +403,8 @@ setMethod("agglomerateByVariable",
         ...){
         # Check by
         by <- .check_MARGIN(by)
+        # Check group
+        .check_group_present(group, x)
         # Get function based on by
         FUN <- switch(by, .merge_rows_TSE, .merge_cols_TSE)
         # Agglomerate
@@ -418,6 +420,8 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
     function(x, by, group = f, f, ...){
         # Check by
         by <- .check_MARGIN(by)
+        # Check group
+        .check_group_present(group, x)
         # Agglomerate the data
         x <- .merge_rows_or_cols(x, group, by, ...)
         return(x)
@@ -431,6 +435,8 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
     function(x, by, group, na.rm = FALSE){
         # Check margin
         by <- .check_MARGIN(by)
+        # Check group
+        .check_group_present(group, x)
         # Select side information based on margin
         FUN <- switch(by, rowData, colData)
         # Check group

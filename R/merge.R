@@ -7,11 +7,11 @@
     }
     dim.type <- match.arg(dim.type)
     if(!is.character(f) && !is.factor(f)){
-        stop("'f' must be a factor or character vector coercible to a ",
+        stop("'group' must be a factor or character vector coercible to a ",
             "meaningful factor.", call. = FALSE)
     }
     if(i != length(f)){
-        stop("'f' must have the same number of ",dim.type," as 'x'",
+        stop("'group' must have the same number of ",dim.type," as 'x'",
             call. = FALSE)
     }
     # This is done otherwise we lose NA values

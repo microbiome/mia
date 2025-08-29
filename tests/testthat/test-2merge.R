@@ -6,7 +6,7 @@ test_that("merge", {
     expect_error(mia:::.norm_f(6),
                  'argument "f" is missing')
     expect_error(mia:::.norm_f(6,5),
-                 "'f' must be a factor or character vector")
+                 "'group' must be a factor or character vector")
     f <- factor(c(rep("a",3),rep("b",3)))
     expect_true(is.factor(mia:::.norm_f(6,f)))
     # .check_archetype

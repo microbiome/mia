@@ -195,6 +195,35 @@
     }
     return(data.type)
 }
+
+# Check if grouping variable is provided
+.check_group_present <- function(group, x, 
+        name = .get_name_in_parent(group)) {
+    if (.is_a_string(group) && length(group) == 1L &&
+        !(group %in% colnames(rowData(x)) || 
+          group %in% colnames(colData(x)))) {
+        stop("'", name, "' specifies '", group,
+             "', which is not a column in rowData(x) or colData(x).",
+             call. = FALSE)
+    }
+    if ((is.vector(group) || is.factor(group)) &&
+        !(.is_a_string(group) && length(group) == 1L) &&
+        !(is.character(group) && all(group %in% c(colnames(rowData(x)),
+                                                  colnames(colData(x))))) &&
+        !(length(group) %in% c(nrow(x), ncol(x)))) {
+        stop("'", name,
+             "' must be a vector/factor with length equal to the number of ",
+             "rows or columns of x.",
+             call. = FALSE)
+    }
+    if (!.is_a_string(group) && !(is.vector(group) || is.factor(group))) {
+        stop("'", name,
+             "' must be either a column name from rowData(x)/colData(x) or a ",
+             "vector/factor of appropriate length.",
+             call. = FALSE)
+    }
+}
+
 ################################################################################
 # Internal wrappers for getters
 
