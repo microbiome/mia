@@ -71,7 +71,7 @@ setMethod("addModules", signature = c(x = "TreeSummarizedExperiment"),
 setMethod("getModules", signature = c(x = "TreeSummarizedExperiment"),
     function(x, sigs, exact.tax.level = FALSE){
         # Check sigs
-        if( !.is_non_empty_character(sigs) ){
+        if( !is.vector(sigs) ){
             stop("sigs must be a character vector or list of character ",
                 "vectors, where each vector corresponds to a module",
                 call. = FALSE)
@@ -91,32 +91,36 @@ setMethod("getModules", signature = c(x = "TreeSummarizedExperiment"),
 )
 
 # Define function to construct modules table based on bugsigdb signatures
-#' @importFrom stringr str_detect
+#' @importFrom stringr fixed str_detect str_remove
 .make_modules_table <- function(x, sigs, exact.tax.level = FALSE){
     # Retrieve taxonomic labels for features
     tax.labs <- .tax_table2label(rowData(x)[taxonomyRanks(x)])
     # Reduce to deepest rank if exact.tax.level is on
     if( exact.tax.level ){
-        tax.labs <- gsub(".*\\|", "", tax.labs)
+        tax.labs <- str_remove(tax.labs, ".*\\|")
     }
     # Convert sigs to list in case of only one module
     if( !is(sigs, "list") ){
         sigs <- list(module = sigs)
     }
-    # Initialise empty list for signatures
-    sig.list <- list()
+    # Initialise all-FALSE modules table
+    modules <- matrix(
+        FALSE,
+        nrow = length(tax.labs),
+        ncol = length(sigs),
+        dimnames = list(rownames(x), names(sigs))
+    )
     # For every signature in modules list
     for( i in seq_along(sigs) ){
         # Extract deepest taxonomic rank
-        sig <- gsub(".*\\|", "", sigs[[i]])
+        sig <- str_remove(sigs[[i]], ".*\\|")
         # Find which features belong to the current signature
-        sig.list[[i]] <- unlist(lapply(tax.labs, function(x) any(str_detect(x, sig))))
+        modules[ , i] <- vapply(
+            tax.labs,
+            function(x) any(str_detect(x, fixed(sig))),
+            logical(1)
+        )
     }
-    # Build modules table from signature list
-    modules <- do.call(cbind, sig.list)
-    # Add names to rows and columns
-    rownames(modules) <- rownames(x)
-    colnames(modules) <- names(sigs)
     return(modules)
 }
 
