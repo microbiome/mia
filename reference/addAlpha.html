@@ -45,7 +45,7 @@ rarefaction."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Estimate alpha diversity indices</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/xa/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/xa/R/addAlpha.R" class="external-link"><code>R/addAlpha.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/ad/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/ad/R/addAlpha.R" class="external-link"><code>R/addAlpha.R</code></a></small>
     <div class="hidden name"><code>addAlpha.Rd</code></div>
     </div>
 
@@ -292,7 +292,10 @@ correlated with the simpler variant implemented here.</p></li>
 <p>Evenness is a standard index in community ecology, and it quantifies how
 evenly the abundances of different species are distributed. The following
 evenness indices are provided:</p>
-<p>By default, this function returns all indices.</p>
+<p>By default, four indices are returned, each taking into account different
+aspects: richness (the number of observed unique features),
+dominance (Berger-Parker), information (Shannon), and phylogenetics (Faith)
+(Cassol et al., 2025).</p>
 <p>The available evenness indices include the following (all in lowercase):</p><ul><li><p>'camargo': Camargo's evenness (Camargo 1992)</p></li>
 <li><p>'simpson_evenness': Simpson’s evenness is calculated as inverse
 Simpson diversity (1/lambda) divided by
@@ -462,6 +465,9 @@ A Consumer's Guide to Evenness Indices.
 A tribute to Claude Shannon (1916 –2001) and a plea for more rigorous use of
 species richness, species diversity and the ‘Shannon–Wiener’ Index.
 <em>Alpha Ecology &amp; Biogeography</em> 12, 177–197.</p>
+<p>Cassol, I., Ibañez, M. &amp; Bustamante, J.P. (2025)
+Key features and guidelines for the application of microbial alpha diversity
+metrics. <em>Sci Rep</em> 15, 622. doi:10.1038/s41598-024-77864-y</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
