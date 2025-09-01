@@ -1,6 +1,5 @@
 test_that("getMediation", {
-
-  skip_if_not(require("miaTime", quietly = TRUE))
+  # Load data from miaTime package
   data("hitchip1006", package = "miaTime")
   tse <- hitchip1006
 

@@ -93,6 +93,7 @@ Suggests:
     dada2,
     knitr,
     mediation,
+    miaTime,
     miaViz,
     microbiomeDataSets,
     NMF,

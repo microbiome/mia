@@ -194,8 +194,7 @@ test_that("agglomerate", {
     ## END test agglomerateByModule ##
 
     # Load data from miaTime package
-    skip_if_not(require("miaTime", quietly = TRUE))
-    data(SilvermanAGutData)
+    data("SilvermanAGutData", package = "miaTime")
     se <- SilvermanAGutData
 
     # checking reference consensus sequence generation

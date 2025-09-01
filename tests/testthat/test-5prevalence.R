@@ -465,8 +465,7 @@ test_that("agglomerateByPrevalence", {
     expect_equal(length(rowTree(actual)$tip.label), length(rownames(actual)))
 
     # Load data from miaTime package
-    skip_if_not(require("miaTime", quietly = TRUE))
-    data(SilvermanAGutData)
+    data("SilvermanAGutData", package = "miaTime")
     se <- SilvermanAGutData
 
     # checking reference consensus sequence generation
