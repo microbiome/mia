@@ -92,7 +92,7 @@ setMethod("getModules", signature = c(x = "TreeSummarizedExperiment"),
 )
 
 # Define function to construct modules table based on bugsigdb signatures
-#' @importFrom stringr fixed str_detect str_remove
+#' @importFrom stringr fixed str_detect str_escape str_remove
 .make_modules_table <- function(x, sigs, exact.tax.level = FALSE){
     # Retrieve taxonomic labels for features
     tax.labs <- .tax_table2label(rowData(x)[taxonomyRanks(x)])
@@ -114,13 +114,12 @@ setMethod("getModules", signature = c(x = "TreeSummarizedExperiment"),
     # For every signature in modules list
     for( i in seq_along(sigs) ){
         # Extract deepest taxonomic rank
-        sig <- str_remove(sigs[[i]], ".*\\|")
+        sig <- sigs[[i]] |>
+            str_remove(".*\\|") |>
+            str_escape() |>
+            paste0(collapse = "|")
         # Find which features belong to the current signature
-        modules[ , i] <- vapply(
-            tax.labs,
-            function(x) any(str_detect(x, fixed(sig))),
-            logical(1)
-        )
+        modules[ , i] <- str_detect(tax.labs, sig)
     }
     return(modules)
 }

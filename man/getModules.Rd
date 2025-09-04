@@ -7,9 +7,9 @@
 \alias{getModules,TreeSummarizedExperiment-method}
 \title{Add information on microbial modules}
 \usage{
-getModules(x, sigs, ...)
+getModules(x, sigs, exact.tax.level = FALSE)
 
-addModules(x, sigs, ...)
+addModules(x, sigs, exact.tax.level = FALSE)
 
 \S4method{addModules}{TreeSummarizedExperiment}(x, sigs, exact.tax.level = FALSE)
 
@@ -46,8 +46,9 @@ taxonomy format, e.g.,
 \code{"k__Bacteria|p__Actinobacteria|c__Actinomycetia|o__Corynebacteriales"}.
 }
 \examples{
+\dontrun{
 # Load butyrate module
-data("butyrate", package = "mia")
+data("butyrate", package = "ariadne")
 
 # Load dataset
 data("Tengeler2020", package = "mia")
@@ -61,5 +62,5 @@ modules <- getModules(tse, sigs)
 
 # Generate & store modules table
 tse <- addModules(tse, sigs)
-
+}
 }
