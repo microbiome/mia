@@ -129,7 +129,7 @@ Must be \code{'rows'} or \code{'cols'}.}
 \item{MARGIN}{Deprecated. Use \code{by} instead.}
 
 \item{method}{\code{Character scalar}. Defines the association method
-('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical'
+('kendall', 'pearson', or 'spearman' for continuous/numeric; 'categorical'
 for discrete) (Default: \code{"kendall"})}
 
 \item{mode}{\code{Character scalar}. Specifies the  output format
