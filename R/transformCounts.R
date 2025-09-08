@@ -654,7 +654,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
                 "'pseudocount' must be specified manually.", call. = FALSE)
         }
         # If there are only positive, non-zero values, we do not add pseudocount
-        if( all(mat > 0, na.rm = TRUE) ){
+        if( pseudocount && all(mat > 0, na.rm = TRUE) ){
             pseudocount <- 0
             message("The assay contains already only strictly positive ",
                     "values. Pseudocount is not added.")
