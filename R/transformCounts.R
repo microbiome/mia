@@ -844,41 +844,45 @@ NULL
 # Inverse rank normalisation
 # For each column (or row if MARGIN=1L), values are ranked and then
 # transformed to the standard normal distribution quantiles.
+.invnorm_one <- function(v, ties.method = "average", offset = 0.5) {
+    ok <- !is.na(v)
+    n  <- sum(ok)
+    res <- rep(NA_real_, length(v))
+    if( n == 0L ) return(res)
+    r <- rank(v[ok], ties.method = ties.method)
+    p <- (r - offset) / (n + 1 - 2 * offset)
+    p[p <= 0] <- .Machine$double.eps
+    p[p >= 1] <- 1 - .Machine$double.eps
+    res[ok] <- qnorm(p)
+    return(res)
+}
+
+#' @importFrom BiocParallel bplapply bpparam
 .apply_transformation_invnorm <- function(mat,
-                                          method,
                                           ties.method = "average",
                                           offset = 0.5,
-                                          ...) {
+                                          BPPARAM = BiocParallel::bpparam(),
+                                          ...) { 
     # Check offset
     if( !is.numeric(offset) || length(offset) != 1L ||
         offset < 0 || offset > 0.5 ){
         stop("'offset' must be a single numeric in [0, 0.5].", call. = FALSE)
     }
+  
     # Check ties.method
     valid_ties <- c("average", "first", "last", "random", "max", "min")
     if( !ties.method %in% valid_ties ){
         stop("'ties.method' must be one of: ",
              paste(valid_ties, collapse = ", "), call. = FALSE)
     }
-  
-    invnorm_one <- function(v) {
-        ok <- !is.na(v)
-        n  <- sum(ok)
-        res <- rep(NA_real_, length(v))
-        if( n == 0L ) return(res)
-        r <- rank(v[ok], ties.method = ties.method)
-        p <- (r - offset) / (n + 1 - 2 * offset)
-        p[p <= 0] <- .Machine$double.eps
-        p[p >= 1] <- 1 - .Machine$double.eps
-        res[ok] <- qnorm(p)
-        res
-    }
-  
     # Apply column-wise
-    out <- apply(mat, 2, invnorm_one)
-    if( is.null(dim(out)) ){
-        out <- matrix(out, nrow = nrow(mat), ncol = 1L)
-    }
+    out <- do.call(cbind, BiocParallel::bplapply(
+        asplit(mat, 2L),
+        .invnorm_one,
+        ties.method = ties.method,
+        offset = offset,
+        BPPARAM = BPPARAM
+    ))
     dimnames(out) <- dimnames(mat)
   
     # Add attributes
