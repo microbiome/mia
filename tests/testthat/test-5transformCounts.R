@@ -551,11 +551,11 @@ test_that("transformAssay", {
             ok <- !is.na(v)
             n  <- sum(ok)
             if (n == 0L) next
-            r <- base::rank(v[ok], ties.method = "average")
+            r <- rank(v[ok], ties.method = "average")
             p <- (r - 0.5) / (n + 1 - 2 * 0.5)  # offset = 0.5
             p[p <= 0] <- .Machine$double.eps
             p[p >= 1] <- 1 - .Machine$double.eps
-            manual[ok, j]  <- stats::qnorm(p)
+            manual[ok, j]  <- qnorm(p)
             manual[!ok, j] <- NA_real_
         }
         expect_equal(inv[, sel, drop = FALSE], manual, tolerance = 1e-12, 
