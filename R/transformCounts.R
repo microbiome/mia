@@ -847,7 +847,7 @@ NULL
 # v : numeric vector to be normalized
 # ties.method : method to handle ties in ranking ("average" is default)
 # offset : adjustment for ranks when computing probabilities
-.invnorm_one <- function(x, ties.method = "average", offset = 0.5){
+.invnorm_one <- function(x, ties.method = "average", offset = 0.5, ...){
     # Identify non-missing values
     non_missing <- !is.na(x)
     n_non_missing  <- non_missing |> sum()
@@ -873,7 +873,7 @@ NULL
 #' @importFrom BiocParallel bplapply bpparam
 .apply_transformation_invnorm <- function(
         mat, ties.method = "average", offset = 0.5,
-        BPPARAM = BiocParallel::bpparam(), ...) {
+        BPPARAM = SerialParam(), ...) {
     # Check offset
     if( !(.is_a_numeric(offset) && offset >= 0 && offset <= 0.5) ){
         stop("'offset' must be a single numeric in [0, 0.5].", call. = FALSE)
@@ -891,7 +891,8 @@ NULL
         FUN = .invnorm_one,
         ties.method = ties.method,
         offset = offset,
-        BPPARAM = BPPARAM
+        BPPARAM = BPPARAM,
+        ...
     )
     res <- do.call(cbind, res)
     dimnames(res) <- dimnames(mat)
