@@ -179,3 +179,4 @@ Changes in version 1.17.x
 + Added transformation method that replaces values <= threshold with NA (2025-05-09)
 + importMetaPhlAn: Preserve features without taxonomy
 + Added agglomerateByModule()
++ Added inverse rank normalization (2025-09-10)

@@ -119,7 +119,7 @@
 #' Controlled by \code{offset} (default \code{0.5}; also
 #' \code{0.375}=Blom, \code{0}=van der Waerden) and \code{ties.method}
 #' (passed to \code{base::rank}, default \code{"average"}).
-#' 
+#'
 #' \item 'pseudocount': Adds only pseudocount.
 #'
 #' \item 'cutoff': In some ecological studies, only strictly positive values
@@ -325,8 +325,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     attr(assay, "pseudocount") <- NULL
     # Calls help function that does the transformation
     # Help function is different for mia and vegan transformations
-    if( method %in% c("log10", "log2", "css", "difference", "division",
-                      "invnorm") ){
+    if( method %in% c(
+            "log10", "log2", "css", "difference", "division", "invnorm") ){
         transformed_table <- .apply_transformation(
             assay, method, MARGIN, ...)
     } else if( method %in% c("philr") ){
@@ -844,55 +844,66 @@ NULL
 # Inverse rank normalisation
 # For each column (or row if MARGIN=1L), values are ranked and then
 # transformed to the standard normal distribution quantiles.
-.invnorm_one <- function(v, ties.method = "average", offset = 0.5) {
-    ok <- !is.na(v)
-    n  <- sum(ok)
-    res <- rep(NA_real_, length(v))
-    if( n == 0L ) return(res)
-    r <- rank(v[ok], ties.method = ties.method)
-    p <- (r - offset) / (n + 1 - 2 * offset)
-    p[p <= 0] <- .Machine$double.eps
-    p[p >= 1] <- 1 - .Machine$double.eps
-    res[ok] <- qnorm(p)
+# v : numeric vector to be normalized
+# ties.method : method to handle ties in ranking ("average" is default)
+# offset : adjustment for ranks when computing probabilities
+.invnorm_one <- function(x, ties.method = "average", offset = 0.5){
+    # Identify non-missing values
+    non_missing <- !is.na(x)
+    n_non_missing  <- non_missing |> sum()
+    # Initialize result vector with NAs
+    res <- rep(NA_real_, length(x))
+    # If there are values that are not missing
+    if( n_non_missing > 0L ){
+        # Rank the non-missing value
+        ranking <- rank(x[non_missing], ties.method = ties.method)
+        # Convert ranks to probabilities/percentiles in (0,1) interval
+        # The denominator adjusts for offset to avoid p=0 or p=1
+        prob <- (ranking - offset) / (n_non_missing + 1 - 2 * offset)
+        # Ensure probabilities are strictly between (0,1) to avoid Inf/-Inf in
+        # qnorm
+        prob[prob <= 0] <- .Machine$double.eps
+        prob[prob >= 1] <- 1 - .Machine$double.eps
+        # Map probabilities to standard normal quantiles
+        res[non_missing] <- qnorm(prob)
+    }
     return(res)
 }
 
 #' @importFrom BiocParallel bplapply bpparam
-.apply_transformation_invnorm <- function(mat,
-                                          ties.method = "average",
-                                          offset = 0.5,
-                                          BPPARAM = BiocParallel::bpparam(),
-                                          ...) { 
+.apply_transformation_invnorm <- function(
+        mat, ties.method = "average", offset = 0.5,
+        BPPARAM = BiocParallel::bpparam(), ...) {
     # Check offset
-    if( !is.numeric(offset) || length(offset) != 1L ||
-        offset < 0 || offset > 0.5 ){
+    if( !(.is_a_numeric(offset) && offset >= 0 && offset <= 0.5) ){
         stop("'offset' must be a single numeric in [0, 0.5].", call. = FALSE)
     }
-  
     # Check ties.method
     valid_ties <- c("average", "first", "last", "random", "max", "min")
-    if( !ties.method %in% valid_ties ){
-        stop("'ties.method' must be one of: ",
-             paste(valid_ties, collapse = ", "), call. = FALSE)
+    if( !(.is_a_string(ties.method) && ties.method %in% valid_ties) ){
+        stop("'ties.method' must be one of the following options: ",
+            paste(valid_ties, collapse = ", "), call. = FALSE)
     }
-    # Apply column-wise
-    out <- do.call(cbind, BiocParallel::bplapply(
-        asplit(mat, 2L),
-        .invnorm_one,
+    #
+    # Apply inverse rank normalisation for each column
+    res <- BiocParallel::bplapply(
+        X = asplit(mat, 2L),
+        FUN = .invnorm_one,
         ties.method = ties.method,
         offset = offset,
         BPPARAM = BPPARAM
-    ))
-    dimnames(out) <- dimnames(mat)
-  
+    )
+    res <- do.call(cbind, res)
+    dimnames(res) <- dimnames(mat)
+
     # Add attributes
-    attr(out, "mia") <- "invnorm"
-    attr(out, "parameters") <- c(
-        attr(out, "parameters"),
+    attr(res, "mia") <- "invnorm"
+    attr(res, "parameters") <- c(
+        attr(res, "parameters"),
         list(ties.method = ties.method, offset = offset)
     )
-  
-    return(out)
+
+    return(res)
 }
 
 # This function is used to add transformed table back to TreeSE. With most of
