@@ -18,7 +18,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.9</span>
       </span>
     </div>
 
@@ -196,6 +196,16 @@ where \(x\) and \(y\) are entries of the specified assay.type.</p></li>
 <li><p>'division': Pairwise ratios between features.
 Calculates \(x / y\) for all unique feature pairs across samples,
 where \(x\) and \(y\) are entries of the specified assay.type.</p></li>
+<li><p>'invnorm': Inverse rank normalisation. Ranks values per
+sample/feature and maps them to standard normal quantiles.
+$$
+z = \Phi^{-1}\!\left(
+  \frac{r - \mathrm{offset}}{\,n + 1 - 2\,\mathrm{offset}\,}
+\right)
+$$
+Controlled by <code>offset</code> (default <code>0.5</code>; also
+<code>0.375</code>=Blom, <code>0</code>=van der Waerden) and <code>ties.method</code>
+(passed to <code><a href="https://rdrr.io/r/base/rank.html" class="external-link">base::rank</a></code>, default <code>"average"</code>).</p></li>
 <li><p>'pseudocount': Adds only pseudocount.</p></li>
 <li><p>'cutoff': In some ecological studies, only strictly positive values
 are taken into account. This method keeps only values greater than
