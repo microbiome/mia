@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.17.7
+Version: 1.17.9
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -109,7 +109,7 @@ Suggests:
     yaml
 LinkingTo:
     Rcpp
-URL: https://github.com/microbiome/mia
+URL: https://microbiome.github.io/mia/, https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

@@ -57,7 +57,7 @@
 #' @param MARGIN Deprecated. Use \code{by} instead.
 #'
 #' @param method \code{Character scalar}. Defines the association method
-#' ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical'
+#' ('kendall', 'pearson', or 'spearman' for continuous/numeric; 'categorical'
 #' for discrete) (Default: \code{"kendall"})
 #'
 #' @param mode \code{Character scalar}. Specifies the  output format

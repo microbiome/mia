@@ -512,6 +512,70 @@ test_that("transformAssay", {
             all(div[pair, ] == ref)
         })
         all_correct |> all() |> expect_true()
+
+
+		############################## INVNORM ################################
+        tse <- GlobalPatterns
+
+        # Run inverse-rank normalisation column-wise (samples)
+        res <- transformAssay(
+            tse,
+            method = "invnorm",
+            MARGIN = "samples",
+            ties.method = "average",
+            offset = 0.5,
+            BPPARAM = BiocParallel::SerialParam()
+        )
+        inv <- assay(res, "invnorm")
+        cnt <- assay(tse, "counts")
+
+        # Shape and names match counts
+        expect_identical(dim(inv), dim(cnt))
+        expect_identical(dimnames(inv), dimnames(cnt))
+
+        # Attributes: method tag + parameters
+        expect_identical(attr(inv, "mia"), "invnorm")
+        pars <- attr(inv, "parameters")
+        expect_true(is.list(pars))
+        expect_identical(pars$`ties.method`, "average")
+        expect_identical(pars$offset, 0.5)
+
+        # NAs preserved in the same positions
+        expect_identical(is.na(inv), is.na(cnt))
+
+        # Compare columns against the formula
+        sel <- seq_len(ncol(cnt))
+        manual <- cnt[, sel, drop = FALSE]
+        for( j in seq_along(sel) ){
+            v  <- manual[, j]
+            ok <- !is.na(v)
+            n  <- sum(ok)
+            if (n == 0L) next
+            r <- rank(v[ok], ties.method = "average")
+            p <- (r - 0.5) / (n + 1 - 2 * 0.5)  # offset = 0.5
+            p[p <= 0] <- .Machine$double.eps
+            p[p >= 1] <- 1 - .Machine$double.eps
+            manual[ok, j]  <- qnorm(p)
+            manual[!ok, j] <- NA_real_
+        }
+        expect_equal(inv[, sel, drop = FALSE], manual, tolerance = 1e-12,
+                     check.attributes = FALSE)
+
+        # Counts assay unchanged
+        expect_equal(assay(res, "counts"), cnt, check.attributes = FALSE)
+
+        # Changing ties.method should change results
+        res_max <- transformAssay(
+            tse, method = "invnorm", MARGIN = "samples",
+            ties.method = "max", BPPARAM = BiocParallel::SerialParam()
+        )
+        expect_false(identical(assay(res_max, "invnorm"), inv))
+
+        # Invalid parameter values should error
+        expect_error(transformAssay(tse, method = "invnorm", offset = 0.75))
+        expect_error(transformAssay(tse, method = "invnorm", offset = -0.01))
+        expect_error(transformAssay(tse, method = "invnorm",
+                                    ties.method = "nope"))
     }
 
     # TSE object
