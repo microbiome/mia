@@ -1,0 +1,573 @@
+/*
+ * BSD 3-Clause License
+ *
+ * Copyright (c) 2016-2021, UniFrac development team.
+ * All rights reserved.
+ *
+ * See LICENSE file for more details
+ */
+
+#include "task_parameters.hpp"
+#include "stripemap.h"
+
+/** REMOVE **/
+#include <math.h>
+#include <vector>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+#ifndef __UNIFRAC_TASKS
+#define __UNIFRAC_TASKS 1
+// CPUs don't need such a big alignment
+#define UNIFRAC_BLOCK 16
+#endif
+
+
+namespace su {
+
+    /* task specific compute parameters
+     *
+     * n_samples <int> the number of samples being processed
+     * start <uint> the first stripe to process
+     * stop <uint> the last stripe to process
+     * tid <uint> the thread identifier
+     * bypass_tips <bool> ignore tips on compute, reduces compute by ~50%
+     * g_unifrac_alpha <double> an alpha value for generalized unifrac
+     */
+    struct task_parameters {
+        uint32_t n_samples;          // number of samples
+        unsigned int start;          // starting stripe
+        unsigned int stop;           // stopping stripe
+        unsigned int tid;            // thread ID
+        bool bypass_tips;    // avoid compute at tips 
+        
+        // task specific arguments below
+        double g_unifrac_alpha;      // generalized unifrac alpha
+    };
+
+
+
+    /*
+        Task parameters - struct of parameters
+        UnifracTaskVector - vector with special things
+            dm_stripes: Vector of vectors: Replace with stripemap
+            task_p
+        
+    
+    */
+
+    // Note: This adds a copy, which is suboptimal
+    //       But was the easiest way to get a contiguous buffer
+    //       And it does allow for fp32 compute, when desired
+    
+    //Seems to have a block of unused stuff at the front?
+    //Accessed via the 
+    class UnifracTaskVector {
+    private:
+      su::StripeMap dm_stripes;
+      const su::task_parameters task_p;
+
+    public:
+      const unsigned int start_idx;
+      const unsigned int n_samples;
+      const uint64_t  n_samples_r;
+      std::vector<double> buf;
+
+      UnifracTaskVector(su::StripeMap _dm_stripes, const su::task_parameters _task_p)
+      : dm_stripes(_dm_stripes), task_p(_task_p)
+      , start_idx(task_p->start), n_samples(task_p->n_samples)
+      , n_samples_r(((n_samples + UNIFRAC_BLOCK-1)/UNIFRAC_BLOCK)*UNIFRAC_BLOCK) // round up
+        //buf is just a new array with as many stripes as called for in task_p
+        //n_samples_r tells us how many unifrac_blocks are required for n_samples.
+        //Originally this was a null comparison, we might need to check what it does specifically 
+      , buf((dm_stripes.is_empty(start_idx)) ?
+                std::vector<double>() :
+                std::vector<double>(n_samples_r*(task_p->stop-start_idx), 0.0)) // dm_stripes could be null, in which case keep it null
+      {
+        if (!buf.empty()) {
+          for(unsigned int stripe=start_idx; stripe < task_p->stop; stripe++) {
+             std::vector dm_stripe = dm_stripes.get(stripe);
+             //This just returns the specified section of buf, and copies the values from dm_stripe there
+             std::vector<double> buf_stripe = this->operator[](stripe);
+             //double * buf_stripe = this->operator[](stripe);
+             for(unsigned int j=0; j<n_samples; j++) {
+                // Note: We could probably just initialize to zero
+                buf_stripe[j] = dm_stripe[j];
+             }
+             
+           }
+        }
+      }
+
+      //idx seems to go in steps of n_samples
+      //[] returns the first element of a n_samples_r sized chunk, i.e. a stripe?
+      //Start_idx is determined by task
+      //It's probably safe to just give them stripe_based access
+      std::vector<double>& operator[](unsigned int idx) { return buf+((idx-start_idx)*n_samples_r);}
+      const double * operator[](unsigned int idx) const { return buf+((idx-start_idx)*n_samples_r);}
+
+      //Destructor copies the buffer values back into dm_stripe
+      ~UnifracTaskVector()
+      {
+        double * const ibuf = buf;
+        if (ibuf != NULL) {
+          for(unsigned int stripe=start_idx; stripe < task_p->stop; stripe++) {
+             std::vector<double> dm_stripe = dm_stripes[stripe];
+             double * buf_stripe = this->operator[](stripe);
+             dm_stripes.update(stripe, vec)
+          }
+        }
+      }
+
+    private:
+      UnifracTaskVector() = delete;
+      UnifracTaskVector operator=(const UnifracTaskVector&other) const = delete;
+    };
+    
+    
+    /***********************************************/   
+    
+    
+    // Base task class to be shared by all tasks
+    template<class TEmb>
+    class UnifracTaskBase {
+    public:
+        //Two taskvectors for stripes and total
+        UnifracTaskVector dm_stripes;
+        UnifracTaskVector dm_stripes_total;
+        
+        su::task_parameters task_p;
+        
+        const unsigned int max_embs;
+        std::vector<double> embedded_proportions;
+        
+        UnifracTaskBase(su::StripeMap _dm_stripes, su::StripeMap _dm_stripes_total,
+                        unsigned int _max_embs, su::task_parameters _task_p)
+            : dm_stripes(_dm_stripes,_task_p), dm_stripes_total(_dm_stripes_total,_task_p), task_p(_task_p)
+            , max_embs(_max_embs))
+        {
+            uint64_t bsize = dm_stripes.n_samples_r * get_emb_els(max_embs);
+            embedded_proportions = std::vector<double>(bsize, 0.0)
+        }
+        
+        virtual ~UnifracTaskBase() {}
+        
+        static unsigned int get_emb_els(unsigned int max_embs);
+        
+        //Need to return a vector?
+        void embed_proportions_range(std::vector<double> in, unsigned int start, unsigned int end, unsigned int emb);
+        void embed_proportions(std::vector<double> in, unsigned int emb) {embed_proportions_range(in,0,dm_stripes.n_samples,emb);}
+        
+        //
+        // ===== Internal, do not use directly =======
+        //
+        
+        // Just copy from one buffer to another
+        // May convert between fp formats in the process (if TOut!=double)
+        
+        //out has all the stripes?
+        //in has just a specific section?
+        std::vector<double> embed_proportions_range_straight(
+                                                std::vector<double> out,
+                                                std::vector<double> in,
+                                              unsigned int start,
+                                              unsigned int end,
+                                              unsigned int emb) const
+        {
+            const unsigned int n_samples  = dm_stripes.n_samples;
+            const uint64_t n_samples_r  = dm_stripes.n_samples_r;
+            const uint64_t offset = emb * n_samples_r;
+            
+            //Copy to stripe indicated by emb
+            //Stripes are all contained in in/out in one mass
+            //Start/end aren't necessarily the whole stripe?
+            for(unsigned int i = start; i < end; i++) {
+                out[offset + i] = in[i-start];
+            }
+            
+            if (end==n_samples) {
+                // avoid NaNs
+                for(unsigned int i = n_samples; i < n_samples_r; i++) {
+                    out[offset + i] = 0.0;
+                }
+            }
+            return out;
+        }
+        
+        
+        // packed bool
+        // Compute (in[:]>0) on each element, and store only the boolean bit.
+        // The output values are stored in a multi-byte format, one bit per emb index,
+        //    so it will likely take multiple passes to store all the values
+        //
+        // Note: assumes we are processing emb in increasing order, starting from 0
+        template<class TOut> void embed_proportions_range_bool(
+                std::vector<double>  out,
+                std::vector<double>  in,
+                unsigned int start,
+                unsigned int end,
+                unsigned int emb) const
+        {
+            
+            const unsigned int n_packed = sizeof(TOut)*8;// e.g. 32 for unit32_t
+            const unsigned int n_samples  = dm_stripes.n_samples;
+            const uint64_t n_samples_r  = dm_stripes.n_samples_r;
+            // The output values are stored in a multi-byte format, one bit per emb index
+            // Compute the element to store the bit into, as well as whichbit in that element 
+            unsigned int emb_block = emb/n_packed; // beginning of the element  block
+            unsigned int emb_bit = emb%n_packed;   // bit inside the elements
+            const uint64_t offset = emb_block * n_samples_r;
+            
+            if  (emb_bit==0) {
+                // assign for emb_bit==0, so it clears the other bits
+                // assumes we processing emb in increasing order, starting from 0
+                for(unsigned int i = start; i < end; i++) {            
+                    out[offset + i] = (in[i-start] > 0);
+                }
+                
+                if (end==n_samples) {
+                    // avoid NaNs
+                    for(unsigned int i = n_samples; i < n_samples_r; i++) {
+                        out[offset + i] = 0;
+                    }
+                }
+            } else {
+                // just update my bit
+                for(unsigned int i = start; i < end; i++) {
+                    out[offset + i] |= (TOut(in[i-start] > 0) << emb_bit);
+                }
+                
+                // the rest of the els are already OK
+            }
+        }
+    };
+    
+    // straight embeded_proportions
+    template<> inline void UnifracTaskBase<double>::embed_proportions_range(const double* __restrict__ in, unsigned int start, unsigned int end, unsigned int emb) {embed_proportions_range_straight(embedded_proportions,in,start,end,emb);}
+    template<> inline unsigned int UnifracTaskBase<double>::get_emb_els(unsigned int max_embs) {return max_embs;}
+    
+    //packed bool embeded_proportions
+    template<> inline void UnifracTaskBase<uint32_t>::embed_proportions_range(const double* __restrict__ in, unsigned int start, unsigned int end, unsigned int emb) {embed_proportions_range_bool(embedded_proportions,in,start,end,emb);}
+    template<> inline unsigned int UnifracTaskBase<uint32_t>::get_emb_els(unsigned int max_embs) {return (max_embs+31)/32;}
+    
+    template<> inline void UnifracTaskBase<uint64_t>::embed_proportions_range(const double* __restrict__ in, unsigned int start, unsigned int end, unsigned int emb) {embed_proportions_range_bool(embedded_proportions,in,start,end,emb);}
+    template<> inline  unsigned int UnifracTaskBase<uint64_t>::get_emb_els(unsigned int max_embs) {return (max_embs+63)/64;}
+    
+    
+    
+    
+    
+    
+    /***********************************************/  
+    
+    /* void unifrac tasks
+     *
+     * all methods utilize the same function signature. that signature is as follows:
+     *
+     * dm_stripes vector<double> the stripes of the distance matrix being accumulated 
+     *      into for unique branch length
+     * dm_stripes vector<double> the stripes of the distance matrix being accumulated 
+     *      into for total branch length (e.g., to normalize unweighted unifrac)
+     * embedded_proportions <double*> the proportions vector for a sample, or rather
+     *      the counts vector normalized to 1. this vector is embedded as it is 
+     *      duplicated: if A, B and C are proportions for features A, B, and C, the
+     *      vector will look like [A B C A B C].
+     * length <double> the branch length of the current node to its parent.
+     * task_p <task_parameters*> task specific parameters.
+     */
+    
+    template<class TEmb>
+    class UnifracTask : public UnifracTaskBase<TEmb> {
+    protected:
+        // Use one cache line on CPU
+        // On GPU, sharing a cache line is actually a good thing
+        static const unsigned int step_size = 16*4/sizeof(double);
+        
+    public:
+        
+        UnifracTask(su::StripeMap _dm_stripes, su::StripeMap _dm_stripes_total, unsigned int _max_embs, su::task_parameters _task_p)
+            : UnifracTaskBase<TEmb>(_dm_stripes, _dm_stripes_total, _max_embs, _task_p) {}
+        
+        virtual ~UnifracTask() {}
+        
+        //Probably should return a vector?
+        virtual void run(unsigned int filled_embs, std::vector<double> length) = 0;
+        
+    protected:
+        static const unsigned int RECOMMENDED_MAX_EMBS_STRAIGHT = 128-16; // a little less to leave a bit of space of maxed-out L1
+        // packed uses 32x less memory,so this should be 32x larger than straight... but there are additional structures, so use half of that
+        static const unsigned int RECOMMENDED_MAX_EMBS_BOOL = 64*32;
+        
+    };
+    
+    /***********************************************/ 
+    
+    
+    //Simplify all template stuff into doubles
+    
+    class UnifracUnweightedTask : public UnifracTask<uint64_t> {
+    public:
+        static const unsigned int RECOMMENDED_MAX_EMBS = UnifracTask<uint64_t>::RECOMMENDED_MAX_EMBS_BOOL;
+        
+        // Note: _max_emb MUST be multiple of 64
+        UnifracUnweightedTask(su::StripeMap _dm_stripes, su::StripeMap _dm_stripes_total, unsigned int _max_embs, su::task_parameters _task_p)
+            : UnifracTask<uint64_t>(_dm_stripes,_dm_stripes_total,_max_embs,_task_p) 
+            {
+                const unsigned int bsize = _max_embs*32;
+                sums = std::vector<double>(bsize, 0.0);
+            }
+        
+        virtual ~UnifracUnweightedTask() {}
+        
+        virtual void run(unsigned int filled_embs, std::vector<double> length) {_run(filled_embs, length);}
+        
+        void _run(unsigned int filled_embs, std::vector<double> length);
+    private:
+        std::vector<double> sums; // temp buffer
+    };
+
+
+
+    
+    
+    
+
+
+    /***********************************************/  
+    
+
+//     template<class TFloat>
+//     class UnifracUnnormalizedWeightedTask : public UnifracTask<TFloat,TFloat> {
+//       public:
+//         static const unsigned int RECOMMENDED_MAX_EMBS = UnifracTask<TFloat,TFloat>::RECOMMENDED_MAX_EMBS_STRAIGHT;
+// 
+//         UnifracUnnormalizedWeightedTask(std::vector<double*> &_dm_stripes, std::vector<double*> &_dm_stripes_total, unsigned int _max_embs, const su::task_parameters* _task_p)
+//         : UnifracTask<TFloat,TFloat>(_dm_stripes,_dm_stripes_total,_max_embs,_task_p)
+//         {
+//           const unsigned int n_samples = this->task_p->n_samples;
+// 
+//           zcheck = NULL;
+//           sums = NULL;
+//           posix_memalign((void **)&zcheck, 4096, sizeof(bool) * n_samples);
+//           posix_memalign((void **)&sums  , 4096, sizeof(TFloat) * n_samples);
+// #pragma acc enter data create(zcheck[:n_samples],sums[:n_samples])
+//         }
+// 
+//         virtual ~UnifracUnnormalizedWeightedTask()
+//         {
+//           free(sums);
+//           free(zcheck);
+//         }
+// 
+//         virtual void run(unsigned int filled_embs, const TFloat * __restrict__ length) {_run(filled_embs, length);}
+// 
+//         void _run(unsigned int filled_embs, const TFloat * __restrict__ length);
+//       protected:
+//         // temp buffers
+//         bool     *zcheck;
+//         TFloat   *sums;
+//     };
+//     
+//     /***********************************************/  
+//     
+//     template<class TFloat>
+//     class UnifracNormalizedWeightedTask : public UnifracTask<TFloat,TFloat> {
+//       public:
+//         static const unsigned int RECOMMENDED_MAX_EMBS = UnifracTask<TFloat,TFloat>::RECOMMENDED_MAX_EMBS_STRAIGHT;
+// 
+//         UnifracNormalizedWeightedTask(std::vector<double*> &_dm_stripes, std::vector<double*> &_dm_stripes_total, unsigned int _max_embs, const su::task_parameters* _task_p)
+//         : UnifracTask<TFloat,TFloat>(_dm_stripes,_dm_stripes_total,_max_embs,_task_p)
+//         {
+//           const unsigned int n_samples = this->task_p->n_samples;
+// 
+//           zcheck = NULL;
+//           sums = NULL;
+//           posix_memalign((void **)&zcheck, 4096, sizeof(bool) * n_samples);
+//           posix_memalign((void **)&sums  , 4096, sizeof(TFloat) * n_samples);
+// #pragma acc enter data create(zcheck[:n_samples],sums[:n_samples])
+//         }
+// 
+//         virtual ~UnifracNormalizedWeightedTask()
+//         {
+//           free(sums);
+//           free(zcheck);
+//         }
+// 
+//         virtual void run(unsigned int filled_embs, const TFloat * __restrict__ length) {_run(filled_embs, length);}
+// 
+//         void _run(unsigned int filled_embs, const TFloat * __restrict__ length);
+//       protected:
+//         // temp buffers
+//         bool     *zcheck;
+//         TFloat   *sums;
+//     };
+//     
+//     
+//     /***********************************************/  
+//     
+//     
+//     template<class TFloat>
+//     class UnifracGeneralizedTask : public UnifracTask<TFloat,TFloat> {
+//       public:
+//         static const unsigned int RECOMMENDED_MAX_EMBS = UnifracTask<TFloat,TFloat>::RECOMMENDED_MAX_EMBS_STRAIGHT;
+// 
+//         UnifracGeneralizedTask(std::vector<double*> &_dm_stripes, std::vector<double*> &_dm_stripes_total, unsigned int _max_embs, const su::task_parameters* _task_p)
+//         : UnifracTask<TFloat,TFloat>(_dm_stripes,_dm_stripes_total,_max_embs,_task_p) {}
+// 
+//         virtual void run(unsigned int filled_embs, const TFloat * __restrict__ length) {_run(filled_embs, length);}
+// 
+//         void _run(unsigned int filled_embs, const TFloat * __restrict__ length);
+//     };
+// 
+//     /* void unifrac_vaw tasks
+//      *
+//      * all methods utilize the same function signature. that signature is as follows:
+//      *
+//      * dm_stripes vector<double> the stripes of the distance matrix being accumulated 
+//      *      into for unique branch length
+//      * dm_stripes vector<double> the stripes of the distance matrix being accumulated 
+//      *      into for total branch length (e.g., to normalize unweighted unifrac)
+//      * embedded_proportions <double*> the proportions vector for a sample, or rather
+//      *      the counts vector normalized to 1. this vector is embedded as it is 
+//      *      duplicated: if A, B and C are proportions for features A, B, and C, the
+//      *      vector will look like [A B C A B C].
+//      * embedded_counts <double*> the counts vector embedded in the same way and order as
+//      *      embedded_proportions. the values of this array are unnormalized feature 
+//      *      counts for the subtree.
+//      * sample_total_counts <double*> the total unnormalized feature counts for all samples
+//      *      embedded in the same way and order as embedded_proportions.
+//      * length <double> the branch length of the current node to its parent.
+//      * task_p <task_parameters*> task specific parameters.
+//      */
+//     template<class TFloat, class TEmb>
+//     class UnifracVawTask : public UnifracTaskBase<TFloat,TEmb> {
+//       protected:
+// #ifdef _OPENACC
+//         // The parallel nature of GPUs needs a largish step
+//   #ifndef SMALLGPU
+//         // default to larger step, which makes a big difference for bigger GPUs like V100
+//         static const unsigned int step_size = 32;
+//         // keep the vector size just big enough to keep the used emb array inside the 32k buffer
+//         static const unsigned int acc_vector_size = 32*32*8/sizeof(TFloat);
+//   #else
+//         // smaller GPUs prefer a slightly smaller step
+//         static const unsigned int step_size = 16;
+//         // keep the vector size just big enough to keep the used emb array inside the 32k buffer
+//         static const unsigned int acc_vector_size = 32*32*8/sizeof(TFloat);
+//   #endif
+// #else
+//         // The serial nature of CPU cores prefers a small step
+//         static const unsigned int step_size = 4;
+// #endif
+// 
+//       public:
+//         TFloat * const embedded_counts;
+//         const TFloat * const sample_total_counts;
+// 
+//         static const unsigned int RECOMMENDED_MAX_EMBS = 128;
+// 
+//         UnifracVawTask(std::vector<double*> &_dm_stripes, std::vector<double*> &_dm_stripes_total, 
+//                     const TFloat * _sample_total_counts,
+//                     unsigned int _max_embs, const su::task_parameters* _task_p)
+//         : UnifracTaskBase<TFloat,TEmb>(_dm_stripes, _dm_stripes_total, _max_embs, _task_p)
+//         , embedded_counts(UnifracTaskBase<TFloat,TFloat>::initialize_embedded(this->dm_stripes.n_samples_r,_max_embs)), sample_total_counts(_sample_total_counts) {}
+// 
+// 
+//         /* delete
+//         UnifracVawTask(UnifracTaskBase<TFloat> &baseObj, 
+//                     const TEmb * _embedded_proportions, const TFloat * _sample_total_counts, unsigned int _max_embs)
+//         : UnifracTaskBase<TFloat>(baseObj)
+//         , embedded_proportions(_embedded_proportions), embedded_counts(initialize_embedded<TFloat>()), sample_total_counts(_sample_total_counts), max_embs(_max_embs) {}
+//         */
+// 
+// 
+//        virtual ~UnifracVawTask() {}
+// 
+//        void sync_embedded_counts(unsigned int filled_embs)
+//        {
+// #ifdef _OPENACC
+//           const uint64_t  n_samples_r = this->dm_stripes.n_samples_r;
+//           const uint64_t bsize = n_samples_r * filled_embs;
+// #pragma acc update device(embedded_counts[:bsize])
+// #endif
+//        }
+// 
+//        void sync_embedded(unsigned int filled_embs) { this->sync_embedded_proportions(filled_embs); this->sync_embedded_counts(filled_embs);}
+// 
+//         void embed_range(const TFloat* __restrict__ in_proportions, const TFloat* __restrict__ in_counts, unsigned int start, unsigned int end, unsigned int emb) {
+//           this->embed_proportions_range(in_proportions,start,end,emb);
+//           this->embed_proportions_range_straight(this->embedded_counts,in_counts,start,end,emb);
+//         }
+//         void embed(const TFloat* __restrict__ in_proportions, const double* __restrict__ in_counts, unsigned int emb) { embed_range(in_proportions,in_counts,0,this->dm_stripes.n_samples,emb);}
+// 
+//        virtual void run(unsigned int filled_embs, const TFloat * __restrict__ length) = 0;
+//     };
+//     
+//     /***********************************************/  
+//     
+//     
+//     template<class TFloat>
+//     class UnifracVawUnnormalizedWeightedTask : public UnifracVawTask<TFloat,TFloat> {
+//       public:
+//         UnifracVawUnnormalizedWeightedTask(std::vector<double*> &_dm_stripes, std::vector<double*> &_dm_stripes_total, 
+//                     const TFloat * _sample_total_counts, 
+//                     unsigned int _max_embs, const su::task_parameters* _task_p)
+//         : UnifracVawTask<TFloat,TFloat>(_dm_stripes,_dm_stripes_total,_sample_total_counts,_max_embs,_task_p) {}
+// 
+//         virtual void run(unsigned int filled_embs, const TFloat * __restrict__ length) {_run(filled_embs, length);}
+// 
+//         void _run(unsigned int filled_embs, const TFloat * __restrict__ length);
+//     };
+//     
+//     /***********************************************/  
+//     
+//     template<class TFloat>
+//     class UnifracVawNormalizedWeightedTask : public UnifracVawTask<TFloat,TFloat> {
+//       public:
+//         UnifracVawNormalizedWeightedTask(std::vector<double*> &_dm_stripes, std::vector<double*> &_dm_stripes_total, 
+//                     const TFloat * _sample_total_counts, 
+//                     unsigned int _max_embs, const su::task_parameters* _task_p)
+//         : UnifracVawTask<TFloat,TFloat>(_dm_stripes,_dm_stripes_total,_sample_total_counts,_max_embs,_task_p) {}
+// 
+//         virtual void run(unsigned int filled_embs, const TFloat * __restrict__ length) {_run(filled_embs, length);}
+// 
+//         void _run(unsigned int filled_embs, const TFloat * __restrict__ length);
+//     };
+//     
+//     /***********************************************/  
+//     
+//     template<class TFloat>
+//     class UnifracVawUnweightedTask : public UnifracVawTask<TFloat,uint32_t> {
+//       public:
+//         UnifracVawUnweightedTask(std::vector<double*> &_dm_stripes, std::vector<double*> &_dm_stripes_total, 
+//                     const TFloat * _sample_total_counts, 
+//                     unsigned int _max_embs, const su::task_parameters* _task_p)
+//         : UnifracVawTask<TFloat,uint32_t>(_dm_stripes,_dm_stripes_total,_sample_total_counts,_max_embs,_task_p) {}
+// 
+//         virtual void run(unsigned int filled_embs, const TFloat * __restrict__ length) {_run(filled_embs, length);}
+// 
+//         void _run(unsigned int filled_embs, const TFloat * __restrict__ length);
+//     };
+//     
+//     /***********************************************/  
+//     
+//     template<class TFloat>
+//     class UnifracVawGeneralizedTask : public UnifracVawTask<TFloat,TFloat> {
+      public:
+        UnifracVawGeneralizedTask(std::vector<double*> &_dm_stripes, std::vector<double*> &_dm_stripes_total,
+                    const TFloat * _sample_total_counts, 
+                    unsigned int _max_embs, const su::task_parameters* _task_p)
+        : UnifracVawTask<TFloat,TFloat>(_dm_stripes,_dm_stripes_total,_sample_total_counts,_max_embs,_task_p) {}
+
+        virtual void run(unsigned int filled_embs, const TFloat * __restrict__ length) {_run(filled_embs, length);}
+
+        void _run(unsigned int filled_embs, const TFloat * __restrict__ length);
+    };
+    
+
+}
+
+#endif
