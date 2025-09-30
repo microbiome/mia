@@ -75,7 +75,7 @@
 #' \itemize{
 #'
 #' \item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
-#' 'normalize', 'pa', 'rank', 'rclr' relabundance', 'rrank', 'standardize',
+#' 'normalize', 'pa', 'rank', 'rclr', 'relabundance', 'rrank', 'standardize',
 #' 'total': please refer to
 #' \code{\link[vegan:decostand]{decostand}} for details.
 #'
@@ -108,6 +108,17 @@
 #' \item 'division': Pairwise ratios between features.
 #' Calculates \eqn{x / y} for all unique feature pairs across samples,
 #' where \eqn{x} and \eqn{y} are entries of the specified assay.type.
+#'
+#' \item 'invnorm': Inverse rank normalisation. Ranks values per
+#' sample/feature and maps them to standard normal quantiles.
+#' \deqn{
+#' z = \Phi^{-1}\!\left(
+#'   \frac{r - \mathrm{offset}}{\,n + 1 - 2\,\mathrm{offset}\,}
+#' \right)
+#' }
+#' Controlled by \code{offset} (default \code{0.5}; also
+#' \code{0.375}=Blom, \code{0}=van der Waerden) and \code{ties.method}
+#' (passed to \code{base::rank}, default \code{"average"}).
 #'
 #' \item 'pseudocount': Adds only pseudocount.
 #'
@@ -259,9 +270,10 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         x, assay.type = "counts", assay_name = NULL,
         method = c(
             "alr", "chi.square", "clr", "css", "cutoff", "difference", "-",
-            "division", "/", "frequency", "hellinger", "log", "log10", "log2",
-            "max", "normalize", "pa", "philr", "pseudocount", "range", "rank",
-            "rclr", "relabundance", "rrank", "standardize", "total", "z"),
+            "division", "/", "frequency", "hellinger", "invnorm", "log",
+            "log10", "log2", "max", "normalize", "pa", "philr", "pseudocount",
+            "range", "rank", "rclr", "relabundance", "rrank", "standardize",
+            "total", "z"),
         MARGIN = "samples",
         name = method,
         pseudocount = FALSE,
@@ -313,7 +325,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     attr(assay, "pseudocount") <- NULL
     # Calls help function that does the transformation
     # Help function is different for mia and vegan transformations
-    if( method %in% c("log10", "log2", "css", "difference", "division") ){
+    if( method %in% c(
+            "log10", "log2", "css", "difference", "division", "invnorm") ){
         transformed_table <- .apply_transformation(
             assay, method, MARGIN, ...)
     } else if( method %in% c("philr") ){
@@ -351,7 +364,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         log2 = .calc_log,
         css = .calc_css,
         difference = .apply_transformation_difference_or_division,
-        division = .apply_transformation_difference_or_division
+        division = .apply_transformation_difference_or_division,
+        invnorm = .apply_transformation_invnorm
     )
     # Get transformed table
     assay <- do.call(
@@ -654,7 +668,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
                 "'pseudocount' must be specified manually.", call. = FALSE)
         }
         # If there are only positive, non-zero values, we do not add pseudocount
-        if( all(mat > 0, na.rm = TRUE) ){
+        if( pseudocount && all(mat > 0, na.rm = TRUE) ){
             pseudocount <- 0
             message("The assay contains already only strictly positive ",
                     "values. Pseudocount is not added.")
@@ -824,6 +838,73 @@ NULL
     mat <- .Call(
         `_mia_apply_transformation_difference_or_division`, mat, method)
     return(mat)
+}
+
+############################## .apply_transformation_invnorm ##################
+# Inverse rank normalisation
+# For each column (or row if MARGIN=1L), values are ranked and then
+# transformed to the standard normal distribution quantiles.
+# v : numeric vector to be normalized
+# ties.method : method to handle ties in ranking ("average" is default)
+# offset : adjustment for ranks when computing probabilities
+.invnorm_one <- function(x, ties.method = "average", offset = 0.5, ...){
+    # Identify non-missing values
+    non_missing <- !is.na(x)
+    n_non_missing  <- non_missing |> sum()
+    # Initialize result vector with NAs
+    res <- rep(NA_real_, length(x))
+    # If there are values that are not missing
+    if( n_non_missing > 0L ){
+        # Rank the non-missing value
+        ranking <- rank(x[non_missing], ties.method = ties.method)
+        # Convert ranks to probabilities/percentiles in (0,1) interval
+        # The denominator adjusts for offset to avoid p=0 or p=1
+        prob <- (ranking - offset) / (n_non_missing + 1 - 2 * offset)
+        # Ensure probabilities are strictly between (0,1) to avoid Inf/-Inf in
+        # qnorm
+        prob[prob <= 0] <- .Machine$double.eps
+        prob[prob >= 1] <- 1 - .Machine$double.eps
+        # Map probabilities to standard normal quantiles
+        res[non_missing] <- qnorm(prob)
+    }
+    return(res)
+}
+
+#' @importFrom BiocParallel bplapply bpparam
+.apply_transformation_invnorm <- function(
+        mat, ties.method = "average", offset = 0.5,
+        BPPARAM = SerialParam(), ...) {
+    # Check offset
+    if( !(.is_a_numeric(offset) && offset >= 0 && offset <= 0.5) ){
+        stop("'offset' must be a single numeric in [0, 0.5].", call. = FALSE)
+    }
+    # Check ties.method
+    valid_ties <- c("average", "first", "last", "random", "max", "min")
+    if( !(.is_a_string(ties.method) && ties.method %in% valid_ties) ){
+        stop("'ties.method' must be one of the following options: ",
+            paste(valid_ties, collapse = ", "), call. = FALSE)
+    }
+    #
+    # Apply inverse rank normalisation for each column
+    res <- BiocParallel::bplapply(
+        X = asplit(mat, 2L),
+        FUN = .invnorm_one,
+        ties.method = ties.method,
+        offset = offset,
+        BPPARAM = BPPARAM,
+        ...
+    )
+    res <- do.call(cbind, res)
+    dimnames(res) <- dimnames(mat)
+
+    # Add attributes
+    attr(res, "mia") <- "invnorm"
+    attr(res, "parameters") <- c(
+        attr(res, "parameters"),
+        list(ties.method = ties.method, offset = offset)
+    )
+
+    return(res)
 }
 
 # This function is used to add transformed table back to TreeSE. With most of
