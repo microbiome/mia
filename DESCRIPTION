@@ -74,7 +74,7 @@ Imports:
     MASS,
     MatrixGenerics,
     methods,
-    rbiom,
+    ecodive,
     rlang,
     S4Vectors,
     scater,
