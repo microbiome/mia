@@ -42,8 +42,7 @@ test_that("Unifrac beta diversity", {
                                               rowTree(tse)))
     expect_equal(unifrac_mia, unifrac_ecodive)
     # Calculate weighted unifrac. Allow tolerance since weighted unifrac
-    # calculation in rbiom has some stochasticity. That is most likely due
-    # multithreading and complex structure of tree (loops).
+    # calculation may have some stochasticity.
     unifrac_mia <- as.matrix(getDissimilarity(tse, method = "unifrac",
                                               weighted = TRUE))
     unifrac_ecodive <- as.matrix(ecodive::weighted_unifrac(t(assay(tse)),
