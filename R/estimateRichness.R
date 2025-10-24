@@ -29,6 +29,10 @@
 }
 
 .calc_hill <- function(mat, ...){
+    # Required to work with DelayedArray
+    if(is(mat, "DelayedArray")) {
+        mat <- matrix(mat, nrow = nrow(mat))
+    }
     # Exponent of Shannon diversity
     exp(vegan::diversity(t(mat), index="shannon"))
 }
