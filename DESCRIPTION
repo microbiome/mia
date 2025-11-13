@@ -102,6 +102,7 @@ Suggests:
     patchwork,
     philr,
     phyloseq,
+    quarto,
     reldist,
     rhdf5,
     rmarkdown,

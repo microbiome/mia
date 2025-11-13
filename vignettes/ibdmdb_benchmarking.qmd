@@ -1,0 +1,532 @@
+---
+title: "IBDMDB — Joint-RPCA Benchmarking"
+format: html
+editor: visual
+---
+
+```{r setup, message = FALSE, warning = FALSE}
+options(warn = -1)
+
+#necessary imports
+library(Matrix)
+library(tidyr)
+library(ggplot2)
+library(plotly)
+library(vegan)
+library(MultiAssayExperiment)
+library(pROC)
+library(dplyr, warn.conflicts = FALSE)
+library(mia)
+
+#load compact demo data
+data(ibdmdb_2omic_demo)        
+suppressWarnings(data(ibdmdb_meta_demo))  
+
+#use the MultiAssayExperiment directly
+mae_joint <- mae2
+se_mgx    <- mae_joint[["MGX"]]
+se_mtx    <- mae_joint[["MTX"]]
+
+#matrices for PCA/NMF comparators etc.
+X_mgx <- SummarizedExperiment::assay(se_mgx, 1L)
+X_mtx <- SummarizedExperiment::assay(se_mtx, 1L)
+stopifnot(identical(colnames(X_mgx), colnames(X_mtx)))
+sample_ids <- colnames(X_mgx)
+
+#single-omic MAEs for the baseline comparisons
+mae_mgx <- MultiAssayExperiment::MultiAssayExperiment(list(MGX = se_mgx))
+mae_mtx <- MultiAssayExperiment::MultiAssayExperiment(list(MTX = se_mtx))
+
+#metadata
+meta_df <- if (exists("ibdmdb_meta_demo")) ibdmdb_meta_demo else NULL
+
+# Helper functions
+
+`%||%` <- function(a, b) if (is.null(a)) b else a
+metric <- function(m, name) { x <- m[[name]]; if (is.null(x)) NA_real_ else as.numeric(x) }
+
+make_groups_autodetect <- function(meta_df, sample_ids, min_frac = 0.01, min_abs = 10L) {
+  out <- data.frame(sample_id = sample_ids, Group = factor(NA, levels = c("IBD", "non-IBD")))
+  if (is.null(meta_df) || !nrow(meta_df)) return(out)
+
+  md <- as.data.frame(meta_df, stringsAsFactors = FALSE)
+  names(md) <- tolower(trimws(names(md)))
+
+  sid <- tolower(trimws(as.character(sample_ids)))
+  thresh <- max(min_abs, floor(length(sid) * min_frac))
+  overlaps <- sapply(md, function(col) {
+    x <- tolower(trimws(as.character(col)))
+    sum(!is.na(x) & x %in% sid)
+  })
+  max_ov <- suppressWarnings(max(overlaps, na.rm = TRUE))
+  if (!is.finite(max_ov) || max_ov < thresh) return(out)
+  best <- names(overlaps)[which.max(overlaps)]
+
+  if (!"diagnosis" %in% names(md)) return(out)
+
+  dx  <- tolower(trimws(as.character(md$diagnosis)))
+  grp <- ifelse(grepl("\\b(uc|cd|ibd)\\b", dx), "IBD",
+         ifelse(grepl("^\\s*non", dx), "non-IBD", NA_character_))
+
+  md$sample_id <- tolower(trimws(as.character(md[[best]])))
+  md$Group <- factor(grp, levels = c("IBD", "non-IBD"))
+  join_tbl <- unique(md[, c("sample_id", "Group")])
+
+  joined <- dplyr::left_join(
+    data.frame(sample_id = sid, stringsAsFactors = FALSE),
+    join_tbl, by = "sample_id"
+  )
+  joined$sample_id <- sample_ids
+  joined
+}
+
+#eval_scores that adapts to available components (1–3)
+eval_scores <- function(scores_df) {
+  out <- list()
+  if (!("Group" %in% names(scores_df))) return(out)
+
+  #detect available component columns
+  comp_cols <- grep("^V\\d+$", names(scores_df), value = TRUE)
+  if (!length(comp_cols)) return(out)
+  use_cols <- comp_cols[seq_len(min(3L, length(comp_cols)))] 
+
+  #Wilcoxon tests
+  if ("V1" %in% names(scores_df)) {
+    res_w1 <- try(wilcox.test(scores_df$V1 ~ scores_df$Group, exact = FALSE), silent = TRUE)
+    out$wilcox_PC1_p <- if (!inherits(res_w1, "try-error")) res_w1$p.value else NA_real_
+  }
+  if ("V2" %in% names(scores_df)) {
+    res_w2 <- try(wilcox.test(scores_df$V2 ~ scores_df$Group, exact = FALSE), silent = TRUE)
+    out$wilcox_PC2_p <- if (!inherits(res_w2, "try-error")) res_w2$p.value else NA_real_
+  }
+
+  #PERMANOVA (only if >=2 components exist)
+  if (length(use_cols) >= 2) {
+    perm_df <- na.omit(scores_df[, c("Group", use_cols), drop = FALSE])
+    if (nrow(perm_df) > 5 &&
+        is.factor(perm_df$Group) &&
+        nlevels(perm_df$Group) >= 2 &&
+        all(table(perm_df$Group) >= 3)) {
+
+      #safely build numeric matrix for the available component columns
+      comp_mat <- as.matrix(perm_df[, use_cols, drop = FALSE])
+      colnames(comp_mat) <- use_cols
+
+      perm <- try(
+        vegan::adonis2(comp_mat ~ Group, data = perm_df, method = "euclidean"),
+        silent = TRUE
+      )
+
+      if (!inherits(perm, "try-error")) {
+        out$permanova_R2 <- perm$R2[1]
+        out$permanova_F  <- perm$F[1]
+        out$permanova_p  <- perm$`Pr(>F)`[1]
+      } else {
+        out$permanova_R2 <- NA_real_
+        out$permanova_F  <- NA_real_
+        out$permanova_p  <- NA_real_
+      }
+    }
+  }
+
+  #AUROC with ranger if at least 1 component exists
+  rf_df <- na.omit(scores_df[, c("Group", use_cols), drop = FALSE])
+  if (nrow(rf_df) && is.factor(rf_df$Group) && nlevels(rf_df$Group) >= 2) {
+    cls_tab <- table(rf_df$Group)
+    wts <- as.numeric(1 / cls_tab)
+    names(wts) <- names(cls_tab)
+    set.seed(42)
+    rf_prob <- ranger::ranger(
+      Group ~ ., data = rf_df, num.trees = 500,
+      probability = TRUE, class.weights = wts, oob.error = TRUE
+    )
+    if ("IBD" %in% colnames(rf_prob$predictions)) {
+      p_ibd <- rf_prob$predictions[, "IBD"]
+      roc_obj <- pROC::roc(rf_df$Group, p_ibd, levels = c("non-IBD", "IBD"))
+      out$AUROC <- as.numeric(pROC::auc(roc_obj))
+    }
+  }
+
+  out
+}
+
+#convenience: run Joint-RPCA and return scores + metrics
+fit_and_score <- function(mae, k, grp_df) {
+  set.seed(42)
+  fit <- jointRPCAuniversal(
+    data = mae,
+    n.components = k,
+    max.iterations = 5,
+    rclr.transform.tables = TRUE,
+    min.sample.count = 1,
+    min.feature.count = 0,
+    min.feature.frequency = 0
+  )
+  U <- as.data.frame(fit$ord.res$samples)
+  colnames(U) <- paste0("V", seq_len(ncol(U)))
+  U$sample_id <- rownames(U)
+  U2 <- dplyr::left_join(U, grp_df, by = "sample_id")
+  list(scores = U2,
+       metrics = eval_scores(U2),
+       fit = fit)
+}
+
+# Subject-wise CV helpers 
+
+find_subject_col <- function(meta) {
+  nm <- tolower(trimws(names(meta)))
+  # common plausible names in IBDMDB metadata
+  hits <- c("participant.id", "participant_id", "participantid",
+            "subject", "subject_id", "host_subject_id", "host.subject.id",
+            "participant", "host_subject")
+  ix <- intersect(nm, hits)
+  if (length(ix)) ix[1] else NULL
+}
+
+build_sample_subject_map <- function(meta_df, sample_ids, min_frac = 0.01, min_abs = 10L) {
+  if (is.null(meta_df) || !nrow(meta_df)) return(NULL)
+  md <- as.data.frame(meta_df, stringsAsFactors = FALSE)
+  names(md) <- tolower(trimws(names(md)))
+
+  #choose "best" sample-id column by overlap with our samples
+  sid <- tolower(trimws(as.character(sample_ids)))
+  thresh <- max(min_abs, floor(length(sid) * min_frac))
+  overlaps <- sapply(md, function(col) {
+    x <- tolower(trimws(as.character(col))); sum(!is.na(x) & x %in% sid)
+  })
+  max_ov <- suppressWarnings(max(overlaps, na.rm = TRUE))
+  if (!is.finite(max_ov) || max_ov < thresh) return(NULL)
+  best_id_col <- names(overlaps)[which.max(overlaps)]
+
+  subj_col <- find_subject_col(md)
+  if (is.null(subj_col)) return(NULL)
+
+  md$sample_id  <- tolower(trimws(as.character(md[[best_id_col]])))
+  md$subject_id <- as.character(md[[subj_col]])
+  out <- unique(md[, c("sample_id", "subject_id")])
+  out <- out[!is.na(out$sample_id) & nzchar(out$sample_id) & !is.na(out$subject_id) & nzchar(out$subject_id), , drop = FALSE]
+  if (!nrow(out)) return(NULL)
+  out
+}
+
+#build groups (IBD vs non-IBD) from metadata
+meta_df <- if (exists("ibdmdb_meta_demo")) ibdmdb_meta_demo else NULL
+grp_df  <- make_groups_autodetect(meta_df, colnames(X_mgx))
+table(grp_df$Group, useNA = "ifany")
+
+# Joint vs Single-omic comparison
+
+#choose a safe k
+per_view_min_dim <- sapply(list(X_mgx, X_mtx), function(m) min(nrow(m), ncol(m)))
+k_max <- max(1L, min(per_view_min_dim))
+k0 <- min(3L, k_max)
+
+#run fits
+res_joint <- fit_and_score(mae_joint, k0, grp_df)
+res_mgx   <- fit_and_score(mae_mgx,   k0, grp_df)
+res_mtx   <- fit_and_score(mae_mtx,   k0, grp_df)
+
+#collect metrics
+grab <- function(x) {
+  m <- x$metrics
+  c(
+    wilcox_PC1_p = m$wilcox_PC1_p %||% NA_real_,
+    wilcox_PC2_p = m$wilcox_PC2_p %||% NA_real_,
+    permanova_R2 = m$permanova_R2 %||% NA_real_,
+    permanova_p  = m$permanova_p  %||% NA_real_,
+    AUROC        = m$AUROC        %||% NA_real_
+  )
+}
+
+bench_tbl <- rbind(
+  cbind(model = "Joint (MGX+MTX)", t(grab(res_joint))),
+  cbind(model = "MGX only",         t(grab(res_mgx))),
+  cbind(model = "MTX only",         t(grab(res_mtx)))
+) %>% as.data.frame()
+
+bench_tbl[, -1] <- lapply(bench_tbl[, -1, drop=FALSE], function(z) as.numeric(z))
+knitr::kable(bench_tbl, digits = 3)
+
+# Plots: Ordinations (PC1 vs PC2)
+plt_ord <- function(scores, title) {
+  ggplot2::ggplot(scores, ggplot2::aes(V1, V2, color = Group)) +
+    ggplot2::geom_point(alpha = 0.8, size = 1.1) +
+    ggplot2::labs(title = title, x = "PC1", y = "PC2", color = NULL) +
+    ggplot2::theme_minimal()
+}
+print(plt_ord(res_joint$scores, sprintf("Joint-RPCA (k=%d)", k0)))
+print(plt_ord(res_mgx$scores,   sprintf("MGX only (k=%d)", k0)))
+print(plt_ord(res_mtx$scores,   sprintf("MTX only (k=%d)", k0)))
+
+# Sensitivity to rank k
+
+ks <- sort(unique(pmax(1, pmin(c(2, 3, 4, 5), k_max))))
+sens <- lapply(ks, function(k) {
+  rj <- fit_and_score(mae_joint, k, grp_df)$metrics
+  rm <- fit_and_score(mae_mgx,   k, grp_df)$metrics
+  rt <- fit_and_score(mae_mtx,   k, grp_df)$metrics
+  data.frame(
+    k = rep(k, 3),
+    model = c("Joint", "MGX", "MTX"),
+    AUROC = c(metric(rj, "AUROC"), metric(rm, "AUROC"), metric(rt, "AUROC")),
+    permanova_R2 = c(metric(rj, "permanova_R2"), metric(rm, "permanova_R2"), metric(rt, "permanova_R2")),
+    wilcox_PC1_p = c(metric(rj, "wilcox_PC1_p"), metric(rm, "wilcox_PC1_p"), metric(rt, "wilcox_PC1_p")),
+    stringsAsFactors = FALSE
+  )
+})
+sens_df <- do.call(rbind, sens)
+knitr::kable(sens_df, digits = 3)
+
+ggplot2::ggplot(sens_df, ggplot2::aes(k, AUROC, group = model, color = model)) +
+  ggplot2::geom_line() + ggplot2::geom_point() +
+  ggplot2::scale_x_continuous(breaks = ks) +
+  ggplot2::labs(title = "AUROC vs rank k", x = "k", y = "AUROC") +
+  ggplot2::theme_minimal()
+
+ggplot2::ggplot(sens_df, ggplot2::aes(k, permanova_R2, group = model, color = model)) +
+  ggplot2::geom_line() + ggplot2::geom_point() +
+  ggplot2::scale_x_continuous(breaks = ks) +
+  ggplot2::labs(title = "PERMANOVA R² vs rank k", x = "k", y = "R²") +
+  ggplot2::theme_minimal()
+
+# Stability: subject-wise train/test split 
+
+set.seed(123)
+samps <- colnames(X_mgx)
+
+#try to build a sample->subject map; fallback to sample-wise if not possible
+ss_map <- build_sample_subject_map(meta_df, samps)
+
+if (!is.null(ss_map)) {
+  dfidx <- data.frame(sample_id = tolower(samps), stringsAsFactors = FALSE)
+  ss_map$sample_id <- tolower(ss_map$sample_id)
+  dfidx <- dplyr::left_join(dfidx, ss_map, by = "sample_id")
+  dfidx$subject_id[is.na(dfidx$subject_id)] <- paste0("unk_", seq_len(sum(is.na(dfidx$subject_id))))
+
+  subjects <- unique(dfidx$subject_id)
+  tr_subj <- sample(subjects, size = floor(0.7 * length(subjects)))
+  idx_train <- which(dfidx$subject_id %in% tr_subj)
+  idx_test  <- setdiff(seq_len(ncol(X_mgx)), idx_train)
+  message(sprintf("[CV] Using subject-wise split: train subjects=%d, test subjects=%d",
+                  length(tr_subj), length(subjects) - length(tr_subj)))
+} else {
+  #fallback: original sample-wise split
+  n <- ncol(X_mgx)
+  idx_train <- sample(seq_len(n), size = floor(0.7 * n))
+  idx_test  <- setdiff(seq_len(n), idx_train)
+  message("[CV] Subject column not found — falling back to sample-wise split.")
+}
+
+make_mae_for <- function(cols) {
+  cd2 <- S4Vectors::DataFrame(row.names = samps[cols])
+  se_mgx2 <- SummarizedExperiment::SummarizedExperiment(list(counts = X_mgx[, cols, drop = FALSE]), colData = cd2)
+  se_mtx2 <- SummarizedExperiment::SummarizedExperiment(list(counts = X_mtx[, cols, drop = FALSE]), colData = cd2)
+  mae2 <- MultiAssayExperiment::MultiAssayExperiment(list(MGX = se_mgx2, MTX = se_mtx2))
+  MultiAssayExperiment::intersectColumns(mae2)
+}
+
+mae_train <- make_mae_for(idx_train)
+mae_test  <- make_mae_for(idx_test)
+
+fit_tr <- jointRPCAuniversal(mae_train, n.components = k0,
+  max.iterations = 5, rclr.transform.tables = TRUE,
+  min.sample.count = 1, min.feature.count = 0, min.feature.frequency = 0)
+fit_te <- jointRPCAuniversal(mae_test, n.components = k0,
+  max.iterations = 5, rclr.transform.tables = TRUE,
+  min.sample.count = 1, min.feature.count = 0, min.feature.frequency = 0)
+
+pc1_tr <- fit_tr$ord.res$samples[, 1]
+pc1_te <- fit_te$ord.res$samples[, 1]
+cat("PC1 stability (subject-wise train/test): variance on each split.\n")
+c(var_train = var(pc1_tr), var_test = var(pc1_te))
+
+# Standard PCA / NMF
+
+#helpers
+clr_transform <- function(mat, pseudo = 1e-6) {
+  # columns are samples; compositional CLR per sample
+  x <- log(mat + pseudo)
+  x <- sweep(x, 2, colMeans(x), FUN = "-")
+  x[!is.finite(x)] <- 0
+  x
+}
+
+zscore_rows <- function(mat) {
+  # center/scale each feature (row) across samples
+  m <- rowMeans(mat); s <- matrixStats::rowSds(mat)
+  s[s == 0 | !is.finite(s)] <- 1
+  sweep(sweep(mat, 1, m, "-"), 1, s, "/")
+}
+
+make_scores_df <- function(S, sample_ids) {
+  S <- as.matrix(S)
+  colnames(S) <- paste0("V", seq_len(ncol(S)))
+  out <- as.data.frame(S)
+  out$sample_id <- sample_ids
+  dplyr::left_join(out, grp_df, by = "sample_id")
+}
+
+eval_wrapper <- function(scores_df, label) {
+  list(model = label, metrics = eval_scores(scores_df), scores = scores_df)
+}
+
+#shared CLR inputs (MGX / MTX as features x samples)
+MGX_clr <- clr_transform(X_mgx)
+MTX_clr <- clr_transform(X_mtx)
+sample_ids <- colnames(MGX_clr)
+
+#1) PCA on concatenated MGX+MTX (after CLR)
+#concatenate features (rows) and transpose to samples x features for prcomp
+X_concat <- rbind(zscore_rows(MGX_clr), zscore_rows(MTX_clr))
+X_concat_t <- t(X_concat)
+pc_fit <- try(prcomp(X_concat_t, center = TRUE, scale. = FALSE), silent = TRUE)
+
+cmp_pca <- NULL
+if (!inherits(pc_fit, "try-error")) {
+  pcs <- pc_fit$x[, seq_len(min(k0, ncol(pc_fit$x))), drop = FALSE]
+  pca_scores <- make_scores_df(pcs, rownames(pc_fit$x))
+  cmp_pca <- eval_wrapper(pca_scores, sprintf("PCA (concat CLR, k=%d)", min(k0, ncol(pcs))))
+} else {
+  message("[PCA] skipped: ", as.character(pc_fit))
+}
+
+#2) NMF (Hellinger)
+cmp_nmf <- NULL
+
+hellinger <- function(mat) {
+  # columns are samples
+  cs <- colSums(mat)
+  cs[cs <= 0 | !is.finite(cs)] <- 1
+  p  <- sweep(mat, 2, cs, "/")
+  x  <- sqrt(p)
+  x[!is.finite(x)] <- 0
+  x
+}
+
+#build feature x sample matrix for NMF 
+MGX_h <- hellinger(X_mgx)
+MTX_h <- hellinger(X_mtx)
+V_h   <- rbind(MGX_h, MTX_h)  
+stopifnot(ncol(V_h) == length(sample_ids))
+
+set.seed(42)
+nmf_k <- k0
+if (requireNamespace("NMF", quietly = TRUE)) {
+  nmf_fit <- try(NMF::nmf(V_h, rank = nmf_k, method = "brunet", nrun = 5, .options = "t"), silent = TRUE)
+  if (!inherits(nmf_fit, "try-error")) {
+    H <- NMF::coef(nmf_fit)                  
+    S <- t(H)[, seq_len(min(nmf_k, nrow(t(H)))), drop = FALSE]  
+    nmf_scores <- make_scores_df(S, sample_ids)
+    cmp_nmf <- eval_wrapper(nmf_scores, sprintf("NMF (Hellinger, k=%d)", ncol(S)))
+  } else {
+    message("[NMF] NMF::nmf failed: ", as.character(nmf_fit))
+  }
+} else if (requireNamespace("NNLM", quietly = TRUE)) {
+  nn <- try(NNLM::nnmf(V_h, k = nmf_k, loss = "mse", max.iter = 1000, rel.tol = 1e-4), silent = TRUE)
+  if (!inherits(nn, "try-error")) {
+    H <- nn$H
+    S <- t(H)[, seq_len(min(nmf_k, nrow(t(H)))), drop = FALSE]
+    nmf_scores <- make_scores_df(S, sample_ids)
+    cmp_nmf <- eval_wrapper(nmf_scores, sprintf("NMF (Hellinger, k=%d, NNLM)", ncol(S)))
+  } else {
+    message("[NMF] NNLM::nnmf failed: ", as.character(nn))
+  }
+} else {
+  message("[NMF] skipped: install NMF or NNLM.")
+}
+
+# Collect & display comparator metrics
+comparators <- Filter(Negate(is.null),
+  list(cmp_pca = cmp_pca,
+       cmp_nmf = cmp_nmf)
+)
+
+if (length(comparators)) {
+  comp_tbl <- do.call(rbind, lapply(comparators, function(x) {
+    m <- x$metrics
+    data.frame(
+      model = x$model,
+      wilcox_PC1_p = m$wilcox_PC1_p %||% NA_real_,
+      wilcox_PC2_p = m$wilcox_PC2_p %||% NA_real_,
+      permanova_R2 = m$permanova_R2 %||% NA_real_,
+      permanova_p  = m$permanova_p  %||% NA_real_,
+      AUROC        = m$AUROC        %||% NA_real_,
+      stringsAsFactors = FALSE
+    )
+  }))
+  knitr::kable(comp_tbl, digits = 3, caption = "Comparators: PCA / NMF")
+  
+  # Quick ordination plots for each comparator
+  plot_comp <- function(obj) {
+    if (is.null(obj)) return(invisible(NULL))
+    ggplot2::ggplot(obj$scores, ggplot2::aes(V1, V2, color = Group)) +
+      ggplot2::geom_point(alpha = 0.8, size = 1.0) +
+      ggplot2::labs(title = obj$model, x = "Comp1", y = "Comp2", color = NULL) +
+      ggplot2::theme_minimal()
+  }
+  invisible(lapply(comparators, function(x) print(plot_comp(x))))
+} else {
+  message("No comparator results available (all skipped).")
+}
+
+# Comparison bars: Joint-RPCA vs PCA vs NMF
+
+#1) Pull the Joint-RPCA row + PCA/NMF rows into one table
+joint_row <- bench_tbl %>%
+  dplyr::filter(grepl("^Joint", model)) %>%
+  dplyr::mutate(model_simple = "Joint-RPCA")
+
+comp_rows <- if (exists("comp_tbl")) {
+  comp_tbl %>%
+    dplyr::mutate(
+      model_simple = dplyr::case_when(
+        grepl("^PCA", model) ~ "PCA",
+        grepl("^NMF", model) ~ "NMF",
+        TRUE ~ model
+      )
+    )
+} else {
+  data.frame()
+}
+
+cmp_all <- dplyr::bind_rows(
+  joint_row %>% dplyr::select(model_simple, permanova_R2, AUROC),
+  comp_rows %>% dplyr::select(model_simple, permanova_R2, AUROC)
+) %>%
+  dplyr::distinct() %>%
+  # keep only the three models of interest if present
+  dplyr::filter(model_simple %in% c("Joint-RPCA", "PCA", "NMF")) %>%
+  # order bars: Joint-RPCA first
+  dplyr::mutate(model_simple = factor(model_simple, levels = c("Joint-RPCA", "PCA", "NMF")))
+
+#2) Long format for side-by-side bars
+cmp_long <- tidyr::pivot_longer(
+  cmp_all,
+  cols = c(permanova_R2, AUROC),
+  names_to = "metric",
+  values_to = "value"
+) %>%
+  dplyr::filter(!is.na(value))
+
+#3) Plot: side-by-side bars (PERMANOVA R² and AUROC)
+ggplot2::ggplot(cmp_long, ggplot2::aes(x = model_simple, y = value, fill = metric)) +
+  ggplot2::geom_col(position = ggplot2::position_dodge(width = 0.7), width = 0.6) +
+  ggplot2::geom_text(
+    ggplot2::aes(label = sprintf("%.3f", value)),
+    position = ggplot2::position_dodge(width = 0.7),
+    vjust = -0.35, size = 3
+  ) +
+  ggplot2::geom_hline(
+    data = subset(cmp_long, metric == "AUROC"),
+    ggplot2::aes(yintercept = 0.5), linetype = 2, linewidth = 0.3, inherit.aes = FALSE
+  ) +
+  ggplot2::coord_cartesian(ylim = c(0, max(1, max(cmp_long$value, na.rm = TRUE) * 1.1))) +
+  ggplot2::labs(
+    title = "Joint-RPCA vs PCA vs NMF",
+    subtitle = "Side-by-side comparison of PERMANOVA R² and AUROC",
+    x = NULL, y = "Score", fill = NULL
+  ) +
+  ggplot2::theme_minimal(base_size = 11) +
+  ggplot2::theme(legend.position = "top")
+
+```

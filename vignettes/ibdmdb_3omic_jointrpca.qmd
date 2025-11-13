@@ -1,0 +1,174 @@
+---
+title: "IBDMDB — 3-Omic Joint-RPCA (MGX + MTX + 16S)"
+format: html
+editor: visual
+---
+
+```{r setup, message = FALSE, warning = FALSE}
+options(warn = -1)
+
+#necessary imports
+library(Matrix)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(plotly)
+library(vegan)
+library(ggforce)
+library(MultiAssayExperiment)
+library(pROC)
+library(mia)
+
+#load packaged demo data
+data(ibdmdb_3omic_demo)  
+suppressWarnings(data(ibdmdb_meta_demo)) 
+
+#use the MultiAssayExperiment directly
+mae_3 <- mae3
+
+#sample IDs used later
+sample_ids <- colnames(SummarizedExperiment::assay(mae_3[["MGX"]], 1L))
+
+#minimal helpers
+make_groups_autodetect <- function(meta_df, sample_ids, min_frac = 0.01, min_abs = 10L) {
+  out <- data.frame(sample_id = sample_ids, Group = factor(NA, levels=c("IBD","non-IBD")))
+  if (is.null(meta_df) || !nrow(meta_df)) return(out)
+  md <- as.data.frame(meta_df, stringsAsFactors = FALSE)
+  names(md) <- tolower(trimws(names(md)))
+  sid <- tolower(trimws(sample_ids))
+  overlaps <- sapply(md, function(col) { x <- tolower(trimws(as.character(col))); sum(!is.na(x) & x %in% sid) })
+  thresh <- max(min_abs, floor(length(sid) * min_frac))
+  max_ov <- suppressWarnings(max(overlaps, na.rm=TRUE))
+  if (!is.finite(max_ov) || max_ov < thresh || !"diagnosis" %in% names(md)) return(out)
+  best <- names(overlaps)[which.max(overlaps)]
+  dx  <- tolower(trimws(as.character(md$diagnosis)))
+  grp <- ifelse(grepl("\\b(uc|cd|ibd)\\b", dx), "IBD",
+         ifelse(grepl("^\\s*non", dx), "non-IBD", NA_character_))
+  md$sample_id <- tolower(trimws(as.character(md[[best]])))
+  md$Group <- factor(grp, levels=c("IBD","non-IBD"))
+  join_tbl <- unique(md[, c("sample_id","Group")])
+  j <- dplyr::left_join(data.frame(sample_id = sid), join_tbl, by = "sample_id")
+  j$sample_id <- sample_ids
+  j
+}
+
+eval_scores <- function(scores_df) {
+  out <- list()
+  if (!("Group" %in% names(scores_df))) return(out)
+  if ("V1" %in% names(scores_df)) out$wilcox_PC1_p <- tryCatch(wilcox.test(scores_df$V1 ~ scores_df$Group, exact=FALSE)$p.value, error=function(e) NA_real_)
+  if ("V2" %in% names(scores_df)) out$wilcox_PC2_p <- tryCatch(wilcox.test(scores_df$V2 ~ scores_df$Group, exact=FALSE)$p.value, error=function(e) NA_real_)
+  if (requireNamespace("vegan", quietly=TRUE)) {
+    comp_cols <- grep("^V\\d+$", names(scores_df), value = TRUE)
+    use_cols <- comp_cols[seq_len(min(3L, length(comp_cols)))]
+    perm_df <- na.omit(scores_df[, c("Group", use_cols), drop = FALSE])
+    if (nrow(perm_df) > 5 && is.factor(perm_df$Group) && nlevels(perm_df$Group) >= 2 && all(table(perm_df$Group) >= 3)) {
+      comp_mat <- as.matrix(perm_df[, use_cols, drop = FALSE])
+      colnames(comp_mat) <- use_cols
+      perm <- vegan::adonis2(comp_mat ~ Group, data = perm_df, method = "euclidean")
+      out$permanova_R2 <- perm$R2[1]; out$permanova_F <- perm$F[1]; out$permanova_p <- perm$`Pr(>F)`[1]
+    }
+  }
+  if (requireNamespace("ranger", quietly=TRUE) && requireNamespace("pROC", quietly=TRUE)) {
+    comp_cols <- grep("^V\\d+$", names(scores_df), value = TRUE)
+    use_cols <- comp_cols[seq_len(min(3L, length(comp_cols)))]
+    rf_df <- na.omit(scores_df[, c("Group", use_cols), drop = FALSE])
+    if (nrow(rf_df) && is.factor(rf_df$Group) && nlevels(rf_df$Group) >= 2) {
+      cls_tab <- table(rf_df$Group); wts <- as.numeric(1/cls_tab); names(wts) <- names(cls_tab)
+      set.seed(42)
+      rf <- ranger::ranger(Group ~ ., data = rf_df, num.trees = 400, probability = TRUE, class.weights = wts, oob.error = TRUE)
+      if ("IBD" %in% colnames(rf$predictions)) {
+        p_ibd <- rf$predictions[, "IBD"]
+        roc   <- pROC::roc(rf_df$Group, p_ibd, levels = c("non-IBD","IBD"))
+        out$AUROC <- as.numeric(pROC::auc(roc))
+      }
+    }
+  }
+  out
+}
+
+#choose rank k safely
+per_view_min_dim <- sapply(list(X_16s, X_mgx, X_mtx), function(m) min(nrow(m), ncol(m)))
+k_max <- max(1L, min(per_view_min_dim))
+k <- min(3L, k_max)
+message(sprintf("[3-omic] per-view min dims = %s; using k = %d",
+                paste(per_view_min_dim, collapse = ", "), k))
+
+#run Joint-RPCA 
+set.seed(42)
+fit3 <- jointRPCAuniversal(
+  data = mae_3,
+  n.components = k,
+  max.iterations = 5,
+  rclr.transform.tables = TRUE,
+  min.sample.count = 1,
+  min.feature.count = 0,
+  min.feature.frequency = 0
+)
+
+U <- as.data.frame(fit3$ord.res$samples)
+colnames(U) <- paste0("V", seq_len(ncol(U)))
+U$sample_id <- rownames(U)
+
+get_view <- function(obj, keys) {
+  if (is.null(obj)) return(NULL)
+  if (is.list(obj)) { for (k in keys) if (!is.null(obj[[k]])) return(as.data.frame(obj[[k]])); return(NULL) }
+  if (is.matrix(obj) || is.data.frame(obj)) return(as.data.frame(obj))
+  NULL
+}
+
+V_MGX <- get_view(fit3$ord.res$features, c("MGX", "view_MGX", "view_mgx"))
+V_MTX <- get_view(fit3$ord.res$features, c("MTX", "view_MTX", "view_mtx"))
+V_S16 <- get_view(fit3$ord.res$features, c("S16", "view_S16", "view_s16"))
+
+#basic ordination (unlabeled)
+print(
+  ggplot2::ggplot(U, ggplot2::aes(V1, V2)) +
+    ggplot2::geom_point(alpha = 0.85) +
+    ggplot2::labs(title = sprintf("Joint-RPCA (16S + MGX + MTX), k = %d — PC1 vs PC2", k),
+                  x = "PC1", y = "PC2") +
+    ggplot2::theme_minimal()
+)
+
+#attach IBD/non-IBD from metadata 
+meta_df <- if (exists("ibdmdb_meta_demo")) ibdmdb_meta_demo else NULL
+grp_df  <- make_groups_autodetect(meta_df, U$sample_id)
+print(sort(table(grp_df$Group, useNA = "ifany")))
+U2 <- dplyr::left_join(U, grp_df, by = "sample_id")
+tab <- table(U2$Group, useNA = "ifany")
+print(tab)
+
+#top loadings per view (PC1)
+top_k <- 15
+show_top <- function(V, label) {
+  if (is.null(V) || !ncol(V)) return(invisible(NULL))
+  ord <- order(V[,1], decreasing = TRUE)
+  top_ix <- seq_len(min(top_k, length(ord)))
+  cat(sprintf("\nTop %s features on PC1:\n", label))
+  print(data.frame(
+    feature = rownames(V)[ord][top_ix],
+    loading = V[ord, 1][top_ix]
+  ))
+}
+show_top(V_S16, "S16")
+show_top(V_MGX, "MGX")
+show_top(V_MTX, "MTX")
+
+#variance explained (scree plot)
+var_df <- data.frame(PC = names(fit3$ord.res$eigvals),
+                     Variance = fit3$ord.res$eigvals^2 / sum(fit3$ord.res$eigvals^2))
+ggplot2::ggplot(var_df, ggplot2::aes(x = PC, y = Variance)) +
+  ggplot2::geom_col(fill = "steelblue") +
+  ggplot2::geom_text(ggplot2::aes(label = scales::percent(Variance, accuracy = 0.1)),
+                     vjust = -0.4, size = 3) +
+  ggplot2::labs(title = "Variance Explained per Component",
+                x = "Principal Component", y = "Proportion of Variance") +
+  ggplot2::theme_minimal()
+
+#cross-view correlation heatmap
+U_mgx <- as.data.frame(fit3$ord.res$samples)
+corr <- cor(U_mgx)
+pheatmap::pheatmap(corr, main = "Component correlation matrix")
+
+cat("\nSession info:\n"); print(sessionInfo())
+
+```
