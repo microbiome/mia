@@ -1,52 +1,66 @@
-#' IBDMDB 2-omic demo (MGX + MTX)
+#' IBDMDB 2-omic demo dataset (MGX + MTX)
 #'
-#' Compact example objects prepared from IBDMDB/HMP2 for quick examples/vignettes:
+#' A compact example derived from the Integrative Human Microbiome Project (iHMP)
+#' Inflammatory Bowel Disease (IBD) cohort.  
+#'
+#' This demo contains two experiments:
 #' \itemize{
-#'   \item \code{se_mgx}: MGX \link[SummarizedExperiment]{SummarizedExperiment}
-#'   \item \code{se_mtx}: MTX \link[SummarizedExperiment]{SummarizedExperiment}
-#'   \item \code{mae2}:   \link[MultiAssayExperiment]{MultiAssayExperiment} with MGX and MTX assays
+#'   \item \code{se_mgx}: metagenomic taxonomic profiles (MGX)
+#'   \item \code{se_mtx}: metatranscriptomic taxonomic profiles (MTX)
+#'   \item \code{mae2}: a
+#'     \link[MultiAssayExperiment]{MultiAssayExperiment}
+#'     containing both experiments
 #' }
 #'
-#' Load with \code{data(ibdmdb_2omic_demo)}; this will place the objects
-#' \code{se_mgx}, \code{se_mtx}, and \code{mae2} into your workspace.
+#' These compact objects are intended for quick examples and vignettes.
+#' Load with:
+#' \code{data(ibdmdb_2omic_demo)}.
 #'
 #' @name ibdmdb_2omic_demo
 #' @docType data
 #' @usage data(ibdmdb_2omic_demo)
 #' @keywords datasets
-#' @format An .rda file containing \code{se_mgx}, \code{se_mtx}, \code{mae2}.
-#' @source Prepared by \code{inst/scripts/prepare_ibdmdb_demo.R}.
+#'
+#' @format A `.rda` file containing:
+#' \describe{
+#'   \item{se_mgx}{A \code{SummarizedExperiment} with MGX abundance data.}
+#'   \item{se_mtx}{A \code{SummarizedExperiment} with MTX abundance data.}
+#'   \item{mae2}{A \code{MultiAssayExperiment} with two experiments: MGX and MTX.}
+#' }
+#'
+#' @source Prepared by \code{inst/scripts/prepare_ibdmdb_demo.R} from
+#'   publicly available IBDMDB/HMP2 taxonomic profiles.
+#'
+#' @references
+#' Lloyd-Price J, Arze C, Ananthakrishnan AN, et al.  
+#' \emph{Multi-omics of the gut microbial ecosystem in inflammatory bowel diseases.}  
+#' Nature 569, 655–662 (2019).  
+#' \doi{10.1038/s41586-019-1237-9}
 NULL
 
-#' IBDMDB metadata (demo subset)
+#' IBDMDB demo metadata subset
 #'
-#' Optional IBDMDB metadata used with the demo objects.
-#' Load with \code{data(ibdmdb_meta_demo)}; this will place the object
-#' \code{ibdmdb_meta_demo} (a \code{data.frame}).
+#' Sample-level metadata corresponding to the compact IBDMDB 2-omic demo
+#' (\code{ibdmdb_2omic_demo}). This is essentially
+#' \code{as.data.frame(colData(mae2))} and is provided as a convenience
+#' for examples and vignettes.
+#'
+#' Loaded with:
+#' \code{data(ibdmdb_meta_demo)}.
 #'
 #' @name ibdmdb_meta_demo
 #' @docType data
 #' @usage data(ibdmdb_meta_demo)
 #' @keywords datasets
-#' @format A \code{data.frame}.
-#' @source Prepared by \code{inst/scripts/prepare_ibdmdb_demo.R}.
-NULL
-
-#' IBDMDB 3-omic demo (16S + MGX + MTX)
 #'
-#' Compact example objects prepared from IBDMDB/HMP2:
-#' \itemize{
-#'   \item \code{se_16s}, \code{se_mgx2}, \code{se_mtx2}: \link[SummarizedExperiment]{SummarizedExperiment}s
-#'   \item \code{mae3}: \link[MultiAssayExperiment]{MultiAssayExperiment} with all three assays
-#' }
+#' @format A \code{data.frame} with selected sample metadata fields.
 #'
-#' Load with \code{data(ibdmdb_3omic_demo)}; this will place the objects
-#' \code{se_16s}, \code{se_mgx2}, \code{se_mtx2}, and \code{mae3}.
+#' @source Prepared by \code{inst/scripts/prepare_ibdmdb_demo.R} from
+#'   publicly available iHMP/IBDMDB metadata.
 #'
-#' @name ibdmdb_3omic_demo
-#' @docType data
-#' @usage data(ibdmdb_3omic_demo)
-#' @keywords datasets
-#' @format An .rda file containing \code{se_16s}, \code{se_mgx2}, \code{se_mtx2}, \code{mae3}.
-#' @source Prepared by \code{inst/scripts/prepare_ibdmdb_demo.R}.
+#' @references
+#' Lloyd-Price J, Arze C, Ananthakrishnan AN, et al.  
+#' \emph{Multi-omics of the gut microbial ecosystem in inflammatory bowel diseases.}  
+#' Nature 569, 655–662 (2019).  
+#' \doi{10.1038/s41586-019-1237-9}
 NULL

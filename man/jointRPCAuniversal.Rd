@@ -4,17 +4,35 @@
 \alias{jointRPCAuniversal}
 \title{Universal Joint RPCA Wrapper}
 \usage{
-jointRPCAuniversal(data, assays = NULL, ...)
+jointRPCAuniversal(x, experiments = NULL, ...)
 }
 \arguments{
-\item{data}{Input object: MultiAssayExperiment, TreeSummarizedExperiment, SummarizedExperiment, list of matrices, or single matrix.}
+\item{x}{Input object: \code{MultiAssayExperiment}, \code{SummarizedExperiment}
+(including \code{TreeSummarizedExperiment}), list of matrices, or single matrix.}
 
-\item{assays}{Character vector of assay names to extract (only used for MultiAssayExperiment). If NULL, use all assays.}
+\item{experiments}{Character vector of experiment names to extract when \code{x}
+is a \code{MultiAssayExperiment} (i.e. \code{names(experiments(x))}).
+If \code{NULL}, all experiments are used.
 
-\item{...}{Additional arguments passed to jointRPCA()}
+For \code{MultiAssayExperiment} inputs, \strong{one assay per experiment} is
+used: by default the first assay returned by
+\code{SummarizedExperiment::assayNames()} (or index \code{1L} if unnamed).
+The actually used assay names are recorded in \code{$assay.names.used} in
+the result. If you need a different assay (e.g. \code{"relab"} instead of
+\code{"counts"}), subset or reorder assays in \code{x} before calling
+\code{jointRPCAuniversal()}.}
+
+\item{...}{Additional arguments passed to \code{.jointRPCA()}.}
 }
 \value{
-Output from jointRPCA()
+Output from \code{.jointRPCA()} with extra fields when \code{x} is a
+\code{MultiAssayExperiment}:
+\itemize{
+\item \code{$experiment.names}: character vector of experiments used.
+\item \code{$assay.names.used}: named character vector giving, for each
+experiment, the assay name that was used (typically the first in
+\code{assayNames()}).
+}
 }
 \description{
 Universal Joint RPCA Wrapper

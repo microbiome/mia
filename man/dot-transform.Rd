@@ -4,16 +4,13 @@
 \alias{.transform}
 \title{Apply Projection of New Compositional Tables to Existing Ordination}
 \usage{
-.transform(ordination, tables, subset.tables = TRUE, apply.rclr = TRUE)
+.transform(ordination, tables, apply.rclr = TRUE)
 }
 \arguments{
 \item{ordination}{A list containing previous ordination results: \code{samples}, \code{features}, and \code{eigvals}.}
 
 \item{tables}{A named list of new compositional tables (matrices or data frames)
 with features as rows and samples as columns.}
-
-\item{subset.tables}{Logical; if \code{TRUE}, removes unshared features in new tables not present in training.
-If \code{FALSE}, stops with an error if features mismatch.}
 
 \item{apply.rclr}{Logical; whether to apply rCLR transformation to new input tables before projection. Default is \code{TRUE}.}
 }

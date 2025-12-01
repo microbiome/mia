@@ -24,8 +24,8 @@
 
 .require_package <- function(pkg){
     if(!requireNamespace(pkg, quietly = TRUE)){
-    stop("'",pkg,"' package not found. Please install the '",pkg,"' package ",
-        "to use this function.", call. = FALSE)
+        stop("'",pkg,"' package not found. Please install the '",pkg,"' package ",
+             "to use this function.", call. = FALSE)
     }
 }
 
@@ -95,7 +95,7 @@
         assay.type, x, name = .get_name_in_parent(assay.type)){
     if(!.is_non_empty_string(assay.type)){
         stop("'",name,"' must be a single non-empty character value.",
-            call. = FALSE)
+             call. = FALSE)
     }
     if(!(assay.type %in% names(assays(x)))){
         stop("'",name,"' must be a valid name of assays(x)", call. = FALSE)
@@ -106,11 +106,11 @@
         tree.name, x, name = .get_name_in_parent(tree.name) ){
     if( !.is_non_empty_string(tree.name) ){
         stop("'", name, "' must be a single non-empty character value.",
-            call. = FALSE)
+             call. = FALSE)
     }
     if( !(tree.name %in% rowTreeNames(x)) ){
         stop("'", name, "' must specify a tree from 'rowTreeNames(x)'.",
-            call. = FALSE)
+             call. = FALSE)
     }
 }
 
@@ -118,11 +118,11 @@
         tree.name, x, name = .get_name_in_parent(tree.name) ){
     if( !.is_non_empty_string(tree.name) ){
         stop("'", name, "' must be a single non-empty character value.",
-            call. = FALSE)
+             call. = FALSE)
     }
     if( !(tree.name %in% colTreeNames(x)) ){
         stop("'", name, "' must specify a tree from 'colTreeNames(x)'.",
-            call. = FALSE)
+             call. = FALSE)
     }
 }
 
@@ -150,7 +150,7 @@
     }
     # Then check that altExp can be found; name or index.
     if( !is.null(altexp) && !altexp %in% c(
-            altExpNames(tse), seq_len(length(altExps(tse)))) ){
+        altExpNames(tse), seq_len(length(altExps(tse)))) ){
         stop(
             "'", altExpName, "', does not specify an experiment from altExp ",
             "slot of '", tse_name, "'.", call. = FALSE)
@@ -173,8 +173,8 @@
 .check_MARGIN <- function(MARGIN, name = .get_name_in_parent(MARGIN)) {
     # MARGIN must be one of the following options
     if( !(length(MARGIN) == 1L && tolower(MARGIN) %in% c(
-            1, 2, "1", "2", "features", "samples", "columns", "col", "row",
-            "rows", "cols")) ) {
+        1, 2, "1", "2", "features", "samples", "columns", "col", "row",
+        "rows", "cols")) ) {
         stop("'", name,"' must be 'rows' or 'cols'.", call. = FALSE)
     }
     # Convert MARGIN to numeric if it is not.
@@ -188,7 +188,7 @@
         data.type, x, name = .get_name_in_parent(data.type)){
     if( !.is_non_empty_string(data.type) ){
         stop("'" ,name, "' must be a single non-empty character value.",
-            call. = FALSE)
+             call. = FALSE)
     }
     if( !(data.type %in% names(metadata(x))) ){
         stop("'",name,"' must be a valid name of metadata(x)", call. = FALSE)
@@ -254,7 +254,7 @@
         values,
         name)
     values <- do.call(cbind, values)
-
+    
     # Based on MARGIN, get rowDatra or colData
     FUN <- switch(MARGIN, rowData, colData)
     # If altexp.name was not NULL, then we know that it specifies correctly
@@ -264,7 +264,7 @@
     } else{
         cd <- FUN(x)
     }
-
+    
     # check for duplicated values
     f <- colnames(cd) %in% colnames(values)
     FUN_name <- switch(MARGIN, "rowData", "colData")
@@ -279,7 +279,7 @@
     }
     # Keep only unique values
     cd <- cbind( (cd)[!f], values )
-
+    
     # Replace colData with new one
     x <- .add_to_coldata(x, cd, altexp = altexp, MARGIN = MARGIN)
     return(x)
@@ -354,7 +354,7 @@
 .add_to_altExps <- function(x, values, name = names(values), ...){
     # Check values
     if( !((is(values, "list") || is(values, "SimpleList")) &&
-            length(values) > 0) ){
+          length(values) > 0) ){
         stop("'values' must be non-empty list.", call. = FALSE)
     }
     # Check names
@@ -417,7 +417,7 @@
     }
     if( !identical(rownames(as.matrix(values)), colnames(x)) ){
         stop("Rownames of the matrix should match with colnames(x).",
-            " The result is not added to reducedDims.", call. = FALSE)
+             " The result is not added to reducedDims.", call. = FALSE)
     }
     # Throw warning if values of reducedDim are overwritten
     if( name %in% names(reducedDims(x)) ){
@@ -468,7 +468,7 @@
         colnames(feature_tab) <- rownames(sample_meta) <- samples
         rownames(feature_tab) <- rownames(feature_meta) <- features
     }
-
+    
     # The abundance table takes the precedence, and metadata is modified
     # accordingly. Give warning if there are samples or features that are not
     # included in the metadata.
@@ -497,7 +497,7 @@
                 "are not present in the abundance table and thus being ",
                 "removed. Please check for errors.", call. = FALSE)
     }
-
+    
     # We order the metadata based on abundance table. Moreover, we subset
     # the metadata to match with abundance table if there are additional data.
     ind <- match(colnames(feature_tab), rownames(sample_meta))
@@ -547,9 +547,9 @@
 #' @importFrom S4Vectors DataFrame
 #' @noRd
 .parse_taxonomy <- function(
-    taxa_tab, sep = "; |;", col.name = column_name, column_name = "Taxon",
-    remove.prefix = prefix.rm, prefix.rm = removeTaxaPrefixes,
-    removeTaxaPrefixes = FALSE, ...) {
+        taxa_tab, sep = "; |;", col.name = column_name, column_name = "Taxon",
+        remove.prefix = prefix.rm, prefix.rm = removeTaxaPrefixes,
+        removeTaxaPrefixes = FALSE, ...) {
     ############################### Input check ################################
     # Check sep
     if(!.is_non_empty_string(sep)){
@@ -558,19 +558,19 @@
     # Check col.name
     if( !(.is_non_empty_string(col.name) && col.name %in% colnames(taxa_tab)) ){
         stop("'col.name' must be a single character value defining column ",
-            "that includes information about taxonomic levels.", call. = FALSE)
+             "that includes information about taxonomic levels.", call. = FALSE)
     }
     # Check remove.prefix
     if(!.is_a_bool(remove.prefix)){
         stop("'remove.prefix' must be TRUE or FALSE.", call. = FALSE)
     }
     ############################## Input check end #############################
-
+    
     #  work with any combination of taxonomic ranks available
     all_ranks <- .taxonomy_rank_prefixes
     all_prefixes <- paste0(all_ranks, "__")
     names(all_prefixes) <- names(all_ranks)
-
+    
     # split the taxa strings
     taxa_split <- CharacterList(strsplit(taxa_tab[, col.name],sep))
     # extract present prefixes
@@ -591,16 +591,16 @@
     #
     if(length(unique(lengths(taxa_split))) != 1L){
         stop("Something went wrong while splitting taxonomic ",
-            "levels. Please check that 'sep' is correct.", call. = FALSE)
+             "levels. Please check that 'sep' is correct.", call. = FALSE)
     }
     taxa_tab <- DataFrame(as.matrix(taxa_split))
     colnames(taxa_tab) <- names(all_ranks)
-
+    
     # Subset columns so that include only those columns that have some
     # information
     non_empty <- colSums(is.na(taxa_tab)) != nrow(taxa_tab)
     taxa_tab <- taxa_tab[ , non_empty, drop = FALSE]
-
+    
     return(taxa_tab)
 }
 
@@ -716,150 +716,150 @@
 #OPTSPACE FUNCTION AND ITS AUXILIARY FUNCTIONS
 #
 .optspace  <- function(x, ropt = 3, niter = 5, tol = 1e-5, verbose = FALSE){
-  
-  ## Preprocessing : x : partially revealed matrix
-  if (is.data.frame(x)) {
-    x <- as.matrix(x)
-  }
-  
-  idxna <- is.na(x)
-  
-  if (!is.matrix(x)) {
-    stop("* optspace : input 'x' should be a matrix")
-  }
-  if (!any(idxna)) {
-    x # no NAs to be filled in and can be returned immediately
-  }  
-  if (any(is.infinite(x))) {
-    stop("* optspace : infinite values are not allowed in 'x'")
-  }
-  
-  m_e <- array(0, c(nrow(x), ncol(x)))
-  m_e[!idxna] <- x[!idxna]
-  
-  ## Preprocessing : size information
-  n <- nrow(x)
-  m <- ncol(x)
-  
-  ## Preprocessing : other sparse-related concepts
-  nnz_e <- sum(!idxna)
-  E <- array(0, c(nrow(x), ncol(x)))
-  E[!idxna] <- 1
-  eps <- nnz_e / sqrt(m * n)
-  
-  ## Preprocessing : ropt  : implied rank
-  if (ropt) {
-    r <- round(ropt)
-    if (!is.numeric(ropt) || (!is.numeric(r)) || (r < 1) || (r > m) || (r > n)) {
-      stop("* optspace: value of argument 'ropt' should be integer
+    
+    ## Preprocessing : x : partially revealed matrix
+    if (is.data.frame(x)) {
+        x <- as.matrix(x)
+    }
+    
+    idxna <- is.na(x)
+    
+    if (!is.matrix(x)) {
+        stop("* optspace : input 'x' should be a matrix")
+    }
+    if (!any(idxna)) {
+        x # no NAs to be filled in and can be returned immediately
+    }  
+    if (any(is.infinite(x))) {
+        stop("* optspace : infinite values are not allowed in 'x'")
+    }
+    
+    m_e <- array(0, c(nrow(x), ncol(x)))
+    m_e[!idxna] <- x[!idxna]
+    
+    ## Preprocessing : size information
+    n <- nrow(x)
+    m <- ncol(x)
+    
+    ## Preprocessing : other sparse-related concepts
+    nnz_e <- sum(!idxna)
+    E <- array(0, c(nrow(x), ncol(x)))
+    E[!idxna] <- 1
+    eps <- nnz_e / sqrt(m * n)
+    
+    ## Preprocessing : ropt  : implied rank
+    if (ropt) {
+        r <- round(ropt)
+        if (!is.numeric(ropt) || (!is.numeric(r)) || (r < 1) || (r > m) || (r > n)) {
+            stop("* optspace: value of argument 'ropt' should be integer
             in [1, min(nrow(x), ncol(x))]")
+        }
+    } else {
+        r <- min(max(round(.guess_rank(m_e, nnz_e)), 2), m - 1)
+        if (verbose) {
+            message(paste0("* optspace: Guessing an implicit rank: Estimated rank 'ropt': ", r))
+        }
     }
-  } else {
-    r <- min(max(round(.guess_rank(m_e, nnz_e)), 2), m - 1)
+    
+    ## Preprocessing : niter : maximum number of iterations
+    if ((is.infinite(niter)) || (niter <= 1) || (!is.numeric(niter))) {
+        stop("* optspace: invalid number provided for argument 'niter'")
+    }
+    niter <- round(niter)
+    rho <-  eps * n
+    
+    ## Main Computation
+    rescal_param <- sqrt(nnz_e * r / (norm(m_e, 'f')^2))
+    m_e <- m_e * rescal_param
+    
+    # 1. SVD
     if (verbose) {
-      message(paste0("* optspace: Guessing an implicit rank: Estimated rank 'ropt': ", r))
+        message("* optspace: Step 2: SVD ...")
     }
-  }
-  
-  ## Preprocessing : niter : maximum number of iterations
-  if ((is.infinite(niter)) || (niter <= 1) || (!is.numeric(niter))) {
-    stop("* optspace: invalid number provided for argument 'niter'")
-  }
-  niter <- round(niter)
-  rho <-  eps * n
-  
-  ## Main Computation
-  rescal_param <- sqrt(nnz_e * r / (norm(m_e, 'f')^2))
-  m_e <- m_e * rescal_param
-  
-  # 1. SVD
-  if (verbose) {
-    message("* optspace: Step 2: SVD ...")
-  }
-  
-  svdEt <- svd(m_e)
-  X0 <- matrix(svdEt$u[, seq_len(r)], ncol=r)
-  X0 <- matrix(X0[, rev(seq_len(ncol(X0)))], ncol=r)
-  S0 <- diag(rev(svdEt$d[seq_len(r)]))
-  Y0 <- matrix(svdEt$v[, seq_len(r)], ncol=r)
-  Y0 <- matrix(Y0[, rev(seq_len(ncol(Y0)))], ncol=r)
-  
-  # 3. Initial Guess
-  if (verbose) {
-    message("* optspace: Step 3: Initial Guess ...")
-  }
-  X0 <- X0 * sqrt(n)
-  Y0 <- Y0 * sqrt(m)
-  S0 <- S0 / eps
-  
-  # 4. Gradient Descent
-  if (verbose) {
-    message("* optspace: Step 4: Gradient Descent ...")
-  }
-  X <- X0
-  Y <- Y0
-  S <- .aux_getoptS(X, Y, m_e, E)
-  # initialize
-  dist <- array(0, c(1, (niter + 1)))
-  dist[1] <- norm((m_e - (X %*% S %*% t(Y))) * E, 'f') / sqrt(nnz_e)
-  # Resolution/regularization for gradient calculation
-  m0 <- 10000
-  
-  for (i in seq_len(niter)) {
-    # compute the gradient
-    tmpgrad <- .aux_gradF_t(X, Y, S, m_e, E, m0, rho)
-    W <- tmpgrad$W
-    Z <- tmpgrad$Z
-    # line search for the optimum jump length
-    t <- .aux_getoptT(X, W, Y, Z, S, m_e, E, m0, rho)
-    X <- X + t * W
-    Y <- Y + t * Z
+    
+    svdEt <- svd(m_e)
+    X0 <- matrix(svdEt$u[, seq_len(r)], ncol=r)
+    X0 <- matrix(X0[, rev(seq_len(ncol(X0)))], ncol=r)
+    S0 <- diag(rev(svdEt$d[seq_len(r)]))
+    Y0 <- matrix(svdEt$v[, seq_len(r)], ncol=r)
+    Y0 <- matrix(Y0[, rev(seq_len(ncol(Y0)))], ncol=r)
+    
+    # 3. Initial Guess
+    if (verbose) {
+        message("* optspace: Step 3: Initial Guess ...")
+    }
+    X0 <- X0 * sqrt(n)
+    Y0 <- Y0 * sqrt(m)
+    S0 <- S0 / eps
+    
+    # 4. Gradient Descent
+    if (verbose) {
+        message("* optspace: Step 4: Gradient Descent ...")
+    }
+    X <- X0
+    Y <- Y0
     S <- .aux_getoptS(X, Y, m_e, E)
-    # compute the distortion
-    dist[i + 1] <- norm(((m_e - X %*% S %*% t(Y)) * E), 'f') / sqrt(nnz_e)    
-    if (dist[i + 1] < tol) {
-      dist <- dist[seq_len(i + 1)]
-      break
+    # initialize
+    dist <- array(0, c(1, (niter + 1)))
+    dist[1] <- norm((m_e - (X %*% S %*% t(Y))) * E, 'f') / sqrt(nnz_e)
+    # Resolution/regularization for gradient calculation
+    m0 <- 10000
+    
+    for (i in seq_len(niter)) {
+        # compute the gradient
+        tmpgrad <- .aux_gradF_t(X, Y, S, m_e, E, m0, rho)
+        W <- tmpgrad$W
+        Z <- tmpgrad$Z
+        # line search for the optimum jump length
+        t <- .aux_getoptT(X, W, Y, Z, S, m_e, E, m0, rho)
+        X <- X + t * W
+        Y <- Y + t * Z
+        S <- .aux_getoptS(X, Y, m_e, E)
+        # compute the distortion
+        dist[i + 1] <- norm(((m_e - X %*% S %*% t(Y)) * E), 'f') / sqrt(nnz_e)    
+        if (dist[i + 1] < tol) {
+            dist <- dist[seq_len(i + 1)]
+            break
+        }
     }
-  }
-  S <- S / rescal_param  
-  # Return Results
-  out <- list()
-  
-  # re-order Optspace may change order during iters
-  index_order <- order(diag(S), decreasing = TRUE)
-  X <- matrix(X[, index_order], ncol=length(index_order))
-  Y <- matrix(Y[, index_order], ncol=length(index_order))
-  S <- matrix(S[index_order, index_order], ncol=length(index_order))
-  out$X <- X
-  out$S <- S
-  out$Y <- Y
-  out$dist <- dist
-  if (verbose) {
-    message('* optspace: estimation finished.')
-  }
-  
-  # -------------------------------------------
-  
-  # This part is not in the Python / Gemelli implementation
-  # but has been added in R to provide more direct access
-  # to the imputed matrix.
-  
-  # Reconstruct the matrix
-  M <- X %*% S %*% t(Y)
-  
-  # Centering is common operation supporting output visualization
-  # Center cols to 0
-  M <- as.matrix(scale(M, center = TRUE, scale = FALSE))
-  # Center rows to 0
-  M <- as.matrix(t(scale(t(M), center = TRUE, scale = FALSE)))
-  
-  # Add imputed matrix to the output
-  out$M <- M
-  
-  # -------------------------------------------
-  
-  out
+    S <- S / rescal_param  
+    # Return Results
+    out <- list()
+    
+    # re-order Optspace may change order during iters
+    index_order <- order(diag(S), decreasing = TRUE)
+    X <- matrix(X[, index_order], ncol=length(index_order))
+    Y <- matrix(Y[, index_order], ncol=length(index_order))
+    S <- matrix(S[index_order, index_order], ncol=length(index_order))
+    out$X <- X
+    out$S <- S
+    out$Y <- Y
+    out$dist <- dist
+    if (verbose) {
+        message('* optspace: estimation finished.')
+    }
+    
+    # -------------------------------------------
+    
+    # This part is not in the Python / Gemelli implementation
+    # but has been added in R to provide more direct access
+    # to the imputed matrix.
+    
+    # Reconstruct the matrix
+    M <- X %*% S %*% t(Y)
+    
+    # Centering is common operation supporting output visualization
+    # Center cols to 0
+    M <- as.matrix(scale(M, center = TRUE, scale = FALSE))
+    # Center rows to 0
+    M <- as.matrix(t(scale(t(M), center = TRUE, scale = FALSE)))
+    
+    # Add imputed matrix to the output
+    out$M <- M
+    
+    # -------------------------------------------
+    
+    out
 }
 
 
@@ -872,65 +872,65 @@
 # keywords internal
 .guess_rank <- function(x, nnz, maxiter = 10000)
 {
-  n <- nrow(x)
-  m <- ncol(x)
-  epsilon <- nnz / sqrt(m * n)
-  svdX <- svd(x)
-  S0 <- svdX$d
-  
-  nsval0 <- length(S0)
-  S1 <- S0[seq_len(nsval0 - 1)] - S0[seq(2, nsval0)]  
-  nsval1 <- length(S1)
-  if (nsval1 > 10) {
-    S1_ <- S1 / mean(S1[seq((nsval1 - 10), nsval1)])
-  } else {
-    S1_ <- S1 / mean(S1[seq_len(nsval1)])
-  }
-  r1 <- 0
-  lam <- 0.05
-  
-  itcounter <- 0
-  while (r1 <= 0) {
-    itcounter <- itcounter + 1
-    cost <- array(0, c(1, length(S1_)))
-    for (idx in seq_len(length(S1_))) {
-      cost[idx] <- lam * max(S1_[seq(idx, length(S1_))]) + idx
-    }
-    v2 <- min(cost)
-    i2 <- which(cost == v2)
-    if (length(i2) == 1) {
-      r1 <- i2 - 1
+    n <- nrow(x)
+    m <- ncol(x)
+    epsilon <- nnz / sqrt(m * n)
+    svdX <- svd(x)
+    S0 <- svdX$d
+    
+    nsval0 <- length(S0)
+    S1 <- S0[seq_len(nsval0 - 1)] - S0[seq(2, nsval0)]  
+    nsval1 <- length(S1)
+    if (nsval1 > 10) {
+        S1_ <- S1 / mean(S1[seq((nsval1 - 10), nsval1)])
     } else {
-      r1 <- max(i2) - 1
+        S1_ <- S1 / mean(S1[seq_len(nsval1)])
     }
-    lam <- lam + 0.05
-    if (itcounter > maxiter) {
-      break
-    }
-  }
-  
-  if (itcounter <= maxiter) {
-    cost2 <- array(0, c(1, (length(S0) - 1)))
-    for (idx in seq_len(length(S0) - 1)) {
-      cost2[idx] <- (S0[idx + 1] + sqrt(idx * epsilon) * S0[1] / epsilon) / S0[idx]
-    }
-    v2 <- min(cost2)
-    i2 <- which(cost2 == v2)
-    if (length(i2) == 1) {
-      r2 <- i2
-    } else {
-      r2 <- max(i2)
+    r1 <- 0
+    lam <- 0.05
+    
+    itcounter <- 0
+    while (r1 <= 0) {
+        itcounter <- itcounter + 1
+        cost <- array(0, c(1, length(S1_)))
+        for (idx in seq_len(length(S1_))) {
+            cost[idx] <- lam * max(S1_[seq(idx, length(S1_))]) + idx
+        }
+        v2 <- min(cost)
+        i2 <- which(cost == v2)
+        if (length(i2) == 1) {
+            r1 <- i2 - 1
+        } else {
+            r1 <- max(i2) - 1
+        }
+        lam <- lam + 0.05
+        if (itcounter > maxiter) {
+            break
+        }
     }
     
-    if (r1 > r2) {
-      r <- r1
+    if (itcounter <= maxiter) {
+        cost2 <- array(0, c(1, (length(S0) - 1)))
+        for (idx in seq_len(length(S0) - 1)) {
+            cost2[idx] <- (S0[idx + 1] + sqrt(idx * epsilon) * S0[1] / epsilon) / S0[idx]
+        }
+        v2 <- min(cost2)
+        i2 <- which(cost2 == v2)
+        if (length(i2) == 1) {
+            r2 <- i2
+        } else {
+            r2 <- max(i2)
+        }
+        
+        if (r1 > r2) {
+            r <- r1
+        } else {
+            r <- r2
+        }
     } else {
-      r <- r2
+        r <- min(nrow(x), ncol(x))
     }
-  } else {
-    r <- min(nrow(x), ncol(x))
-  }
-  r
+    r
 }
 
 
@@ -951,12 +951,12 @@
 # keywords internal
 .aux_G <- function(x, m0, r)
 {
-  z <- rowSums(x^2) / (2 * m0 * r)
-  y <- exp((z - 1)^2) - 1
-  idxfind <- (z < 1)
-  y[idxfind] <- 0
-  out <- sum(y)
-  out
+    z <- rowSums(x^2) / (2 * m0 * r)
+    y <- exp((z - 1)^2) - 1
+    idxfind <- (z < 1)
+    y[idxfind] <- 0
+    out <- sum(y)
+    out
 }
 
 # Total Loss Function with Regularization
@@ -983,13 +983,13 @@
 # keywords internal
 .aux_F_t <- function(x, y, s, m_e, e, m0, rho)
 {
-  n <- nrow(x)
-  r <- ncol(x)
-  out1 <- sum((((x %*% s %*% t(y)) - m_e) * e)^2) / 2
-  out2 <- rho * .aux_G(y, m0, r)
-  out3 <- rho * .aux_G(x, m0, r)
-  out  <- out1 + out2 + out3
-  out
+    n <- nrow(x)
+    r <- ncol(x)
+    out1 <- sum((((x %*% s %*% t(y)) - m_e) * e)^2) / 2
+    out2 <- rho * .aux_G(y, m0, r)
+    out3 <- rho * .aux_G(x, m0, r)
+    out  <- out1 + out2 + out3
+    out
 }
 
 
@@ -1010,11 +1010,11 @@
 # keywords internal
 .aux_Gp <- function(x, m0, r)
 {
-  z <- rowSums(x^2) / (2 * m0 * r)
-  z <- 2 * exp((z - 1)^2) / (z - 1)
-  idxfind <- (z < 0)
-  z[idxfind] <- 0  
-  out <- x * matrix(z, nrow = nrow(x), ncol = ncol(x), byrow = FALSE) / (m0 * r)
+    z <- rowSums(x^2) / (2 * m0 * r)
+    z <- 2 * exp((z - 1)^2) / (z - 1)
+    idxfind <- (z < 0)
+    z[idxfind] <- 0  
+    out <- x * matrix(z, nrow = nrow(x), ncol = ncol(x), byrow = FALSE) / (m0 * r)
 }
 
 
@@ -1042,28 +1042,28 @@
 # @keywords internal
 .aux_gradF_t <- function(x, y, s, m_e, e, m0, rho)
 {
-  n <- nrow(x)
-  r <- ncol(x)
-  m <- nrow(y)
-  if (ncol(y) != r) {
-    stop("dimension error from the internal function .aux_gradF_t")
-  }
-  
-  XS  <- x %*% s
-  YS  <- y %*% t(s)
-  XSY <- XS %*% t(y)
-  
-  Qx <- t(x) %*% ((m_e - XSY) * e) %*% YS / n
-  Qy <- t(y) %*% t((m_e - XSY) * e) %*% XS / m
-  
-  W <- ((XSY - m_e) * e) %*% YS  + (x %*% Qx) + rho * .aux_Gp(x, m0, r)
-  Z <- t((XSY - m_e) * e) %*% XS + (y %*% Qy) + rho * .aux_Gp(y, m0, r)
-  
-  resgrad <- list()
-  resgrad$W <- W
-  resgrad$Z <- Z
-  resgrad
-  
+    n <- nrow(x)
+    r <- ncol(x)
+    m <- nrow(y)
+    if (ncol(y) != r) {
+        stop("dimension error from the internal function .aux_gradF_t")
+    }
+    
+    XS  <- x %*% s
+    YS  <- y %*% t(s)
+    XSY <- XS %*% t(y)
+    
+    Qx <- t(x) %*% ((m_e - XSY) * e) %*% YS / n
+    Qy <- t(y) %*% t((m_e - XSY) * e) %*% XS / m
+    
+    W <- ((XSY - m_e) * e) %*% YS  + (x %*% Qx) + rho * .aux_Gp(x, m0, r)
+    Z <- t((XSY - m_e) * e) %*% XS + (y %*% Qy) + rho * .aux_Gp(y, m0, r)
+    
+    resgrad <- list()
+    resgrad$W <- W
+    resgrad$Z <- Z
+    resgrad
+    
 }
 
 
@@ -1084,24 +1084,24 @@
 # # @keywords internal
 .aux_getoptS <- function(x, y, m_e, e)
 {
-  n <- nrow(x)
-  r <- ncol(x)  
-  C <- t(x) %*% (m_e) %*% y
-  C <- matrix(as.vector(C))  
-  nnrow <- ncol(x) * ncol(y)
-  A <- matrix(NA, nrow = nnrow, ncol = (r^2))
-  
-  for (i in seq_len(r)) {
-    for (j in seq_len(r)) {
-      ind <- (j - 1) * r + i
-      tmp <- t(x) %*% (outer(x[, i], y[, j]) * e) %*% y      
-      A[, ind] <- as.vector(tmp)
+    n <- nrow(x)
+    r <- ncol(x)  
+    C <- t(x) %*% (m_e) %*% y
+    C <- matrix(as.vector(C))  
+    nnrow <- ncol(x) * ncol(y)
+    A <- matrix(NA, nrow = nnrow, ncol = (r^2))
+    
+    for (i in seq_len(r)) {
+        for (j in seq_len(r)) {
+            ind <- (j - 1) * r + i
+            tmp <- t(x) %*% (outer(x[, i], y[, j]) * e) %*% y      
+            A[, ind] <- as.vector(tmp)
+        }
     }
-  }
-  
-  S <- solve(A, C)
-  out <- matrix(S, nrow = r)
-  out
+    
+    S <- solve(A, C)
+    out <- matrix(S, nrow = r)
+    out
 }
 
 
@@ -1133,20 +1133,20 @@
 # keywords internal
 .aux_getoptT <- function(x, w, y, z, s, m_e, e, m0, rho)
 {
-  norm2WZ <- norm(w, 'f')^2 + norm(z, 'f')^2
-  f <- array(0, c(1, 21))
-  f[1] <- .aux_F_t(x, y, s, m_e, e, m0, rho)
-  t <- -1e-1
-  for (i in seq_len(21)) {
-    f[i + 1] <- .aux_F_t(x + t * w, y + t * z, s, m_e, e, m0, rho)
-    if ((f[i + 1] - f[1]) <= 0.5 * t * norm2WZ) {
-      out <- t
-      break
+    norm2WZ <- norm(w, 'f')^2 + norm(z, 'f')^2
+    f <- array(0, c(1, 21))
+    f[1] <- .aux_F_t(x, y, s, m_e, e, m0, rho)
+    t <- -1e-1
+    for (i in seq_len(21)) {
+        f[i + 1] <- .aux_F_t(x + t * w, y + t * z, s, m_e, e, m0, rho)
+        if ((f[i + 1] - f[1]) <= 0.5 * t * norm2WZ) {
+            out <- t
+            break
+        }
+        t <- t / 2
     }
-    t <- t / 2
-  }
-  out <- t
-  t
+    out <- t
+    t
 }
 
 #ORDINATION RESULTS FUNCTION
@@ -1154,117 +1154,548 @@
 #constructor function
 .OrdinationResults <- function(method, eigvals, samples, features,
                                proportion.explained, dist = NULL, metadata = list()) {
-  structure(list(
-    method = method,
-    eigvals = eigvals,
-    samples = samples,
-    features = features,
-    proportion.explained = proportion.explained,
-    dist = dist,
-    metadata = metadata
-  ), class = "OrdinationResults")
+    structure(list(
+        method = method,
+        eigvals = eigvals,
+        samples = samples,
+        features = features,
+        proportion.explained = proportion.explained,
+        dist = dist,
+        metadata = metadata
+    ), class = "OrdinationResults")
 }
 
 #print method
 .print.OrdinationResults <- function(x, ...) {
-  cat("OrdinationResults (method:", x$method, ")\n")
-  cat("Number of components:", length(x$eigvals), "\n")
-  cat("Variance explained:\n")
-  print(round(x$proportion.explained, 3))
-  invisible(x)
+    cat("OrdinationResults (method:", x$method, ")\n")
+    cat("Number of components:", length(x$eigvals), "\n")
+    cat("Variance explained:\n")
+    print(round(x$proportion.explained, 3))
+    invisible(x)
 }
 
 #summary method
 .summary.OrdinationResults <- function(object, ...) {
-  print(object)
-  cat("\nSample scores (first few rows):\n")
-  print(head(object$samples))
-  cat("\nFeature loadings (first few rows):\n")
-  print(head(object$features))
-  invisible(object)
+    print(object)
+    cat("\nSample scores (first few rows):\n")
+    print(head(object$samples))
+    cat("\nFeature loadings (first few rows):\n")
+    print(head(object$features))
+    invisible(object)
 }
 
 #plot method
 .plot.OrdinationResults <- function(x, comps = c(1, 2), ...) {
-  if (length(comps) != 2) stop("Please select two components to plot.")
-  plot(x$samples[, comps], col = "blue", pch = 19,
-       xlab = paste0("PC", comps[1]),
-       ylab = paste0("PC", comps[2]),
-       main = paste("Ordination (", x$method, ")", sep = ""))
-  points(x$features[, comps], col = "red", pch = 4)
-  legend("topright", legend = c("Samples", "Features"),
-         col = c("blue", "red"), pch = c(19, 4))
+    if (length(comps) != 2) stop("Please select two components to plot.")
+    plot(x$samples[, comps], col = "blue", pch = 19,
+         xlab = paste0("PC", comps[1]),
+         ylab = paste0("PC", comps[2]),
+         main = paste("Ordination (", x$method, ")", sep = ""))
+    points(x$features[, comps], col = "red", pch = 4)
+    legend("topright", legend = c("Samples", "Features"),
+           col = c("blue", "red"), pch = c(19, 4))
 }
 
 #DISTANCE MATRIX FUNCTION
 #
 .DistanceMatrix <- function(matrix, ids = NULL, method = "euclidean") {
-  if (!is.matrix(matrix)) stop("Input must be a matrix.")
-  if (!isSymmetric(matrix)) stop("Distance matrix must be symmetric.")
-  if (!is.null(ids)) {
-    if (length(ids) != nrow(matrix)) stop("Length of 'ids' must match matrix dimensions.")
-    rownames(matrix) <- ids
-    colnames(matrix) <- ids
-  }
-  structure(list(
-    data = matrix,
-    ids = rownames(matrix),
-    method = method
-  ), class = "DistanceMatrix")
+    if (!is.matrix(matrix)) stop("Input must be a matrix.")
+    if (!isSymmetric(matrix)) stop("Distance matrix must be symmetric.")
+    if (!is.null(ids)) {
+        if (length(ids) != nrow(matrix)) stop("Length of 'ids' must match matrix dimensions.")
+        rownames(matrix) <- ids
+        colnames(matrix) <- ids
+    }
+    structure(list(
+        data = matrix,
+        ids = rownames(matrix),
+        method = method
+    ), class = "DistanceMatrix")
 }
 
 .print.DistanceMatrix <- function(x, ...) {
-  cat("DistanceMatrix (", x$method, ")\n", sep = "")
-  cat("Number of objects:", length(x$ids), "\n")
-  print(head(x$data, 6))  # Show only top part
-  invisible(x)
+    cat("DistanceMatrix (", x$method, ")\n", sep = "")
+    cat("Number of objects:", length(x$ids), "\n")
+    print(head(x$data, 6))  # Show only top part
+    invisible(x)
 }
 
 .summary.DistanceMatrix <- function(object, ...) {
-  cat("Summary of DistanceMatrix\n")
-  cat("Method:", object$method, "\n")
-  cat("Size:", nrow(object$data), "x", ncol(object$data), "\n")
-  cat("IDs:\n")
-  print(head(object$ids, 6))
-  cat("\nDistance Summary Stats:\n")
-  print(summary(as.vector(object$data[upper.tri(object$data)])))
-  invisible(object)
+    cat("Summary of DistanceMatrix\n")
+    cat("Method:", object$method, "\n")
+    cat("Size:", nrow(object$data), "x", ncol(object$data), "\n")
+    cat("IDs:\n")
+    print(head(object$ids, 6))
+    cat("\nDistance Summary Stats:\n")
+    print(summary(as.vector(object$data[upper.tri(object$data)])))
+    invisible(object)
 }
 
 #wrapper to store dataset-specific sample scores
 .dataset_specific_scores <- function(rclr.tables, n.components = 2, max.iterations = 5) {
-  scores <- lapply(seq_along(rclr.tables), function(i) {
-    tbl <- rclr.tables[[i]]
-    res <- .optspace_helper(
-      rclr.table     = t(tbl),
-      feature.ids    = rownames(tbl),
-      subject.ids    = colnames(tbl),
-      n.components   = n.components,
-      max.iterations = max.iterations
-    )
-    res$ord.res$samples
-  })
-  
-  names(scores) <- paste0("Dataset_", seq_along(scores))
-  
-  return(scores)
+    scores <- lapply(seq_along(rclr.tables), function(i) {
+        tbl <- rclr.tables[[i]]
+        res <- .optspace_helper(
+            rclr.table     = t(tbl),
+            feature.ids    = rownames(tbl),
+            subject.ids    = colnames(tbl),
+            n.components   = n.components,
+            max.iterations = max.iterations
+        )
+        res$ord.res$samples
+    })
+    
+    names(scores) <- paste0("Dataset_", seq_along(scores))
+    
+    return(scores)
 }
 
 #wrapper to store dataset-specific feature loadings
 .dataset_specific_loadings <- function(rclr.tables, n.components = 2, max.iterations = 5) {
-  loadings <- lapply(seq_along(rclr.tables), function(i) {
-    tbl <- rclr.tables[[i]]
-    res <- .optspace_helper(
-      rclr.table     = t(tbl),
-      feature.ids    = rownames(tbl),
-      subject.ids    = colnames(tbl),
-      n.components   = n.components,
-      max.iterations = max.iterations
+    loadings <- lapply(seq_along(rclr.tables), function(i) {
+        tbl <- rclr.tables[[i]]
+        res <- .optspace_helper(
+            rclr.table     = t(tbl),
+            feature.ids    = rownames(tbl),
+            subject.ids    = colnames(tbl),
+            n.components   = n.components,
+            max.iterations = max.iterations
+        )
+        res$ord.res$features
+    })
+    
+    names(loadings) <- paste0("Dataset_", seq_along(loadings))
+    
+    return(loadings)
+}
+
+################################################################################
+# Joint-RPCA benchmarking helpers
+
+.keep_finite_cols <- function(X) {
+    ok <- apply(X, 2, function(v) all(is.finite(v)))
+    if (!any(ok)) stop("All columns removed by finite filter.")
+    X[, ok, drop = FALSE]
+}
+
+.drop_constant_cols <- function(X) {
+    sds <- apply(X, 2, function(v) sd(v, na.rm = TRUE))
+    keep <- is.finite(sds) & (sds > 0)
+    if (!any(keep)) stop("No non-constant columns remain after filtering.")
+    X[, keep, drop = FALSE]
+}
+
+.prep_train_test <- function(X_train, X_test) {
+    m <- colMeans(X_train, na.rm = TRUE)
+    s <- apply(X_train, 2, sd, na.rm = TRUE)
+    s[s == 0 | !is.finite(s)] <- 1
+    list(
+        Xtr = sweep(sweep(X_train, 2, m, "-"), 2, s, "/"),
+        Xte = sweep(sweep(X_test,  2, m, "-"), 2, s, "/")
     )
-    res$ord.res$features
-  })
-  
-  names(loadings) <- paste0("Dataset_", seq_along(loadings))
-  
-  return(loadings)
+}
+
+.evaluate_model_cv <- function(features, labels, folds = 5, ntree = 500, seed = 42) {
+    set.seed(seed)
+    tab <- table(labels)
+    if (length(labels) < 2L || length(tab) < 2L) stop("Need >=2 samples and >=2 classes.")
+    folds <- max(2L, min(as.integer(folds), as.integer(min(tab)), length(labels) - 1L))
+    folds_idx <- caret::createFolds(labels, k = folds, list = TRUE, returnTrain = FALSE)
+    
+    accs <- numeric(length(folds_idx)); aucs <- numeric(length(folds_idx))
+    for (i in seq_along(folds_idx)) {
+        test_idx  <- folds_idx[[i]]
+        train_idx <- setdiff(seq_along(labels), test_idx)
+        Xtr <- features[train_idx, , drop = FALSE]; Xte <- features[test_idx, , drop = FALSE]
+        ytr <- labels[train_idx]; yte <- labels[test_idx]
+        if (length(unique(ytr)) < 2L) { accs[i] <- NA_real_; aucs[i] <- NA_real_; next }
+        
+        pp <- .prep_train_test(Xtr, Xte)
+        rf <- randomForest(x = pp$Xtr, y = ytr, ntree = ntree)
+        
+        yhat <- predict(rf, pp$Xte, type = "response")
+        accs[i] <- mean(yhat == yte)
+        
+        probs <- predict(rf, pp$Xte, type = "prob")
+        all_lvls <- levels(labels)
+        miss <- setdiff(all_lvls, colnames(probs))
+        if (length(miss)) for (mm in miss) probs <- cbind(probs, setNames(rep(0, nrow(probs)), mm))
+        probs <- probs[, all_lvls, drop = FALSE]
+        
+        if (length(unique(yte)) < 2L) {
+            aucs[i] <- NA_real_
+        } else {
+            aucs[i] <- tryCatch(as.numeric(pROC::multiclass.roc(yte, probs)$auc), error = function(e) NA_real_)
+        }
+    }
+    list(accuracy = mean(accs, na.rm = TRUE), auc = mean(aucs, na.rm = TRUE))
+    
+}
+
+.get_fold_metrics <- function(X) {
+    set.seed(42)
+    idx <- caret::createFolds(labels, k = safe_k, list = TRUE, returnTrain = FALSE)
+    acc <- auc <- numeric(length(idx))
+    for (i in seq_along(idx)) {
+        te <- idx[[i]]; tr <- setdiff(seq_along(labels), te)
+        if (length(unique(labels[tr])) < 2L) {acc[i] <- NA; auc[i] <- NA; next}
+        pp <- .prep_train_test(X[tr, , drop = FALSE], X[te, , drop = FALSE])
+        rf <- randomForest(pp$Xtr, labels[tr], ntree = 500)
+        yhat <- predict(rf, pp$Xte)
+        acc[i] <- mean(yhat == labels[te])
+        probs <- predict(rf, pp$Xte, type = "prob")
+        miss <- setdiff(levels(labels), colnames(probs))
+        if (length(miss)) for (mm in miss) probs <- cbind(probs, setNames(rep(0, nrow(probs)), mm))
+        probs <- probs[ , levels(labels), drop = FALSE]
+        auc[i] <- tryCatch(as.numeric(pROC::multiclass.roc(labels[te], probs)$auc), error = function(e) NA)
+    }
+    tibble::tibble(Fold = seq_along(idx), Accuracy = acc, MacroAUC = auc)
+}
+
+.rep_dim <- function(X) ncol(X)
+
+.timeit <- function(expr) { t0 <- proc.time(); force(expr); as.numeric((proc.time()-t0)["elapsed"]) }
+
+.ci95 <- function(x){ x <- x[is.finite(x)]; m <- mean(x); s <- sd(x); n <- length(x); if(n <= 1||!is.finite(s)||s == 0) c(m,m,m) else c(m, m-1.96*s/sqrt(n), m+1.96*s/sqrt(n)) }
+
+#helper to evaluate a score matrix fairly
+.eval_method <- function(U_scores, meta, prefix = "AX") {
+    U <- as.data.frame(U_scores)
+    k <- ncol(U); colnames(U) <- paste0(prefix, seq_len(k))
+    U$sample_id <- rownames(U_scores)
+    
+    meta_tmp <- meta
+    if ("sample_id" %in% colnames(meta_tmp)) {
+        meta_tmp$sample_id <- as.character(meta_tmp$sample_id)
+    } else {
+        meta_tmp <- tibble::rownames_to_column(meta_tmp, "sample_id")
+    }
+    df <- dplyr::left_join(U, meta_tmp, by = "sample_id")
+    
+    #Wilcoxon on first two axes
+    w1p <- if (k >= 1)
+        suppressWarnings(wilcox.test(df[[paste0(prefix, 1)]] ~ df$Group, exact = FALSE)$p.value)
+    else NA_real_
+    w2p <- if (k >= 2)
+        suppressWarnings(wilcox.test(df[[paste0(prefix, 2)]] ~ df$Group, exact = FALSE)$p.value)
+    else NA_real_
+    
+    #PERMANOVA on first up to 3 axes
+    axes <- paste0(prefix, seq_len(min(3, k)))
+    perm_R2 <- perm_F <- perm_p <- NA_real_
+    if (length(axes) >= 2) {
+        perm <- vegan::adonis2(df[, axes] ~ Group, data = df, method = "euclidean")
+        perm_R2 <- perm$R2[1]; perm_F <- perm$F[1]; perm_p <- perm$`Pr(>F)`[1]
+    }
+    
+    #weighted RF AUROC
+    aucv <- NA_real_
+    if (length(axes) >= 2) {
+        rf_df <- na.omit(df[, c("Group", axes)])
+        rf_df$Group <- factor(rf_df$Group, levels = c("non-IBD", "IBD"))
+        if (nlevels(rf_df$Group) == 2 && all(table(rf_df$Group) >= 5)) {
+            cls_tab <- table(rf_df$Group)
+            wts <- as.numeric(1 / cls_tab); names(wts) <- names(cls_tab)
+            set.seed(42)
+            rf_prob <- ranger(
+                Group ~ ., data = rf_df,
+                num.trees     = 1000,
+                probability   = TRUE,
+                class.weights = wts,
+                oob.error     = TRUE
+            )
+            p_ibd <- rf_prob$predictions[, "IBD"]
+            roc_obj <- pROC::roc(rf_df$Group, p_ibd, levels = c("non-IBD", "IBD"))
+            aucv <- as.numeric(pROC::auc(roc_obj))
+        }
+    }
+    
+    tibble(
+        method       = prefix,
+        wilcox_PC1_p = w1p,
+        wilcox_PC2_p = w2p,
+        permanova_R2 = perm_R2,
+        permanova_F  = perm_F,
+        permanova_p  = perm_p,
+        AUROC        = aucv
+    )
+}
+
+.lr <- function(mat, top, bot, pcnt = 0.5) {
+    log(
+        (colSums(mat[top, , drop = FALSE]) + pcnt) /
+            (colSums(mat[bot, , drop = FALSE]) + pcnt)
+    )
+}
+
+.make_groups_autodetect <- function(meta_df, sample_ids, min_frac = 0.01, min_abs = 10L) {
+    out <- data.frame(
+        sample_id = sample_ids,
+        Group = factor(NA, levels = c("IBD", "non-IBD"))
+    )
+    if (is.null(meta_df) || !nrow(meta_df)) return(out)
+    
+    md <- as.data.frame(meta_df, stringsAsFactors = FALSE)
+    names(md) <- tolower(trimws(names(md)))
+    
+    sid <- tolower(trimws(as.character(sample_ids)))
+    thresh <- max(min_abs, floor(length(sid) * min_frac))
+    overlaps <- sapply(md, function(col) {
+        x <- tolower(trimws(as.character(col)))
+        sum(!is.na(x) & x %in% sid)
+    })
+    max_ov <- suppressWarnings(max(overlaps, na.rm = TRUE))
+    if (!is.finite(max_ov) || max_ov < thresh) return(out)
+    best <- names(overlaps)[which.max(overlaps)]
+    
+    if (!"diagnosis" %in% names(md)) return(out)
+    
+    dx  <- tolower(trimws(as.character(md$diagnosis)))
+    grp <- ifelse(grepl("\\b(uc|cd|ibd)\\b", dx), "IBD",
+                  ifelse(grepl("^\\s*non", dx), "non-IBD", NA_character_))
+    
+    md$sample_id <- tolower(trimws(as.character(md[[best]])))
+    md$Group <- factor(grp, levels = c("IBD", "non-IBD"))
+    join_tbl <- unique(md[, c("sample_id", "Group")])
+    
+    joined <- dplyr::left_join(
+        data.frame(sample_id = sid, stringsAsFactors = FALSE),
+        join_tbl, by = "sample_id"
+    )
+    joined$sample_id <- sample_ids
+    joined
+}
+
+.eval_scores <- function(scores_df) {
+    out <- list()
+    if (!("Group" %in% names(scores_df))) return(out)
+    
+    #detect available component columns
+    comp_cols <- grep("^V\\d+$", names(scores_df), value = TRUE)
+    if (!length(comp_cols)) return(out)
+    use_cols <- comp_cols[seq_len(min(3L, length(comp_cols)))]
+    
+    #Wilcoxon tests
+    if ("V1" %in% names(scores_df)) {
+        res_w1 <- try(wilcox.test(scores_df$V1 ~ scores_df$Group, exact = FALSE), silent = TRUE)
+        out$wilcox_PC1_p <- if (!inherits(res_w1, "try-error")) res_w1$p.value else NA_real_
+    }
+    if ("V2" %in% names(scores_df)) {
+        res_w2 <- try(wilcox.test(scores_df$V2 ~ scores_df$Group, exact = FALSE), silent = TRUE)
+        out$wilcox_PC2_p <- if (!inherits(res_w2, "try-error")) res_w2$p.value else NA_real_
+    }
+    
+    #PERMANOVA (only if >=2 components exist)
+    if (length(use_cols) >= 2) {
+        perm_df <- na.omit(scores_df[, c("Group", use_cols), drop = FALSE])
+        if (nrow(perm_df) > 5 &&
+            is.factor(perm_df$Group) &&
+            nlevels(perm_df$Group) >= 2 &&
+            all(table(perm_df$Group) >= 3)) {
+            
+            comp_mat <- as.matrix(perm_df[, use_cols, drop = FALSE])
+            colnames(comp_mat) <- use_cols
+            
+            perm <- try(
+                vegan::adonis2(comp_mat ~ Group, data = perm_df, method = "euclidean"),
+                silent = TRUE
+            )
+            
+            if (!inherits(perm, "try-error")) {
+                out$permanova_R2 <- perm$R2[1]
+                out$permanova_F  <- perm$F[1]
+                out$permanova_p  <- perm$`Pr(>F)`[1]
+            } else {
+                out$permanova_R2 <- NA_real_
+                out$permanova_F  <- NA_real_
+                out$permanova_p  <- NA_real_
+            }
+        }
+    }
+    
+    #AUROC with ranger if at least 1 component exists
+    rf_df <- na.omit(scores_df[, c("Group", use_cols), drop = FALSE])
+    if (nrow(rf_df) && is.factor(rf_df$Group) && nlevels(rf_df$Group) >= 2) {
+        cls_tab <- table(rf_df$Group)
+        wts <- as.numeric(1 / cls_tab)
+        names(wts) <- names(cls_tab)
+        set.seed(42)
+        rf_prob <- ranger::ranger(
+            Group ~ ., data = rf_df, num.trees = 500,
+            probability = TRUE, class.weights = wts, oob.error = TRUE
+        )
+        if ("IBD" %in% colnames(rf_prob$predictions)) {
+            p_ibd <- rf_prob$predictions[, "IBD"]
+            roc_obj <- pROC::roc(rf_df$Group, p_ibd, levels = c("non-IBD", "IBD"))
+            out$AUROC <- as.numeric(pROC::auc(roc_obj))
+        }
+    }
+    
+    out
+}
+
+#convenience: run Joint-RPCA and return scores + metrics
+.fit_and_score <- function(mae, k, grp_df) {
+    set.seed(42)
+    mae <- runJointRPCA(
+        x = mae,
+        n.components = k,
+        max.iterations = 5,
+        rclr.transform.tables = TRUE,
+        min.sample.count = 1,
+        min.feature.count = 0,
+        min.feature.frequency = 0
+    )
+    
+    fit <- metadata(mae)$JointRPCA[["JointRPCA"]]
+    
+    U <- as.data.frame(fit$ord.res$samples)
+    colnames(U) <- paste0("V", seq_len(ncol(U)))
+    U$sample_id <- rownames(U)
+    U2 <- dplyr::left_join(U, grp_df, by = "sample_id")
+    
+    list(
+        scores  = U2,
+        metrics = .eval_scores(U2),
+        fit     = fit
+    )
+}
+
+.find_subject_col <- function(meta) {
+    nm <- tolower(trimws(names(meta)))
+    hits <- c(
+        "participant.id", "participant_id", "participantid",
+        "subject", "subject_id", "host_subject_id", "host.subject.id",
+        "participant", "host_subject"
+    )
+    ix <- intersect(nm, hits)
+    if (length(ix)) ix[1] else NULL
+}
+
+.build_sample_subject_map <- function(meta_df, sample_ids, min_frac = 0.01, min_abs = 10L) {
+    if (is.null(meta_df) || !nrow(meta_df)) return(NULL)
+    md <- as.data.frame(meta_df, stringsAsFactors = FALSE)
+    names(md) <- tolower(trimws(names(md)))
+    
+    sid <- tolower(trimws(as.character(sample_ids)))
+    thresh <- max(min_abs, floor(length(sid) * min_frac))
+    overlaps <- sapply(md, function(col) {
+        x <- tolower(trimws(as.character(col)))
+        sum(!is.na(x) & x %in% sid)
+    })
+    max_ov <- suppressWarnings(max(overlaps, na.rm = TRUE))
+    if (!is.finite(max_ov) || max_ov < thresh) return(NULL)
+    best_id_col <- names(overlaps)[which.max(overlaps)]
+    
+    subj_col <- .find_subject_col(md)
+    if (is.null(subj_col)) return(NULL)
+    
+    md$sample_id  <- tolower(trimws(as.character(md[[best_id_col]])))
+    md$subject_id <- as.character(md[[subj_col]])
+    out <- unique(md[, c("sample_id", "subject_id")])
+    out <- out[!is.na(out$sample_id) & nzchar(out$sample_id) &
+                   !is.na(out$subject_id) & nzchar(out$subject_id),
+               , drop = FALSE]
+    if (!nrow(out)) return(NULL)
+    out
+}
+
+.clr_transform <- function(mat, pseudo = 1e-6) {
+    x <- log(mat + pseudo)
+    x <- sweep(x, 2, colMeans(x), FUN = "-")
+    x[!is.finite(x)] <- 0
+    x
+}
+
+.zscore_rows <- function(mat) {
+    m <- rowMeans(mat)
+    s <- matrixStats::rowSds(mat)
+    s[s == 0 | !is.finite(s)] <- 1
+    sweep(sweep(mat, 1, m, "-"), 1, s, "/")
+}
+
+.hellinger <- function(mat) {
+    cs <- colSums(mat)
+    cs[cs <= 0 | !is.finite(cs)] <- 1
+    p  <- sweep(mat, 2, cs, "/")
+    x  <- sqrt(p)
+    x[!is.finite(x)] <- 0
+    x
+}
+
+.make_scores_df <- function(S, sample_ids) {
+    S <- as.matrix(S)
+    colnames(S) <- paste0("V", seq_len(ncol(S)))
+    out <- as.data.frame(S)
+    out$sample_id <- sample_ids
+    dplyr::left_join(out, grp_df, by = "sample_id")
+}
+
+.eval_wrapper <- function(scores_df, label) {
+    list(model = label, metrics = .eval_scores(scores_df), scores = scores_df)
+}
+
+#collect metrics
+.grab <- function(x) {
+    m <- x$metrics
+    get_num <- function(z) if (is.null(z)) NA_real_ else as.numeric(z)
+    c(
+        wilcox_PC1_p = get_num(m$wilcox_PC1_p),
+        wilcox_PC2_p = get_num(m$wilcox_PC2_p),
+        permanova_R2 = get_num(m$permanova_R2),
+        permanova_p  = get_num(m$permanova_p),
+        AUROC        = get_num(m$AUROC)
+    )
+}
+
+.make_mae_for <- function(cols) {
+    cd2 <- S4Vectors::DataFrame(row.names = samps[cols])
+    se_mgx2 <- SummarizedExperiment::SummarizedExperiment(
+        list(counts = X_mgx[, cols, drop = FALSE]),
+        colData = cd2
+    )
+    se_mtx2 <- SummarizedExperiment::SummarizedExperiment(
+        list(counts = X_mtx[, cols, drop = FALSE]),
+        colData = cd2
+    )
+    mae2 <- MultiAssayExperiment::MultiAssayExperiment(list(MGX = se_mgx2, MTX = se_mtx2))
+    MultiAssayExperiment::intersectColumns(mae2)
+}
+
+.plt_ord <- function(scores, title) {
+    ggplot2::ggplot(scores, ggplot2::aes(V1, V2, color = Group)) +
+        ggplot2::geom_point(alpha = 0.8, size = 1.1) +
+        ggplot2::labs(title = title, x = "PC1", y = "PC2", color = NULL) +
+        ggplot2::theme_minimal()
+}
+
+.plot_comp <- function(obj) {
+    if (is.null(obj)) return(invisible(NULL))
+    ggplot2::ggplot(obj$scores, ggplot2::aes(V1, V2, color = Group)) +
+        ggplot2::geom_point(alpha = 0.8, size = 1.0) +
+        ggplot2::labs(title = obj$model, x = "Comp1", y = "Comp2", color = NULL) +
+        ggplot2::theme_minimal()
+}
+
+.get_view <- function(obj, keys) {
+    if (is.null(obj)) return(NULL)
+    if (is.list(obj)) {
+        for (k in keys) {
+            if (!is.null(obj[[k]])) return(as.data.frame(obj[[k]]))
+        }
+        return(NULL)
+    }
+    if (is.matrix(obj) || is.data.frame(obj)) return(as.data.frame(obj))
+    NULL
+}
+
+.show_top <- function(V, label, top_k = 15) {
+    if (is.null(V) || !ncol(V)) return(invisible(NULL))
+    ord   <- order(V[, 1], decreasing = TRUE)
+    top_ix <- seq_len(min(top_k, length(ord)))
+    cat(sprintf("\nTop %s features on PC1:\n", label))
+    print(data.frame(
+        feature = rownames(V)[ord][top_ix],
+        loading = V[ord, 1][top_ix]
+    ))
 }

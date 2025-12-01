@@ -3,19 +3,31 @@
 \docType{data}
 \name{ibdmdb_meta_demo}
 \alias{ibdmdb_meta_demo}
-\title{IBDMDB metadata (demo subset)}
+\title{IBDMDB demo metadata subset}
 \format{
-A \code{data.frame}.
+A \code{data.frame} with selected sample metadata fields.
 }
 \source{
-Prepared by \code{inst/scripts/prepare_ibdmdb_demo.R}.
+Prepared by \code{inst/scripts/prepare_ibdmdb_demo.R} from
+publicly available iHMP/IBDMDB metadata.
 }
 \usage{
 data(ibdmdb_meta_demo)
 }
 \description{
-Optional IBDMDB metadata used with the demo objects.
-Load with \code{data(ibdmdb_meta_demo)}; this will place the object
-\code{ibdmdb_meta_demo} (a \code{data.frame}).
+Sample-level metadata corresponding to the compact IBDMDB 2-omic demo
+(\code{ibdmdb_2omic_demo}). This is essentially
+\code{as.data.frame(colData(mae2))} and is provided as a convenience
+for examples and vignettes.
+}
+\details{
+Loaded with:
+\code{data(ibdmdb_meta_demo)}.
+}
+\references{
+Lloyd-Price J, Arze C, Ananthakrishnan AN, et al.
+\emph{Multi-omics of the gut microbial ecosystem in inflammatory bowel diseases.}
+Nature 569, 655–662 (2019).
+\doi{10.1038/s41586-019-1237-9}
 }
 \keyword{datasets}
