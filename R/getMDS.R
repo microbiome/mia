@@ -17,6 +17,13 @@
 #' difference is that these functions apply microbiome-specific options such
 #' as \code{getDissimilarity} function by default.
 #'
+#' By default \code{scater::calculateMDS} keeps only the \code{ntop = 500}
+#' most variable features. When rarefaction is enabled (\code{niter > 0}) the
+#' sampling depth is evaluated on this filtered matrix, so samples whose depth
+#' falls below the requested \code{sample} are dropped. Pass \code{ntop = Inf}
+#' (or specify \code{subset.row}) if you need to retain all taxa so that the
+#' minimum depth of \code{assay(x, assay.type)} remains reachable.
+#'
 #' See \code{\link[scater:runMDS]{scater::calculateMDS}} for details.
 #'
 #' @return
@@ -40,6 +47,13 @@
 #'     \item \code{subset.result}: \code{Logical result}. Specifies whether to
 #'     subset \code{x} to match the result if some samples were removed during
 #'     calculation. (Default: \code{TRUE})
+#'
+#'     \item \code{ntop}: \code{Numeric scalar}. Forwarded to
+#'     \code{scater::calculateMDS}. Controls how many of the most variable
+#'     features are kept before MDS is run. (Default: \code{500}). Set
+#'     \code{ntop = Inf} (or supply \code{subset.row}) when you need the full
+#'     assay for operations such as rarefaction where absolute library sizes
+#'     matter.
 #' }
 #'
 #' @examples
@@ -59,6 +73,18 @@
 #'
 #' # Calculate PCoA with Unifrac and rarefaction. (Note: increase iterations)
 #' tse <- addMDS(tse, method = "unifrac", name = "unifrac_rare", niter = 2L)
+#'
+#' # Disable feature filtering when rarefying at the minimum depth
+#' min_depth <- min(colSums(assay(tse, "counts")))
+#' tse <- addMDS(
+#'     tse,
+#'     assay.type = "counts",
+#'     method = "bray",
+#'     niter = 2L,
+#'     sample = min_depth,
+#'     ntop = Inf
+#' )
+#' reducedDim(tse, "MDS")[1:3, 1:2]
 #'
 #' # Visualize results
 #' p1 <- plotReducedDim(tse, "unifrac", colour_by = "SampleType") +
