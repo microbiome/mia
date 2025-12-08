@@ -7,7 +7,7 @@
 \alias{getDPCoA,TreeSummarizedExperiment,missing-method}
 \alias{calculateDPCoA}
 \alias{addDPCoA}
-\title{Calculation of Double Principal Correspondance analysis}
+\title{Calculation of Double Principal Correspondence analysis}
 \usage{
 getDPCoA(x, y, ...)
 
@@ -94,7 +94,7 @@ For \code{addDPCoA} a modified \code{x} with the results stored in
 \code{reducedDim} as the given \code{name}
 }
 \description{
-Double Principal Correspondance analysis is made available via the
+Double Principal Correspondence analysis is made available via the
 \code{ade4} package in typical fashion. Results are stored in the
 \code{reducedDims} and are available for all the expected functions.
 }
