@@ -383,8 +383,7 @@ test_that("mergeSEs", {
     
     # Test that reference sequences stay the same
     # Load data from miaTime package
-    skip_if_not(require("miaTime", quietly = TRUE))
-    data(SilvermanAGutData)
+    data("SilvermanAGutData", package = "miaTime")
     tse <- SilvermanAGutData
     tse1 <- tse
     rownames(tse1) <- paste0("Taxon", 1:nrow(tse))
