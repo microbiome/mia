@@ -628,8 +628,8 @@ setMethod("agglomerateByPrevalence",
             # If user wants to agglomerate based on rank
             x <- .merge_features(x, rank, check.assays = FALSE, ...)
             # Find groups that will be used to agglomerate the data
-            f <- rownames(x)[ match(rownames(x), rownames(res)) ]
-            f[ is.na(f) ] <- other.name
+            f <- rownames(x)
+            f[ !f %in% rownames(res) ] <- other.name
             # Find consensus sequences, and add them to result
             ref_seq <- referenceSeq(x)
             ref_seq <- .merge_refseq_list(ref_seq, f, rownames(res), ...)
