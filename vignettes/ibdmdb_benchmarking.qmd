@@ -1,7 +1,10 @@
+% \VignetteIndexEntry{IBDMDB — Joint-RPCA Benchmarking}
+% \VignetteEngine{knitr::rmarkdown}
+% \VignetteEncoding{UTF-8}
+
 ---
 title: "IBDMDB — Joint-RPCA Benchmarking"
-format: html
-editor: visual
+format: BiocStyle::html_document
 ---
 
 ```{r setup, message = FALSE, warning = FALSE}
@@ -338,5 +341,8 @@ ggplot2::ggplot(cmp_long, ggplot2::aes(x = model_simple, y = value, fill = metri
     ) +
     ggplot2::theme_minimal(base_size = 11) +
     ggplot2::theme(legend.position = "top")
+
+#label: session-info
+sessionInfo()
 
 ```

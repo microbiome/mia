@@ -1,7 +1,10 @@
+% \VignetteIndexEntry{Joint RPCA Reproducible Example}
+% \VignetteEngine{knitr::rmarkdown}
+% \VignetteEncoding{UTF-8}
+
 ---
 title: "Joint RPCA Reproducible Example"
-format: html
-editor: visual
+format: BiocStyle::html_document
 ---
 
 ```{r setup, message = FALSE, warning = FALSE}
@@ -323,5 +326,8 @@ ggplot(summary_ci, aes(x = reorder(Method, MacroAUC_mean), y = MacroAUC_mean)) +
     geom_col() + geom_errorbar(aes(ymin = MacroAUC_lwr, ymax = MacroAUC_upr), width = .2) +
     coord_flip() + labs(x = NULL, y = "MacroAUC (mean ± 95% CI)", title = "Method comparison with 95% CIs") +
     theme_minimal(12)
+
+#label: session-info
+sessionInfo()
 
 ```

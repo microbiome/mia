@@ -1,7 +1,10 @@
+% \VignetteIndexEntry{Joint RPCA — iHMP IBD Mini-Replication}
+% \VignetteEngine{knitr::rmarkdown}
+% \VignetteEncoding{UTF-8}
+
 ---
 title: "Joint RPCA — iHMP IBD Mini-Replication"
-format: html
-editor: visual
+format: BiocStyle::html_document
 ---
 
 ```{r setup, message = FALSE, warning = FALSE}
@@ -309,5 +312,8 @@ if (any(!is.na(bench$AUROC))) {
         theme_minimal() %>%
         print()
 }
+
+#label: session-info
+sessionInfo()
 
 ```

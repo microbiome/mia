@@ -1,7 +1,10 @@
+% \VignetteIndexEntry{IBDMDB — 2-Omic Joint-RPCA (MGX + MTX)}
+% \VignetteEngine{knitr::rmarkdown}
+% \VignetteEncoding{UTF-8}
+
 ---
 title: "IBDMDB — 2-Omic Joint-RPCA (MGX + MTX)"
-format: html
-editor: visual
+format: BiocStyle::html_document
 ---
 
 ```{r setup, message = FALSE, warning = FALSE}
@@ -99,7 +102,7 @@ ggplot(U2, aes(x = V1, y = V2, color = Group)) +
 mia:::.show_top(V_mgx, "MGX")
 mia:::.show_top(V_mtx, "MTX")
 
-cat("\nSession info:\n")
-print(sessionInfo())
+#label: session-info
+sessionInfo()
 
 ```

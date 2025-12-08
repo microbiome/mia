@@ -304,7 +304,8 @@ runJointRPCA <- function(x,
         n.components  = n.components,
         max.iterations = max.iterations,
         test.samples  = test.samples,
-        train.samples = train.samples
+        train.samples = train.samples,
+        sample.order  = shared.all.samples
     )
     
     list(
@@ -340,7 +341,8 @@ runJointRPCA <- function(x,
                                    n.components,
                                    max.iterations,
                                    test.samples,
-                                   train.samples) {
+                                   train.samples,
+                                   sample.order = NULL) {
     #split and transpose training/test data per table
     tables.split <- lapply(tables, function(tbl) {
         list(t(tbl[, test.samples, drop = FALSE]),
@@ -414,8 +416,17 @@ runJointRPCA <- function(x,
     }
     
     #compute distance matrix and CV error summary
-    dist.mat <- as.matrix(dist(ord.res$samples))
-    dist.res <- .DistanceMatrix(dist.mat, ids = rownames(ord.res$samples))
+    dist.base <- as.matrix(dist(ord.res$samples))
+    
+    if (!is.null(sample.order)) {
+        order_use <- intersect(sample.order, rownames(dist.base))
+        dist.mat  <- dist.base[order_use, order_use, drop = FALSE]
+    } else {
+        dist.mat  <- dist.base
+        order_use <- rownames(dist.base)
+    }
+    
+    dist.res <- .DistanceMatrix(dist.mat, ids = order_use)
     
     cv.dist <- data.frame(t(dists))
     colnames(cv.dist) <- c("mean_CV", "std_CV")

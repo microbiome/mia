@@ -9,7 +9,8 @@
   n.components,
   max.iterations,
   test.samples,
-  train.samples
+  train.samples,
+  sample.order = NULL
 )
 }
 \arguments{
