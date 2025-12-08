@@ -12,10 +12,10 @@
 #' with certain taxonomic ranks, as defined in \code{rowData}. Only available
 #' \code{\link{taxonomyRanks}} can be used.
 #'
-#' \code{agglomerateByVariable} merges data on rows or columns of a
-#' \code{SummarizedExperiment} as defined by a \code{factor} alongside the
-#' chosen dimension. This function allows agglomeration of data based on other
-#' variables than taxonomy ranks.
+#' \code{agglomerateByVariable} and \code{agglomerateByModule} merge data on
+#' rows or columns of a \code{SummarizedExperiment} as defined by a
+#' \code{factor} alongside the chosen dimension. This function allows
+#' agglomeration of data based on other variables than taxonomy ranks.
 #' Metadata from the \code{rowData} or \code{colData} are
 #' retained as defined by \code{archetype}.
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are
@@ -32,17 +32,21 @@
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
 #' However, additional support for \code{TreeSummarizedExperiment} was added and
 #' science field agnostic names were used. In addition the \code{archetype}
-#' argument lets the user select how to preserve row or column data.
+#' argument lets the user select how to preserve row or column data. For merge
+#' data of assays the function from \code{scuttle} are used.
 #'
-#' For merge data of assays the function from \code{scuttle} are used.
+#' \code{agglomerateByModule} allows to agglomerate features or samples based
+#' on one or multiple variables of logical or numeric binary (0/1) type. It is
+#' particularly useful for agglomerating by taxonomic or functional modules,
+#' each defined by a logical or binary variable in the \code{rowData}, as
+#' features can belong to several modules.
 #'
 #' @return
 #' \code{agglomerateByRank} returns a taxonomically-agglomerated,
 #' optionally-pruned object of the same class as \code{x}.
-#' \code{agglomerateByVariable} returns an object of the same class as \code{x}
-#' with the specified entries merged into one entry in all relevant components.
-#' \code{agglomerateByRank} returns a taxonomically-agglomerated,
-#' optionally-pruned object of the same class as \code{x}.
+#' \code{agglomerateByVariable} and \code{agglomerateByModule} return an object
+#' of the same class as \code{x} with the specified entries merged into one
+#' entry in all relevant components.
 #'
 #' @inheritParams getPrevalence
 #'
@@ -120,9 +124,11 @@
 #' \code{factor vector}. A column name from \code{rowData(x)} or
 #' \code{colData(x)} or alternatively a vector specifying how the merging is
 #' performed. If vector, the value must be the same length as
-#' \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
-#' merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
-#' returned unchanged.
+#' \code{nrow(x)/ncol(x)}. Rows or columns corresponding to the same level will
+#' be merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will
+#' be returned unchanged. For \code{agglomerateByModule}, \code{group} should
+#' specify one or several names of logical or numeric binary variables from the
+#' \code{rowData(x)/colData(x)} by which to agglomerate rows or columns.
 #'
 #' @param f Deprecated. Use \code{group} instead.
 #'
@@ -212,6 +218,35 @@
 #' merged <- agglomerateByVariable(
 #'     GlobalPatterns, by = "cols", colData(GlobalPatterns)$SampleType)
 #' merged
+#'
+#' ## Agglomerate by multiple modules
+#'
+#' # Generate 30 random modules
+#' N_module <- 30L
+#' modules <- sample(
+#'     c(TRUE, FALSE),
+#'     size = nrow(tse) * N_module,
+#'     prob = c(0.2, 0.8),
+#'     replace = TRUE
+#' )
+#'
+#' # Convert modules to matrix
+#' modules <- matrix(modules, nrow = nrow(tse))
+#' 
+#' # Add module names as colnames
+#' colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
+#' 
+#' # Add modules to rowData
+#' rowData(tse) <- cbind(rowData(tse), modules)
+#' 
+#' # Extract module columns
+#' module_columns <- grep("module_", colnames(rowData(tse)), value = TRUE)
+#'
+#' # Agglomerate based on modules
+#' tse_module <- agglomerateByModule(tse, by = 1, group = module_columns)
+#' 
+#' # Optionally, store results into altExp slot
+#' altExp(tse, "modules") <- tse_module
 #'
 #' @seealso
 #' \code{\link[=splitOn]{splitOn}}
@@ -385,6 +420,49 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
         by <- .check_MARGIN(by)
         # Agglomerate the data
         x <- .merge_rows_or_cols(x, group, by, ...)
+        return(x)
+    }
+)
+
+#' @rdname agglomerate-methods
+#' @export
+#' @importFrom S4Vectors DataFrame SimpleList
+setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
+    function(x, by, group, na.rm = FALSE){
+        # Check margin
+        by <- .check_MARGIN(by)
+        # Select side information based on margin
+        FUN <- switch(by, rowData, colData)
+        # Check group
+        if( !all(group %in% names(FUN(x))) ){
+            stop("some elements in 'group' did not match with any column of ",
+                as.character(substitute(FUN)), call. = FALSE)
+        }
+        # Extract modules table
+        modules <- as.matrix(FUN(x)[ , group, drop = FALSE])
+        # Check and process modules
+        modules <- .check_and_process_modules(modules)
+        # Merge assays by module
+        assays <- mapply(.agglomerate_module_assay, assayNames(x), assays(x),
+            MoreArgs = list(by = by, modules = modules, na.rm = na.rm),
+            SIMPLIFY = FALSE)
+        # Convert to SimpleList
+        assays <- assays |> SimpleList()
+        # Construct module-wise experiment
+        x <- do.call(class(x), list(
+            assays = assays,
+            colData = if (by == 1L)
+                colData(x) else DataFrame(row.names = colnames(modules)),
+            rowData = if (by == 1L)
+                DataFrame(row.names = colnames(modules)) else rowData(x),
+            metadata = metadata(x))
+        )
+        # Add new names to agglomerated dimension
+        if( by == 1L ){
+            rownames(x) <- colnames(modules)
+        } else {
+            colnames(x) <- colnames(modules)
+        }
         return(x)
     }
 )
