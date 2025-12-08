@@ -488,24 +488,25 @@ test_that("agglomerateByPrevalence", {
     feature <- sample(na.omit(rowData(actual)[["Genus"]]), 1)
     seqs_ref <- seqs_ref[ rowData(se)[["Genus"]] %in% feature ]
     seqs_ref <- .merge_refseq(
-      seqs_ref, factor(rep(feature, length(seqs_ref))), rownames(seqs_ref),
+      seqs_ref, factor(rep(feature, length(seqs_ref))),
       threshold = th)
     seqs_test <- seqs_test[ names(seqs_test) %in% feature ]
     expect_equal(seqs_test, seqs_ref)
 
     # checking reference consensus sequence generation using 'Genus:Alistipes'
     actual <- agglomerateByPrevalence(se,"Genus", update.refseq = FALSE)
-    expect_equal(as.character(referenceSeq(actual)[["Alistipes"]]),
-                 paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
-                        "GTTAGAGGTGAAATCCCGGGGCTTAACTCCGGAACTGCCTCTAATACTGTTAG",
-                        "ACTAGAGAGTAGTTGCGGTAGGCGGAATGTATGGTGTAGCGGTGAAATGCTTA",
-                        "GAGATCATACAGAACACCGATTGCGAAGGCAGCTTACCAAACTATATCTGACG",
-                        "TTGAGGCACGAAAGCGTGGGG"))
-    actual <- agglomerateByPrevalence(se,"Genus", update.refseq = TRUE)
-    expect_equal(as.character(referenceSeq(actual)[["Alistipes"]]),
-                 paste0("BCNMKCKTTVWYCKKMHTTMYTKKKYKTMMMKNKHDYKYMKDYKKNHNNNYM",
-                        "MKHHNDNNKTKMMMDNBHNBKKCTYMMCHNBNDDDNKSSHBNNRWDMYKKBNN",
-                        "DNYTDRRKDVHNKNDRVGRNDRSBRRAWTBYNHRKKKWRSSRKKRAAWKSSKW",
-                        "RRWDWTNDBRVRRAMHHCMRDKKSSRARGSSVSYYHNYBRRVHNDNNHYKRMV",
-                        "VYKVRDNNNSRAARSBDKGGKK"))
+    reference <- se[rowData(se)[["Genus"]] %in% "Alistipes", ]
+    reference <- reference[1, ]
+    expect_equal(
+        as.character(referenceSeq(actual)[["Alistipes"]]),
+        as.character(referenceSeq(reference)[["seq_1"]])
+    )
+    actual <- agglomerateByPrevalence(
+        se,"Genus", update.refseq = TRUE, threshold = 0.1)
+    reference <- se[rowData(se)[["Genus"]] %in% "Alistipes", ]
+    reference <- ConsensusSequence(referenceSeq(reference), threshold = 0.1)
+    expect_equal(
+        as.character(referenceSeq(actual)[["Alistipes"]]),
+        as.character(reference)
+    )
 })
