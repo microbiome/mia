@@ -89,6 +89,11 @@
     # If user specified column name from row/colData, get the values
     if( .is_a_string(f) && f %in% colnames(rowData_FUN(x)) ){
         f <- rowData_FUN(x)[[ f ]]
+    } else if( .is_a_string(f) && !f %in% colnames(rowData_FUN(x)) &&
+                nrow_FUN(x) != 1L){
+        stop("Specified grouoing variable ('group' or 'rank' argument) must ",
+            "specify a column from ", switch(by, "row", "col"), "Data(x).",
+            call. = FALSE)
     }
     # Check that the group ID vector is specifying groups for each element
     f <- .norm_f(nrow_FUN(x), f, ...)
@@ -244,10 +249,10 @@
         threshold <- 0.05
     }
     if(!is(sequences_list,"DNAStringSetList")){
-        return(.merge_refseq(sequences_list, f, names, threshold))
+        return(.merge_refseq(sequences_list, f, threshold))
     }
     names <- names(sequences_list)
-    seqs <- DNAStringSetList(lapply(sequences_list, .merge_refseq, f, names,
+    seqs <- DNAStringSetList(lapply(sequences_list, .merge_refseq, f,
                                     threshold))
     names(seqs) <- names
     seqs
@@ -255,7 +260,7 @@
 
 #' @importFrom Biostrings DNAStringSetList
 #' @importFrom DECIPHER ConsensusSequence
-.merge_refseq <- function(sequences, f, names, threshold){
+.merge_refseq <- function(sequences, f, threshold){
     sequences <- split(sequences,f)
     seq <- unlist(DNAStringSetList(lapply(sequences, ConsensusSequence,
                                             threshold = threshold)))
