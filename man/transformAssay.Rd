@@ -107,7 +107,7 @@ The available transformation methods include:
 \itemize{
 
 \item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
-'normalize', 'pa', 'rank', 'rclr' relabundance', 'rrank', 'standardize',
+'normalize', 'pa', 'rank', 'rclr', 'relabundance', 'rrank', 'standardize',
 'total': please refer to
 \code{\link[vegan:decostand]{decostand}} for details.
 

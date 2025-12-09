@@ -21,7 +21,7 @@
     if(is.null(colnames(x)) || is.null(rownames(x))){
         stop("colnames and rownames must not be NULL", call. = FALSE)
     }
-    # node.label should be NULL or character vector specifying links between 
+    # node.label should be NULL or character vector specifying links between
     # rows and tree labels
     node_for_each <- is.character(node.label) &&
         length(node.label) == nrow(x) &&
@@ -73,12 +73,8 @@
     x <- .merge_assay_by_rows(x, node.label, ...)
 
     # Calculate unifrac. Use implementation from ecodive package
-    if( weighted ){
-        res <- weighted_unifrac(t(x), tree = tree)
-    }
-    else {
-        res <- unweighted_unifrac(t(x), tree = tree)
-    }
+    FUN <- if( weighted ) weighted_unifrac else unweighted_unifrac
+    res <- FUN(t(x), tree = tree)
     return(res)
 }
 
