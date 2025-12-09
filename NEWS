@@ -183,3 +183,4 @@ Changes in version 1.17.x
 
 Changes in version 1.19.x
 + Fixed a bug related to agglomerateByPrevalence and referenceSeq agglomeration (2025-12-08)
++ Use ecodive in UniFrac (1.19.2, 2025-12-09)
