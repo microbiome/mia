@@ -3,7 +3,7 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   mia: mia.html
-last_built: 2025-12-08T20:38Z
+last_built: 2025-12-09T09:24Z
 urls:
   reference: https://microbiome.github.io/mia/reference
   article: https://microbiome.github.io/mia/articles

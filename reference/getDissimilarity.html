@@ -23,7 +23,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.2</span>
       </span>
     </div>
 
@@ -189,7 +189,9 @@ calculated using relative abundances, the higher the value the higher the
 similarity is. When using relative abundances, overlap value 1 means that
 all the abundances of features are equal between two samples, and 0 means
 that samples have completely different relative abundances.</p>
-<p>Unifrac is calculated with <code><a href="https://cmmr.github.io/rbiom/reference/rbiom-deprecated.html" class="external-link">rbiom:unifrac()</a></code>.</p>
+<p>Unifrac is calculated with <code>
+<a href="https://cmmr.github.io/ecodive/reference/bdiv_functions.html" class="external-link">ecodive:unweighted_unifrac()</a></code>
+or <code><a href="https://cmmr.github.io/ecodive/reference/bdiv_functions.html" class="external-link">ecodive:weighted_unifrac()</a></code>.</p>
 <p>If rarefaction is enabled, <code><a href="https://vegandevs.github.io/vegan/reference/avgdist.html" class="external-link">vegan:avgdist()</a></code> is
 utilized.</p>
 <p>Rarefaction can be used to control uneven sequencing depths. Although,
@@ -266,13 +268,13 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-in"><span><span class="co"># Multi Dimensional Scaling applied to JSD dissimilarity matrix</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="addMDS.html">addMDS</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"overlap"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"MDS"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                [,1]      [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3      -43284.813 -45143.87</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       -4790.904 -40203.23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1       26147.150 -15952.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw -133864.366 -14824.29</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw  610755.430 803373.51</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  -78217.650   3434.70</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                [,1]       [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3      -43284.813   45143.87</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       -4790.904   40203.23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1       26147.150   15952.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw -133864.366   14824.29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw  610755.430 -803373.51</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  -78217.650   -3434.70</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Unifrac dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
