@@ -249,10 +249,10 @@
         threshold <- 0.05
     }
     if(!is(sequences_list,"DNAStringSetList")){
-        return(.merge_refseq(sequences_list, f, names, threshold))
+        return(.merge_refseq(sequences_list, f, threshold))
     }
     names <- names(sequences_list)
-    seqs <- DNAStringSetList(lapply(sequences_list, .merge_refseq, f, names,
+    seqs <- DNAStringSetList(lapply(sequences_list, .merge_refseq, f,
                                     threshold))
     names(seqs) <- names
     seqs
@@ -260,7 +260,7 @@
 
 #' @importFrom Biostrings DNAStringSetList
 #' @importFrom DECIPHER ConsensusSequence
-.merge_refseq <- function(sequences, f, names, threshold){
+.merge_refseq <- function(sequences, f, threshold){
     sequences <- split(sequences,f)
     seq <- unlist(DNAStringSetList(lapply(sequences, ConsensusSequence,
                                             threshold = threshold)))
