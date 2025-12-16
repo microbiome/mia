@@ -19,13 +19,8 @@ test_that("transformAssay", {
                      check.attributes = FALSE)
 
         ############################# RELATIVE ABUNDANCE #######################
-        # Calculates relative abundances. Should be equal.
-        expect_equal(
-            as.matrix(assays(mia::transformAssay(tse, method = "relabundance"))$relabundance),
-            as.matrix(vegan::decostand(assay(tse, "counts"), method = "total", MARGIN = 2)),
-            check.attributes = FALSE
-        )
-
+        # Calculation tests against vegan at later section
+        # Tests validity of assay name
         mat <- matrix(1:60, nrow = 6)
         df <- DataFrame(n = c(1:6))
         expect_error(transformAssay(
@@ -120,19 +115,13 @@ test_that("transformAssay", {
         expect_true(all.equal(as.matrix(ass[19:20, 17:18]), normalized_counts, check.attributes = FALSE))
 
         ########################## PA ##########################################
-        # Calculates pa transformation. Should be equal.
+        # Calculates pa transformation. Validate format.
         actual <- assay(mia::transformAssay(tse, method = "pa"),"pa")
-        expect_equal(as.vector(actual),
-                     as.vector(vegan::decostand(assay(tse, "counts"), method = "pa", MARGIN = 2)),
-                     check.attributes = FALSE)
         expect_equal(typeof(actual),"double")
         expect_true(all(actual == 1 | actual == 0))
 
-        # Tests transformAssay(MARGIN = "features"), calculates pa transformation. Should be equal.
+        # .. feature wise
         actual <- assay(mia::transformAssay(tse, MARGIN = "features", method = "pa"),"pa")
-        expect_equal(as.vector(actual),
-                     as.vector(vegan::decostand(assay(tse, "counts"), method = "pa", MARGIN = 1))
-        )
         expect_equal(typeof(actual),"double")
         expect_true(all(actual == 1 | actual == 0))
 
@@ -314,7 +303,21 @@ test_that("transformAssay", {
         compare <- vegan::decostand(assay(tse, "counts"), method = "rank",
                                     MARGIN = 2)
         expect_equal(actual, compare)
-        
+
+        # pa
+        tse <- transformAssay(tse, assay.type = "counts", method = "pa")
+        actual <- assay(tse, "pa")
+        attr(actual, "parameters")$pseudocount <- NULL
+        compare <- vegan::decostand(assay(tse, "counts"), method = "pa",
+                                    MARGIN = 2)
+        expect_equal(actual, compare, check.attributes = FALSE)
+        # .. feature wise
+        tse <- transformAssay(tse, MARGIN = "features", method = "pa")
+        actual <- assay(tse, "pa")
+        attr(actual, "parameters")$pseudocount <- NULL
+        compare <- vegan::decostand(assay(tse, "counts"), method = "pa",
+                                    MARGIN = 1)
+        expect_equal(actual, compare, check.attributes = FALSE) 
       
 
         # Check that transformation is applied to altExps
