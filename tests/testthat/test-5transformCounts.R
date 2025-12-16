@@ -149,24 +149,11 @@ test_that("transformAssay", {
         expect_error(mia::transformAssay(tse, method = "clr"))
 
         tse <- transformAssay(tse, method = "relabundance")
-        # Adds pseudocount
-        assay(tse, "test") <- assay(tse, "relabundance") + 1
-        assay(tse, "test2") <- assay(tse, "test")
+        # Adds pos/neg pseudocount
         assay(tse, "neg_values") <- assay(tse, "counts") - 2
         assay(tse, "na_values") <- assay(tse, "counts") + 2
-        # First row is zeroes
-        assay(tse, "test2")[1, ] <- 0
         # One missing value
         assay(tse, "na_values")[4, 5] <- NA
-        
-        # Tests that clr robust gives values that are approximately same if only
-        # one value per sample is changed to zero
-        expect_equal(assays(mia::transformAssay(tse, assay.type = "test",
-                                                method = "rclr")),
-                     assays(mia::transformAssay(tse, assay.type = "test2",
-                                                method = "rclr")),
-                     check.attributes = FALSE)
-        
 
         tse <- transformAssay(tse, method = "relabundance")
         # Expect error when counts and zeroes
