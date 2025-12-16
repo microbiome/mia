@@ -20,10 +20,11 @@ test_that("transformAssay", {
 
         ############################# RELATIVE ABUNDANCE #######################
         # Calculates relative abundances. Should be equal.
-        expect_equal(as.matrix(assays(mia::transformAssay(tse, method = "relabundance"))$relabundance),
-                     apply(as.matrix(assay(tse,"counts")), 2, FUN=function(x){
-                         x/sum(x)
-                     }), check.attributes = FALSE)
+        expect_equal(
+            as.matrix(assays(mia::transformAssay(tse, method = "relabundance"))$relabundance),
+            as.matrix(vegan::decostand(assay(tse, "counts"), method = "total", MARGIN = 2)),
+            check.attributes = FALSE
+        )
 
         mat <- matrix(1:60, nrow = 6)
         df <- DataFrame(n = c(1:6))
