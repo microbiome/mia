@@ -1,10 +1,10 @@
-% \VignetteIndexEntry{IBDMDB — Joint-RPCA Benchmarking}
-% \VignetteEngine{knitr::rmarkdown}
-% \VignetteEncoding{UTF-8}
-
 ---
 title: "IBDMDB — Joint-RPCA Benchmarking"
 format: BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{IBDMDB — Joint-RPCA Benchmarking}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, message = FALSE, warning = FALSE}

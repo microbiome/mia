@@ -1,10 +1,10 @@
-% \VignetteIndexEntry{Joint RPCA — iHMP IBD Mini-Replication}
-% \VignetteEngine{knitr::rmarkdown}
-% \VignetteEncoding{UTF-8}
-
 ---
 title: "Joint RPCA — iHMP IBD Mini-Replication"
 format: BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{Joint RPCA — iHMP IBD Mini-Replication}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, message = FALSE, warning = FALSE}

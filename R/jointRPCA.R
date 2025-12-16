@@ -71,7 +71,11 @@ jointRPCAuniversal <- function(x, experiments = NULL, ...) {
             experiments
         )
         
-        tables <- lapply(experiments, function(e) {
+        tables <- vector("list", length(experiments))
+        names(tables) <- experiments
+        
+        for (i in seq_along(experiments)) {
+            e <- experiments[[i]]
             exp_se <- exps[[e]]
             if (is.null(exp_se)) {
                 stop(sprintf("Experiment '%s' not found in 'x'.", e))
@@ -79,21 +83,19 @@ jointRPCAuniversal <- function(x, experiments = NULL, ...) {
             
             anm <- SummarizedExperiment::assayNames(exp_se)
             if (length(anm)) {
-                #use first assay by name
                 default_assay <- anm[1]
             } else {
-                #fall back to index 1 if unnamed
                 default_assay <- 1L
             }
             
-            assay_names_used[[e]] <<- if (is.character(default_assay)) {
+            assay_names_used[[e]] <- if (is.character(default_assay)) {
                 default_assay
             } else {
                 as.character(default_assay)
             }
             
-            SummarizedExperiment::assay(exp_se, default_assay)
-        })
+            tables[[e]] <- SummarizedExperiment::assay(exp_se, default_assay)
+        }
         
         names(tables) <- experiments
         
@@ -270,8 +272,18 @@ runJointRPCA <- function(x,
     #transform tables: rCLR or masking
     rclr.tables <- lapply(tables, function(tbl) {
         mat <- as.matrix(tbl)
+        rown <- rownames(mat)
+        coln <- colnames(mat)
+        
         if (rclr.transform.tables) {
-            vegan::decostand(mat, method = "rclr", MARGIN = 2)
+            
+            mat[!is.finite(mat)] <- 0
+            mat[mat < 0]         <- 0
+            
+            out <- vegan::decostand(mat, method = "rclr", MARGIN = 2)
+            
+            dimnames(out) <- list(rown, coln)
+            out
         } else {
             .mask_value_only(mat)$data
         }
@@ -343,21 +355,46 @@ runJointRPCA <- function(x,
                                    test.samples,
                                    train.samples,
                                    sample.order = NULL) {
-    #split and transpose training/test data per table
-    tables.split <- lapply(tables, function(tbl) {
-        list(t(tbl[, test.samples, drop = FALSE]),
-             t(tbl[, train.samples, drop = FALSE]))
+    
+    # Coerce to matrices and enforce colnames presence
+    tables <- lapply(tables, function(tbl) {
+        mat <- as.matrix(tbl)
+        if (is.null(colnames(mat))) {
+            stop("[.joint_optspace_helper] Input table is missing column names (sample IDs).")
+        }
+        mat
     })
     
-    #format input for solver
+    # Global set of samples present in all views
+    all_samples <- Reduce(intersect, lapply(tables, colnames))
+    
+    # Align train/test to actually available samples
+    test.samples  <- intersect(test.samples,  all_samples)
+    train.samples <- intersect(train.samples, all_samples)
+    
+    if (!length(test.samples) || !length(train.samples)) {
+        stop("[.joint_optspace_helper] Empty train/test split after aligning sample IDs.")
+    }
+    
+    # Split and transpose training/test data per table
+    tables.split <- lapply(tables, function(tbl) {
+        list(
+            t(tbl[, test.samples,  drop = FALSE]),
+            t(tbl[, train.samples, drop = FALSE])
+        )
+    })
+    
+    # Format input for solver
     tables.for.solver <- lapply(tables.split, function(pair) {
         lapply(pair, as.matrix)
     })
     
-    #run joint OptSpace solver
-    opt.result <- .joint_optspace_solve(tables.for.solver,
-                                        n.components = n.components,
-                                        max.iter = max.iterations)
+    # Run joint OptSpace solver
+    opt.result <- .joint_optspace_solve(
+        train.test.pairs = tables.for.solver,
+        n.components      = n.components,
+        max.iter          = max.iterations
+    )
     
     U <- opt.result$U
     S <- opt.result$S
@@ -476,9 +513,15 @@ runJointRPCA <- function(x,
     #rCLR if requested 
     prep_view <- function(tab) {
         mat <- as.matrix(tab)
+        rown <- rownames(mat)
+        coln <- colnames(mat)
+        
         if (apply.rclr) {
             mat <- vegan::decostand(mat, method = "rclr", MARGIN = 2)
+            
+            dimnames(mat) <- list(rown, coln)
         }
+        
         storage.mode(mat) <- "double"
         mat[!is.finite(mat)] <- 0
         mat

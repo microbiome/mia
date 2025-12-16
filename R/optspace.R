@@ -1,13 +1,11 @@
 #' OptSpace back-end (joint & single-view)
 #'
-#' Internal OptSpace solver + helpers. Prefers \code{vegan::optspace()} when
-#' available; otherwise falls back to the internal \code{.optspace}.
+#' OptSpace-based solvers built on top of \code{vegan::optspace()}.
 #'
 #' This file contains:
 #' \itemize{
 #'   \item \code{.optspace_helper()} — single-view rCLR → OptSpace → biplot
 #'   \item \code{.joint_optspace_solve()} — multi-view joint factorization
-#'   \item \code{.optspace()} and its auxiliaries — internal fallback solver
 #' }
 #'
 #' @keywords internal
@@ -42,100 +40,78 @@ NULL
                              n.components = 3,
                              max.iterations = 5) {
     
-    #prefer vegan::optspace() if available; otherwise fall back to internal .optspace
-    opt.result <- NULL
-    if (requireNamespace("vegan", quietly = TRUE) &&
-        "optspace" %in% getNamespaceExports("vegan")) {
-        opt.result <- try({
-            getExportedValue("vegan", "optspace")(
-                rclr.table,
-                r      = n.components,       
-                niter  = max.iterations,
-                tol    = 1e-5,
-                center = TRUE,               
-                scale  = FALSE
-            )
-        }, silent = TRUE)
-        #ensure expected slots exist; otherwise fall back
-        if (inherits(opt.result, "try-error") ||
-            is.null(opt.result$X) || is.null(opt.result$S) || is.null(opt.result$Y)) {
-            opt.result <- NULL
-        }
-    }
-    if (is.null(opt.result)) {
-        opt.result <- .optspace(
-            rclr.table,
-            ropt    = n.components,
-            niter   = max.iterations,
-            tol     = 1e-5,
-            verbose = FALSE
-        )
-    }
+    opt.result <- vegan::optspace(
+        x      = rclr.table,
+        ropt   = n.components,   
+        niter  = max.iterations,
+        tol    = 1e-5,
+        verbose = FALSE
+    )
     
-    #update n.components
     n.components <- ncol(opt.result$S)
     
-    #reconstruct and re-center matrix
+    # Reconstruct and re-center matrix
     X.hat <- opt.result$X %*% opt.result$S %*% t(opt.result$Y)
     X.hat <- scale(X.hat, center = TRUE, scale = FALSE)
     X.hat <- t(scale(t(X.hat), center = TRUE, scale = FALSE))
     
-    #PCA
+    # PCA
     svd.out <- svd(X.hat)
     u <- svd.out$u[, 1:n.components, drop = FALSE]
     s <- svd.out$d[1:n.components]
     v <- svd.out$v[, 1:n.components, drop = FALSE]
     
-    #label loadings
+    # Label loadings
     rename.cols <- paste0("PC", seq_len(n.components))
-    sample.scores <- data.frame(u, row.names = subject.ids)
+    sample.scores  <- data.frame(u, row.names = subject.ids)
     feature.scores <- data.frame(v, row.names = feature.ids)
     feature.scores <- as.matrix(feature.scores)
-    colnames(sample.scores) <- rename.cols
+    colnames(sample.scores)  <- rename.cols
     colnames(feature.scores) <- rename.cols
     
-    #proportion explained
+    # Proportion explained
     prop.var <- s^2 / sum(svd.out$d^2)
     names(prop.var) <- rename.cols
-    names(s) <- rename.cols
+    names(s)        <- rename.cols
     
-    #add PC3 for 2D case
+    # Add PC3 for 2D case
     if (n.components == 2) {
-        sample.scores$PC3 <- 0
+        sample.scores$PC3  <- 0
         feature.scores$PC3 <- 0
-        s <- c(s, PC3 = 0)
+        s        <- c(s,        PC3 = 0)
         prop.var <- c(prop.var, PC3 = 0)
         rename.cols <- c(rename.cols, "PC3")
     }
     
-    #compute distance
+    # Compute distance in sample PC-space
     dist.matrix.raw <- as.matrix(dist(u))
     rownames(dist.matrix.raw) <- subject.ids
     colnames(dist.matrix.raw) <- subject.ids
     
-    #wrap with DistanceMatrix
-    dist.res <- .DistanceMatrix(dist.matrix.raw, ids = subject.ids, method = "aitchison")
+    dist.res <- .DistanceMatrix(dist.matrix.raw, ids = subject.ids,
+                                method = "aitchison")
     
-    #build OrdinationResults object
     ord.res <- .OrdinationResults(
         method = "rpca_biplot",
         eigvals = s,
         samples = sample.scores,
         features = feature.scores,
         proportion.explained = prop.var,
-        dist = dist.matrix.raw,  
+        dist = dist.matrix.raw,
         metadata = list(
             long.method.name = "(Robust Aitchison) RPCA Biplot",
-            run.id = sprintf("optspace_helper_n.components_%d.max.iterations_%d", 
-                             n.components, max.iterations)
+            run.id = sprintf(
+                "optspace_helper_n.components_%d.max.iterations_%d",
+                n.components, max.iterations
+            )
         )
     )
     
-    return(list(
+    list(
         ord.res = ord.res,
-        dist = dist.res,  
+        dist    = dist.res,
         opt.fit = opt.result
-    ))
+    )
 }
 
 #' Joint OptSpace Optimization Across Multiple Train/Test Splits
@@ -177,43 +153,24 @@ NULL
     #stack training matrices horizontally 
     train.stacked <- do.call(cbind, train.matrices)
     
-    #apply OptSpace to stacked matrix
-    if (verbose) message("Running optspace() on stacked training data...")
-    fit <- NULL
-    if (requireNamespace("vegan", quietly = TRUE) &&
-        "optspace" %in% getNamespaceExports("vegan")) {
-        fit <- try({
-            getExportedValue("vegan", "optspace")(
-                train.stacked,
-                r      = n.components,
-                niter  = max.iter,
-                tol    = 1e-5,
-                center = TRUE,
-                scale  = FALSE
-            )
-        }, silent = TRUE)
-        if (inherits(fit, "try-error") ||
-            is.null(fit$X) || is.null(fit$S) || is.null(fit$Y)) {
-            fit <- NULL
-        }
-    }
+    # Apply OptSpace to stacked matrix via vegan
+    if (verbose)
+        message("Running vegan::optspace() on stacked training data...")
     
-    if (is.null(fit)) {
-        fit <- .optspace(
-            train.stacked,
-            ropt    = n.components,
-            niter   = max.iter,
-            tol     = 1e-5,
-            verbose = FALSE
-        )
-    }
+    fit <- vegan::optspace(
+        x      = train.stacked,
+        ropt   = n.components,
+        niter  = max.iter,
+        tol    = 1e-5,
+        verbose = verbose
+    )
     
     #extract sample loadings
     U.shared <- fit$X
     S.shared <- fit$S
     
     #split V back into per-table pieces
-    feat.indices <- cumsum(sapply(dims, function(d) d[2]))
+    feat.indices <- cumsum(vapply(dims, function(d) d[2], numeric(1)))
     feat.starts  <- c(1, head(feat.indices, -1) + 1)
     V.list <- Map(function(start, end) fit$Y[start:end, , drop = FALSE],
                   feat.starts, feat.indices)

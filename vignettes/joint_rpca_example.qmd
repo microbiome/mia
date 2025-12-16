@@ -1,10 +1,10 @@
-% \VignetteIndexEntry{Joint RPCA Reproducible Example}
-% \VignetteEngine{knitr::rmarkdown}
-% \VignetteEncoding{UTF-8}
-
 ---
 title: "Joint RPCA Reproducible Example"
 format: BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{Joint RPCA Reproducible Example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, message = FALSE, warning = FALSE}
@@ -31,8 +31,12 @@ library(MultiAssayExperiment)
 library(reshape2)
 library(pROC)
 library(randomForest)
-library(MOFA2)
 library(mia)
+
+has_mofa <- requireNamespace("MOFA2", quietly = TRUE)
+if (!has_mofa) {
+    message("MOFA2 is not available; MOFA baseline will be skipped.")
+}
 
 # Load Data and Run Joint RPCA
 
@@ -163,57 +167,71 @@ features_jointRPCA <- mia:::.keep_finite_cols(features_jointRPCA)
 features_jointRPCA <- mia:::.drop_constant_cols(features_jointRPCA)
 
 #MOFA+ factors
-res_mofa <- NULL
-mofa_in <- lapply(result$rclr.tables, function(M) {
-    V <- M[, common_samples, drop = FALSE]        
-    ok_finite <- apply(V, 1, function(v) all(is.finite(v)))
-    V <- V[ok_finite, , drop = FALSE]
-    sds <- apply(V, 1, sd)
-    V <- V[sds > 0 & is.finite(sds), , drop = FALSE]
-    V
-})
+can_run_mofa <- FALSE
+mofa_top3 <- NULL
 
-mofa <- create_mofa(mofa_in)
-data_opts     <- get_default_data_options(mofa)
-model_opts    <- get_default_model_options(mofa)
-training_opts <- get_default_training_options(mofa)
-
-has_basilisk_prepare <- "use_basilisk" %in% names(formals(MOFA2::prepare_mofa))
-has_basilisk_run     <- "use_basilisk" %in% names(formals(MOFA2::run_mofa))
-
-if (has_basilisk_prepare) {
-    mofa <- prepare_mofa(
-        object = mofa,
-        data_options = data_opts,
-        model_options = model_opts,
-        training_options = training_opts,
-        use_basilisk = TRUE
-    )
-} else {
-    mofa <- prepare_mofa(
-        object = mofa,
-        data_options = data_opts,
-        model_options = model_opts,
-        training_options = training_opts
-    )
+if (has_mofa) {
+    try({
+        mofa_in <- lapply(result$rclr.tables, function(M) {
+            V <- M[, common_samples, drop = FALSE]
+            ok_finite <- apply(V, 1, function(v) all(is.finite(v)))
+            V <- V[ok_finite, , drop = FALSE]
+            sds <- apply(V, 1, sd)
+            V <- V[sds > 0 & is.finite(sds), , drop = FALSE]
+            V
+        })
+        
+        mofa <- MOFA2::create_mofa(mofa_in)
+        data_opts     <- MOFA2::get_default_data_options(mofa)
+        model_opts    <- MOFA2::get_default_model_options(mofa)
+        training_opts <- MOFA2::get_default_training_options(mofa)
+        
+        has_basilisk_prepare <- "use_basilisk" %in% names(formals(MOFA2::prepare_mofa))
+        has_basilisk_run     <- "use_basilisk" %in% names(formals(MOFA2::run_mofa))
+        
+        use_basilisk <- has_basilisk_prepare && has_basilisk_run
+        
+        if (has_basilisk_prepare) {
+            mofa <- MOFA2::prepare_mofa(
+                object = mofa,
+                data_options = data_opts,
+                model_options = model_opts,
+                training_options = training_opts,
+                use_basilisk = use_basilisk
+            )
+        } else {
+            mofa <- MOFA2::prepare_mofa(
+                object = mofa,
+                data_options = data_opts,
+                model_options = model_opts,
+                training_options = training_opts
+            )
+        }
+        
+        set.seed(1)
+        if (has_basilisk_run) {
+            mofa <- MOFA2::run_mofa(mofa, use_basilisk = use_basilisk)
+        } else {
+            mofa <- MOFA2::run_mofa(mofa)
+        }
+        
+        fac_list <- MOFA2::get_factors(mofa, factors = "all", as.data.frame = FALSE)
+        mofa_factors <- fac_list[[1]]
+        mofa_factors <- mofa_factors[rownames(features_jointRPCA), , drop = FALSE]
+        
+        ve <- MOFA2::calculate_variance_explained(mofa)
+        ve_global <- ve$r2_total[[1]]
+        
+        top3 <- order(ve_global, decreasing = TRUE)[seq_len(min(3, ncol(mofa_factors)))]
+        mofa_top3 <- mofa_factors[, top3, drop = FALSE]
+        
+        can_run_mofa <- TRUE
+    }, silent = TRUE)
 }
 
-set.seed(1)
-if (has_basilisk_run) {
-    mofa <- run_mofa(mofa, use_basilisk = TRUE)
-} else {
-    mofa <- run_mofa(mofa)
+if (!can_run_mofa) {
+    message("MOFA2 could not be run in this environment; skipping MOFA baseline.")
 }
-
-fac_list <- get_factors(mofa, factors = "all", as.data.frame = FALSE)
-mofa_factors <- fac_list[[1]]  
-mofa_factors <- mofa_factors[rownames(features_jointRPCA), , drop = FALSE]
-
-ve <- MOFA2::calculate_variance_explained(mofa)
-ve_global <- ve$r2_total[[1]]                   
-
-top3 <- order(ve_global, decreasing = TRUE)[seq_len(min(3, ncol(mofa_factors)))]
-mofa_top3 <- mofa_factors[, top3, drop = FALSE]
 
 #random baseline
 set.seed(1)
@@ -245,16 +263,18 @@ features_random      <- features_random[keep_idx, , drop = FALSE]
 tab <- table(labels)
 safe_k <- max(2L, min(5L, as.integer(min(tab)), length(labels) - 1L))
 
-detach("package:MOFA2", unload = TRUE)
-
 #run all baselines
 res_joint   <- mia:::.evaluate_model_cv(features_jointRPCA, labels, folds = safe_k)
 res_rpca    <- mia:::.evaluate_model_cv(features_rpca_concat, labels, folds = safe_k)
 res_pca     <- mia:::.evaluate_model_cv(features_pca_concat,  labels, folds = safe_k)
 res_concat  <- mia:::.evaluate_model_cv(features_concat_pca,  labels, folds = safe_k)
 res_rclr_rf <- mia:::.evaluate_model_cv(features_rclr_concat[keep_idx, , drop = FALSE],
-                                 labels, folds = safe_k)
-res_mofa <- mia:::.evaluate_model_cv(mofa_top3, labels, folds = safe_k)
+                                        labels, folds = safe_k)
+if (can_run_mofa) {
+    res_mofa <- .evaluate_model_cv(mofa_top3, labels, folds = safe_k)
+} else {
+    res_mofa <- list(accuracy = NA_real_, auc = NA_real_)
+}
 res_random  <- mia:::.evaluate_model_cv(features_random,      labels, folds = safe_k)
 
 results_df <- tibble::tibble(
@@ -281,22 +301,29 @@ ggplot(results_long, aes(x = reorder(Method, Score), y = Score)) +
 
 #report dims and runtime
 dims <- tibble::tibble(
-    Method   = c("Joint-RPCA", "Per-layer RPCA", "Per-layer PCA", "Concat rCLR → PCA", "Raw rCLR", "MOFA+", "Random"),
-    Dim      = c(mia:::.rep_dim(features_jointRPCA), mia:::.rep_dim(features_rpca_concat),
-                 mia:::.rep_dim(features_pca_concat), mia:::.rep_dim(features_concat_pca),
-                 mia:::.rep_dim(features_rclr_concat), mia:::.rep_dim(mofa_top3), mia:::.rep_dim(features_random))
+    Method = c("Joint-RPCA", "Per-layer RPCA", "Per-layer PCA",
+               "Concat rCLR → PCA", "Raw rCLR",
+               if (can_run_mofa) "MOFA+" else NULL,
+               "Random"),
+    Dim = c(.rep_dim(features_jointRPCA),
+            .rep_dim(features_rpca_concat),
+            .rep_dim(features_pca_concat),
+            .rep_dim(features_concat_pca),
+            .rep_dim(features_rclr_concat),
+            if (can_run_mofa) .rep_dim(mofa_top3) else NULL,
+            .rep_dim(features_random))
 )
 
 times <- tibble::tibble(
     Method = dims$Method,
     Sec    = c(
-        mia:::.timeit(mia:::.evaluate_model_cv(features_jointRPCA, labels, folds = safe_k)),
-        mia:::.timeit(mia:::.evaluate_model_cv(features_rpca_concat, labels, folds = safe_k)),
-        mia:::.timeit(mia:::.evaluate_model_cv(features_pca_concat,  labels, folds = safe_k)),
-        mia:::.timeit(mia:::.evaluate_model_cv(features_concat_pca,  labels, folds = safe_k)),
-        mia:::.timeit(mia:::.evaluate_model_cv(features_rclr_concat[rownames(features_jointRPCA), , drop = FALSE], labels, folds = safe_k)),
-        mia:::.timeit(mia:::.evaluate_model_cv(mofa_top3, labels, folds = safe_k)),
-        mia:::.timeit(mia:::.evaluate_model_cv(features_random, labels, folds = safe_k))
+        .timeit(.evaluate_model_cv(features_jointRPCA, labels, folds = safe_k)),
+        .timeit(.evaluate_model_cv(features_rpca_concat, labels, folds = safe_k)),
+        .timeit(.evaluate_model_cv(features_pca_concat,  labels, folds = safe_k)),
+        .timeit(.evaluate_model_cv(features_concat_pca,  labels, folds = safe_k)),
+        .timeit(.evaluate_model_cv(features_rclr_concat[rownames(features_jointRPCA), , drop = FALSE], labels, folds = safe_k)),
+        if (can_run_mofa) .timeit(.evaluate_model_cv(mofa_top3, labels, folds = safe_k)) else NULL,
+        .timeit(.evaluate_model_cv(features_random, labels, folds = safe_k))
     )
 )
 
@@ -304,14 +331,20 @@ print(dims); print(times)
 
 #per‑fold results + CIs + paired tests
 
-fold_tbl <- dplyr::bind_rows(
-    mia:::.get_fold_metrics(features_jointRPCA) |> dplyr::mutate(Method = "Joint-RPCA"),
-    mia:::.get_fold_metrics(features_rpca_concat)|> dplyr::mutate(Method = "Per-layer RPCA"),
-    mia:::.get_fold_metrics(features_pca_concat) |> dplyr::mutate(Method = "Per-layer PCA"),
-    mia:::.get_fold_metrics(features_concat_pca) |> dplyr::mutate(Method = "Concat rCLR → PCA"),
-    mia:::.get_fold_metrics(features_rclr_concat[rownames(features_jointRPCA), , drop = FALSE]) |> dplyr::mutate(Method = "Raw rCLR"),
-    mia:::.get_fold_metrics(mofa_top3)           |> dplyr::mutate(Method = "MOFA+")
+fold_list <- list(
+    .get_fold_metrics(features_jointRPCA) |> dplyr::mutate(Method = "Joint-RPCA"),
+    .get_fold_metrics(features_rpca_concat)|> dplyr::mutate(Method = "Per-layer RPCA"),
+    .get_fold_metrics(features_pca_concat) |> dplyr::mutate(Method = "Per-layer PCA"),
+    .get_fold_metrics(features_concat_pca) |> dplyr::mutate(Method = "Concat rCLR → PCA"),
+    .get_fold_metrics(features_rclr_concat[rownames(features_jointRPCA), , drop = FALSE]) |> dplyr::mutate(Method = "Raw rCLR")
 )
+
+if (can_run_mofa) {
+    fold_list[[length(fold_list) + 1]] <-
+        .get_fold_metrics(mofa_top3) |> dplyr::mutate(Method = "MOFA+")
+}
+
+fold_tbl <- dplyr::bind_rows(fold_list)
 
 summary_ci <- fold_tbl |> group_by(Method) |>
     summarize(Accuracy_mean = mia:::.ci95(Accuracy)[1], Accuracy_lwr = mia:::.ci95(Accuracy)[2], Accuracy_upr = mia:::.ci95(Accuracy)[3],
