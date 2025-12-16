@@ -194,8 +194,7 @@ test_that("agglomerate", {
     ## END test agglomerateByModule ##
 
     # Load data from miaTime package
-    skip_if_not(require("miaTime", quietly = TRUE))
-    data(SilvermanAGutData)
+    data("SilvermanAGutData", package = "miaTime")
     se <- SilvermanAGutData
 
     # checking reference consensus sequence generation
@@ -217,7 +216,7 @@ test_that("agglomerate", {
     feature <- sample(na.omit(rowData(se)[["Genus"]]), 1)
     seqs_ref <- seqs_ref[ rowData(se)[["Genus"]] %in% feature ]
     seqs_ref <- .merge_refseq(
-        seqs_ref, factor(rep(feature, length(seqs_ref))), rownames(seqs_ref),
+        seqs_ref, factor(rep(feature, length(seqs_ref))),
         threshold = th)
     seqs_test <- seqs_test[ names(seqs_test) %in% feature ]
     expect_equal(seqs_test, seqs_ref)

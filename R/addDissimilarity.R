@@ -91,7 +91,9 @@
 #' all the abundances of features are equal between two samples, and 0 means
 #' that samples have completely different relative abundances.
 #'
-#' Unifrac is calculated with \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
+#' Unifrac is calculated with \code{
+#' \link[ecodive:unweighted_unifrac]{ecodive:unweighted_unifrac()}}
+#' or \code{\link[ecodive:weighted_unifrac]{ecodive:weighted_unifrac()}}.
 #'
 #' If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
 #' utilized.

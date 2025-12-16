@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.17.11
+Version: 1.19.2
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -74,7 +74,7 @@ Imports:
     MASS,
     MatrixGenerics,
     methods,
-    rbiom,
+    ecodive,
     rlang,
     S4Vectors,
     scater,
@@ -93,6 +93,7 @@ Suggests:
     dada2,
     knitr,
     mediation,
+    miaTime,
     miaViz,
     microbiomeDataSets,
     NMF,
@@ -111,5 +112,5 @@ LinkingTo:
 URL: https://microbiome.github.io/mia/, https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 VignetteBuilder: knitr
