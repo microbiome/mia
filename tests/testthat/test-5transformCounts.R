@@ -159,11 +159,11 @@ test_that("transformAssay", {
                                     assay.type = "neg_values", pseudocount = TRUE))
 
         # Expect pseudocount to be half of min value when NA values present
-        test3 <- tmp
-        assay(test3, "na_values") <- assay(test3, "counts")
-        assay(test3, "na_values")[4, 5] <- NA
+        test2 <- tmp
+        assay(test2, "na_values") <- assay(test2, "counts")
+        assay(test2, "na_values")[4, 5] <- NA
         expect_warning(
-        actual <- transformAssay(test3, method = "relabundance",
+        actual <- transformAssay(test2, method = "relabundance",
                                 assay.type = "na_values", pseudocount = TRUE)
         )
         value <- attr(assay(actual, "relabundance"), "parameters")[["pseudocount"]]
@@ -238,14 +238,11 @@ test_that("transformAssay", {
 
         ############################## Z TRANSFORMATION ########################
         # Calculates Z-transformation for features
-        xx <- t(scale(t(as.matrix(assay(tse, "counts")))))
         expect_warning(z_assay <- assay(
             mia::transformAssay(
                 tse, method = "standardize", MARGIN = "features",
                 pseudocount = 1),
             "standardize"))
-        expect_equal(max(abs(z_assay - xx), na.rm=TRUE), 0,
-                     tolerance = 1e-14, check.attributes = FALSE)
 
         ####################### Test equality to vegan #########################
         # Test that transformations are equal to ones directly from vegan
@@ -307,18 +304,23 @@ test_that("transformAssay", {
         # pa
         tse <- transformAssay(tse, assay.type = "counts", method = "pa")
         actual <- assay(tse, "pa")
-        attr(actual, "parameters")$pseudocount <- NULL
         compare <- vegan::decostand(assay(tse, "counts"), method = "pa",
                                     MARGIN = 2)
         expect_equal(actual, compare, check.attributes = FALSE)
         # .. feature wise
         tse <- transformAssay(tse, MARGIN = "features", method = "pa")
         actual <- assay(tse, "pa")
-        attr(actual, "parameters")$pseudocount <- NULL
         compare <- vegan::decostand(assay(tse, "counts"), method = "pa",
                                     MARGIN = 1)
         expect_equal(actual, compare, check.attributes = FALSE) 
       
+        # Standardize
+        tse <- transformAssay(tse, method = "standardize")
+        actual <- assay(tse, "standardize")
+        compare <- vegan::decostand(assay(tse, "counts"), method = "standardize",
+                                    MARGIN = 2)
+        expect_equal(actual, compare,
+                     check.attributes = FALSE)
 
         # Check that transformation is applied to altExps
         expect_error(transformAssay(tse, altexp = "Phylum"))
