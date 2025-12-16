@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.17.5
+Version: 1.19.2
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -39,7 +39,8 @@ Authors@R:
       person(given = "Pande", family = "Erawijantari", role=c("ctb")),
       person(given = "Danielle", family = "Callan", role=c("ctb")),
       person(given = "Sam", family = "Hillman", role=c("ctb")),
-      person(given = "Jesse", family = "Pasanen", role=c("ctb")))
+      person(given = "Jesse", family = "Pasanen", role=c("ctb")),
+      person(given = "Eetu", family = "Tammi", role=c("ctb")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the
@@ -73,7 +74,7 @@ Imports:
     MASS,
     MatrixGenerics,
     methods,
-    rbiom,
+    ecodive,
     rlang,
     S4Vectors,
     scater,
@@ -92,6 +93,7 @@ Suggests:
     dada2,
     knitr,
     mediation,
+    miaTime,
     miaViz,
     microbiomeDataSets,
     NMF,
@@ -107,8 +109,8 @@ Suggests:
     yaml
 LinkingTo:
     Rcpp
-URL: https://github.com/microbiome/mia
+URL: https://microbiome.github.io/mia/, https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 VignetteBuilder: knitr

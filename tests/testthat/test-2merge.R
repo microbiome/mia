@@ -112,7 +112,7 @@ test_that("merge", {
     # Generate data
     tse <- mockSCE()
     rowData(tse)[["group"]] <- sample(LETTERS, nrow(tse), replace = TRUE)
-    colData(tse)[["group"]] <- sample(LETTERS, ncol(tse), replace=TRUE)
+    colData(tse)[["group"]] <- sample(LETTERS, ncol(tse), replace = TRUE)
     # Create a data with NAs
     n_value <- nrow(tse)*ncol(tse)
     assay(tse)[c(1, 5, 3, 6)] <- NA

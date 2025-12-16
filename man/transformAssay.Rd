@@ -43,8 +43,11 @@ the magnitude of the normalized counts. (Default: \code{1000}).
 specifies relative difference threshold and determines the first point
 where the relative change in  differences between consecutive quantiles
 exceeds this threshold. (Default: \code{0.1}) For \code{"cutoff"},
-values less than or equal to the threshold are replaced with \code{NA}.
+values less than or equal to the threshold are replaced with \code{value}.
 (Default: \code{0})
+\item \code{value}: \code{Numeric scalar}. For  \code{"cutoff"}, specifies
+the replacement value for counts less than or equal to the threshold.
+(Default: \code{NA})
 \item \code{tree}: \code{phylo}. Phylogeny used in PhILR transformation.
 If \code{NULL}, the tree is retrieved from \code{x}.
 (Default: \code{NULL}).
@@ -104,7 +107,7 @@ The available transformation methods include:
 \itemize{
 
 \item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
-'normalize', 'pa', 'rank', 'rclr' relabundance', 'rrank', 'standardize',
+'normalize', 'pa', 'rank', 'rclr', 'relabundance', 'rrank', 'standardize',
 'total': please refer to
 \code{\link[vegan:decostand]{decostand}} for details.
 
@@ -130,11 +133,30 @@ the data.
 log2 = log2(x)}
 where \eqn{x} is a single value of data.
 
+\item 'difference': Pairwise differences between features.
+Calculates \eqn{x - y} for all unique feature pairs across samples,
+where \eqn{x} and \eqn{y} are entries of the specified assay.type.
+
+\item 'division': Pairwise ratios between features.
+Calculates \eqn{x / y} for all unique feature pairs across samples,
+where \eqn{x} and \eqn{y} are entries of the specified assay.type.
+
+\item 'invnorm': Inverse rank normalisation. Ranks values per
+sample/feature and maps them to standard normal quantiles.
+\deqn{
+z = \Phi^{-1}\!\left(
+  \frac{r - \mathrm{offset}}{\,n + 1 - 2\,\mathrm{offset}\,}
+\right)
+}
+Controlled by \code{offset} (default \code{0.5}; also
+\code{0.375}=Blom, \code{0}=van der Waerden) and \code{ties.method}
+(passed to \code{base::rank}, default \code{"average"}).
+
 \item 'pseudocount': Adds only pseudocount.
 
 \item 'cutoff': In some ecological studies, only strictly positive values
 are taken into account. This method keeps only values greater than
-\code{threshold} and replaces all other values with \code{NA}.
+\code{threshold} and replaces all other values with \code{value}.
 
 }
 }

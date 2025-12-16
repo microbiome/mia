@@ -1,5 +1,6 @@
 #' @importFrom ape drop.tip
-#' @importFrom rbiom unifrac
+#' @importFrom ecodive weighted_unifrac
+#' @importFrom ecodive unweighted_unifrac
 .get_unifrac <- function(
         x, tree, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
     # Transpose the matrix so that the orientation is the same as in other
@@ -20,7 +21,7 @@
     if(is.null(colnames(x)) || is.null(rownames(x))){
         stop("colnames and rownames must not be NULL", call. = FALSE)
     }
-    # node.label should be NULL or character vector specifying links between 
+    # node.label should be NULL or character vector specifying links between
     # rows and tree labels
     node_for_each <- is.character(node.label) &&
         length(node.label) == nrow(x) &&
@@ -71,8 +72,9 @@
     # multiple rows are linked to single tip.
     x <- .merge_assay_by_rows(x, node.label, ...)
 
-    # Calculate unifrac. Use implementation from rbiom package
-    res <- unifrac(x, tree = tree, weighted = weighted)
+    # Calculate unifrac. Use implementation from ecodive package
+    FUN <- if( weighted ) weighted_unifrac else unweighted_unifrac
+    res <- FUN(t(x), tree = tree)
     return(res)
 }
 
