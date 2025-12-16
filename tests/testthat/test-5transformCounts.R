@@ -123,7 +123,7 @@ test_that("transformAssay", {
         # Calculates pa transformation. Should be equal.
         actual <- assay(mia::transformAssay(tse, method = "pa"),"pa")
         expect_equal(as.vector(actual),
-                     as.integer(as.matrix(assay(tse, "counts")) > 0),
+                     as.vector(vegan::decostand(assay(tse, "counts"), method = "pa", MARGIN = 2)),
                      check.attributes = FALSE)
         expect_equal(typeof(actual),"double")
         expect_true(all(actual == 1 | actual == 0))
@@ -131,7 +131,8 @@ test_that("transformAssay", {
         # Tests transformAssay(MARGIN = "features"), calculates pa transformation. Should be equal.
         actual <- assay(mia::transformAssay(tse, MARGIN = "features", method = "pa"),"pa")
         expect_equal(as.vector(actual),
-                     as.integer(t(as.matrix(t(assay(tse, "counts"))) > 0)))
+                     as.vector(vegan::decostand(assay(tse, "counts"), method = "pa", MARGIN = 1))
+        )
         expect_equal(typeof(actual),"double")
         expect_true(all(actual == 1 | actual == 0))
 
