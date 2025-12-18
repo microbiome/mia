@@ -1,11 +1,11 @@
-test_that("single-view .jointRPCA returns the expected structure", {
+test_that("single-view .joint_rpca returns the expected structure", {
     set.seed(123)
     #features x samples
     X <- abs(matrix(rnorm(20 * 12), nrow = 20, ncol = 12))
     rownames(X) <- paste0("f", 1:20)
     colnames(X) <- paste0("s", 1:12)
     
-    fit <- mia:::.jointRPCA(
+    fit <- mia:::.joint_rpca(
         tables = list(assay1 = X),
         n.components = 3,
         max.iterations = 2,
@@ -45,7 +45,7 @@ test_that("single-view .jointRPCA returns the expected structure", {
     expect_equal(colnames(fit$dist$data), colnames(X))
 })
 
-test_that("multi-view .jointRPCA preserves per-view feature loadings", {
+test_that("multi-view .joint_rpca preserves per-view feature loadings", {
     set.seed(42)
     #two views, same samples
     S <- paste0("s", 1:10)
@@ -54,7 +54,7 @@ test_that("multi-view .jointRPCA preserves per-view feature loadings", {
     B <- abs(matrix(rnorm(30 * 10), 30, 10,
                     dimnames = list(paste0("b", 1:30), S)))
     
-    fit <- mia:::.jointRPCA(
+    fit <- mia:::.joint_rpca(
         tables = list(MGX = A, MTX = B),
         n.components = 2,
         max.iterations = 2,
@@ -93,7 +93,7 @@ test_that("unshared samples are dropped with a warning and alignment is correct"
                     dimnames = list(paste0("b", 1:15), S2)))
     
     expect_warning(
-        fit <- mia:::.jointRPCA(
+        fit <- mia:::.joint_rpca(
             tables = list(MGX = A, MTX = B),
             n.components = 2,
             max.iterations = 2,
@@ -119,7 +119,7 @@ test_that("projection of new samples via .transform appends rows and keeps compo
     B <- abs(matrix(rnorm(length(featsB) * length(S_train)), length(featsB), length(S_train),
                     dimnames = list(featsB, S_train)))
     
-    fit <- mia:::.jointRPCA(
+    fit <- mia:::.joint_rpca(
         tables = list(MGX = A, MTX = B),
         n.components = 3,
         max.iterations = 2,
@@ -158,7 +158,7 @@ test_that("errors surface for duplicated sample IDs during preprocessing", {
     colnames(X) <- c("s1", "s1", "s2", "s3")  
     
     expect_error(
-        mia:::.jointRPCA(
+        mia:::.joint_rpca(
             tables = list(assay1 = X),
             n.components = 2,
             max.iterations = 2,

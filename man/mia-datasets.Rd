@@ -21,6 +21,10 @@ features and 280 samples}
 and 3 samples}
 \item{\code{\link{GlobalPatterns}}: A TreeSummarizedExperiment with 19216
 features and 26 samples}
+\item{\code{\link{ibdmdb_2omic_demo}}: A compact
+\code{MultiAssayExperiment} demo dataset with 2 experiments (MGX + MTX)}
+\item{\code{\link{ibdmdb_meta_demo}}: Sample-level metadata for
+\code{\link{ibdmdb_2omic_demo}}}
 \item{\code{\link{HintikkaXOData}}: A MultiAssayExperiment with 3
 experiments (microbiota, metabolites and biomarkers)}
 \item{\code{\link{peerj13075}}: A TreeSummarizedExperiment with 674

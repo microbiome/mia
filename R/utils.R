@@ -713,10 +713,614 @@
     return(tse)
 }
 
-#ORDINATION RESULTS FUNCTION
-#
-#constructor function
-.OrdinationResults <- function(method, eigvals, samples, features,
+#' Joint Robust PCA on Multiple Compositional Tables
+#'
+#' Internal engine for Joint Robust Principal Component Analysis (RPCA) using
+#' OptSpace on multiple compositional tables.
+#'
+#' This function assumes a list of already extracted tables and is typically
+#' called via \code{jointRPCAuniversal()} or \code{getJointRPCA()}.
+#'
+#' @param tables A list of compositional data tables (matrices or data frames).
+#' @param n.test.samples Integer specifying the number of samples to hold out for testing
+#'   (only used if \code{sample.metadata} is \code{NULL}). Default is 10.
+#' @param sample.metadata Optional data frame containing sample-level metadata.
+#' @param train.test.column The name of the column in \code{sample.metadata}
+#'   that defines training vs test samples.
+#' @param n.components Integer specifying the number of principal components to compute.
+#' @param rclr.transform.tables Logical; whether to apply rCLR transformation to each
+#'   input table before ordination. Default is \code{TRUE}.
+#' @param min.sample.count Minimum total count required for a sample to be retained.
+#' @param min.feature.count Minimum total count required for a feature to be retained.
+#' @param min.feature.frequency Minimum percentage (0–100) of samples in which a
+#'   feature must be non-zero to be retained.
+#' @param max.iterations Maximum number of optimization iterations.
+#'
+#' @return A list with \code{ord.res}, \code{dist}, \code{cv.stats}, and
+#'   \code{rclr.tables}.
+#'
+#' @keywords internal
+#' @noRd
+
+.joint_rpca <- function(tables,
+                        n.test.samples = 10,
+                        sample.metadata = NULL,
+                        train.test.column = NULL,
+                        n.components = 3,
+                        rclr.transform.tables = TRUE,
+                        min.sample.count = 0,
+                        min.feature.count = 0,
+                        min.feature.frequency = 0,
+                        max.iterations = 5) {
+    
+    if (is.null(names(tables))) {
+        names(tables) <- paste0("view", seq_along(tables))
+    }
+    
+    if (n.components < 2) stop("n.components must be at least 2.")
+    if (max.iterations < 1) stop("max.iterations must be at least 1.")
+    
+    #filtering (always done, independent of rclr)
+    tables <- lapply(tables, function(tbl) {
+        .rpca_table_processing(
+            tbl,
+            min.sample.count      = min.sample.count,
+            min.feature.count     = min.feature.count,
+            min.feature.frequency = min.feature.frequency
+        )
+    })
+    
+    #find shared samples across views
+    sample.sets <- lapply(tables, colnames)
+    shared.all.samples <- Reduce(intersect, sample.sets)
+    if (length(shared.all.samples) == 0) {
+        stop("No samples overlap between all tables. If using pre-transformed tables, set rclr.transform.tables = FALSE.")
+    }
+    unshared.samples <- setdiff(unique(unlist(sample.sets)), shared.all.samples)
+    if (length(unshared.samples) > 0) {
+        warning(sprintf("Removing %d sample(s) that do not overlap in tables.", length(unshared.samples)))
+    }
+    
+    #restrict each table to the shared sample set
+    tables <- lapply(tables, function(tbl) {
+        tbl[, shared.all.samples, drop = FALSE]
+    })
+    shared.all.samples <- Reduce(intersect, lapply(tables, colnames))
+    
+    #transform tables: rCLR or masking
+    rclr.tables <- lapply(tables, function(tbl) {
+        mat <- as.matrix(tbl)
+        rown <- rownames(mat)
+        coln <- colnames(mat)
+        
+        if (rclr.transform.tables) {
+            
+            mat[!is.finite(mat)] <- 0
+            mat[mat < 0]         <- 0
+            
+            out <- vegan::decostand(mat, method = "rclr", MARGIN = 2)
+            
+            dimnames(out) <- list(rown, coln)
+            out
+        } else {
+            .mask_value_only(mat)$data
+        }
+    })
+    names(rclr.tables) <- names(tables)
+    
+    #determine train/test split
+    if (!is.null(sample.metadata) && !is.null(train.test.column)) {
+        md <- as.data.frame(sample.metadata)
+        md <- md[shared.all.samples, , drop = FALSE]
+        train.samples <- rownames(md)[md[[train.test.column]] == "train"]
+        test.samples  <- rownames(md)[md[[train.test.column]] == "test"]
+    } else {
+        ord.tmp <- .optspace_helper(
+            rclr.table   = t(rclr.tables[[1]]),
+            feature.ids  = rownames(rclr.tables[[1]]),
+            subject.ids  = colnames(rclr.tables[[1]]),
+            n.components = n.components,
+            max.iterations = max.iterations
+        )$ord.res
+        sorted.ids <- rownames(ord.tmp$samples[order(ord.tmp$samples[, 1]), ])
+        idx <- round(seq(1, length(sorted.ids), length.out = n.test.samples))
+        test.samples <- sorted.ids[idx]
+        train.samples <- setdiff(shared.all.samples, test.samples)
+    }
+    
+    #run joint OptSpace
+    result <- .joint_optspace_helper(
+        tables        = rclr.tables,
+        n.components  = n.components,
+        max.iterations = max.iterations,
+        test.samples  = test.samples,
+        train.samples = train.samples,
+        sample.order  = shared.all.samples
+    )
+    
+    list(
+        ord.res      = result$ord.res,
+        dist         = result$dist,
+        cv.stats     = result$cv.stats,
+        rclr.tables  = rclr.tables
+    )
+}
+
+#' Joint RPCA Ordination Across Multiple Compositional Tables
+#'
+#' Internal function that performs Robust PCA via joint OptSpace decomposition across multiple compositional tables.
+#' It splits each table into train/test sets, applies joint factorization, reconstructs sample and feature embeddings,
+#' optionally projects test samples, computes a sample distance matrix, and returns cross-validation error statistics.
+#'
+#' @param tables A list of compositional matrices or data frames with features as rows and samples as columns.
+#' @param n.components Number of principal components to compute.
+#' @param max.iterations Maximum number of optimization iterations for OptSpace.
+#' @param test.samples Character vector of sample IDs to be projected into the ordination space.
+#' @param train.samples Character vector of sample IDs used to fit the ordination.
+#'
+#' @return A list with:
+#' \describe{
+#'   \item{ord.res}{An \code{OrdinationResults} object containing embeddings, loadings, and variance explained.}
+#'   \item{dist}{A \code{DistanceMatrix} object for sample embeddings.}
+#'   \item{cv.stats}{A data frame summarizing reconstruction error across iterations and tables.}
+#' }
+#'
+#' @keywords internal
+#' @noRd
+
+.joint_optspace_helper <- function(tables,
+                                   n.components,
+                                   max.iterations,
+                                   test.samples,
+                                   train.samples,
+                                   sample.order = NULL) {
+    
+    # Coerce to matrices and enforce colnames presence
+    tables <- lapply(tables, function(tbl) {
+        mat <- as.matrix(tbl)
+        if (is.null(colnames(mat))) {
+            stop("[.joint_optspace_helper] Input table is missing column names (sample IDs).")
+        }
+        mat
+    })
+    
+    # Global set of samples present in all views
+    all_samples <- Reduce(intersect, lapply(tables, colnames))
+    
+    # Align train/test to actually available samples
+    test.samples  <- intersect(test.samples,  all_samples)
+    train.samples <- intersect(train.samples, all_samples)
+    
+    if (!length(test.samples) || !length(train.samples)) {
+        stop("[.joint_optspace_helper] Empty train/test split after aligning sample IDs.")
+    }
+    
+    # Split and transpose training/test data per table
+    tables.split <- lapply(tables, function(tbl) {
+        list(
+            t(tbl[, test.samples,  drop = FALSE]),
+            t(tbl[, train.samples, drop = FALSE])
+        )
+    })
+    
+    # Format input for solver
+    tables.for.solver <- lapply(tables.split, function(pair) {
+        lapply(pair, as.matrix)
+    })
+    
+    # Run joint OptSpace solver
+    opt.result <- .joint_optspace_solve(
+        train.test.pairs = tables.for.solver,
+        n.components      = n.components,
+        max.iter          = max.iterations
+    )
+    
+    U <- opt.result$U
+    S <- opt.result$S
+    V.list <- opt.result$V.list
+    dists <- opt.result$dists
+    
+    #assign row/column names to loadings
+    pc.names <- paste0("PC", seq_len(n.components))
+    
+    #combine feature loadings with table-derived row names
+    vjoint <- do.call(rbind, Map(function(tbl, V) {
+        rownames(V) <- rownames(tbl)
+        colnames(V) <- pc.names
+        V
+    }, tables, V.list))
+    
+    U <- U[seq_along(train.samples), , drop = FALSE]
+    rownames(U) <- train.samples
+    colnames(U) <- pc.names
+    
+    #recenter & re-factor via SVD
+    X <- U %*% S %*% t(vjoint)
+    X <- sweep(X, 2, colMeans(X))
+    X <- sweep(X, 1, rowMeans(X))
+    svd.res <- svd(X)
+    u <- svd.res$u[, seq_len(n.components), drop = FALSE]
+    v <- svd.res$v[, seq_len(n.components), drop = FALSE]
+    s.eig <- svd.res$d[seq_len(n.components)]
+    
+    rownames(u) <- train.samples
+    rownames(v) <- rownames(vjoint)
+    pc.names <- paste0("PC", seq_len(n.components))
+    colnames(u) <- colnames(v) <- pc.names
+    
+    #build a named per-view features list
+    features_list <- lapply(seq_along(tables), function(i) {
+        rid <- rownames(tables[[i]])          
+        v[rid, , drop = FALSE]                
+    })
+    names(features_list) <- names(tables)    
+    
+    prop.exp <- s.eig^2 / sum(s.eig^2)
+    ord.res <- .ordination_results(
+        method = "rpca",
+        eigvals = setNames(s.eig, pc.names),
+        samples = u,
+        features = features_list,              
+        proportion.explained = setNames(prop.exp, pc.names)
+    )
+    
+    #project test samples
+    if (length(test.samples) > 0) {
+        test.matrices <- lapply(tables, function(tbl) tbl[, test.samples, drop = FALSE])
+        names(test.matrices) <- names(tables)  
+        ord.res <- .transform(ord.res, test.matrices, apply.rclr = FALSE)
+    }
+    
+    #compute distance matrix and CV error summary
+    dist.base <- as.matrix(dist(ord.res$samples))
+    
+    if (!is.null(sample.order)) {
+        order_use <- intersect(sample.order, rownames(dist.base))
+        dist.mat  <- dist.base[order_use, order_use, drop = FALSE]
+    } else {
+        dist.mat  <- dist.base
+        order_use <- rownames(dist.base)
+    }
+    
+    dist.res <- .distance_matrix(dist.mat, ids = order_use)
+    
+    cv.dist <- data.frame(t(dists))
+    colnames(cv.dist) <- c("mean_CV", "std_CV")
+    cv.dist$run <- sprintf("tables_%d.n.components_%d.max.iterations_%d.n.test_%d",
+                           length(tables), n.components, max.iterations, length(test.samples))
+    cv.dist$iteration <- seq_len(nrow(cv.dist))
+    rownames(cv.dist) <- seq_len(nrow(cv.dist))
+    
+    list(ord.res = ord.res, dist = dist.res, cv.stats = cv.dist)
+}
+
+#' Apply Projection of New Compositional Tables to Existing Ordination
+#'
+#' Internal function that transforms and projects new sample tables into an existing Joint RPCA ordination space.
+#' It handles feature alignment, optional rCLR preprocessing, padding of missing features,
+#' and merges projected samples with existing ones.
+#'
+#' @param ordination A list containing previous ordination results: `samples`, `features`, and `eigvals`.
+#' @param tables A named list of new compositional tables (matrices or data frames)
+#'   with features as rows and samples as columns.
+#' @param apply.rclr Logical; whether to apply rCLR transformation to new input tables before projection. Default is `TRUE`.
+#'
+#' @return An updated ordination list with the `samples` matrix extended to include new projected samples.
+#' @keywords internal
+#' @noRd
+
+.transform <- function(ordination, tables,
+                       apply.rclr = TRUE) {
+    
+    Udf    <- ordination$samples
+    Vobj   <- ordination$features
+    s.eig  <- ordination$eigvals
+    
+    #ensure tables is a list of views
+    if (!is.list(tables)) {
+        stop("[.transform] 'tables' must be a list of view matrices (features x samples).")
+    }
+    
+    if (is.list(Vobj) && !is.null(names(Vobj))) {
+        if (is.null(names(tables))) {
+            names(tables) <- names(Vobj)[seq_along(tables)]
+        }
+        if (is.null(names(tables))) {
+            stop("[.transform] 'tables' must be a *named* list of view matrices (features x samples).")
+        }
+    }
+    
+    #rCLR if requested 
+    prep_view <- function(tab) {
+        mat <- as.matrix(tab)
+        rown <- rownames(mat)
+        coln <- colnames(mat)
+        
+        if (apply.rclr) {
+            mat <- vegan::decostand(mat, method = "rclr", MARGIN = 2)
+            
+            dimnames(mat) <- list(rown, coln)
+        }
+        
+        storage.mode(mat) <- "double"
+        mat[!is.finite(mat)] <- 0
+        mat
+    }
+    tables <- lapply(tables, prep_view)
+    
+    if (is.matrix(Vobj)) {
+        all.features <- rownames(Vobj)
+        tables <- lapply(tables, function(mat) {
+            miss <- setdiff(all.features, rownames(mat))
+            if (length(miss)) {
+                pad <- matrix(0, nrow = length(miss), ncol = ncol(mat),
+                              dimnames = list(miss, colnames(mat)))
+                mat <- rbind(mat, pad)
+            }
+            mat[all.features, , drop = FALSE]
+        })
+        proj.mat <- do.call(cbind, tables)
+        colnames(proj.mat) <- make.unique(colnames(proj.mat), sep = "_")
+        ordination$samples <- .transform_helper(Udf, Vobj, s.eig, proj.mat)
+        return(ordination)
+    }
+    
+    #3+-omic path: V is a named list per view
+    if (!is.list(Vobj) || is.null(names(Vobj))) {
+        stop("[.transform] ordination$features is neither a matrix nor a named list.")
+    }
+    
+    #intersect views by name, preserve training order
+    views <- intersect(names(Vobj), names(tables))
+    if (!length(views)) stop("[.transform] No overlapping view names between ordination and new tables.")
+    
+    test.matrices <- list()
+    for (vw in views) {
+        Vvw <- Vobj[[vw]]
+        stopifnot(is.matrix(Vvw), !is.null(rownames(Vvw)))
+        mat <- tables[[vw]]
+        
+        train_feats <- rownames(Vvw)
+        miss <- setdiff(train_feats, rownames(mat))
+        if (length(miss)) {
+            pad <- matrix(0, nrow = length(miss), ncol = ncol(mat),
+                          dimnames = list(miss, colnames(mat)))
+            mat <- rbind(mat, pad)
+        }
+        mat <- mat[train_feats, , drop = FALSE]
+        
+        test.matrices[[vw]] <- mat
+    }
+    
+    ordination$samples <- .transform_helper(Udf, Vobj, s.eig, test.matrices)
+    ordination
+}
+
+#' Project New Data into Existing Ordination Space
+#'
+#' Internal function to align rCLR-transformed samples to an existing RPCA ordination space.
+#' Handles feature alignment, deduplication of sample names, double-centering normalization,
+#' and projection into low-rank space using previously learned components.
+#'
+#' @param Udf Matrix of training sample embeddings (samples × components).
+#' @param Vdf Matrix or list of feature loadings (features × components, or per-view list).
+#' @param s.eig Singular values from the RPCA decomposition.
+#' @param table.rclr.project New rCLR-transformed table(s) for projection (features × samples).
+#'   If `Vdf` is a matrix, provide a single matrix; if `Vdf` is a list, provide a named list of matrices per view.
+#' @param dedup.samples Logical; whether to merge samples with identical names (e.g. suffixes like `_1`, `_2`)
+#'   by averaging their feature values. Default is `TRUE`. Set to `FALSE` to preserve all duplicate sample IDs.
+#'
+#' @return A combined matrix of training and projected samples (samples × components).
+#' @keywords internal
+#' @noRd
+
+.transform_helper <- function(Udf, Vdf, s.eig, table.rclr.project,
+                              dedup.samples = TRUE) {
+    
+    #legacy path (single view)
+    if (is.matrix(Vdf)) {
+        stopifnot(is.matrix(table.rclr.project))
+        #align rows by name
+        common <- intersect(rownames(Vdf), rownames(table.rclr.project))
+        if (length(common) < ncol(Udf))
+            stop(sprintf("[.transform_helper] Too few matching features: %d", length(common)))
+        
+        M <- t(as.matrix(table.rclr.project[common, , drop = FALSE]))   
+        V <- as.matrix(Vdf[common, , drop = FALSE])                     
+        
+        #dedup of sample IDs
+        if (dedup.samples) {
+            sid <- sub("_\\d+$", "", rownames(M))
+            if (any(duplicated(sid))) {
+                M <- rowsum(M, group = sid, reorder = FALSE) / as.vector(table(sid))
+            } else {
+                rownames(M) <- sid
+            }
+        }
+        
+        #projection (match training scaling)
+        Uproj <- M %*% V
+        #scale by singular values
+        if (length(s.eig)) {
+            Sinv <- diag(1 / s.eig, nrow = length(s.eig))
+            Uproj <- Uproj %*% Sinv
+        }
+        
+        colnames(Uproj) <- colnames(Udf)
+        U.combined <- rbind(Udf[setdiff(rownames(Udf), rownames(Uproj)), , drop = FALSE], Uproj)
+        return(U.combined)
+    }
+    
+    #multi-view path (named lists)
+    stopifnot(is.list(Vdf), is.list(table.rclr.project))
+    views <- intersect(names(Vdf), names(table.rclr.project))
+    if (!length(views)) stop("[.transform_helper] No overlapping views.")
+    
+    #project per view, then sum contributions in the shared latent space
+    Usum <- NULL
+    ncomp <- ncol(Udf)
+    for (vw in views) {
+        Vvw <- Vdf[[vw]]
+        Tvw <- table.rclr.project[[vw]]
+        stopifnot(is.matrix(Vvw), is.matrix(Tvw))
+        
+        common <- intersect(rownames(Vvw), rownames(Tvw))
+        if (length(common) < ncomp) {
+            stop(sprintf("[.transform_helper] View '%s': too few matching features (%d).", vw, length(common)))
+        }
+        
+        M <- t(as.matrix(Tvw[common, , drop = FALSE]))     
+        V <- as.matrix(Vvw[common, , drop = FALSE])        
+        
+        #accumulate per-view U
+        Uvw <- M %*% V                                     
+        if (is.null(Usum)) {
+            Usum <- Uvw
+        } else {
+            #align rows (samples) by name before summing
+            all_s <- union(rownames(Usum), rownames(Uvw))
+            Utmp  <- matrix(0, nrow = length(all_s), ncol = ncol(Udf),
+                            dimnames = list(all_s, colnames(Udf)))
+            Utmp[rownames(Usum), ] <- Usum
+            Utmp[rownames(Uvw), ]  <- Utmp[rownames(Uvw), ] + Uvw
+            Usum <- Utmp
+        }
+    }
+    
+    #sample dedup (after combining views)
+    if (dedup.samples) {
+        sid <- sub("_\\d+$", "", rownames(Usum))
+        if (any(duplicated(sid))) {
+            Usum <- rowsum(Usum, group = sid, reorder = FALSE) / as.vector(table(sid))
+        } else {
+            rownames(Usum) <- sid
+        }
+    }
+    
+    #scale by S
+    if (length(s.eig)) {
+        Sinv <- diag(1 / s.eig, nrow = length(s.eig))
+        Usum <- Usum %*% Sinv
+    }
+    colnames(Usum) <- colnames(Udf)
+    
+    #merge with training U, avoiding duplicates
+    keep_train <- setdiff(rownames(Udf), rownames(Usum))
+    rbind(Udf[keep_train, , drop = FALSE], Usum)
+}
+
+#' RPCA Table Filtering and Preprocessing
+#'
+#' Internal function that performs filtering and cleanup on a compositional data table
+#' prior to Robust PCA analysis. Removes low-count features/samples, enforces non-zero frequency thresholds,
+#' checks for ID duplication, and returns a matrix suitable for transformation and ordination.
+#'
+#' @param table A matrix or data frame with features as rows and samples as columns.
+#' @param min.sample.count Minimum total count required for a sample to be retained. Default is 0.
+#' @param min.feature.count Minimum total count required for a feature to be retained. Default is 0.
+#' @param min.feature.frequency Minimum percentage (0–100) of samples in which a feature must be non-zero. Default is 0.
+#'
+#' @return A filtered numeric matrix containing non-empty features and samples.
+#' @keywords internal
+#' @noRd
+
+.rpca_table_processing <- function(table,
+                                   min.sample.count = 0,
+                                   min.feature.count = 0,
+                                   min.feature.frequency = 0) {
+    #ensure the input is a matrix
+    if (is.data.frame(table)) {
+        table <- as.matrix(table)
+    }
+    
+    n.features <- nrow(table)
+    n.samples  <- ncol(table)
+    
+    #filter features by total count
+    if (!is.null(min.feature.count)) {
+        feature.totals <- rowSums(table, na.rm = TRUE)
+        keep.features <- feature.totals > min.feature.count
+        table <- table[keep.features, , drop = FALSE]
+    }
+    
+    #filter features by frequency across samples
+    if (!is.null(min.feature.frequency)) {
+        freq.threshold <- min.feature.frequency / 100
+        feature.freq <- rowMeans(table > 0, na.rm = TRUE)
+        keep.features <- feature.freq > freq.threshold
+        table <- table[keep.features, , drop = FALSE]
+    }
+    
+    #filter samples by total count
+    if (!is.null(min.sample.count)) {
+        sample.totals <- colSums(table, na.rm = TRUE)
+        keep.samples <- sample.totals > min.sample.count
+        table <- table[, keep.samples, drop = FALSE]
+    }
+    
+    #check for duplicate IDs
+    if (any(duplicated(colnames(table)))) {
+        stop("Data table contains duplicate sample (column) IDs.")
+    }
+    if (any(duplicated(rownames(table)))) {
+        stop("Data table contains duplicate feature (row) IDs.")
+    }
+    
+    #remove empty rows and columns if sample filtering applied
+    if (!is.null(min.sample.count)) {
+        nonzero.features <- rowSums(table, na.rm = TRUE) > 0
+        nonzero.samples  <- colSums(table, na.rm = TRUE) > 0
+        table <- table[nonzero.features, nonzero.samples, drop = FALSE]
+    }
+    
+    return(table)
+}
+
+#' Generate a MaskedMatrix from Numeric Input
+#'
+#' Internal helper that ensures input is a 2D numeric matrix and returns a masked version,
+#' replacing non-finite values (e.g., NA, NaN, Inf) with `NA` and recording their positions in a logical mask.
+#'
+#' @param mat A numeric matrix or vector. If a vector, it will be converted to a 1-row matrix.
+#'
+#' @return A list of class \code{"MaskedMatrix"} with two elements:
+#' \describe{
+#'   \item{data}{The original matrix with non-finite values replaced by \code{NA}.}
+#'   \item{mask}{Logical matrix indicating non-finite entries (TRUE if missing).}
+#' }
+#'
+#' @keywords internal
+#' @noRd
+
+.mask_value_only <- function(mat) {
+    #ensure matrix is at least 2D
+    if (is.vector(mat)) {
+        mat <- matrix(mat, nrow = 1)
+    }
+    
+    #ensure matrix is not more than 2D
+    if (length(dim(mat)) > 2) {
+        stop("Input matrix can only have two dimensions or less")
+    }
+    
+    #generate logical mask: TRUE where values are missing
+    mask <- !is.finite(mat)  
+    
+    #create masked matrix
+    masked.mat <- mat
+    masked.mat[!is.finite(mat)] <- NA
+    
+    #return as a masked matrix
+    return(structure(list(
+        data = masked.mat,
+        mask = mask
+    ), class = "MaskedMatrix"))
+}
+
+#' Internal constructor for ordination results
+#' @keywords internal
+#' @noRd
+.ordination_results <- function(method, eigvals, samples, features,
                                proportion.explained, dist = NULL, metadata = list()) {
     structure(list(
         method = method,
@@ -729,40 +1333,10 @@
     ), class = "OrdinationResults")
 }
 
-#print method
-.print.OrdinationResults <- function(x, ...) {
-    cat("OrdinationResults (method:", x$method, ")\n")
-    cat("Number of components:", length(x$eigvals), "\n")
-    cat("Variance explained:\n")
-    print(round(x$proportion.explained, 3))
-    invisible(x)
-}
-
-#summary method
-.summary.OrdinationResults <- function(object, ...) {
-    print(object)
-    cat("\nSample scores (first few rows):\n")
-    print(head(object$samples))
-    cat("\nFeature loadings (first few rows):\n")
-    print(head(object$features))
-    invisible(object)
-}
-
-#plot method
-.plot.OrdinationResults <- function(x, comps = c(1, 2), ...) {
-    if (length(comps) != 2) stop("Please select two components to plot.")
-    plot(x$samples[, comps], col = "blue", pch = 19,
-         xlab = paste0("PC", comps[1]),
-         ylab = paste0("PC", comps[2]),
-         main = paste("Ordination (", x$method, ")", sep = ""))
-    points(x$features[, comps], col = "red", pch = 4)
-    legend("topright", legend = c("Samples", "Features"),
-           col = c("blue", "red"), pch = c(19, 4))
-}
-
-#DISTANCE MATRIX FUNCTION
-#
-.DistanceMatrix <- function(matrix, ids = NULL, method = "euclidean") {
+#' Internal constructor for a distance matrix object
+#' @keywords internal
+#' @noRd
+.distance_matrix <- function(matrix, ids = NULL, method = "euclidean") {
     if (!is.matrix(matrix)) stop("Input must be a matrix.")
     if (!isSymmetric(matrix)) stop("Distance matrix must be symmetric.")
     if (!is.null(ids)) {
@@ -775,491 +1349,4 @@
         ids = rownames(matrix),
         method = method
     ), class = "DistanceMatrix")
-}
-
-.print.DistanceMatrix <- function(x, ...) {
-    cat("DistanceMatrix (", x$method, ")\n", sep = "")
-    cat("Number of objects:", length(x$ids), "\n")
-    print(head(x$data, 6))  # Show only top part
-    invisible(x)
-}
-
-.summary.DistanceMatrix <- function(object, ...) {
-    cat("Summary of DistanceMatrix\n")
-    cat("Method:", object$method, "\n")
-    cat("Size:", nrow(object$data), "x", ncol(object$data), "\n")
-    cat("IDs:\n")
-    print(head(object$ids, 6))
-    cat("\nDistance Summary Stats:\n")
-    print(summary(as.vector(object$data[upper.tri(object$data)])))
-    invisible(object)
-}
-
-#wrapper to store dataset-specific sample scores
-.dataset_specific_scores <- function(rclr.tables, n.components = 2, max.iterations = 5) {
-    scores <- lapply(seq_along(rclr.tables), function(i) {
-        tbl <- rclr.tables[[i]]
-        res <- .optspace_helper(
-            rclr.table     = t(tbl),
-            feature.ids    = rownames(tbl),
-            subject.ids    = colnames(tbl),
-            n.components   = n.components,
-            max.iterations = max.iterations
-        )
-        res$ord.res$samples
-    })
-    
-    names(scores) <- paste0("Dataset_", seq_along(scores))
-    
-    return(scores)
-}
-
-#wrapper to store dataset-specific feature loadings
-.dataset_specific_loadings <- function(rclr.tables, n.components = 2, max.iterations = 5) {
-    loadings <- lapply(seq_along(rclr.tables), function(i) {
-        tbl <- rclr.tables[[i]]
-        res <- .optspace_helper(
-            rclr.table     = t(tbl),
-            feature.ids    = rownames(tbl),
-            subject.ids    = colnames(tbl),
-            n.components   = n.components,
-            max.iterations = max.iterations
-        )
-        res$ord.res$features
-    })
-    
-    names(loadings) <- paste0("Dataset_", seq_along(loadings))
-    
-    return(loadings)
-}
-
-################################################################################
-# Joint-RPCA benchmarking helpers
-
-.keep_finite_cols <- function(X) {
-    ok <- apply(X, 2, function(v) all(is.finite(v)))
-    if (!any(ok)) stop("All columns removed by finite filter.")
-    X[, ok, drop = FALSE]
-}
-
-.drop_constant_cols <- function(X) {
-    sds <- apply(X, 2, function(v) sd(v, na.rm = TRUE))
-    keep <- is.finite(sds) & (sds > 0)
-    if (!any(keep)) stop("No non-constant columns remain after filtering.")
-    X[, keep, drop = FALSE]
-}
-
-.prep_train_test <- function(X_train, X_test) {
-    m <- colMeans(X_train, na.rm = TRUE)
-    s <- apply(X_train, 2, sd, na.rm = TRUE)
-    s[s == 0 | !is.finite(s)] <- 1
-    list(
-        Xtr = sweep(sweep(X_train, 2, m, "-"), 2, s, "/"),
-        Xte = sweep(sweep(X_test,  2, m, "-"), 2, s, "/")
-    )
-}
-
-.evaluate_model_cv <- function(features, labels, folds = 5, ntree = 500, seed = 42) {
-    set.seed(seed)
-    tab <- table(labels)
-    if (length(labels) < 2L || length(tab) < 2L) stop("Need >=2 samples and >=2 classes.")
-    folds <- max(2L, min(as.integer(folds), as.integer(min(tab)), length(labels) - 1L))
-    folds_idx <- caret::createFolds(labels, k = folds, list = TRUE, returnTrain = FALSE)
-    
-    accs <- numeric(length(folds_idx)); aucs <- numeric(length(folds_idx))
-    for (i in seq_along(folds_idx)) {
-        test_idx  <- folds_idx[[i]]
-        train_idx <- setdiff(seq_along(labels), test_idx)
-        Xtr <- features[train_idx, , drop = FALSE]; Xte <- features[test_idx, , drop = FALSE]
-        ytr <- labels[train_idx]; yte <- labels[test_idx]
-        if (length(unique(ytr)) < 2L) { accs[i] <- NA_real_; aucs[i] <- NA_real_; next }
-        
-        pp <- .prep_train_test(Xtr, Xte)
-        rf <- randomForest(x = pp$Xtr, y = ytr, ntree = ntree)
-        
-        yhat <- predict(rf, pp$Xte, type = "response")
-        accs[i] <- mean(yhat == yte)
-        
-        probs <- predict(rf, pp$Xte, type = "prob")
-        all_lvls <- levels(labels)
-        miss <- setdiff(all_lvls, colnames(probs))
-        if (length(miss)) for (mm in miss) probs <- cbind(probs, setNames(rep(0, nrow(probs)), mm))
-        probs <- probs[, all_lvls, drop = FALSE]
-        
-        if (length(unique(yte)) < 2L) {
-            aucs[i] <- NA_real_
-        } else {
-            aucs[i] <- tryCatch(as.numeric(pROC::multiclass.roc(yte, probs)$auc), error = function(e) NA_real_)
-        }
-    }
-    list(accuracy = mean(accs, na.rm = TRUE), auc = mean(aucs, na.rm = TRUE))
-    
-}
-
-.get_fold_metrics <- function(X) {
-    set.seed(42)
-    idx <- caret::createFolds(labels, k = safe_k, list = TRUE, returnTrain = FALSE)
-    acc <- auc <- numeric(length(idx))
-    for (i in seq_along(idx)) {
-        te <- idx[[i]]; tr <- setdiff(seq_along(labels), te)
-        if (length(unique(labels[tr])) < 2L) {acc[i] <- NA; auc[i] <- NA; next}
-        pp <- .prep_train_test(X[tr, , drop = FALSE], X[te, , drop = FALSE])
-        rf <- randomForest(pp$Xtr, labels[tr], ntree = 500)
-        yhat <- predict(rf, pp$Xte)
-        acc[i] <- mean(yhat == labels[te])
-        probs <- predict(rf, pp$Xte, type = "prob")
-        miss <- setdiff(levels(labels), colnames(probs))
-        if (length(miss)) for (mm in miss) probs <- cbind(probs, setNames(rep(0, nrow(probs)), mm))
-        probs <- probs[ , levels(labels), drop = FALSE]
-        auc[i] <- tryCatch(as.numeric(pROC::multiclass.roc(labels[te], probs)$auc), error = function(e) NA)
-    }
-    tibble::tibble(Fold = seq_along(idx), Accuracy = acc, MacroAUC = auc)
-}
-
-.rep_dim <- function(X) ncol(X)
-
-.timeit <- function(expr) { t0 <- proc.time(); force(expr); as.numeric((proc.time()-t0)["elapsed"]) }
-
-.ci95 <- function(x){ x <- x[is.finite(x)]; m <- mean(x); s <- sd(x); n <- length(x); if(n <= 1||!is.finite(s)||s == 0) c(m,m,m) else c(m, m-1.96*s/sqrt(n), m+1.96*s/sqrt(n)) }
-
-#helper to evaluate a score matrix fairly
-.eval_method <- function(U_scores, meta, prefix = "AX") {
-    U <- as.data.frame(U_scores)
-    k <- ncol(U); colnames(U) <- paste0(prefix, seq_len(k))
-    U$sample_id <- rownames(U_scores)
-    
-    meta_tmp <- meta
-    if ("sample_id" %in% colnames(meta_tmp)) {
-        meta_tmp$sample_id <- as.character(meta_tmp$sample_id)
-    } else {
-        meta_tmp <- tibble::rownames_to_column(meta_tmp, "sample_id")
-    }
-    df <- dplyr::left_join(U, meta_tmp, by = "sample_id")
-    
-    #Wilcoxon on first two axes
-    w1p <- if (k >= 1)
-        suppressWarnings(wilcox.test(df[[paste0(prefix, 1)]] ~ df$Group, exact = FALSE)$p.value)
-    else NA_real_
-    w2p <- if (k >= 2)
-        suppressWarnings(wilcox.test(df[[paste0(prefix, 2)]] ~ df$Group, exact = FALSE)$p.value)
-    else NA_real_
-    
-    #PERMANOVA on first up to 3 axes
-    axes <- paste0(prefix, seq_len(min(3, k)))
-    perm_R2 <- perm_F <- perm_p <- NA_real_
-    if (length(axes) >= 2) {
-        perm <- vegan::adonis2(df[, axes] ~ Group, data = df, method = "euclidean")
-        perm_R2 <- perm$R2[1]; perm_F <- perm$F[1]; perm_p <- perm$`Pr(>F)`[1]
-    }
-    
-    #weighted RF AUROC
-    aucv <- NA_real_
-    if (length(axes) >= 2) {
-        rf_df <- na.omit(df[, c("Group", axes)])
-        rf_df$Group <- factor(rf_df$Group, levels = c("non-IBD", "IBD"))
-        if (nlevels(rf_df$Group) == 2 && all(table(rf_df$Group) >= 5)) {
-            cls_tab <- table(rf_df$Group)
-            wts <- as.numeric(1 / cls_tab); names(wts) <- names(cls_tab)
-            set.seed(42)
-            rf_prob <- ranger(
-                Group ~ ., data = rf_df,
-                num.trees     = 1000,
-                probability   = TRUE,
-                class.weights = wts,
-                oob.error     = TRUE
-            )
-            p_ibd <- rf_prob$predictions[, "IBD"]
-            roc_obj <- pROC::roc(rf_df$Group, p_ibd, levels = c("non-IBD", "IBD"))
-            aucv <- as.numeric(pROC::auc(roc_obj))
-        }
-    }
-    
-    tibble(
-        method       = prefix,
-        wilcox_PC1_p = w1p,
-        wilcox_PC2_p = w2p,
-        permanova_R2 = perm_R2,
-        permanova_F  = perm_F,
-        permanova_p  = perm_p,
-        AUROC        = aucv
-    )
-}
-
-.lr <- function(mat, top, bot, pcnt = 0.5) {
-    log(
-        (colSums(mat[top, , drop = FALSE]) + pcnt) /
-            (colSums(mat[bot, , drop = FALSE]) + pcnt)
-    )
-}
-
-.make_groups_autodetect <- function(meta_df, sample_ids, min_frac = 0.01, min_abs = 10L) {
-    out <- data.frame(
-        sample_id = sample_ids,
-        Group = factor(NA, levels = c("IBD", "non-IBD"))
-    )
-    if (is.null(meta_df) || !nrow(meta_df)) return(out)
-    
-    md <- as.data.frame(meta_df, stringsAsFactors = FALSE)
-    names(md) <- tolower(trimws(names(md)))
-    
-    sid <- tolower(trimws(as.character(sample_ids)))
-    thresh <- max(min_abs, floor(length(sid) * min_frac))
-    overlaps <- vapply(md, function(col) {
-        x <- tolower(trimws(as.character(col)))
-        sum(!is.na(x) & x %in% sid)
-    }, FUN.VALUE = integer(1))
-    max_ov <- suppressWarnings(max(overlaps, na.rm = TRUE))
-    if (!is.finite(max_ov) || max_ov < thresh) return(out)
-    best <- names(overlaps)[which.max(overlaps)]
-    
-    if (!"diagnosis" %in% names(md)) return(out)
-    
-    dx  <- tolower(trimws(as.character(md$diagnosis)))
-    grp <- ifelse(grepl("\\b(uc|cd|ibd)\\b", dx), "IBD",
-                  ifelse(grepl("^\\s*non", dx), "non-IBD", NA_character_))
-    
-    md$sample_id <- tolower(trimws(as.character(md[[best]])))
-    md$Group <- factor(grp, levels = c("IBD", "non-IBD"))
-    join_tbl <- unique(md[, c("sample_id", "Group")])
-    
-    joined <- dplyr::left_join(
-        data.frame(sample_id = sid, stringsAsFactors = FALSE),
-        join_tbl, by = "sample_id"
-    )
-    joined$sample_id <- sample_ids
-    joined
-}
-
-.eval_scores <- function(scores_df) {
-    out <- list()
-    if (!("Group" %in% names(scores_df))) return(out)
-    
-    #detect available component columns
-    comp_cols <- grep("^V\\d+$", names(scores_df), value = TRUE)
-    if (!length(comp_cols)) return(out)
-    use_cols <- comp_cols[seq_len(min(3L, length(comp_cols)))]
-    
-    #Wilcoxon tests
-    if ("V1" %in% names(scores_df)) {
-        res_w1 <- try(wilcox.test(scores_df$V1 ~ scores_df$Group, exact = FALSE), silent = TRUE)
-        out$wilcox_PC1_p <- if (!inherits(res_w1, "try-error")) res_w1$p.value else NA_real_
-    }
-    if ("V2" %in% names(scores_df)) {
-        res_w2 <- try(wilcox.test(scores_df$V2 ~ scores_df$Group, exact = FALSE), silent = TRUE)
-        out$wilcox_PC2_p <- if (!inherits(res_w2, "try-error")) res_w2$p.value else NA_real_
-    }
-    
-    #PERMANOVA (only if >=2 components exist)
-    if (length(use_cols) >= 2) {
-        perm_df <- na.omit(scores_df[, c("Group", use_cols), drop = FALSE])
-        if (nrow(perm_df) > 5 &&
-            is.factor(perm_df$Group) &&
-            nlevels(perm_df$Group) >= 2 &&
-            all(table(perm_df$Group) >= 3)) {
-            
-            comp_mat <- as.matrix(perm_df[, use_cols, drop = FALSE])
-            colnames(comp_mat) <- use_cols
-            
-            perm <- try(
-                vegan::adonis2(comp_mat ~ Group, data = perm_df, method = "euclidean"),
-                silent = TRUE
-            )
-            
-            if (!inherits(perm, "try-error")) {
-                out$permanova_R2 <- perm$R2[1]
-                out$permanova_F  <- perm$F[1]
-                out$permanova_p  <- perm$`Pr(>F)`[1]
-            } else {
-                out$permanova_R2 <- NA_real_
-                out$permanova_F  <- NA_real_
-                out$permanova_p  <- NA_real_
-            }
-        }
-    }
-    
-    #AUROC with ranger if at least 1 component exists
-    rf_df <- na.omit(scores_df[, c("Group", use_cols), drop = FALSE])
-    if (nrow(rf_df) && is.factor(rf_df$Group) && nlevels(rf_df$Group) >= 2) {
-        cls_tab <- table(rf_df$Group)
-        wts <- as.numeric(1 / cls_tab)
-        names(wts) <- names(cls_tab)
-        set.seed(42)
-        rf_prob <- ranger::ranger(
-            Group ~ ., data = rf_df, num.trees = 500,
-            probability = TRUE, class.weights = wts, oob.error = TRUE
-        )
-        if ("IBD" %in% colnames(rf_prob$predictions)) {
-            p_ibd <- rf_prob$predictions[, "IBD"]
-            roc_obj <- pROC::roc(rf_df$Group, p_ibd, levels = c("non-IBD", "IBD"))
-            out$AUROC <- as.numeric(pROC::auc(roc_obj))
-        }
-    }
-    
-    out
-}
-
-#convenience: run Joint-RPCA and return scores + metrics
-.fit_and_score <- function(mae, k, grp_df) {
-    set.seed(42)
-    mae <- runJointRPCA(
-        x = mae,
-        n.components = k,
-        max.iterations = 5,
-        rclr.transform.tables = TRUE,
-        min.sample.count = 1,
-        min.feature.count = 0,
-        min.feature.frequency = 0
-    )
-    
-    fit <- metadata(mae)$JointRPCA[["JointRPCA"]]
-    
-    U <- as.data.frame(fit$ord.res$samples)
-    colnames(U) <- paste0("V", seq_len(ncol(U)))
-    U$sample_id <- rownames(U)
-    U2 <- dplyr::left_join(U, grp_df, by = "sample_id")
-    
-    list(
-        scores  = U2,
-        metrics = .eval_scores(U2),
-        fit     = fit
-    )
-}
-
-.find_subject_col <- function(meta) {
-    nm <- tolower(trimws(names(meta)))
-    hits <- c(
-        "participant.id", "participant_id", "participantid",
-        "subject", "subject_id", "host_subject_id", "host.subject.id",
-        "participant", "host_subject"
-    )
-    ix <- intersect(nm, hits)
-    if (length(ix)) ix[1] else NULL
-}
-
-.build_sample_subject_map <- function(meta_df, sample_ids, min_frac = 0.01, min_abs = 10L) {
-    if (is.null(meta_df) || !nrow(meta_df)) return(NULL)
-    md <- as.data.frame(meta_df, stringsAsFactors = FALSE)
-    names(md) <- tolower(trimws(names(md)))
-    
-    sid <- tolower(trimws(as.character(sample_ids)))
-    thresh <- max(min_abs, floor(length(sid) * min_frac))
-    overlaps <- vapply(md, function(col) {
-        x <- tolower(trimws(as.character(col)))
-        sum(!is.na(x) & x %in% sid)
-    }, FUN.VALUE = integer(1))
-    max_ov <- suppressWarnings(max(overlaps, na.rm = TRUE))
-    if (!is.finite(max_ov) || max_ov < thresh) return(NULL)
-    best_id_col <- names(overlaps)[which.max(overlaps)]
-    
-    subj_col <- .find_subject_col(md)
-    if (is.null(subj_col)) return(NULL)
-    
-    md$sample_id  <- tolower(trimws(as.character(md[[best_id_col]])))
-    md$subject_id <- as.character(md[[subj_col]])
-    out <- unique(md[, c("sample_id", "subject_id")])
-    out <- out[!is.na(out$sample_id) & nzchar(out$sample_id) &
-                   !is.na(out$subject_id) & nzchar(out$subject_id),
-               , drop = FALSE]
-    if (!nrow(out)) return(NULL)
-    out
-}
-
-.clr_transform <- function(mat, pseudo = 1e-6) {
-    x <- log(mat + pseudo)
-    x <- sweep(x, 2, colMeans(x), FUN = "-")
-    x[!is.finite(x)] <- 0
-    x
-}
-
-.zscore_rows <- function(mat) {
-    m <- rowMeans(mat)
-    s <- matrixStats::rowSds(mat)
-    s[s == 0 | !is.finite(s)] <- 1
-    sweep(sweep(mat, 1, m, "-"), 1, s, "/")
-}
-
-.hellinger <- function(mat) {
-    cs <- colSums(mat)
-    cs[cs <= 0 | !is.finite(cs)] <- 1
-    p  <- sweep(mat, 2, cs, "/")
-    x  <- sqrt(p)
-    x[!is.finite(x)] <- 0
-    x
-}
-
-.make_scores_df <- function(S, sample_ids) {
-    S <- as.matrix(S)
-    colnames(S) <- paste0("V", seq_len(ncol(S)))
-    out <- as.data.frame(S)
-    out$sample_id <- sample_ids
-    dplyr::left_join(out, grp_df, by = "sample_id")
-}
-
-.eval_wrapper <- function(scores_df, label) {
-    list(model = label, metrics = .eval_scores(scores_df), scores = scores_df)
-}
-
-#collect metrics
-.grab <- function(x) {
-    m <- x$metrics
-    get_num <- function(z) if (is.null(z)) NA_real_ else as.numeric(z)
-    c(
-        wilcox_PC1_p = get_num(m$wilcox_PC1_p),
-        wilcox_PC2_p = get_num(m$wilcox_PC2_p),
-        permanova_R2 = get_num(m$permanova_R2),
-        permanova_p  = get_num(m$permanova_p),
-        AUROC        = get_num(m$AUROC)
-    )
-}
-
-.make_mae_for <- function(cols) {
-    cd2 <- S4Vectors::DataFrame(row.names = samps[cols])
-    se_mgx2 <- SummarizedExperiment::SummarizedExperiment(
-        list(counts = X_mgx[, cols, drop = FALSE]),
-        colData = cd2
-    )
-    se_mtx2 <- SummarizedExperiment::SummarizedExperiment(
-        list(counts = X_mtx[, cols, drop = FALSE]),
-        colData = cd2
-    )
-    mae2 <- MultiAssayExperiment::MultiAssayExperiment(list(MGX = se_mgx2, MTX = se_mtx2))
-    MultiAssayExperiment::intersectColumns(mae2)
-}
-
-.plt_ord <- function(scores, title) {
-    ggplot2::ggplot(scores, ggplot2::aes(V1, V2, color = Group)) +
-        ggplot2::geom_point(alpha = 0.8, size = 1.1) +
-        ggplot2::labs(title = title, x = "PC1", y = "PC2", color = NULL) +
-        ggplot2::theme_minimal()
-}
-
-.plot_comp <- function(obj) {
-    if (is.null(obj)) return(invisible(NULL))
-    ggplot2::ggplot(obj$scores, ggplot2::aes(V1, V2, color = Group)) +
-        ggplot2::geom_point(alpha = 0.8, size = 1.0) +
-        ggplot2::labs(title = obj$model, x = "Comp1", y = "Comp2", color = NULL) +
-        ggplot2::theme_minimal()
-}
-
-.get_view <- function(obj, keys) {
-    if (is.null(obj)) return(NULL)
-    if (is.list(obj)) {
-        for (k in keys) {
-            if (!is.null(obj[[k]])) return(as.data.frame(obj[[k]]))
-        }
-        return(NULL)
-    }
-    if (is.matrix(obj) || is.data.frame(obj)) return(as.data.frame(obj))
-    NULL
-}
-
-.show_top <- function(V, label, top_k = 15) { 
-    if (is.null(V) || !ncol(V)) return(invisible(NULL)) 
-    ord <- order(V[, 1], decreasing = TRUE)
-    top_ix <- seq_len(min(top_k, length(ord))) 
-    cat(sprintf("\nTop %s features on PC1:\n", label)) 
-    print(data.frame( 
-        feature = rownames(V)[ord][top_ix], 
-        loading = V[ord, 1][top_ix] 
-    ))
 }

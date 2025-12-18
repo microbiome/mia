@@ -24,8 +24,9 @@ prev_mgx_frac <- 0.05
 prev_mtx_frac <- 0.02
 
 #cap feature counts for speed/size
-cap_mgx <- 10000L
-cap_mtx <- 10000L
+cap_mgx <- 800L
+cap_mtx <- 800L
+max_samples <- 60L
 
 # ------------------------------------------------------------------------------
 #dependencies
@@ -219,6 +220,10 @@ if (has_mgx && has_mtx) {
     #recompute strict shared
     shared2 <- intersect(colnames(M_mgx), colnames(M_mtx))
     shared2 <- sort(unique(shared2))
+    set.seed(1)
+    if (length(shared2) > max_samples) {
+        shared2 <- sort(sample(shared2, max_samples))
+    }
     M_mgx <- M_mgx[, shared2, drop = FALSE]
     M_mtx <- M_mtx[, shared2, drop = FALSE]
     

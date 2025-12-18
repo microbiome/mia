@@ -1,4 +1,4 @@
-test_that("runJointRPCA stores embedding in reducedDim and metadata", {
+test_that("getJointRPCA stores embedding in reducedDim and metadata", {
     skip_if_not(requireNamespace("SingleCellExperiment", quietly = TRUE))
     
     set.seed(123)
@@ -10,7 +10,7 @@ test_that("runJointRPCA stores embedding in reducedDim and metadata", {
         assays = list(counts = X)
     )
     
-    sce2 <- mia:::runJointRPCA(
+    sce2 <- mia:::getJointRPCA(
         sce,
         name = "JointRPCA_test",
         n.components = 2,

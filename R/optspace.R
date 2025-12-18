@@ -33,6 +33,7 @@ NULL
 #' }
 #'
 #' @keywords internal
+#' @noRd
 
 .optspace_helper <- function(rclr.table,
                              feature.ids,
@@ -88,10 +89,10 @@ NULL
     rownames(dist.matrix.raw) <- subject.ids
     colnames(dist.matrix.raw) <- subject.ids
     
-    dist.res <- .DistanceMatrix(dist.matrix.raw, ids = subject.ids,
+    dist.res <- .distance_matrix(dist.matrix.raw, ids = subject.ids,
                                 method = "aitchison")
     
-    ord.res <- .OrdinationResults(
+    ord.res <- .ordination_results(
         method = "rpca_biplot",
         eigvals = s,
         samples = sample.scores,
@@ -134,6 +135,7 @@ NULL
 #' }
 #'
 #' @keywords internal
+#' @noRd
 
 .joint_optspace_solve <- function(train.test.pairs, n.components,
                                   max.iter = 50, verbose = TRUE) {
