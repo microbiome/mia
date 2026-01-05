@@ -349,9 +349,11 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
         }
         # last resort - this happens, if annotation data contains ambiguous data
         # sometimes labeled as "circles"
-        if(make.unique && anyDuplicated(ans)){
+        if (make.unique && anyDuplicated(ans)) {
             dup <- which(ans %in% ans[which(duplicated(ans))])
             ans[dup] <- make.unique(ans[dup], sep = "_")
+            message("Duplicated taxonomy labels were made unique (",
+                    length(dup), " adjusted).")
         }
         ans
     }
