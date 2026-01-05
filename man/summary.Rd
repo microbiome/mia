@@ -18,9 +18,10 @@ getUnique(x, ...)
 getTop(
   x,
   top = 5L,
-  method = c("mean", "sum", "median"),
+  method = c("mean", "sum", "median", "prevalence"),
   assay.type = assay_name,
   assay_name = "counts",
+  rank = NULL,
   na.rm = TRUE,
   ...
 )
@@ -31,6 +32,7 @@ getTop(
   method = c("mean", "sum", "median", "prevalence"),
   assay.type = assay_name,
   assay_name = "counts",
+  rank = NULL,
   na.rm = TRUE,
   ...
 )
@@ -65,11 +67,11 @@ assay used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{na.rm}{\code{Logical scalar}. Should NA values be omitted?
-(Default: \code{TRUE})}
-
 \item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a
 value of the output of \code{taxonomyRanks()}. (Default: \code{NULl})}
+
+\item{na.rm}{\code{Logical scalar}. Should NA values be omitted?
+(Default: \code{TRUE})}
 
 \item{object}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}

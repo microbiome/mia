@@ -60,4 +60,12 @@ test_that("summaries", {
     # Test with multiple equal dominant taxa in one sample
     assay(GlobalPatterns)[1, 1] <- max(assay(GlobalPatterns)[, 1])
     expect_warning(summarizeDominance(GlobalPatterns, complete = FALSE))
+
+    # getTop with rank aggregation matches explicit agglomeration
+    agg <- agglomerateByRank(GlobalPatterns, rank = "Genus")
+    expect_identical(
+        getTop(GlobalPatterns, rank = "Genus", method = "mean", top = 5,
+               assay.type = "counts"),
+        getTop(agg, method = "mean", top = 5, assay.type = "counts")
+    )
 })
