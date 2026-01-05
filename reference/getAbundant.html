@@ -48,7 +48,7 @@ prevalence."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Determine abundant and rare taxa. Rare taxa can be further classified to conditionally rare and permanently rare.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/mds/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/mds/R/getAbundant.R" class="external-link"><code>R/getAbundant.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/729/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/729/R/getAbundant.R" class="external-link"><code>R/getAbundant.R</code></a></small>
     <div class="hidden name"><code>getAbundant.Rd</code></div>
     </div>
 
@@ -216,6 +216,7 @@ insight from a single functional group- <em>FEMS Microbiol. Ecol.</em> 93(11).
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Agglomerate to family level</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Duplicated taxonomy labels were made unique (13 adjusted).</span>
 <span class="r-in"><span><span class="co"># Transform to relative abundances. Note that we add pseudocount. This is</span></span></span>
 <span class="r-in"><span><span class="co"># because otherwise we cannot calculate CRT and PRT due to zeroes and</span></span></span>
 <span class="r-in"><span><span class="co"># zero division in calculating abundance ratio.</span></span></span>
