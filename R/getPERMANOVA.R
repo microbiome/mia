@@ -113,7 +113,7 @@
 #' \code{\link[=runCCA]{addCCA}} and \code{\link[=runCCA]{addRDA}}
 #'
 #' @references
-#' \insertRef{Anderson2001}{Rdpack}
+#' \insertRef{Anderson2001}{mia}
 #'
 NULL
 

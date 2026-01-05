@@ -153,7 +153,7 @@ esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "euclidean",
 reducedDims(esophagus)
 }
 \references{
-\insertRef{Kruskal1964}{Rdpack}
+\insertRef{Kruskal1964}{mia}
 }
 \seealso{
 \code{\link[MASS:isoMDS]{MASS::isoMDS}},

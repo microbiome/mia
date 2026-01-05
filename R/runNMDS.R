@@ -63,7 +63,7 @@
 #' results.
 #'
 #' @references
-#' \insertRef{Kruskal1964}{Rdpack}
+#' \insertRef{Kruskal1964}{mia}
 #'
 #' @examples
 #' # generate some example data

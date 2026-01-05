@@ -121,7 +121,7 @@ library(scater)
 plotReducedDim(esophagus, "DPCoA")
 }
 \references{
-\insertRef{Pavoine2004}{Rdpack}
+\insertRef{Pavoine2004}{mia}
 }
 \seealso{
 \code{\link[scater:plotReducedDim]{plotReducedDim}}

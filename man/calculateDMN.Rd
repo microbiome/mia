@@ -181,7 +181,7 @@ head(metadata(tse)$DMM$prob)
 bestModel@mixture$Weight
 }
 \references{
-\insertRef{Holmes2012}{Rdpack}
+\insertRef{Holmes2012}{mia}
 }
 \seealso{
 \code{\link[DirichletMultinomial:DMN-class]{DMN-class}},

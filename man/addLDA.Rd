@@ -79,5 +79,5 @@ tab <- getReducedDimAttribute(tse, "LDA_10","eval_metrics")
 plot(tab[["k"]], tab[["perplexity"]], xlab = "k", ylab = "perplexity")
 }
 \references{
-\insertRef{Blei2003}{Rdpack}
+\insertRef{Blei2003}{mia}
 }

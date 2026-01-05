@@ -60,7 +60,7 @@
 #' \code{\link[DirichletMultinomial:fitted]{accessors for DMN objects}}
 #'
 #' @references
-#' \insertRef{Holmes2012}{Rdpack}
+#' \insertRef{Holmes2012}{mia}
 #'
 #' @name calculateDMN
 #'

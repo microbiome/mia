@@ -41,7 +41,7 @@
 #' feature loadings.
 #'
 #' @references
-#' \insertRef{Blei2003}{Rdpack}
+#' \insertRef{Blei2003}{mia}
 #'
 #' @name addLDA
 #'

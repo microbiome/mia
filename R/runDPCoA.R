@@ -69,7 +69,7 @@
 #' \code{\link[SingleCellExperiment:reducedDims]{reducedDims}}
 #'
 #' @references
-#' \insertRef{Pavoine2004}{Rdpack}
+#' \insertRef{Pavoine2004}{mia}
 #'
 #' @examples
 #' data(esophagus)

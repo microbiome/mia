@@ -56,7 +56,7 @@
 #' \code{eval.metric} value.
 #'
 #' @references
-#' \insertRef{Brunet2004}{Rdpack}
+#' \insertRef{Brunet2004}{mia}
 #'
 #' @name addNMF
 #'

@@ -142,7 +142,7 @@ attr(rda_res, "significance")
 
 }
 \references{
-\insertRef{Anderson2001}{Rdpack}
+\insertRef{Anderson2001}{mia}
 }
 \seealso{
 For more details on the actual implementation see
