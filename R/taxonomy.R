@@ -352,6 +352,7 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
         if(make.unique && anyDuplicated(ans)){
             dup <- which(ans %in% ans[which(duplicated(ans))])
             ans[dup] <- make.unique(ans[dup], sep = "_")
+            message("Duplicated labels were made unique.")
         }
         ans
     }
