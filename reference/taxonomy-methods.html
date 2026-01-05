@@ -46,7 +46,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Functions for accessing taxonomic data stored in <code>rowData</code>.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/729/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/729/R/taxonomy.R" class="external-link"><code>R/taxonomy.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/msg/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/msg/R/taxonomy.R" class="external-link"><code>R/taxonomy.R</code></a></small>
     <div class="hidden name"><code>taxonomy-methods.Rd</code></div>
     </div>
 
@@ -283,7 +283,7 @@ be accessed using <code>metadata(df)$confidence</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1413 17803 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">getTaxonomyLabels</span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>,<span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Duplicated taxonomy labels were made unique (19 adjusted).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Duplicated labels were made unique.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "Class:Thermoprotei"               "Class:Thermoprotei_1"            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "Species:Sulfolobusacidocaldarius" "Class:Sd-NA"                     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "Class:Sd-NA_1"                    "Class:Sd-NA_2"                   </span>
@@ -299,7 +299,7 @@ be accessed using <code>metadata(df)$confidence</code>.</p>
 <span class="r-in"><span><span class="co"># tell much. In this case, you might want to get the labels with higher</span></span></span>
 <span class="r-in"><span><span class="co"># taxonomy rank</span></span></span>
 <span class="r-in"><span><span class="fu">getTaxonomyLabels</span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>,<span class="op">]</span>, lowest.rank <span class="op">=</span> <span class="st">"Class"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Duplicated taxonomy labels were made unique (19 adjusted).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Duplicated labels were made unique.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "Thermoprotei"                                                               </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "Thermoprotei_1"                                                             </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "Thermoprotei_Sulfolobales_Sulfolobaceae_Sulfolobus_Sulfolobusacidocaldarius"</span>
