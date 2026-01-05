@@ -101,3 +101,6 @@ loadings_NMF_4 <- getReducedDimAttribute(tse, "NMF_4", "loadings")
 head(loadings_NMF_4)
 
 }
+\references{
+\insertRef{Brunet2004}{Rdpack}
+}

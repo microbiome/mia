@@ -68,6 +68,9 @@
 #' \code{\link[scater:plotReducedDim]{plotReducedDim}}
 #' \code{\link[SingleCellExperiment:reducedDims]{reducedDims}}
 #'
+#' @references
+#' \insertRef{Pavoine2004}{Rdpack}
+#'
 #' @examples
 #' data(esophagus)
 #' dpcoa <- getDPCoA(esophagus)

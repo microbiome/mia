@@ -55,6 +55,9 @@
 #' values contained in k, and the best fit is selected based on
 #' \code{eval.metric} value.
 #'
+#' @references
+#' \insertRef{Brunet2004}{Rdpack}
+#'
 #' @name addNMF
 #'
 #' @examples

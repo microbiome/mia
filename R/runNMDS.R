@@ -62,6 +62,9 @@
 #' \code{\link[scater:plotReducedDim]{plotMDS}}, to quickly visualize the
 #' results.
 #'
+#' @references
+#' \insertRef{Kruskal1964}{Rdpack}
+#'
 #' @examples
 #' # generate some example data
 #' mat <- matrix(1:60, nrow = 6)

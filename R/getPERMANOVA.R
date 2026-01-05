@@ -112,6 +112,9 @@
 #' \code{\link[vegan:permutest]{vegan::permutest}}. See also
 #' \code{\link[=runCCA]{addCCA}} and \code{\link[=runCCA]{addRDA}}
 #'
+#' @references
+#' \insertRef{Anderson2001}{Rdpack}
+#'
 NULL
 
 #' @export

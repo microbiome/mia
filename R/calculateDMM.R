@@ -59,6 +59,9 @@
 #' \code{\link[DirichletMultinomial:cvdmngroup]{cvdmngroup }},
 #' \code{\link[DirichletMultinomial:fitted]{accessors for DMN objects}}
 #'
+#' @references
+#' \insertRef{Holmes2012}{Rdpack}
+#'
 #' @name calculateDMN
 #'
 #' @examples
