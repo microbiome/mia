@@ -15,18 +15,16 @@ test_that("getJointRPCA stores embedding in reducedDim and metadata", {
         name = "JointRPCA_test",
         n.components = 2,
         max.iterations = 2,
-        rclr.transform.tables = FALSE,
+        transform = "none",
         n.test.samples = 3
     )
     
-    #reducedDim populated
     emb <- reducedDim(sce2, "JointRPCA_test")
     expect_true(is.matrix(emb))
     expect_equal(nrow(emb), ncol(X))
     expect_equal(rownames(emb), colnames(X))
     
-    #metadata populated
     jr <- metadata(sce2)$JointRPCA[["JointRPCA_test"]]
     expect_type(jr, "list")
-    expect_true(all(c("ord.res", "dist", "cv.stats", "rclr.tables") %in% names(jr)))
+    expect_true(all(c("ord_res", "dist", "cv_stats", "rclr_tables") %in% names(jr)))
 })

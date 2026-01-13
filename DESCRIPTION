@@ -51,7 +51,6 @@ Description:
 biocViews: Microbiome, Software, DataImport
 License: Artistic-2.0 | file LICENSE
 Encoding: UTF-8
-SystemRequirements: quarto
 LazyData: false
 Depends:
     R (>= 4.0),

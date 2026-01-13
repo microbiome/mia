@@ -5,7 +5,7 @@
 \alias{ibdmdb_2omic_demo}
 \title{IBDMDB 2-omic demo dataset (MGX + MTX)}
 \format{
-A \code{.rda} file containing:
+A \code{MultiAssayExperiment} object containing:
 \describe{
 \item{se_mgx}{A \code{SummarizedExperiment} with MGX abundance data.}
 \item{se_mtx}{A \code{SummarizedExperiment} with MTX abundance data.}

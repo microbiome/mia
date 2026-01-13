@@ -4,7 +4,17 @@
 \alias{getJointRPCA}
 \title{Run Joint-RPCA and store embedding in reducedDim}
 \usage{
-getJointRPCA(x, experiments = NULL, altexp = NULL, name = "JointRPCA", ...)
+getJointRPCA(
+  x,
+  experiments = NULL,
+  altexp = NULL,
+  name = "JointRPCA",
+  transform = c("rclr", "none"),
+  optspace.tol = 1e-05,
+  center = TRUE,
+  scale = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{SummarizedExperiment}, \code{TreeSummarizedExperiment},
@@ -21,9 +31,23 @@ Joint-RPCA is run on \code{altExp(x, altexp)} instead of \code{x}.}
 \item{name}{Character scalar giving the name of the \code{reducedDim} slot
 in which to store the joint sample embedding. Defaults to \code{"JointRPCA"}.}
 
-\item{...}{Additional arguments passed to \code{jointRPCAuniversal()},
-and from there to the internal \code{.joint_rpca()} engine (e.g. \code{n.components},
-\code{min.sample.count}, \code{max.iterations}, etc.).}
+\item{transform}{Character string specifying preprocessing applied to each
+input table before ordination. Use \code{"rclr"} to apply the robust CLR
+transform (via \code{vegan::decostand(method = "rclr")}) or \code{"none"} to
+disable transformation (data are used as-is after masking non-finite values).}
+
+\item{optspace.tol}{Numeric tolerance passed to \code{vegan::optspace()}.}
+
+\item{center}{Logical; whether to center the reconstructed low-rank matrix
+(double-centering) prior to SVD/PCA steps.}
+
+\item{scale}{Logical; whether to scale the reconstructed matrix prior to
+SVD/PCA steps. Defaults to \code{FALSE}.}
+
+\item{...}{Additional arguments passed to \code{jointRPCAuniversal()} and then
+to the internal \code{.joint_rpca()} engine (e.g. \code{n.components},
+\code{min.sample.count}, \code{min.feature.count}, \code{min.feature.frequency},
+\code{max.iterations}, \code{sample.metadata}).}
 }
 \value{
 The input object \code{x} with a new entry in

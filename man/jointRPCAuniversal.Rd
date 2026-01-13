@@ -4,7 +4,15 @@
 \alias{jointRPCAuniversal}
 \title{Universal Joint RPCA Wrapper}
 \usage{
-jointRPCAuniversal(x, experiments = NULL, ...)
+jointRPCAuniversal(
+  x,
+  experiments = NULL,
+  transform = c("rclr", "none"),
+  optspace.tol = 1e-05,
+  center = TRUE,
+  scale = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{Input object: \code{MultiAssayExperiment}, \code{SummarizedExperiment}
@@ -17,10 +25,23 @@ If \code{NULL}, all experiments are used.
 For \code{MultiAssayExperiment} inputs, \strong{one assay per experiment} is
 used: by default the first assay returned by
 \code{SummarizedExperiment::assayNames()} (or index \code{1L} if unnamed).
-The actually used assay names are recorded in \code{$assay.names.used} in
+The actually used assay names are recorded in \code{$assay_names_used} in
 the result. If you need a different assay (e.g. \code{"relab"} instead of
 \code{"counts"}), subset or reorder assays in \code{x} before calling
 \code{jointRPCAuniversal()}.}
+
+\item{transform}{Character string specifying preprocessing applied to each
+input table before ordination. Use \code{"rclr"} to apply the robust CLR
+transform (via \code{vegan::decostand(method = "rclr")}) or \code{"none"} to
+disable transformation (data are used as-is after masking non-finite values).}
+
+\item{optspace.tol}{Numeric tolerance passed to \code{vegan::optspace()}.}
+
+\item{center}{Logical; whether to center the reconstructed low-rank matrix
+(double-centering) prior to SVD/PCA steps.}
+
+\item{scale}{Logical; whether to scale the reconstructed matrix prior to
+SVD/PCA steps. Defaults to \code{FALSE}.}
 
 \item{...}{Additional arguments passed to \code{.joint_rpca()}.}
 }
@@ -28,8 +49,8 @@ the result. If you need a different assay (e.g. \code{"relab"} instead of
 Output from \code{.joint_rpca()} with extra fields when \code{x} is a
 \code{MultiAssayExperiment}:
 \itemize{
-\item \code{$experiment.names}: character vector of experiments used.
-\item \code{$assay.names.used}: named character vector giving, for each
+\item \code{$experiment_names}: character vector of experiments used.
+\item \code{$assay_names_used}: named character vector giving, for each
 experiment, the assay name that was used (typically the first in
 \code{assayNames()}).
 }

@@ -1,6 +1,6 @@
 test_that("single-view .joint_rpca returns the expected structure", {
     set.seed(123)
-    #features x samples
+    # Features x samples
     X <- abs(matrix(rnorm(20 * 12), nrow = 20, ncol = 12))
     rownames(X) <- paste0("f", 1:20)
     colnames(X) <- paste0("s", 1:12)
@@ -9,24 +9,24 @@ test_that("single-view .joint_rpca returns the expected structure", {
         tables = list(assay1 = X),
         n.components = 3,
         max.iterations = 2,
-        rclr.transform.tables = FALSE,  
+        transform = "none",  
         n.test.samples = 4
     )
     
-    #top-level structure
+    # Top-level structure
     expect_type(fit, "list")
-    expect_true(all(c("ord.res", "dist", "cv.stats", "rclr.tables") %in% names(fit)))
+    expect_true(all(c("ord_res", "dist", "cv_stats", "rclr_tables") %in% names(fit)))
     
-    #ordination structure
-    OR <- fit$ord.res
+    # Ordination structure
+    OR <- fit$ord_res
     expect_true(all(c("eigvals", "samples", "features", "proportion.explained") %in% names(OR)))
     
-    #samples: should include both train + projected test = all original samples
+    # Samples: should include both train + projected test = all original samples
     expect_equal(nrow(OR$samples), ncol(X))
     expect_equal(colnames(OR$samples), paste0("PC", 1:3))
     expect_true(all(colnames(OR$samples) %in% names(OR$proportion.explained)))
     
-    #features: now per-view list, even for single-view
+    # Features: now per-view list, even for single-view
     expect_true(is.list(OR$features))
     expect_true("assay1" %in% names(OR$features))
     
@@ -35,9 +35,9 @@ test_that("single-view .joint_rpca returns the expected structure", {
     expect_equal(nrow(F1), nrow(X))
     expect_equal(colnames(F1), paste0("PC", 1:3))
     
-    #cv stats & dist
-    expect_true(is.data.frame(fit$cv.stats))
-    expect_true(all(c("mean_CV", "std_CV", "run", "iteration") %in% names(fit$cv.stats)))
+    # CV stats & dist
+    expect_true(is.data.frame(fit$cv_stats))
+    expect_true(all(c("mean_CV", "std_CV", "run", "iteration") %in% names(fit$cv_stats)))
     
     expect_s3_class(fit$dist, "DistanceMatrix")
     expect_true(is.matrix(fit$dist$data))
@@ -47,7 +47,7 @@ test_that("single-view .joint_rpca returns the expected structure", {
 
 test_that("multi-view .joint_rpca preserves per-view feature loadings", {
     set.seed(42)
-    #two views, same samples
+    # Two views, same samples
     S <- paste0("s", 1:10)
     A <- abs(matrix(rnorm(25 * 10), 25, 10,
                     dimnames = list(paste0("a", 1:25), S)))
@@ -58,15 +58,15 @@ test_that("multi-view .joint_rpca preserves per-view feature loadings", {
         tables = list(MGX = A, MTX = B),
         n.components = 2,
         max.iterations = 2,
-        rclr.transform.tables = FALSE,
+        transform = "none",
         n.test.samples = 3
     )
     
-    OR <- fit$ord.res
+    OR <- fit$ord_res
     expect_true(is.list(OR$features))
     expect_true(all(c("MGX", "MTX") %in% names(OR$features)))
     
-    #check each view's loading matrix dimensions & rownames
+    # Check each view's loading matrix dimensions & rownames
     MGXv <- OR$features$MGX; MTXv <- OR$features$MTX
     if (is.data.frame(MGXv)) MGXv <- as.matrix(MGXv)
     if (is.data.frame(MTXv)) MTXv <- as.matrix(MTXv)
@@ -78,7 +78,7 @@ test_that("multi-view .joint_rpca preserves per-view feature loadings", {
     expect_true(all(rownames(MGXv) %in% rownames(A)))
     expect_true(all(rownames(MTXv) %in% rownames(B)))
     
-    #samples include all training + projected test
+    # Samples include all training + projected test
     expect_equal(nrow(OR$samples), length(S))
     expect_equal(colnames(OR$samples), paste0("PC", 1:2))
 })
@@ -97,14 +97,14 @@ test_that("unshared samples are dropped with a warning and alignment is correct"
             tables = list(MGX = A, MTX = B),
             n.components = 2,
             max.iterations = 2,
-            rclr.transform.tables = FALSE,
+            transform = "none",
             n.test.samples = 2
         ),
         regexp = "Removing.*sample\\(s\\).*overlap",
         all = FALSE
     )
     
-    OR <- fit$ord.res
+    OR <- fit$ord_res
     expect_equal(nrow(OR$samples), 6)
 })
 
@@ -123,21 +123,21 @@ test_that("projection of new samples via .transform appends rows and keeps compo
         tables = list(MGX = A, MTX = B),
         n.components = 3,
         max.iterations = 2,
-        rclr.transform.tables = FALSE,
+        transform = "none",
         n.test.samples = 3
     )
     
-    OR <- fit$ord.res
+    OR <- fit$ord_res
     n_before <- nrow(OR$samples)
     
-    #create new samples (same features, new sample IDs)
+    # Create new samples (same features, new sample IDs)
     S_new <- c("s9", "s10")
     A_new <- abs(matrix(rnorm(length(featsA) * length(S_new)), length(featsA), length(S_new),
                         dimnames = list(featsA, S_new)))
     B_new <- abs(matrix(rnorm(length(featsB) * length(S_new)), length(featsB), length(S_new),
                         dimnames = list(featsB, S_new)))
     
-    #project new samples
+    # Project new samples
     OR2 <- mia:::.transform(
         ordination = OR,
         tables = list(MGX = A_new, MTX = B_new),
@@ -162,7 +162,7 @@ test_that("errors surface for duplicated sample IDs during preprocessing", {
             tables = list(assay1 = X),
             n.components = 2,
             max.iterations = 2,
-            rclr.transform.tables = FALSE,
+            transform = "none",
             n.test.samples = 2
         ),
         regexp = "duplicate sample \\(column\\) IDs",
@@ -173,7 +173,7 @@ test_that("errors surface for duplicated sample IDs during preprocessing", {
 test_that("jointRPCAuniversal works on MultiAssayExperiment", {
     set.seed(2025)
     
-    #two views, same samples
+    # Two views, same samples
     S <- paste0("s", 1:8)
     MGX_mat <- abs(matrix(
         rnorm(15 * length(S)),
@@ -202,20 +202,20 @@ test_that("jointRPCAuniversal works on MultiAssayExperiment", {
         experiments           = c("MGX", "MTX"),
         n.components          = 2,
         max.iterations        = 2,
-        rclr.transform.tables = FALSE,
+        transform = "none",
         n.test.samples        = 3
     )
     
-    #basic structure
+    # Basic structure
     expect_type(fit, "list")
-    expect_true(all(c("ord.res", "dist", "cv.stats", "rclr.tables") %in% names(fit)))
+    expect_true(all(c("ord_res", "dist", "cv_stats", "rclr_tables") %in% names(fit)))
     
-    #rclr.tables should be named by experiment
-    expect_true(is.list(fit$rclr.tables))
-    expect_equal(names(fit$rclr.tables), c("MGX", "MTX"))
+    # rclr_tables should be named by experiment
+    expect_true(is.list(fit$rclr_tables))
+    expect_equal(names(fit$rclr_tables), c("MGX", "MTX"))
     
-    #per-view feature loadings should also carry MGX/MTX names
-    OR <- fit$ord.res
+    # Per-view feature loadings should also carry MGX/MTX names
+    OR <- fit$ord_res
     expect_true(is.list(OR$features))
     expect_true(all(c("MGX", "MTX") %in% names(OR$features)))
     
@@ -259,17 +259,17 @@ test_that("jointRPCAuniversal uses default assays per experiment in a MAE and re
         experiments = c("MGX", "MTX"),
         n.components = 2,
         max.iterations = 2,
-        rclr.transform.tables = FALSE,
+        transform = "none",
         n.test.samples = 2
     )
     
-    #basic structure
+    # Basic structure
     expect_true(is.list(fit))
-    expect_true(all(c("MGX", "MTX") %in% names(fit$rclr.tables)))
+    expect_true(all(c("MGX", "MTX") %in% names(fit$rclr_tables)))
     
-    expect_true(all(c("experiment.names", "assay.names.used") %in% names(fit)))
-    expect_equal(fit$experiment.names, c("MGX", "MTX"))
-    expect_named(fit$assay.names.used, c("MGX", "MTX"))
-    expect_equal(fit$assay.names.used[["MGX"]], "counts")
-    expect_equal(fit$assay.names.used[["MTX"]], "counts")
+    expect_true(all(c("experiment_names", "assay_names_used") %in% names(fit)))
+    expect_equal(fit$experiment_names, c("MGX", "MTX"))
+    expect_named(fit$assay_names_used, c("MGX", "MTX"))
+    expect_equal(fit$assay_names_used[["MGX"]], "counts")
+    expect_equal(fit$assay_names_used[["MTX"]], "counts")
 })

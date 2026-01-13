@@ -1,35 +1,35 @@
-#build compact demo objects (.rda) for IBDMDB examples/vignettes.
+# Build compact demo objects (.rda) for IBDMDB examples/vignettes.
 #
-#produces:
-#  data/ibdmdb_2omic_demo.rda  (se_mgx, se_mtx, mae2)
-#  data/ibdmdb_meta_demo.rda   (ibdmdb_meta_demo: sample-level metadata subset)
+# Produces:
+#   data/ibdmdb_2omic_demo.rda  (se_mgx, se_mtx, mae2)
+#   data/ibdmdb_meta_demo.rda   (ibdmdb_meta_demo: sample-level metadata subset)
 #
-#source raw inputs from inst/extdata and pre-process for speed/size.
+# Source raw inputs from inst/extdata and pre-process for speed/size.
 
 message("== IBDMDB demo data preparation ==")
 
 # ------------------------------------------------------------------------------
-#config
+# Config
 # ------------------------------------------------------------------------------
 
 raw_dir <- file.path("inst", "extdata")
 
-#2-omic (used in ibdmdb_benchmarking.qmd & ibdmdb_2omic_jointrpca.qmd)
+# 2-omic (used in ibdmdb_benchmarking.qmd & ibdmdb_2omic_jointrpca.qmd)
 f_mgx  <- file.path(raw_dir, "taxonomic_profiles_mgx.tsv")
 f_mtx  <- file.path(raw_dir, "ecs_relab.tsv")
 f_meta <- file.path(raw_dir, "hmp2_metadata_2018-08-20.csv")
 
-#prevalence thresholds (fraction of samples)
+# Prevalence thresholds (fraction of samples)
 prev_mgx_frac <- 0.05
 prev_mtx_frac <- 0.02
 
-#cap feature counts for speed/size
+# Cap feature counts for speed/size
 cap_mgx <- 800L
 cap_mtx <- 800L
 max_samples <- 60L
 
 # ------------------------------------------------------------------------------
-#dependencies
+# Dependencies
 # ------------------------------------------------------------------------------
 
 need <- c("data.table", "matrixStats", "SummarizedExperiment", "MultiAssayExperiment")
@@ -48,7 +48,7 @@ library(SummarizedExperiment)
 library(MultiAssayExperiment)
 
 # ------------------------------------------------------------------------------
-#helpers
+# Helpers
 # ------------------------------------------------------------------------------
 
 read_ibdmdb_tsv <- function(path) {
@@ -120,7 +120,7 @@ read_metadata <- function(path) {
     read.csv(path, stringsAsFactors = FALSE, check.names = FALSE)
 }
 
-#attach metadata rows to a SummarizedExperiment, if possible
+# Attach metadata rows to a SummarizedExperiment, if possible
 make_SE <- function(mat, meta_df = NULL, assay_name = "counts") {
     if (is.null(meta_df)) {
         return(SummarizedExperiment::SummarizedExperiment(
@@ -131,7 +131,7 @@ make_SE <- function(mat, meta_df = NULL, assay_name = "counts") {
     
     md <- as.data.frame(meta_df, stringsAsFactors = FALSE, check.names = FALSE)
     
-    #find best matching ID column between metadata and matrix samples
+    # Find best matching ID column between metadata and matrix samples
     overlaps <- vapply(
         md,
         function(col) sum(as.character(col) %in% colnames(mat)),
@@ -164,14 +164,14 @@ make_SE <- function(mat, meta_df = NULL, assay_name = "counts") {
 }
 
 # ------------------------------------------------------------------------------
-#I/O guards
+# I/O guards
 # ------------------------------------------------------------------------------
 
 if (!dir.exists(raw_dir)) stop("Raw input dir not found: ", raw_dir)
 if (!dir.exists("data")) dir.create("data", recursive = TRUE)
 
 # ------------------------------------------------------------------------------
-#metadata (shared with 2-omic demo)
+# Metadata (shared with 2-omic demo)
 # ------------------------------------------------------------------------------
 
 has_meta <- file.exists(f_meta)
@@ -183,7 +183,7 @@ if (has_meta) {
 demo_samples <- character(0)
 
 # ------------------------------------------------------------------------------
-#prepare 2-omic (MGX + MTX)
+# Prepare 2-omic (MGX + MTX)
 # ------------------------------------------------------------------------------
 
 has_mgx <- file.exists(f_mgx)
@@ -206,18 +206,18 @@ if (has_mgx && has_mtx) {
     M_mgx <- M_mgx[, shared, drop = FALSE]
     M_mtx <- M_mtx[, shared, drop = FALSE]
     
-    #per-view prevalence
+    # Per-view prevalence
     n_samp <- ncol(M_mgx)
     keep_mgx <- rowSums(M_mgx > 0) >= ceiling(prev_mgx_frac * n_samp)
     keep_mtx <- rowSums(M_mtx > 0) >= ceiling(prev_mtx_frac * n_samp)
     M_mgx <- M_mgx[keep_mgx, , drop = FALSE]
     M_mtx <- M_mtx[keep_mtx, , drop = FALSE]
     
-    #drop all-zero samples per view
+    # Drop all-zero samples per view
     M_mgx <- M_mgx[, colSums(M_mgx) > 0, drop = FALSE]
     M_mtx <- M_mtx[, colSums(M_mtx) > 0, drop = FALSE]
     
-    #recompute strict shared
+    # Recompute strict shared
     shared2 <- intersect(colnames(M_mgx), colnames(M_mtx))
     shared2 <- sort(unique(shared2))
     set.seed(1)
@@ -227,11 +227,11 @@ if (has_mgx && has_mtx) {
     M_mgx <- M_mgx[, shared2, drop = FALSE]
     M_mtx <- M_mtx[, shared2, drop = FALSE]
     
-    #cap by variance
+    # Cap by variance
     M_mgx <- cap_by_var(M_mgx, cap_mgx)
     M_mtx <- cap_by_var(M_mtx, cap_mtx)
     
-    #attach metadata if available
+    # Attach metadata if available
     meta_df <- if (has_meta) meta_full else NULL
     se_mgx  <- make_SE(M_mgx, meta_df, assay_name = "mgx")
     se_mtx  <- make_SE(M_mtx, meta_df, assay_name = "mtx")
@@ -240,15 +240,15 @@ if (has_mgx && has_mtx) {
         experiments = list(MGX = se_mgx, MTX = se_mtx)
     )
     
-    #attach sample metadata at the MAE level (if consistent across experiments)
+    # Attach sample metadata at the MAE level (if consistent across experiments)
     if (!is.null(colData(se_mgx))) {
         MultiAssayExperiment::colData(mae2) <- colData(se_mgx)
     }
     
-    #track demo sample IDs
+    # Track demo sample IDs
     demo_samples <- union(demo_samples, colnames(M_mgx))
     
-    #save demo objects
+    # Save demo objects
     save(
         se_mgx, se_mtx, mae2,
         file     = file.path("data", "ibdmdb_2omic_demo.rda"),
@@ -265,7 +265,7 @@ if (has_mgx && has_mtx) {
 }
 
 # ------------------------------------------------------------------------------
-# save ibdmdb_meta_demo (metadata subset for demo samples)
+# Save ibdmdb_meta_demo (metadata subset for demo samples)
 # ------------------------------------------------------------------------------
 
 if (has_meta) {

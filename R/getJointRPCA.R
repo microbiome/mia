@@ -16,24 +16,41 @@
 #'   For \code{MultiAssayExperiment} inputs, \strong{one assay per experiment} is
 #'   used: by default the first assay returned by
 #'   \code{SummarizedExperiment::assayNames()} (or index \code{1L} if unnamed).
-#'   The actually used assay names are recorded in \code{$assay.names.used} in
+#'   The actually used assay names are recorded in \code{$assay_names_used} in
 #'   the result. If you need a different assay (e.g. \code{"relab"} instead of
 #'   \code{"counts"}), subset or reorder assays in \code{x} before calling
 #'   \code{jointRPCAuniversal()}.
+#' @param transform Character string specifying preprocessing applied to each
+#'   input table before ordination. Use \code{"rclr"} to apply the robust CLR
+#'   transform (via \code{vegan::decostand(method = "rclr")}) or \code{"none"} to
+#'   disable transformation (data are used as-is after masking non-finite values).
+#' @param optspace.tol Numeric tolerance passed to \code{vegan::optspace()}.
+#' @param center Logical; whether to center the reconstructed low-rank matrix
+#'   (double-centering) prior to SVD/PCA steps.
+#' @param scale Logical; whether to scale the reconstructed matrix prior to
+#'   SVD/PCA steps. Defaults to \code{FALSE}.
 #' @param ... Additional arguments passed to \code{.joint_rpca()}.
 #'
 #' @return Output from \code{.joint_rpca()} with extra fields when \code{x} is a
 #'   \code{MultiAssayExperiment}:
 #'   \itemize{
-#'     \item \code{$experiment.names}: character vector of experiments used.
-#'     \item \code{$assay.names.used}: named character vector giving, for each
+#'     \item \code{$experiment_names}: character vector of experiments used.
+#'     \item \code{$assay_names_used}: named character vector giving, for each
 #'           experiment, the assay name that was used (typically the first in
 #'           \code{assayNames()}).
 #'   }
 #' @export
 
-jointRPCAuniversal <- function(x, experiments = NULL, ...) {
+jointRPCAuniversal <- function(x, experiments = NULL,
+                               transform = c("rclr", "none"),
+                               optspace.tol = 1e-5,
+                               center = TRUE,
+                               scale = FALSE,
+                               ...) {
+    
     assay_names_used <- NULL
+    
+    transform <- match.arg(transform)
     
     if (inherits(x, "MultiAssayExperiment")) {
         
@@ -43,7 +60,7 @@ jointRPCAuniversal <- function(x, experiments = NULL, ...) {
             experiments <- names(exps)
         }
         if (length(experiments) == 0L) {
-            stop("No experiments found in 'x'.")
+            stop("No experiments found in 'x'.", call. = FALSE)
         }
         
         assay_names_used <- setNames(
@@ -58,7 +75,7 @@ jointRPCAuniversal <- function(x, experiments = NULL, ...) {
             e <- experiments[[i]]
             exp_se <- exps[[e]]
             if (is.null(exp_se)) {
-                stop(sprintf("Experiment '%s' not found in 'x'.", e))
+                stop(sprintf("Experiment '%s' not found in 'x'.", e), call. = FALSE)
             }
             
             anm <- SummarizedExperiment::assayNames(exp_se)
@@ -80,10 +97,11 @@ jointRPCAuniversal <- function(x, experiments = NULL, ...) {
         names(tables) <- experiments
         
     } else if (inherits(x, "SummarizedExperiment")) {
-        #covers TreeSummarizedExperiment as it inherits from SE
         tables <- list(SummarizedExperiment::assay(x))
-        nm <- tryCatch(SummarizedExperiment::assayNames(x)[1], error = function(e) NULL)
-        names(tables) <- if (is.null(nm) || is.na(nm)) "assay1" else nm
+        anm <- SummarizedExperiment::assayNames(x)
+        
+        nm <- if (length(anm) && !is.na(anm[1])) anm[1] else "assay1"
+        names(tables) <- nm
         
     } else if (is.list(x) && all(vapply(x, is.matrix, logical(1)))) {
         tables <- x
@@ -98,18 +116,26 @@ jointRPCAuniversal <- function(x, experiments = NULL, ...) {
     } else {
         stop(
             "Unsupported input type for jointRPCAuniversal(): ",
-            paste(class(x), collapse = ", ")
+            paste(class(x), collapse = ", "),
+            call. = FALSE
         )
     }
     
-    res <- .joint_rpca(tables = tables, ...)
+    res <- .joint_rpca(
+        tables = tables,
+        transform = transform,
+        optspace.tol = optspace.tol,
+        center = center,
+        scale = scale,
+        ...
+    )
     
     if (inherits(x, "MultiAssayExperiment")) {
-        res$experiment.names <- experiments
-        res$assay.names.used <- assay_names_used
+        res$experiment_names <- experiments
+        res$assay_names_used <- assay_names_used
     }
     
-    res
+    return(res)
 }
 
 #' Run Joint-RPCA and store embedding in reducedDim
@@ -128,9 +154,19 @@ jointRPCAuniversal <- function(x, experiments = NULL, ...) {
 #'   Joint-RPCA is run on \code{altExp(x, altexp)} instead of \code{x}.
 #' @param name Character scalar giving the name of the \code{reducedDim} slot
 #'   in which to store the joint sample embedding. Defaults to \code{"JointRPCA"}.
-#' @param ... Additional arguments passed to \code{jointRPCAuniversal()},
-#'   and from there to the internal \code{.joint_rpca()} engine (e.g. \code{n.components},
-#'   \code{min.sample.count}, \code{max.iterations}, etc.).
+#' @param transform Character string specifying preprocessing applied to each
+#'   input table before ordination. Use \code{"rclr"} to apply the robust CLR
+#'   transform (via \code{vegan::decostand(method = "rclr")}) or \code{"none"} to
+#'   disable transformation (data are used as-is after masking non-finite values).
+#' @param optspace.tol Numeric tolerance passed to \code{vegan::optspace()}.
+#' @param center Logical; whether to center the reconstructed low-rank matrix
+#'   (double-centering) prior to SVD/PCA steps.
+#' @param scale Logical; whether to scale the reconstructed matrix prior to
+#'   SVD/PCA steps. Defaults to \code{FALSE}.
+#' @param ... Additional arguments passed to \code{jointRPCAuniversal()} and then
+#'   to the internal \code{.joint_rpca()} engine (e.g. \code{n.components},
+#'   \code{min.sample.count}, \code{min.feature.count}, \code{min.feature.frequency},
+#'   \code{max.iterations}, \code{sample.metadata}).
 #'
 #' @return The input object \code{x} with a new entry in
 #'   \code{reducedDim(x, name)} containing the Joint-RPCA sample embedding.
@@ -144,33 +180,93 @@ getJointRPCA <- function(x,
                          experiments = NULL,
                          altexp = NULL,
                          name   = "JointRPCA",
+                         transform = c("rclr", "none"),
+                         optspace.tol = 1e-5,
+                         center = TRUE,
+                         scale = FALSE,
                          ...) {
-    #select the object to operate on
+    
+    transform <- match.arg(transform)
+    
+    # Select the object to operate on
     y <- x
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
     }
     
-    #use universal front-end to build tables + run .joint_rpca()
-    res <- jointRPCAuniversal(y, experiments = experiments, ...)
+    # Use universal front-end to build tables + run .joint_rpca()
+    res <- jointRPCAuniversal(
+        y,
+        experiments = experiments,
+        transform   = transform,
+        optspace.tol = optspace.tol,
+        center      = center,
+        scale       = scale,
+        ...
+    )
     
-    #extract sample embedding
-    emb <- res$ord.res$samples
-    if (is.null(emb) || !is.matrix(emb)) {
-        stop("Joint-RPCA did not return a valid sample embedding in ord.res$samples.")
+    # Extract sample embedding
+    emb <- res[["ord_res"]][["samples"]]
+    
+    if (is.null(emb)) {
+        stop(
+            "Internal error: JointRPCA did not return a sample embedding. ",
+            "Please report this and include sessionInfo().",
+            call. = FALSE
+        )
     }
     
-    #store embedding in reducedDim only if supported (SCE / TreeSE / mia-specific)
+    emb <- as.matrix(emb)
+    
+    # Ensure embedding rownames match colnames of the target object (Bioconductor requirement)
+    target_cols <- colnames(x)
+    if (!is.null(altexp)) {
+        target_cols <- colnames(x)
+    }
+    
+    if (is.null(target_cols)) {
+        stop("Cannot store reducedDim: 'x' has no colnames().", call. = FALSE)
+    }
+    
+    if (is.null(rownames(emb))) {
+        stop("Cannot store reducedDim: embedding has no rownames().", call. = FALSE)
+    }
+    
+    # Require the same set of samples/cells
+    if (!setequal(rownames(emb), target_cols)) {
+        missing_in_emb <- setdiff(target_cols, rownames(emb))
+        extra_in_emb   <- setdiff(rownames(emb), target_cols)
+        stop(
+            "Cannot store reducedDim: embedding rownames do not match colnames(x).\n",
+            "Missing in embedding: ", paste(missing_in_emb, collapse = ", "), "\n",
+            "Extra in embedding: ", paste(extra_in_emb, collapse = ", "),
+            call. = FALSE
+        )
+    }
+    
+    # Reorder embedding to exactly match colnames(x)
+    emb <- emb[target_cols, , drop = FALSE]
+    rownames(emb) <- target_cols
+    
+    if (nrow(emb) == 0L || ncol(emb) == 0L || is.null(rownames(emb))) {
+        stop(
+            "Internal error: JointRPCA returned an invalid sample embedding. ",
+            "Please report this and include sessionInfo().",
+            call. = FALSE
+        )
+    }
+    
+    # Store embedding in reducedDim only if supported (SCE / TreeSE / mia-specific)
     cls <- class(x)
     if (any(cls %in% c("SingleCellExperiment", "TreeSummarizedExperiment"))) {
         reducedDim(x, name) <- emb
     }
     
-    #store full result in metadata
+    # Store full result in metadata
     if (is.null(metadata(x)$JointRPCA)) {
         metadata(x)$JointRPCA <- list()
     }
     metadata(x)$JointRPCA[[name]] <- res
     
-    x
+    return(x)
 }

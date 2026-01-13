@@ -21,15 +21,15 @@ NULL
 #'
 #' @param rclr.table A numeric matrix representing rCLR-transformed compositional data.
 #' @param feature.ids Character vector of feature names (used for row labeling of loadings).
-#' @param subject.ids Character vector of sample names (used for row labeling of embeddings).
+#' @param sample.ids Character vector of sample names (used for row labeling of embeddings).
 #' @param n.components Integer specifying number of principal components to retain. Default is 3.
 #' @param max.iterations Maximum number of iterations to run OptSpace optimization. Default is 5.
 #'
 #' @return A list with:
 #' \describe{
-#'   \item{ord.res}{An \code{OrdinationResults} object containing PCA scores, loadings, and metadata.}
+#'   \item{ord_res}{An \code{OrdinationResults} object containing PCA scores, loadings, and metadata.}
 #'   \item{dist}{A sample-by-sample \code{DistanceMatrix} object using Aitchison geometry.}
-#'   \item{opt.fit}{The raw OptSpace fit result containing matrices \code{X}, \code{Y}, and \code{S}.}
+#'   \item{opt_fit}{The raw OptSpace fit result containing matrices \code{X}, \code{Y}, and \code{S}.}
 #' }
 #'
 #' @keywords internal
@@ -37,15 +37,18 @@ NULL
 
 .optspace_helper <- function(rclr.table,
                              feature.ids,
-                             subject.ids,
+                             sample.ids,
                              n.components = 3,
-                             max.iterations = 5) {
+                             max.iterations = 5,
+                             tol = 1e-5,
+                             center = TRUE,
+                             scale = FALSE) {
     
     opt.result <- vegan::optspace(
-        x      = rclr.table,
-        ropt   = n.components,   
-        niter  = max.iterations,
-        tol    = 1e-5,
+        x       = rclr.table,
+        ropt    = n.components,
+        niter   = max.iterations,
+        tol     = tol,
         verbose = FALSE
     )
     
@@ -53,8 +56,8 @@ NULL
     
     # Reconstruct and re-center matrix
     X.hat <- opt.result$X %*% opt.result$S %*% t(opt.result$Y)
-    X.hat <- scale(X.hat, center = TRUE, scale = FALSE)
-    X.hat <- t(scale(t(X.hat), center = TRUE, scale = FALSE))
+    X.hat <- scale(X.hat, center = center, scale = scale)
+    X.hat <- t(scale(t(X.hat), center = center, scale = scale))
     
     # PCA
     svd.out <- svd(X.hat)
@@ -64,10 +67,11 @@ NULL
     
     # Label loadings
     rename.cols <- paste0("PC", seq_len(n.components))
-    sample.scores  <- data.frame(u, row.names = subject.ids)
+    sample.scores <- u
     feature.scores <- data.frame(v, row.names = feature.ids)
     feature.scores <- as.matrix(feature.scores)
-    colnames(sample.scores)  <- rename.cols
+    rownames(sample.scores) <- sample.ids
+    colnames(sample.scores) <- rename.cols
     colnames(feature.scores) <- rename.cols
     
     # Proportion explained
@@ -77,8 +81,11 @@ NULL
     
     # Add PC3 for 2D case
     if (n.components == 2) {
-        sample.scores$PC3  <- 0
-        feature.scores$PC3 <- 0
+        sample.scores  <- cbind(sample.scores,  PC3 = 0)
+        feature.scores <- cbind(feature.scores, PC3 = 0)
+        sample.scores  <- as.matrix(sample.scores)
+        feature.scores <- as.matrix(feature.scores)
+        
         s        <- c(s,        PC3 = 0)
         prop.var <- c(prop.var, PC3 = 0)
         rename.cols <- c(rename.cols, "PC3")
@@ -86,13 +93,13 @@ NULL
     
     # Compute distance in sample PC-space
     dist.matrix.raw <- as.matrix(dist(u))
-    rownames(dist.matrix.raw) <- subject.ids
-    colnames(dist.matrix.raw) <- subject.ids
+    rownames(dist.matrix.raw) <- sample.ids
+    colnames(dist.matrix.raw) <- sample.ids
     
-    dist.res <- .distance_matrix(dist.matrix.raw, ids = subject.ids,
+    dist.res <- .distance_matrix(dist.matrix.raw, ids = sample.ids,
                                 method = "aitchison")
     
-    ord.res <- .ordination_results(
+    ord_res <- .ordination_results(
         method = "rpca_biplot",
         eigvals = s,
         samples = sample.scores,
@@ -108,11 +115,11 @@ NULL
         )
     )
     
-    list(
-        ord.res = ord.res,
+    return(list(
+        ord_res = ord_res,
         dist    = dist.res,
-        opt.fit = opt.result
-    )
+        opt_fit = opt.result
+    ))
 }
 
 #' Joint OptSpace Optimization Across Multiple Train/Test Splits
@@ -130,7 +137,7 @@ NULL
 #' \describe{
 #'   \item{U}{Shared sample embedding matrix across all input tables.}
 #'   \item{S}{Singular values matrix from OptSpace decomposition.}
-#'   \item{V.list}{List of per-table feature loading matrices.}
+#'   \item{V_list}{List of per-table feature loading matrices.}
 #'   \item{dists}{Matrix of reconstruction errors (rows: error type, columns: tables).}
 #' }
 #'
@@ -138,8 +145,9 @@ NULL
 #' @noRd
 
 .joint_optspace_solve <- function(train.test.pairs, n.components,
-                                  max.iter = 50, verbose = TRUE) {
-    #prepare lists to hold training matrices and dimensions
+                                  max.iter = 50, verbose = TRUE,
+                                  tol = 1e-5) {
+    # Prepare lists to hold training matrices and dimensions
     train.matrices <- list()
     test.matrices  <- list()
     dims           <- list()
@@ -152,7 +160,7 @@ NULL
         dims           <- append(dims, list(dim(train.mat)))
     }
     
-    #stack training matrices horizontally 
+    # Stack training matrices horizontally 
     train.stacked <- do.call(cbind, train.matrices)
     
     # Apply OptSpace to stacked matrix via vegan
@@ -160,37 +168,37 @@ NULL
         message("Running vegan::optspace() on stacked training data...")
     
     fit <- vegan::optspace(
-        x      = train.stacked,
-        ropt   = n.components,
-        niter  = max.iter,
-        tol    = 1e-5,
+        x       = train.stacked,
+        ropt    = n.components,
+        niter   = max.iter,
+        tol     = tol,
         verbose = verbose
     )
     
-    #extract sample loadings
+    # Extract sample loadings
     U.shared <- fit$X
     S.shared <- fit$S
     
-    #split V back into per-table pieces
+    # Split V back into per-table pieces
     feat.indices <- cumsum(vapply(dims, function(d) d[2], numeric(1)))
     feat.starts  <- c(1, head(feat.indices, -1) + 1)
-    V.list <- Map(function(start, end) fit$Y[start:end, , drop = FALSE],
+    V_list <- Map(function(start, end) fit$Y[start:end, , drop = FALSE],
                   feat.starts, feat.indices)
     
-    #reconstruction error per view (mean_CV / std_CV placeholder)
+    # Reconstruction error per view (mean_CV / std_CV placeholder)
     n_views <- length(test.matrices)
     dists   <- matrix(0, nrow = 2, ncol = n_views)
     
     for (i in seq_along(test.matrices)) {
-        V.k     <- V.list[[i]]
+        V.k     <- V_list[[i]]
         test.mat <- test.matrices[[i]]
         
-        #project test samples: U.test = test × V
+        # Project test samples: U.test = test × V
         U.test <- as.matrix(test.mat) %*% V.k
         U.test <- sweep(U.test, 2, diag(S.shared), "/")
         recon.test <- U.test %*% S.shared %*% t(V.k)
         
-        #center for consistency
+        # Center for consistency
         recon.test <- scale(recon.test, center = TRUE, scale = FALSE)
         recon.test <- t(scale(t(recon.test), center = TRUE, scale = FALSE))
         
@@ -202,5 +210,5 @@ NULL
         dists[2, i] <- 0          
     }
     
-    list(U = U.shared, S = S.shared, V.list = V.list, dists = dists)
+    return(list(U = U.shared, S = S.shared, V_list = V_list, dists = dists))
 }

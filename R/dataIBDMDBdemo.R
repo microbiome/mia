@@ -21,7 +21,7 @@
 #' @usage data(ibdmdb_2omic_demo)
 #' @keywords datasets
 #'
-#' @format A `.rda` file containing:
+#' @format A \code{MultiAssayExperiment} object containing:
 #' \describe{
 #'   \item{se_mgx}{A \code{SummarizedExperiment} with MGX abundance data.}
 #'   \item{se_mtx}{A \code{SummarizedExperiment} with MTX abundance data.}
