@@ -1,5 +1,6 @@
 context("mergeSEs")
 test_that("mergeSEs", {
+    testthat::skip_if_not_installed("miaTime")
     # Load data
     data(GlobalPatterns, package="mia")
     data(esophagus, package="mia")

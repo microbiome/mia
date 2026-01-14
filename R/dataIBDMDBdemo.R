@@ -37,30 +37,3 @@
 #' Nature 569, 655–662 (2019).  
 #' \doi{10.1038/s41586-019-1237-9}
 NULL
-
-#' IBDMDB demo metadata subset
-#'
-#' Sample-level metadata corresponding to the compact IBDMDB 2-omic demo
-#' (\code{ibdmdb_2omic_demo}). This is essentially
-#' \code{as.data.frame(colData(mae2))} and is provided as a convenience
-#' for examples and vignettes.
-#'
-#' Loaded with:
-#' \code{data(ibdmdb_meta_demo)}.
-#'
-#' @name ibdmdb_meta_demo
-#' @docType data
-#' @usage data(ibdmdb_meta_demo)
-#' @keywords datasets
-#'
-#' @format A \code{data.frame} with selected sample metadata fields.
-#'
-#' @source Prepared by \code{inst/scripts/prepare_ibdmdb_demo.R} from
-#'   publicly available iHMP/IBDMDB metadata.
-#'
-#' @references
-#' Lloyd-Price J, Arze C, Ananthakrishnan AN, et al.  
-#' \emph{Multi-omics of the gut microbial ecosystem in inflammatory bowel diseases.}  
-#' Nature 569, 655–662 (2019).  
-#' \doi{10.1038/s41586-019-1237-9}
-NULL

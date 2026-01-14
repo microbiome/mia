@@ -15,16 +15,16 @@
 #'
 #'   For \code{MultiAssayExperiment} inputs, \strong{one assay per experiment} is
 #'   used: by default the first assay returned by
-#'   \code{SummarizedExperiment::assayNames()} (or index \code{1L} if unnamed).
+#'   \code{assayNames()} (or index \code{1L} if unnamed).
 #'   The actually used assay names are recorded in \code{$assay_names_used} in
 #'   the result. If you need a different assay (e.g. \code{"relab"} instead of
 #'   \code{"counts"}), subset or reorder assays in \code{x} before calling
 #'   \code{jointRPCAuniversal()}.
 #' @param transform Character string specifying preprocessing applied to each
 #'   input table before ordination. Use \code{"rclr"} to apply the robust CLR
-#'   transform (via \code{vegan::decostand(method = "rclr")}) or \code{"none"} to
+#'   transform (via \code{decostand(method = "rclr")}) or \code{"none"} to
 #'   disable transformation (data are used as-is after masking non-finite values).
-#' @param optspace.tol Numeric tolerance passed to \code{vegan::optspace()}.
+#' @param optspace.tol Numeric tolerance passed to \code{optspace()}.
 #' @param center Logical; whether to center the reconstructed low-rank matrix
 #'   (double-centering) prior to SVD/PCA steps.
 #' @param scale Logical; whether to scale the reconstructed matrix prior to
@@ -39,6 +39,11 @@
 #'           experiment, the assay name that was used (typically the first in
 #'           \code{assayNames()}).
 #'   }
+#' @importFrom SummarizedExperiment assayNames
+#' @importFrom SummarizedExperiment assay
+#' @importFrom MultiAssayExperiment experiments
+#' @importFrom vegan decostand
+#' @importFrom vegan optspace
 #' @export
 
 jointRPCAuniversal <- function(x, experiments = NULL,
@@ -48,58 +53,19 @@ jointRPCAuniversal <- function(x, experiments = NULL,
                                scale = FALSE,
                                ...) {
     
-    assay_names_used <- NULL
-    
     transform <- match.arg(transform)
     
+    assay_names_used <- NULL
+    
     if (inherits(x, "MultiAssayExperiment")) {
-        
-        exps <- MultiAssayExperiment::experiments(x)
-        
-        if (is.null(experiments)) {
-            experiments <- names(exps)
-        }
-        if (length(experiments) == 0L) {
-            stop("No experiments found in 'x'.", call. = FALSE)
-        }
-        
-        assay_names_used <- setNames(
-            character(length(experiments)),
-            experiments
-        )
-        
-        tables <- vector("list", length(experiments))
-        names(tables) <- experiments
-        
-        for (i in seq_along(experiments)) {
-            e <- experiments[[i]]
-            exp_se <- exps[[e]]
-            if (is.null(exp_se)) {
-                stop(sprintf("Experiment '%s' not found in 'x'.", e), call. = FALSE)
-            }
-            
-            anm <- SummarizedExperiment::assayNames(exp_se)
-            if (length(anm)) {
-                default_assay <- anm[1]
-            } else {
-                default_assay <- 1L
-            }
-            
-            assay_names_used[[e]] <- if (is.character(default_assay)) {
-                default_assay
-            } else {
-                as.character(default_assay)
-            }
-            
-            tables[[e]] <- SummarizedExperiment::assay(exp_se, default_assay)
-        }
-        
-        names(tables) <- experiments
+        mae <- .extract_mae_tables(x, experiments)
+        tables <- mae$tables
+        experiments <- mae$experiments
+        assay_names_used <- mae$assay_names_used
         
     } else if (inherits(x, "SummarizedExperiment")) {
-        tables <- list(SummarizedExperiment::assay(x))
-        anm <- SummarizedExperiment::assayNames(x)
-        
+        tables <- list(assay(x))
+        anm <- assayNames(x)
         nm <- if (length(anm) && !is.na(anm[1])) anm[1] else "assay1"
         names(tables) <- nm
         
@@ -156,9 +122,9 @@ jointRPCAuniversal <- function(x, experiments = NULL,
 #'   in which to store the joint sample embedding. Defaults to \code{"JointRPCA"}.
 #' @param transform Character string specifying preprocessing applied to each
 #'   input table before ordination. Use \code{"rclr"} to apply the robust CLR
-#'   transform (via \code{vegan::decostand(method = "rclr")}) or \code{"none"} to
+#'   transform (via \code{decostand(method = "rclr")}) or \code{"none"} to
 #'   disable transformation (data are used as-is after masking non-finite values).
-#' @param optspace.tol Numeric tolerance passed to \code{vegan::optspace()}.
+#' @param optspace.tol Numeric tolerance passed to \code{optspace()}.
 #' @param center Logical; whether to center the reconstructed low-rank matrix
 #'   (double-centering) prior to SVD/PCA steps.
 #' @param scale Logical; whether to scale the reconstructed matrix prior to

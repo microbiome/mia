@@ -24,7 +24,7 @@ If \code{NULL}, all experiments are used.
 
 For \code{MultiAssayExperiment} inputs, \strong{one assay per experiment} is
 used: by default the first assay returned by
-\code{SummarizedExperiment::assayNames()} (or index \code{1L} if unnamed).
+\code{assayNames()} (or index \code{1L} if unnamed).
 The actually used assay names are recorded in \code{$assay_names_used} in
 the result. If you need a different assay (e.g. \code{"relab"} instead of
 \code{"counts"}), subset or reorder assays in \code{x} before calling
@@ -32,10 +32,10 @@ the result. If you need a different assay (e.g. \code{"relab"} instead of
 
 \item{transform}{Character string specifying preprocessing applied to each
 input table before ordination. Use \code{"rclr"} to apply the robust CLR
-transform (via \code{vegan::decostand(method = "rclr")}) or \code{"none"} to
+transform (via \code{decostand(method = "rclr")}) or \code{"none"} to
 disable transformation (data are used as-is after masking non-finite values).}
 
-\item{optspace.tol}{Numeric tolerance passed to \code{vegan::optspace()}.}
+\item{optspace.tol}{Numeric tolerance passed to \code{optspace()}.}
 
 \item{center}{Logical; whether to center the reconstructed low-rank matrix
 (double-centering) prior to SVD/PCA steps.}

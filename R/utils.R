@@ -1399,3 +1399,47 @@
         method = method
     ), class = "DistanceMatrix"))
 }
+
+#' Extract per-experiment assay tables from a MultiAssayExperiment
+#'
+#' @param x A MultiAssayExperiment.
+#' @param experiments Character vector of experiment names (or NULL for all).
+#'
+#' @return A list with `tables`, `experiments`, and `assay_names_used`.
+#'
+#' @keywords internal
+#' @noRd
+.extract_mae_tables <- function(x, experiments = NULL) {
+    exps <- experiments(x)
+    
+    if (is.null(experiments)) {
+        experiments <- names(exps)
+    }
+    if (length(experiments) == 0L) {
+        stop("No experiments found in 'x'.", call. = FALSE)
+    }
+    
+    assay_names_used <- setNames(character(length(experiments)), experiments)
+    tables <- vector("list", length(experiments))
+    names(tables) <- experiments
+    
+    for (i in seq_along(experiments)) {
+        e <- experiments[[i]]
+        exp_se <- exps[[e]]
+        if (is.null(exp_se)) {
+            stop(sprintf("Experiment '%s' not found in 'x'.", e), call. = FALSE)
+        }
+        
+        anm <- assayNames(exp_se)
+        default_assay <- if (length(anm)) anm[[1]] else 1L
+        
+        assay_names_used[[e]] <- if (is.character(default_assay)) default_assay else as.character(default_assay)
+        tables[[e]] <- assay(exp_se, default_assay)
+    }
+    
+    list(
+        tables = tables,
+        experiments = experiments,
+        assay_names_used = assay_names_used
+    )
+}

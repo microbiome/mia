@@ -464,6 +464,7 @@ test_that("agglomerateByPrevalence", {
                                       update.tree = TRUE)
     expect_equal(length(rowTree(actual)$tip.label), length(rownames(actual)))
 
+    testthat::skip_if_not_installed("miaTime")
     # Load data from miaTime package
     data("SilvermanAGutData", package = "miaTime")
     se <- SilvermanAGutData

@@ -110,7 +110,6 @@ Suggests:
     rhdf5,
     rmarkdown,
     testthat,
-    tibble,
     topicdoc,
     topicmodels,
     yaml

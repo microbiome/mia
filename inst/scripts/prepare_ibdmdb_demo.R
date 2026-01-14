@@ -2,7 +2,6 @@
 #
 # Produces:
 #   data/ibdmdb_2omic_demo.rda  (se_mgx, se_mtx, mae2)
-#   data/ibdmdb_meta_demo.rda   (ibdmdb_meta_demo: sample-level metadata subset)
 #
 # Source raw inputs from inst/extdata and pre-process for speed/size.
 
@@ -262,27 +261,6 @@ if (has_mgx && has_mtx) {
         "\n  MGX: ", f_mgx, " (", has_mgx, ")",
         "\n  MTX: ", f_mtx, " (", has_mtx, ")"
     )
-}
-
-# ------------------------------------------------------------------------------
-# Save ibdmdb_meta_demo (metadata subset for demo samples)
-# ------------------------------------------------------------------------------
-
-if (has_meta) {
-    if (exists("mae2")) {
-        ibdmdb_meta_demo <- as.data.frame(MultiAssayExperiment::colData(mae2))
-        message("Saving ibdmdb_meta_demo derived from colData(mae2).")
-    } else {
-        ibdmdb_meta_demo <- meta_full
-        message("mae2 not available; saving full metadata as ibdmdb_meta_demo.")
-    }
-    
-    save(
-        ibdmdb_meta_demo,
-        file     = file.path("data", "ibdmdb_meta_demo.rda"),
-        compress = "xz"
-    )
-    message("Saved: data/ibdmdb_meta_demo.rda")
 }
 
 message("== Done. Re-run devtools::document(); devtools::check(); BiocCheck::BiocCheck(). ==")

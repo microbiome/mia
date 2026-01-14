@@ -1,5 +1,6 @@
 context("agglomerate")
 test_that("agglomerate", {
+    testthat::skip_if_not_installed("miaTime")
     gr <- GRanges("chr1",rep("1-6",11))
     df <- DataFrame(n = c(1:11))
     mcols(gr) <- df
