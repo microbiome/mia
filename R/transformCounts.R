@@ -36,6 +36,8 @@
 #'   to fill reference sample's column in returned assay when calculating alr.
 #'   (Default: \code{NA})
 #'   \item \code{ref_vals} Deprecated. Use \code{reference} instead.
+#'   \item \code{bins}: \code{Numeric scalar}. For \code{"binning"}, specifies
+#'   the number of bins to use. (Default: \code{4})
 #'   \item \code{percentile}: \code{Numeric scalar} or \code{NULL} (css). Used
 #'   to set the  percentile value that calculates the scaling factors in the css
 #'   normalization. If \code{NULL}, percentile is estimated from the data by
@@ -269,7 +271,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 .transform_assay <- function(
         x, assay.type = "counts", assay_name = NULL,
         method = c(
-            "alr", "chi.square", "clr", "css", "cutoff", "difference", "-",
+            "alr", "binning", "chi.square", "clr", "css", "cutoff", "difference", "-",
             "division", "/", "frequency", "hellinger", "invnorm", "log",
             "log10", "log2", "max", "normalize", "pa", "philr", "pseudocount",
             "range", "rank", "rclr", "relabundance", "rrank", "standardize",
@@ -325,8 +327,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     attr(assay, "pseudocount") <- NULL
     # Calls help function that does the transformation
     # Help function is different for mia and vegan transformations
-    if( method %in% c(
-            "log10", "log2", "css", "difference", "division", "invnorm") ){
+    if( method %in% c("binning", "log10", "log2", "css", "difference",
+            "division", "invnorm") ){
         transformed_table <- .apply_transformation(
             assay, method, MARGIN, ...)
     } else if( method %in% c("philr") ){
@@ -360,6 +362,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     # Function is selected based on the "method" variable
     FUN <- switch(
         method,
+        binning = .apply_binning,
         log10 = .calc_log,
         log2 = .calc_log,
         css = .calc_css,
@@ -903,6 +906,59 @@ NULL
         attr(res, "parameters"),
         list(ties.method = ties.method, offset = offset)
     )
+
+    return(res)
+}
+
+################################ .apply_binning ################################
+# This function divides the data into a specified number of bins.
+.apply_binning <- function(mat, bins = 4, ...){
+    # Check that bins is a single positive numeric value
+    if( !.is_a_numeric(bins) || bins <= 0 ){
+        stop("'bins' must be a single positive numeric value.", call. = FALSE)
+    }
+    bins <- as.integer(bins)
+
+    # Apply binning
+    res <- apply(mat, MARGIN = 2, function(x) {
+        # Initialize result with 0 (for zero values)
+        res <- rep(0, length(x))
+
+        # Identify non-zero values
+        is_nonzero <- x != 0
+        n_nonzero <- sum(is_nonzero)
+
+        if (n_nonzero > 0) {
+            # Get indices of non-zero values
+            nonzero_indices <- which(is_nonzero)
+            nonzero_values <- x[nonzero_indices]
+
+            # Sort indices based on values (descending)
+            ord <- order(nonzero_values, decreasing = TRUE)
+
+            # Calculate bin assignments
+            if( n_nonzero < bins ){
+                # For samples with fewer than B non-zero abundance species,
+                # species are distributed proportionally across bins 1 through B
+                bin_values <- round(seq(from = bins, to = 1, length.out = n_nonzero))
+            } else {
+                # Ranks 1 to n_nonzero
+                # Formula: bin = B - ceiling(rank * B / N) + 1
+                ranks <- seq_len(n_nonzero)
+                bin_values <- bins - ceiling(ranks * bins / n_nonzero) + 1
+            }
+
+            # Assign back
+            res[nonzero_indices[ord]] <- bin_values
+        }
+        return(res)
+    })
+
+    # Ensure dimensions are preserved (apply simplifies to vector if dim is 1)
+    if( is.null(dim(res)) && !is.null(dim(mat)) ){
+        dim(res) <- dim(mat)
+    }
+    dimnames(res) <- dimnames(mat)
 
     return(res)
 }
