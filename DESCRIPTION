@@ -40,7 +40,8 @@ Authors@R:
       person(given = "Danielle", family = "Callan", role=c("ctb")),
       person(given = "Sam", family = "Hillman", role=c("ctb")),
       person(given = "Jesse", family = "Pasanen", role=c("ctb")),
-      person(given = "Eetu", family = "Tammi", role=c("ctb")))
+      person(given = "Eetu", family = "Tammi", role=c("ctb"))),
+      person(given = "Aituar", family = "Bektanov", role=c("ctb")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the
@@ -72,7 +73,6 @@ Imports:
     dplyr,
     IRanges,
     MASS,
-    Matrix,
     MatrixGenerics,
     methods,
     ecodive,
@@ -91,9 +91,7 @@ Suggests:
     ade4,
     BiocStyle,
     biomformat,
-    caret,
     dada2,
-    ggplot2,
     knitr,
     mediation,
     miaTime,
@@ -103,9 +101,6 @@ Suggests:
     patchwork,
     philr,
     phyloseq,
-    pROC,
-    quarto,
-    randomForest,
     reldist,
     rhdf5,
     rmarkdown,
