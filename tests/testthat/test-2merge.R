@@ -31,20 +31,20 @@ test_that("merge", {
     expect_equal(actual, c(1,2))
     actual <- mia:::.norm_archetype(f, c(1))
     expect_equal(actual, c(1,1))
-    
+
     # .get_element_pos
     expect_error(mia:::.get_element_pos(),
                  'argument "archetype" is missing')
     expect_error(mia:::.get_element_pos(f),
                  'argument "archetype" is missing')
-    
+
     actual <- mia:::.get_element_pos(f, archetype = mia:::.norm_archetype(f, 1))
     expect_equal(actual,c(a = 1, b = 4))
     actual <- mia:::.get_element_pos(f, archetype = mia:::.norm_archetype(f, 2))
     expect_equal(actual,c(a = 2, b = 5))
     actual <- mia:::.get_element_pos(f, archetype = c(2,1))
     expect_equal(actual,c(a = 2, b = 4))
-    
+
     # .merge_rows_or_cols
     mat <- matrix(1:60, nrow = 6)
     gr <- GRanges("chr1",rep("1-6",6))
@@ -78,7 +78,7 @@ test_that("merge", {
                                      rowRanges = unname(grl))
     FUN_check_x <- function(x,archetype=1){
         actual <- agglomerateByVariable(x, by = "rows", f, archetype, 
-                                        update.tree = FALSE)
+            update.tree = FALSE)
         expect_s4_class(actual,class(x))
         expect_equal(dim(actual),c(2,10))
     }
@@ -232,7 +232,7 @@ test_that("merge", {
     expect_equal(
         agglomerateByVariable(tse, by = "rows", group = rowData(tse)$group2),
         agglomerateByVariable(tse, by = "rows", group = rowData(tse)$group2))
-    
+
     # Both datasets have group variable
     merged <- agglomerateByVariable(
         tse, by = "rows", group = rowData(tse)$group, update.tree = TRUE)

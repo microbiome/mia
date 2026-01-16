@@ -51,8 +51,8 @@ test_that("mergeSEs", {
     
     # Expect that rowTree is preserved if rownames match
     tse <- mergeSEs(list(tse1, GlobalPatterns), 
-                    assay.type = "counts",
-                    missing.values = NA)
+                                         assay.type = "counts",
+                                         missing.values = NA)
     expect_equal(rowTree(GlobalPatterns), rowTree(tse))
     # Expect some NAs
     tse <- mergeSEs(list(tse1, tse2), assay.type = "counts")
@@ -90,7 +90,7 @@ test_that("mergeSEs", {
     # CHECK FULL JOIN ###################################################
     tse <- suppressWarnings( 
         mergeSEs(list(tse2, tse3, tse1, tse1[1:2, ], tse1[1, ]), 
-                 missing.values = NA)
+                    missing.values = NA)
     )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
@@ -146,12 +146,12 @@ test_that("mergeSEs", {
     # CHECK INNER JOIN ##############################################
     tse <- suppressWarnings( 
         mergeSEs(list(tse1[, 1:5], tse1[, 5:10], tse3[1:20, 6:10]), 
-                 join = "inner")
+                       join = "inner")
     )
     expect_true( nrow(tse) == 0 )
     expect_equal( rowTree(tse), NULL )
     tse <- mergeSEs(list(tse1[, 1:5], tse1[, 5:10], tse1[1:20, 6:10]), 
-                    join = "inner", collapse.cols = TRUE)
+                       join = "inner", collapse.cols = TRUE)
     expect_true( all(dim(tse) == c(20, 10)) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
@@ -182,7 +182,7 @@ test_that("mergeSEs", {
     
     # CHECK LEFT JOIN ##############################################
     tse <- mergeSEs(list(tse1[11:20, 1:13], tse1[10:50, 7:20]), 
-                    join = "left", collapse.cols = TRUE)
+                       join = "left", collapse.cols = TRUE)
     expect_true( all(dim(tse) == c(10, 20)) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
@@ -254,48 +254,48 @@ test_that("mergeSEs", {
     metadata(tse) <- list( cd = colData(tse) )
     tse4 <- suppressWarnings( 
         mergeSEs(list(tse, tse3, tse2, tse1), 
-                 join = "inner")
+                        join = "inner")
     )
     expect_equal( nrow(tse4), 0 )
     expect_equal( metadata(tse4)[["abc"]], metadata(tse1)[["abc"]] )
     expect_equal( metadata(tse4)[["test"]], metadata(tse3)[["test"]] )
     expect_equal( metadata(tse4)[["cd"]], metadata(tse)[["cd"]] )
     expect_true( all( names(metadata(tse4)) %in% 
-                          c(names(metadata(tse1)), names(metadata(tse3)), 
-                            names(metadata(tse))) ) )
+                           c(names(metadata(tse1)), names(metadata(tse3)), 
+                             names(metadata(tse))) ) )
     expect_equal( length( names(metadata(tse4))), 3) 
     
     # Check correct class
     se1 <- as(tse1, "SummarizedExperiment")
     rownames(se1) <- rownames(tse1)
     tse <- mergeSEs(list(se1, se1, se1), 
-                    join = "full")
+                       join = "full")
     expect_true(class(tse) == "SummarizedExperiment")
     suppressWarnings(
-        tse <- mergeSEs(list(se1, 
-                             as(tse1, "SingleCellExperiment"),
-                             as(tse1, "TreeSummarizedExperiment")), 
-                        join = "inner")
+    tse <- mergeSEs(list(se1, 
+                            as(tse1, "SingleCellExperiment"),
+                            as(tse1, "TreeSummarizedExperiment")), 
+                       join = "inner")
     )
     expect_true(class(tse) == "SummarizedExperiment")
     suppressWarnings(
-        tse <- mergeSEs(list(se1, 
-                             as(tse1, "SingleCellExperiment"),
-                             as(tse1, "SingleCellExperiment")), 
-                        join = "full")
+    tse <- mergeSEs(list(se1, 
+                            as(tse1, "SingleCellExperiment"),
+                            as(tse1, "SingleCellExperiment")), 
+                       join = "full")
     )
     expect_true(class(tse) == "SummarizedExperiment")
     suppressWarnings(
-        tse <- mergeSEs(x = as(tse1, "TreeSummarizedExperiment"), 
-                        y = as(tse1, "SingleCellExperiment"), 
-                        join = "right")
+    tse <- mergeSEs(x = as(tse1, "TreeSummarizedExperiment"), 
+                       y = as(tse1, "SingleCellExperiment"), 
+                       join = "right")
     )
     expect_warning(mergeSEs(x = as(tse1, "TreeSummarizedExperiment"), 
                             y = as(tse1, "SingleCellExperiment"), 
                             join = "right"))
     expect_true(class(tse) == "SingleCellExperiment")
     tse <- mergeSEs(list(as(tse1, "TreeSummarizedExperiment")), 
-                    join = "left")
+                       join = "left")
     expect_true(class(tse) == "TreeSummarizedExperiment")
     
     # Test collapse.cols
@@ -307,14 +307,14 @@ test_that("mergeSEs", {
                          join = "full")
     expect_equal( dim(tse_test), c(28, 18))
     expect_true( (all( c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", ".2", ".3")), 
-                          paste0(rep(colnames(tse[, 4:5]), each=2), c("", ".3")), 
-                          colnames(tse[, 6:10]) ) %in% 
-                           colnames(tse_test) ) &&
-                      all( colnames(tse_test) %in% 
-                               c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", ".2", ".3")), 
-                                  paste0(rep(colnames(tse[, 4:5]), each=2), c("", ".3")), 
-                                  colnames(tse[, 6:10]) ) ) )
-    )
+                         paste0(rep(colnames(tse[, 4:5]), each=2), c("", ".3")), 
+                         colnames(tse[, 6:10]) ) %in% 
+                          colnames(tse_test) ) &&
+                     all( colnames(tse_test) %in% 
+                     c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", ".2", ".3")), 
+                        paste0(rep(colnames(tse[, 4:5]), each=2), c("", ".3")), 
+                        colnames(tse[, 6:10]) ) ) )
+                 )
     # Test that tree is added after agglomeration
     agg_tse1 <- suppressWarnings( aggTSE(tse1, rowLevel = c(6,4,2)) )
     expect_warning(tse <- mergeSEs(tse1, agg_tse1))
@@ -364,7 +364,7 @@ test_that("mergeSEs", {
     expect_true(ncol(colData(tse)) == length(unique(c( colnames(colData(tse1)),
                                                        colnames(colData(tse2)),
                                                        colnames(colData(tse3)))
-    ))+2)
+                                                    ))+2)
     
     # Check that multiple assays are supported
     tse1 <- transformAssay(tse1, method="relabundance")
