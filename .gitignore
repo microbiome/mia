@@ -10,5 +10,4 @@
 docs/
 .DS_Store
 mia.BiocCheck/
-inst/extdata/ecs_relab.tsv
-src/*.dll 
+src/*.dll

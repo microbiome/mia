@@ -3,33 +3,27 @@
 \name{getJointRPCA}
 \alias{getJointRPCA}
 \title{Run Joint-RPCA and store embedding in reducedDim}
-\usage{
-getJointRPCA(
-  x,
-  experiments = NULL,
-  altexp = NULL,
-  name = "JointRPCA",
-  transform = c("rclr", "none"),
-  optspace.tol = 1e-05,
-  center = TRUE,
-  scale = FALSE,
-  ...
-)
-}
 \arguments{
-\item{x}{A \code{SummarizedExperiment}, \code{TreeSummarizedExperiment},
-\code{MultiAssayExperiment}, or a related object supported by
-\code{jointRPCAuniversal()}.}
-
-\item{experiments}{Optional character vector of experiment names to use when
-\code{x} is a \code{MultiAssayExperiment} (i.e. \code{names(experiments(x))}).
-Ignored for \code{SummarizedExperiment} inputs.}
-
 \item{altexp}{Optional name of an alternative experiment. If supplied,
 Joint-RPCA is run on \code{altExp(x, altexp)} instead of \code{x}.}
 
 \item{name}{Character scalar giving the name of the \code{reducedDim} slot
 in which to store the joint sample embedding. Defaults to \code{"JointRPCA"}.}
+
+\item{x}{Input object: \code{MultiAssayExperiment}, \code{SummarizedExperiment}
+(including \code{TreeSummarizedExperiment}), list of matrices, or single matrix.}
+
+\item{experiments}{Character vector of experiment names to extract when \code{x}
+is a \code{MultiAssayExperiment} (i.e. \code{names(experiments(x))}).
+If \code{NULL}, all experiments are used.
+
+For \code{MultiAssayExperiment} inputs, \strong{one assay per experiment} is
+used: by default the first assay returned by
+\code{assayNames()} (or index \code{1L} if unnamed).
+The actually used assay names are recorded in \code{$assay_names_used} in
+the result. If you need a different assay (e.g. \code{"relab"} instead of
+\code{"counts"}), subset or reorder assays in \code{x} before calling
+\code{jointRPCAuniversal()}.}
 
 \item{transform}{Character string specifying preprocessing applied to each
 input table before ordination. Use \code{"rclr"} to apply the robust CLR
@@ -44,10 +38,7 @@ disable transformation (data are used as-is after masking non-finite values).}
 \item{scale}{Logical; whether to scale the reconstructed matrix prior to
 SVD/PCA steps. Defaults to \code{FALSE}.}
 
-\item{...}{Additional arguments passed to \code{jointRPCAuniversal()} and then
-to the internal \code{.joint_rpca()} engine (e.g. \code{n.components},
-\code{min.sample.count}, \code{min.feature.count}, \code{min.feature.frequency},
-\code{max.iterations}, \code{sample.metadata}).}
+\item{...}{Additional arguments passed to \code{.joint_rpca()}.}
 }
 \value{
 The input object \code{x} with a new entry in
@@ -55,8 +46,22 @@ The input object \code{x} with a new entry in
 The full Joint-RPCA result (including distances, cross-validation
 statistics and transformed tables) is stored in
 \code{metadata(x)$JointRPCA[[name]]}.
+
+Output from \code{.joint_rpca()} with extra fields when \code{x} is a
+\code{MultiAssayExperiment}:
+\itemize{
+\item \code{$experiment_names}: character vector of experiments used.
+\item \code{$assay_names_used}: named character vector giving, for each
+experiment, the assay name that was used (typically the first in
+\code{assayNames()}).
+}
 }
 \description{
+Run Joint-RPCA and store embedding in reducedDim
+
+Universal Joint RPCA Wrapper
+}
+\details{
 Convenience wrapper that runs Joint Robust PCA on one or more compositional
 tables and stores the resulting sample embedding in \code{reducedDim(x, name)},
 similar to \code{runMDS()} and \code{runPCA()}.

@@ -9,7 +9,8 @@ A \code{MultiAssayExperiment} object containing:
 \describe{
 \item{se_mgx}{A \code{SummarizedExperiment} with MGX abundance data.}
 \item{se_mtx}{A \code{SummarizedExperiment} with MTX abundance data.}
-\item{mae2}{A \code{MultiAssayExperiment} with two experiments: MGX and MTX.}
+\item{mae2}{A \code{MultiAssayExperiment} with two experiments: MGX and
+MTX.}
 }
 }
 \source{
@@ -39,7 +40,8 @@ Load with:
 }
 \references{
 Lloyd-Price J, Arze C, Ananthakrishnan AN, et al.
-\emph{Multi-omics of the gut microbial ecosystem in inflammatory bowel diseases.}
+\emph{Multi-omics of the gut microbial ecosystem in inflammatory bowel
+diseases.}
 Nature 569, 655–662 (2019).
 \doi{10.1038/s41586-019-1237-9}
 }

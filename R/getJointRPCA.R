@@ -5,8 +5,143 @@
 ##   - getJointRPCA()
 ##
 
-#' Universal Joint RPCA Wrapper
+#' Run Joint-RPCA and store embedding in reducedDim
+#' @name getJointRPCA
 #'
+#' @details
+#' Convenience wrapper that runs Joint Robust PCA on one or more compositional
+#' tables and stores the resulting sample embedding in \code{reducedDim(x, name)},
+#' similar to \code{runMDS()} and \code{runPCA()}.
+#'
+#' @param x A \code{SummarizedExperiment}, \code{TreeSummarizedExperiment},
+#'   \code{MultiAssayExperiment}, or a related object supported by
+#'   \code{jointRPCAuniversal()}.
+#' @param experiments Optional character vector of experiment names to use when
+#'   \code{x} is a \code{MultiAssayExperiment} (i.e. \code{names(experiments(x))}).
+#'   Ignored for \code{SummarizedExperiment} inputs.
+#' @param altexp Optional name of an alternative experiment. If supplied,
+#'   Joint-RPCA is run on \code{altExp(x, altexp)} instead of \code{x}.
+#' @param name Character scalar giving the name of the \code{reducedDim} slot
+#'   in which to store the joint sample embedding. Defaults to \code{"JointRPCA"}.
+#' @param transform Character string specifying preprocessing applied to each
+#'   input table before ordination. Use \code{"rclr"} to apply the robust CLR
+#'   transform (via \code{decostand(method = "rclr")}) or \code{"none"} to
+#'   disable transformation (data are used as-is after masking non-finite values).
+#' @param optspace.tol Numeric tolerance passed to \code{optspace()}.
+#' @param center Logical; whether to center the reconstructed low-rank matrix
+#'   (double-centering) prior to SVD/PCA steps.
+#' @param scale Logical; whether to scale the reconstructed matrix prior to
+#'   SVD/PCA steps. Defaults to \code{FALSE}.
+#' @param ... Additional arguments passed to \code{jointRPCAuniversal()} and then
+#'   to the internal \code{.joint_rpca()} engine (e.g. \code{n.components},
+#'   \code{min.sample.count}, \code{min.feature.count}, \code{min.feature.frequency},
+#'   \code{max.iterations}, \code{sample.metadata}).
+#'
+#' @return The input object \code{x} with a new entry in
+#'   \code{reducedDim(x, name)} containing the Joint-RPCA sample embedding.
+#'   The full Joint-RPCA result (including distances, cross-validation
+#'   statistics and transformed tables) is stored in
+#'   \code{metadata(x)$JointRPCA[[name]]}.
+#'
+#' @export
+NULL
+
+getJointRPCA <- function(x,
+                         experiments = NULL,
+                         altexp = NULL,
+                         name = "JointRPCA",
+                         transform = c("rclr", "none"),
+                         optspace.tol = 1e-5,
+                         center = TRUE,
+                         scale = FALSE,
+                         ...) {
+    transform <- match.arg(transform)
+
+    # Select the object to operate on
+    y <- x
+    if (!is.null(altexp)) {
+        y <- altExp(x, altexp)
+    }
+
+    # Use universal front-end to build tables + run .joint_rpca()
+    res <- jointRPCAuniversal(
+        y,
+        experiments = experiments,
+        transform = transform,
+        optspace.tol = optspace.tol,
+        center = center,
+        scale = scale,
+        ...
+    )
+
+    # Extract sample embedding
+    emb <- res[["ord_res"]][["samples"]]
+
+    if (is.null(emb)) {
+        stop(
+            "Internal error: JointRPCA did not return a sample embedding. ",
+            "Please report this and include sessionInfo().",
+            call. = FALSE
+        )
+    }
+
+    emb <- as.matrix(emb)
+
+    # Ensure embedding rownames match colnames of the target object (Bioconductor requirement)
+    target_cols <- colnames(x)
+    if (!is.null(altexp)) {
+        target_cols <- colnames(x)
+    }
+
+    if (is.null(target_cols)) {
+        stop("Cannot store reducedDim: 'x' has no colnames().", call. = FALSE)
+    }
+
+    if (is.null(rownames(emb))) {
+        stop("Cannot store reducedDim: embedding has no rownames().", call. = FALSE)
+    }
+
+    # Require the same set of samples/cells
+    if (!setequal(rownames(emb), target_cols)) {
+        missing_in_emb <- setdiff(target_cols, rownames(emb))
+        extra_in_emb <- setdiff(rownames(emb), target_cols)
+        stop(
+            "Cannot store reducedDim: embedding rownames do not match colnames(x).\n",
+            "Missing in embedding: ", paste(missing_in_emb, collapse = ", "), "\n",
+            "Extra in embedding: ", paste(extra_in_emb, collapse = ", "),
+            call. = FALSE
+        )
+    }
+
+    # Reorder embedding to exactly match colnames(x)
+    emb <- emb[target_cols, , drop = FALSE]
+    rownames(emb) <- target_cols
+
+    if (nrow(emb) == 0L || ncol(emb) == 0L || is.null(rownames(emb))) {
+        stop(
+            "Internal error: JointRPCA returned an invalid sample embedding. ",
+            "Please report this and include sessionInfo().",
+            call. = FALSE
+        )
+    }
+
+    # Store embedding in reducedDim only if supported (SCE / TreeSE / mia-specific)
+    cls <- class(x)
+    if (any(cls %in% c("SingleCellExperiment", "TreeSummarizedExperiment"))) {
+        reducedDim(x, name) <- emb
+    }
+
+    # Store full result in metadata
+    if (is.null(metadata(x)$JointRPCA)) {
+        metadata(x)$JointRPCA <- list()
+    }
+    metadata(x)$JointRPCA[[name]] <- res
+
+    return(x)
+}
+
+#' Universal Joint RPCA Wrapper
+#' @name getJointRPCA
 #' @param x Input object: \code{MultiAssayExperiment}, \code{SummarizedExperiment}
 #'   (including \code{TreeSummarizedExperiment}), list of matrices, or single matrix.
 #' @param experiments Character vector of experiment names to extract when \code{x}
@@ -45,6 +180,7 @@
 #' @importFrom vegan decostand
 #' @importFrom vegan optspace
 #' @export
+NULL
 
 jointRPCAuniversal <- function(x, experiments = NULL,
                                transform = c("rclr", "none"),
@@ -52,33 +188,28 @@ jointRPCAuniversal <- function(x, experiments = NULL,
                                center = TRUE,
                                scale = FALSE,
                                ...) {
-    
     transform <- match.arg(transform)
-    
+
     assay_names_used <- NULL
-    
+
     if (inherits(x, "MultiAssayExperiment")) {
         mae <- .extract_mae_tables(x, experiments)
         tables <- mae$tables
         experiments <- mae$experiments
         assay_names_used <- mae$assay_names_used
-        
     } else if (inherits(x, "SummarizedExperiment")) {
         tables <- list(assay(x))
         anm <- assayNames(x)
         nm <- if (length(anm) && !is.na(anm[1])) anm[1] else "assay1"
         names(tables) <- nm
-        
     } else if (is.list(x) && all(vapply(x, is.matrix, logical(1)))) {
         tables <- x
         if (is.null(names(tables))) {
             names(tables) <- paste0("view", seq_along(tables))
         }
-        
     } else if (is.matrix(x)) {
         tables <- list(x)
         names(tables) <- "assay1"
-        
     } else {
         stop(
             "Unsupported input type for jointRPCAuniversal(): ",
@@ -86,7 +217,7 @@ jointRPCAuniversal <- function(x, experiments = NULL,
             call. = FALSE
         )
     }
-    
+
     res <- .joint_rpca(
         tables = tables,
         transform = transform,
@@ -95,146 +226,13 @@ jointRPCAuniversal <- function(x, experiments = NULL,
         scale = scale,
         ...
     )
-    
+
     if (inherits(x, "MultiAssayExperiment")) {
         res$experiment_names <- experiments
         res$assay_names_used <- assay_names_used
     }
-    
+
     return(res)
-}
-
-#' Run Joint-RPCA and store embedding in reducedDim
-#'
-#' Convenience wrapper that runs Joint Robust PCA on one or more compositional
-#' tables and stores the resulting sample embedding in \code{reducedDim(x, name)},
-#' similar to \code{runMDS()} and \code{runPCA()}.
-#'
-#' @param x A \code{SummarizedExperiment}, \code{TreeSummarizedExperiment},
-#'   \code{MultiAssayExperiment}, or a related object supported by
-#'   \code{jointRPCAuniversal()}.
-#' @param experiments Optional character vector of experiment names to use when
-#'   \code{x} is a \code{MultiAssayExperiment} (i.e. \code{names(experiments(x))}).
-#'   Ignored for \code{SummarizedExperiment} inputs.
-#' @param altexp Optional name of an alternative experiment. If supplied,
-#'   Joint-RPCA is run on \code{altExp(x, altexp)} instead of \code{x}.
-#' @param name Character scalar giving the name of the \code{reducedDim} slot
-#'   in which to store the joint sample embedding. Defaults to \code{"JointRPCA"}.
-#' @param transform Character string specifying preprocessing applied to each
-#'   input table before ordination. Use \code{"rclr"} to apply the robust CLR
-#'   transform (via \code{decostand(method = "rclr")}) or \code{"none"} to
-#'   disable transformation (data are used as-is after masking non-finite values).
-#' @param optspace.tol Numeric tolerance passed to \code{optspace()}.
-#' @param center Logical; whether to center the reconstructed low-rank matrix
-#'   (double-centering) prior to SVD/PCA steps.
-#' @param scale Logical; whether to scale the reconstructed matrix prior to
-#'   SVD/PCA steps. Defaults to \code{FALSE}.
-#' @param ... Additional arguments passed to \code{jointRPCAuniversal()} and then
-#'   to the internal \code{.joint_rpca()} engine (e.g. \code{n.components},
-#'   \code{min.sample.count}, \code{min.feature.count}, \code{min.feature.frequency},
-#'   \code{max.iterations}, \code{sample.metadata}).
-#'
-#' @return The input object \code{x} with a new entry in
-#'   \code{reducedDim(x, name)} containing the Joint-RPCA sample embedding.
-#'   The full Joint-RPCA result (including distances, cross-validation
-#'   statistics and transformed tables) is stored in
-#'   \code{metadata(x)$JointRPCA[[name]]}.
-#'
-#' @export
-
-getJointRPCA <- function(x,
-                         experiments = NULL,
-                         altexp = NULL,
-                         name   = "JointRPCA",
-                         transform = c("rclr", "none"),
-                         optspace.tol = 1e-5,
-                         center = TRUE,
-                         scale = FALSE,
-                         ...) {
-    
-    transform <- match.arg(transform)
-    
-    # Select the object to operate on
-    y <- x
-    if (!is.null(altexp)) {
-        y <- altExp(x, altexp)
-    }
-    
-    # Use universal front-end to build tables + run .joint_rpca()
-    res <- jointRPCAuniversal(
-        y,
-        experiments = experiments,
-        transform   = transform,
-        optspace.tol = optspace.tol,
-        center      = center,
-        scale       = scale,
-        ...
-    )
-    
-    # Extract sample embedding
-    emb <- res[["ord_res"]][["samples"]]
-    
-    if (is.null(emb)) {
-        stop(
-            "Internal error: JointRPCA did not return a sample embedding. ",
-            "Please report this and include sessionInfo().",
-            call. = FALSE
-        )
-    }
-    
-    emb <- as.matrix(emb)
-    
-    # Ensure embedding rownames match colnames of the target object (Bioconductor requirement)
-    target_cols <- colnames(x)
-    if (!is.null(altexp)) {
-        target_cols <- colnames(x)
-    }
-    
-    if (is.null(target_cols)) {
-        stop("Cannot store reducedDim: 'x' has no colnames().", call. = FALSE)
-    }
-    
-    if (is.null(rownames(emb))) {
-        stop("Cannot store reducedDim: embedding has no rownames().", call. = FALSE)
-    }
-    
-    # Require the same set of samples/cells
-    if (!setequal(rownames(emb), target_cols)) {
-        missing_in_emb <- setdiff(target_cols, rownames(emb))
-        extra_in_emb   <- setdiff(rownames(emb), target_cols)
-        stop(
-            "Cannot store reducedDim: embedding rownames do not match colnames(x).\n",
-            "Missing in embedding: ", paste(missing_in_emb, collapse = ", "), "\n",
-            "Extra in embedding: ", paste(extra_in_emb, collapse = ", "),
-            call. = FALSE
-        )
-    }
-    
-    # Reorder embedding to exactly match colnames(x)
-    emb <- emb[target_cols, , drop = FALSE]
-    rownames(emb) <- target_cols
-    
-    if (nrow(emb) == 0L || ncol(emb) == 0L || is.null(rownames(emb))) {
-        stop(
-            "Internal error: JointRPCA returned an invalid sample embedding. ",
-            "Please report this and include sessionInfo().",
-            call. = FALSE
-        )
-    }
-    
-    # Store embedding in reducedDim only if supported (SCE / TreeSE / mia-specific)
-    cls <- class(x)
-    if (any(cls %in% c("SingleCellExperiment", "TreeSummarizedExperiment"))) {
-        reducedDim(x, name) <- emb
-    }
-    
-    # Store full result in metadata
-    if (is.null(metadata(x)$JointRPCA)) {
-        metadata(x)$JointRPCA <- list()
-    }
-    metadata(x)$JointRPCA[[name]] <- res
-    
-    return(x)
 }
 
 #' Joint Robust PCA on Multiple Compositional Tables
@@ -282,20 +280,19 @@ getJointRPCA <- function(x,
                         optspace.tol = 1e-5,
                         center = TRUE,
                         scale = FALSE) {
-    
     transform <- match.arg(transform)
-    
+
     if (is.null(names(tables))) {
         names(tables) <- paste0("view", seq_along(tables))
     }
-    
+
     if (n.components < 2) {
         stop("n.components must be at least 2.", call. = FALSE)
     }
     if (max.iterations < 1) {
         stop("max.iterations must be at least 1.", call. = FALSE)
     }
-    
+
     # Filtering (always done, independent of rclr)
     tables <- lapply(tables, function(tbl) {
         out <- .rpca_table_processing(
@@ -314,7 +311,7 @@ getJointRPCA <- function(x,
         }
         out
     })
-    
+
     # Find shared samples across views
     sample.sets <- lapply(tables, colnames)
     shared.all.samples <- Reduce(intersect, sample.sets)
@@ -338,22 +335,22 @@ getJointRPCA <- function(x,
     if (length(unshared.samples) > 0) {
         warning(sprintf("Removing %d sample(s) that do not overlap in tables.", length(unshared.samples)))
     }
-    
+
     # Restrict each table to the shared sample set
     tables <- lapply(tables, function(tbl) {
         tbl[, shared.all.samples, drop = FALSE]
     })
     shared.all.samples <- Reduce(intersect, lapply(tables, colnames))
-    
+
     # Transform tables: rCLR or masking
     rclr_tables <- lapply(tables, function(tbl) {
         mat <- as.matrix(tbl)
         rown <- rownames(mat)
         coln <- colnames(mat)
-        
+
         if (transform == "rclr") {
             mat[!is.finite(mat)] <- 0
-            mat[mat < 0]         <- 0
+            mat[mat < 0] <- 0
             out <- vegan::decostand(mat, method = "rclr", MARGIN = 2)
             dimnames(out) <- list(rown, coln)
             out
@@ -364,13 +361,13 @@ getJointRPCA <- function(x,
         }
     })
     names(rclr_tables) <- names(tables)
-    
+
     # Determine train/test split
     if (!is.null(sample.metadata) && !is.null(train.test.column)) {
         md <- as.data.frame(sample.metadata)
         md <- md[shared.all.samples, , drop = FALSE]
         train.samples <- rownames(md)[md[[train.test.column]] == "train"]
-        test.samples  <- rownames(md)[md[[train.test.column]] == "test"]
+        test.samples <- rownames(md)[md[[train.test.column]] == "test"]
     } else {
         ord.tmp <- .optspace_helper(
             rclr.table      = t(rclr_tables[[1]]),
@@ -387,7 +384,7 @@ getJointRPCA <- function(x,
         test.samples <- sorted.ids[idx]
         train.samples <- setdiff(shared.all.samples, test.samples)
     }
-    
+
     # Run joint OptSpace
     result <- .joint_optspace_helper(
         tables         = rclr_tables,
@@ -400,7 +397,7 @@ getJointRPCA <- function(x,
         center         = center,
         scale          = scale
     )
-    
+
     return(list(
         ord_res      = result$ord_res,
         dist         = result$dist,
@@ -440,7 +437,6 @@ getJointRPCA <- function(x,
                                    tol = 1e-5,
                                    center = TRUE,
                                    scale = FALSE) {
-    
     # Coerce to matrices and enforce colnames presence
     tables <- lapply(tables, function(tbl) {
         mat <- as.matrix(tbl)
@@ -449,31 +445,31 @@ getJointRPCA <- function(x,
         }
         mat
     })
-    
+
     # Global set of samples present in all views
     all_samples <- Reduce(intersect, lapply(tables, colnames))
-    
+
     # Align train/test to actually available samples
-    test.samples  <- intersect(test.samples,  all_samples)
+    test.samples <- intersect(test.samples, all_samples)
     train.samples <- intersect(train.samples, all_samples)
-    
+
     if (!length(test.samples) || !length(train.samples)) {
         stop("[.joint_optspace_helper] Empty train/test split after aligning sample IDs.")
     }
-    
+
     # Split and transpose training/test data per table
     tables.split <- lapply(tables, function(tbl) {
         list(
-            t(tbl[, test.samples,  drop = FALSE]),
+            t(tbl[, test.samples, drop = FALSE]),
             t(tbl[, train.samples, drop = FALSE])
         )
     })
-    
+
     # Format input for solver
     tables.for.solver <- lapply(tables.split, function(pair) {
         lapply(pair, as.matrix)
     })
-    
+
     # Run joint OptSpace solver
     opt.result <- .joint_optspace_solve(
         train.test.pairs = tables.for.solver,
@@ -481,29 +477,29 @@ getJointRPCA <- function(x,
         max.iter         = max.iterations,
         tol              = tol
     )
-    
+
     U <- opt.result$U
     S <- opt.result$S
     V_list <- opt.result$V_list
     dists <- opt.result$dists
-    
+
     # Assign row/column names to loadings
     pc.names <- paste0("PC", seq_len(n.components))
-    
+
     # Combine feature loadings with table-derived row names
     vjoint <- do.call(rbind, Map(function(tbl, V) {
         rownames(V) <- rownames(tbl)
         colnames(V) <- pc.names
         V
     }, tables, V_list))
-    
+
     U <- U[seq_along(train.samples), , drop = FALSE]
     rownames(U) <- train.samples
     colnames(U) <- pc.names
-    
+
     # Recenter & re-factor via SVD
     X <- U %*% S %*% t(vjoint)
-    
+
     if (center) {
         X <- sweep(X, 2, colMeans(X))
         X <- sweep(X, 1, rowMeans(X))
@@ -515,55 +511,57 @@ getJointRPCA <- function(x,
     u <- svd.res$u[, seq_len(n.components), drop = FALSE]
     v <- svd.res$v[, seq_len(n.components), drop = FALSE]
     s.eig <- svd.res$d[seq_len(n.components)]
-    
+
     rownames(u) <- train.samples
     rownames(v) <- rownames(vjoint)
     pc.names <- paste0("PC", seq_len(n.components))
     colnames(u) <- colnames(v) <- pc.names
-    
+
     # Build a named per-view features list
     features_list <- lapply(seq_along(tables), function(i) {
-        rid <- rownames(tables[[i]])          
-        v[rid, , drop = FALSE]                
+        rid <- rownames(tables[[i]])
+        v[rid, , drop = FALSE]
     })
-    names(features_list) <- names(tables)    
-    
+    names(features_list) <- names(tables)
+
     prop.exp <- s.eig^2 / sum(s.eig^2)
     ord_res <- .ordination_results(
         method = "rpca",
         eigvals = setNames(s.eig, pc.names),
         samples = u,
-        features = features_list,              
+        features = features_list,
         proportion.explained = setNames(prop.exp, pc.names)
     )
-    
+
     # Project test samples
     if (length(test.samples) > 0) {
         test.matrices <- lapply(tables, function(tbl) tbl[, test.samples, drop = FALSE])
-        names(test.matrices) <- names(tables)  
+        names(test.matrices) <- names(tables)
         ord_res <- .transform(ord_res, test.matrices, apply.rclr = FALSE)
     }
-    
+
     # Compute distance matrix and CV error summary
     dist.base <- as.matrix(dist(ord_res$samples))
-    
+
     if (!is.null(sample.order)) {
         order_use <- intersect(sample.order, rownames(dist.base))
-        dist.mat  <- dist.base[order_use, order_use, drop = FALSE]
+        dist.mat <- dist.base[order_use, order_use, drop = FALSE]
     } else {
-        dist.mat  <- dist.base
+        dist.mat <- dist.base
         order_use <- rownames(dist.base)
     }
-    
+
     dist.res <- .distance_matrix(dist.mat, ids = order_use)
-    
+
     cv.dist <- data.frame(t(dists))
     colnames(cv.dist) <- c("mean_CV", "std_CV")
-    cv.dist$run <- sprintf("tables_%d.n.components_%d.max.iterations_%d.n.test_%d",
-                           length(tables), n.components, max.iterations, length(test.samples))
+    cv.dist$run <- sprintf(
+        "tables_%d.n.components_%d.max.iterations_%d.n.test_%d",
+        length(tables), n.components, max.iterations, length(test.samples)
+    )
     cv.dist$iteration <- seq_len(nrow(cv.dist))
     rownames(cv.dist) <- seq_len(nrow(cv.dist))
-    
+
     return(list(ord_res = ord_res, dist = dist.res, cv_stats = cv.dist))
 }
 
@@ -584,16 +582,15 @@ getJointRPCA <- function(x,
 
 .transform <- function(ordination, tables,
                        apply.rclr = TRUE) {
-    
-    Udf    <- ordination$samples
-    Vobj   <- ordination$features
-    s.eig  <- ordination$eigvals
-    
+    Udf <- ordination$samples
+    Vobj <- ordination$features
+    s.eig <- ordination$eigvals
+
     # Ensure tables is a list of views
     if (!is.list(tables)) {
         stop("[.transform] 'tables' must be a list of view matrices (features x samples).")
     }
-    
+
     if (is.list(Vobj) && !is.null(names(Vobj))) {
         if (is.null(names(tables))) {
             names(tables) <- names(Vobj)[seq_along(tables)]
@@ -602,32 +599,34 @@ getJointRPCA <- function(x,
             stop("[.transform] 'tables' must be a *named* list of view matrices (features x samples).")
         }
     }
-    
-    # rCLR if requested 
+
+    # rCLR if requested
     prep_view <- function(tab) {
         mat <- as.matrix(tab)
         rown <- rownames(mat)
         coln <- colnames(mat)
-        
+
         if (apply.rclr) {
             mat <- vegan::decostand(mat, method = "rclr", MARGIN = 2)
-            
+
             dimnames(mat) <- list(rown, coln)
         }
-        
+
         storage.mode(mat) <- "double"
         mat[!is.finite(mat)] <- 0
         mat
     }
     tables <- lapply(tables, prep_view)
-    
+
     if (is.matrix(Vobj)) {
         all.features <- rownames(Vobj)
         tables <- lapply(tables, function(mat) {
             miss <- setdiff(all.features, rownames(mat))
             if (length(miss)) {
-                pad <- matrix(0, nrow = length(miss), ncol = ncol(mat),
-                              dimnames = list(miss, colnames(mat)))
+                pad <- matrix(0,
+                    nrow = length(miss), ncol = ncol(mat),
+                    dimnames = list(miss, colnames(mat))
+                )
                 mat <- rbind(mat, pad)
             }
             mat[all.features, , drop = FALSE]
@@ -637,34 +636,36 @@ getJointRPCA <- function(x,
         ordination$samples <- .transform_helper(Udf, Vobj, s.eig, proj.mat)
         return(ordination)
     }
-    
+
     # 3+-omic path: V is a named list per view
     if (!is.list(Vobj) || is.null(names(Vobj))) {
         stop("[.transform] ordination$features is neither a matrix nor a named list.")
     }
-    
+
     # Intersect views by name, preserve training order
     views <- intersect(names(Vobj), names(tables))
     if (!length(views)) stop("[.transform] No overlapping view names between ordination and new tables.")
-    
+
     test.matrices <- list()
     for (vw in views) {
         Vvw <- Vobj[[vw]]
         stopifnot(is.matrix(Vvw), !is.null(rownames(Vvw)))
         mat <- tables[[vw]]
-        
+
         train_feats <- rownames(Vvw)
         miss <- setdiff(train_feats, rownames(mat))
         if (length(miss)) {
-            pad <- matrix(0, nrow = length(miss), ncol = ncol(mat),
-                          dimnames = list(miss, colnames(mat)))
+            pad <- matrix(0,
+                nrow = length(miss), ncol = ncol(mat),
+                dimnames = list(miss, colnames(mat))
+            )
             mat <- rbind(mat, pad)
         }
         mat <- mat[train_feats, , drop = FALSE]
-        
+
         test.matrices[[vw]] <- mat
     }
-    
+
     ordination$samples <- .transform_helper(Udf, Vobj, s.eig, test.matrices)
     return(ordination)
 }
@@ -689,18 +690,18 @@ getJointRPCA <- function(x,
 
 .transform_helper <- function(Udf, Vdf, s.eig, table.rclr.project,
                               dedup.samples = TRUE) {
-    
     # Legacy path (single view)
     if (is.matrix(Vdf)) {
         stopifnot(is.matrix(table.rclr.project))
         # Align rows by name
         common <- intersect(rownames(Vdf), rownames(table.rclr.project))
-        if (length(common) < ncol(Udf))
+        if (length(common) < ncol(Udf)) {
             stop(sprintf("[.transform_helper] Too few matching features: %d", length(common)))
-        
-        M <- t(as.matrix(table.rclr.project[common, , drop = FALSE]))   
-        V <- as.matrix(Vdf[common, , drop = FALSE])                     
-        
+        }
+
+        M <- t(as.matrix(table.rclr.project[common, , drop = FALSE]))
+        V <- as.matrix(Vdf[common, , drop = FALSE])
+
         # Dedup of sample IDs
         if (dedup.samples) {
             sid <- sub("_\\d+$", "", rownames(M))
@@ -710,7 +711,7 @@ getJointRPCA <- function(x,
                 rownames(M) <- sid
             }
         }
-        
+
         # Projection (match training scaling)
         Uproj <- M %*% V
         # Scale by singular values
@@ -718,17 +719,17 @@ getJointRPCA <- function(x,
             Sinv <- diag(1 / s.eig, nrow = length(s.eig))
             Uproj <- Uproj %*% Sinv
         }
-        
+
         colnames(Uproj) <- colnames(Udf)
         U.combined <- rbind(Udf[setdiff(rownames(Udf), rownames(Uproj)), , drop = FALSE], Uproj)
         return(U.combined)
     }
-    
+
     # Multi-view path (named lists)
     stopifnot(is.list(Vdf), is.list(table.rclr.project))
     views <- intersect(names(Vdf), names(table.rclr.project))
     if (!length(views)) stop("[.transform_helper] No overlapping views.")
-    
+
     # Project per view, then sum contributions in the shared latent space
     Usum <- NULL
     ncomp <- ncol(Udf)
@@ -736,30 +737,32 @@ getJointRPCA <- function(x,
         Vvw <- Vdf[[vw]]
         Tvw <- table.rclr.project[[vw]]
         stopifnot(is.matrix(Vvw), is.matrix(Tvw))
-        
+
         common <- intersect(rownames(Vvw), rownames(Tvw))
         if (length(common) < ncomp) {
             stop(sprintf("[.transform_helper] View '%s': too few matching features (%d).", vw, length(common)))
         }
-        
-        M <- t(as.matrix(Tvw[common, , drop = FALSE]))     
-        V <- as.matrix(Vvw[common, , drop = FALSE])        
-        
+
+        M <- t(as.matrix(Tvw[common, , drop = FALSE]))
+        V <- as.matrix(Vvw[common, , drop = FALSE])
+
         # Accumulate per-view U
-        Uvw <- M %*% V                                     
+        Uvw <- M %*% V
         if (is.null(Usum)) {
             Usum <- Uvw
         } else {
             # Align rows (samples) by name before summing
             all_s <- union(rownames(Usum), rownames(Uvw))
-            Utmp  <- matrix(0, nrow = length(all_s), ncol = ncol(Udf),
-                            dimnames = list(all_s, colnames(Udf)))
+            Utmp <- matrix(0,
+                nrow = length(all_s), ncol = ncol(Udf),
+                dimnames = list(all_s, colnames(Udf))
+            )
             Utmp[rownames(Usum), ] <- Usum
-            Utmp[rownames(Uvw), ]  <- Utmp[rownames(Uvw), ] + Uvw
+            Utmp[rownames(Uvw), ] <- Utmp[rownames(Uvw), ] + Uvw
             Usum <- Utmp
         }
     }
-    
+
     # Sample dedup (after combining views)
     if (dedup.samples) {
         sid <- sub("_\\d+$", "", rownames(Usum))
@@ -769,14 +772,14 @@ getJointRPCA <- function(x,
             rownames(Usum) <- sid
         }
     }
-    
+
     # Scale by S
     if (length(s.eig)) {
         Sinv <- diag(1 / s.eig, nrow = length(s.eig))
         Usum <- Usum %*% Sinv
     }
     colnames(Usum) <- colnames(Udf)
-    
+
     # Merge with training U, avoiding duplicates
     keep_train <- setdiff(rownames(Udf), rownames(Usum))
     rbind(Udf[keep_train, , drop = FALSE], Usum)
@@ -805,17 +808,17 @@ getJointRPCA <- function(x,
     if (is.data.frame(table)) {
         table <- as.matrix(table)
     }
-    
+
     n.features <- nrow(table)
-    n.samples  <- ncol(table)
-    
+    n.samples <- ncol(table)
+
     # Filter features by total count
     if (!is.null(min.feature.count)) {
         feature.totals <- rowSums(table, na.rm = TRUE)
         keep.features <- feature.totals > min.feature.count
         table <- table[keep.features, , drop = FALSE]
     }
-    
+
     # Filter features by frequency across samples
     if (!is.null(min.feature.frequency)) {
         freq.threshold <- min.feature.frequency / 100
@@ -823,14 +826,14 @@ getJointRPCA <- function(x,
         keep.features <- feature.freq > freq.threshold
         table <- table[keep.features, , drop = FALSE]
     }
-    
+
     # Filter samples by total count
     if (!is.null(min.sample.count)) {
         sample.totals <- colSums(table, na.rm = TRUE)
         keep.samples <- sample.totals > min.sample.count
         table <- table[, keep.samples, drop = FALSE]
     }
-    
+
     # Check for duplicate IDs
     if (any(duplicated(colnames(table)))) {
         stop("Data table contains duplicate sample (column) IDs.", call. = FALSE)
@@ -838,14 +841,14 @@ getJointRPCA <- function(x,
     if (any(duplicated(rownames(table)))) {
         stop("Data table contains duplicate feature (row) IDs.", call. = FALSE)
     }
-    
+
     # Remove empty rows and columns if sample filtering applied
     if (!is.null(min.sample.count)) {
         nonzero.features <- rowSums(table, na.rm = TRUE) > 0
-        nonzero.samples  <- colSums(table, na.rm = TRUE) > 0
+        nonzero.samples <- colSums(table, na.rm = TRUE) > 0
         table <- table[nonzero.features, nonzero.samples, drop = FALSE]
     }
-    
+
     return(table)
 }
 
@@ -870,19 +873,19 @@ getJointRPCA <- function(x,
     if (is.vector(mat)) {
         mat <- matrix(mat, nrow = 1)
     }
-    
+
     # Ensure matrix is not more than 2D
     if (length(dim(mat)) > 2) {
         stop("Input matrix can only have two dimensions or less")
     }
-    
+
     # Generate logical mask: TRUE where values are missing
-    mask <- !is.finite(mat)  
-    
+    mask <- !is.finite(mat)
+
     # Create masked matrix
     masked.mat <- mat
     masked.mat[!is.finite(mat)] <- NA
-    
+
     # Return as a masked matrix
     return(structure(list(
         data = masked.mat,
@@ -935,35 +938,254 @@ getJointRPCA <- function(x,
 #' @noRd
 .extract_mae_tables <- function(x, experiments = NULL) {
     exps <- experiments(x)
-    
+
     if (is.null(experiments)) {
         experiments <- names(exps)
     }
     if (length(experiments) == 0L) {
         stop("No experiments found in 'x'.", call. = FALSE)
     }
-    
+
     assay_names_used <- setNames(character(length(experiments)), experiments)
     tables <- vector("list", length(experiments))
     names(tables) <- experiments
-    
+
     for (i in seq_along(experiments)) {
         e <- experiments[[i]]
         exp_se <- exps[[e]]
         if (is.null(exp_se)) {
             stop(sprintf("Experiment '%s' not found in 'x'.", e), call. = FALSE)
         }
-        
+
         anm <- assayNames(exp_se)
         default_assay <- if (length(anm)) anm[[1]] else 1L
-        
+
         assay_names_used[[e]] <- if (is.character(default_assay)) default_assay else as.character(default_assay)
         tables[[e]] <- assay(exp_se, default_assay)
     }
-    
+
     list(
         tables = tables,
         experiments = experiments,
         assay_names_used = assay_names_used
     )
+}
+
+#' OptSpace back-end (joint & single-view)
+#'
+#' OptSpace-based solvers built on top of \code{vegan::optspace()}.
+#'
+#' This file contains:
+#' \itemize{
+#'   \item \code{.optspace_helper()} — single-view rCLR → OptSpace → biplot
+#'   \item \code{.joint_optspace_solve()} — multi-view joint factorization
+#' }
+#'
+#' @keywords internal
+#' @noRd
+NULL
+
+#' OptSpace-Based Dimensionality Reduction and RPCA Biplot Generation
+#'
+#' Internal function that fits an OptSpace model to a rCLR-transformed compositional table,
+#' reconstructs the low-rank matrix, applies PCA, and constructs an ordination result
+#' capturing sample embeddings, feature loadings, and explained variance. A distance matrix
+#' is also generated using Aitchison geometry.
+#'
+#' @param rclr.table A numeric matrix representing rCLR-transformed compositional data.
+#' @param feature.ids Character vector of feature names (used for row labeling of loadings).
+#' @param sample.ids Character vector of sample names (used for row labeling of embeddings).
+#' @param n.components Integer specifying number of principal components to retain. Default is 3.
+#' @param max.iterations Maximum number of iterations to run OptSpace optimization. Default is 5.
+#'
+#' @return A list with:
+#' \describe{
+#'   \item{ord_res}{An \code{OrdinationResults} object containing PCA scores, loadings, and metadata.}
+#'   \item{dist}{A sample-by-sample \code{DistanceMatrix} object using Aitchison geometry.}
+#'   \item{opt_fit}{The raw OptSpace fit result containing matrices \code{X}, \code{Y}, and \code{S}.}
+#' }
+#'
+#' @keywords internal
+#' @noRd
+
+.optspace_helper <- function(rclr.table,
+                             feature.ids,
+                             sample.ids,
+                             n.components = 3,
+                             max.iterations = 5,
+                             tol = 1e-5,
+                             center = TRUE,
+                             scale = FALSE) {
+    opt.result <- vegan::optspace(
+        x       = rclr.table,
+        ropt    = n.components,
+        niter   = max.iterations,
+        tol     = tol,
+        verbose = FALSE
+    )
+
+    n.components <- ncol(opt.result$S)
+
+    # Reconstruct and re-center matrix
+    X.hat <- opt.result$X %*% opt.result$S %*% t(opt.result$Y)
+    X.hat <- scale(X.hat, center = center, scale = scale)
+    X.hat <- t(scale(t(X.hat), center = center, scale = scale))
+
+    # PCA
+    svd.out <- svd(X.hat)
+    u <- svd.out$u[, 1:n.components, drop = FALSE]
+    s <- svd.out$d[1:n.components]
+    v <- svd.out$v[, 1:n.components, drop = FALSE]
+
+    # Label loadings
+    rename.cols <- paste0("PC", seq_len(n.components))
+    sample.scores <- u
+    feature.scores <- data.frame(v, row.names = feature.ids)
+    feature.scores <- as.matrix(feature.scores)
+    rownames(sample.scores) <- sample.ids
+    colnames(sample.scores) <- rename.cols
+    colnames(feature.scores) <- rename.cols
+
+    # Proportion explained
+    prop.var <- s^2 / sum(svd.out$d^2)
+    names(prop.var) <- rename.cols
+    names(s) <- rename.cols
+
+    # Add PC3 for 2D case
+    if (n.components == 2) {
+        sample.scores <- cbind(sample.scores, PC3 = 0)
+        feature.scores <- cbind(feature.scores, PC3 = 0)
+        sample.scores <- as.matrix(sample.scores)
+        feature.scores <- as.matrix(feature.scores)
+
+        s <- c(s, PC3 = 0)
+        prop.var <- c(prop.var, PC3 = 0)
+        rename.cols <- c(rename.cols, "PC3")
+    }
+
+    # Compute distance in sample PC-space
+    dist.matrix.raw <- as.matrix(dist(u))
+    rownames(dist.matrix.raw) <- sample.ids
+    colnames(dist.matrix.raw) <- sample.ids
+
+    dist.res <- .distance_matrix(dist.matrix.raw,
+        ids = sample.ids,
+        method = "aitchison"
+    )
+
+    ord_res <- .ordination_results(
+        method = "rpca_biplot",
+        eigvals = s,
+        samples = sample.scores,
+        features = feature.scores,
+        proportion.explained = prop.var,
+        dist = dist.matrix.raw,
+        metadata = list(
+            long.method.name = "(Robust Aitchison) RPCA Biplot",
+            run.id = sprintf(
+                "optspace_helper_n.components_%d.max.iterations_%d",
+                n.components, max.iterations
+            )
+        )
+    )
+
+    return(list(
+        ord_res = ord_res,
+        dist    = dist.res,
+        opt_fit = opt.result
+    ))
+}
+
+#' Joint OptSpace Optimization Across Multiple Train/Test Splits
+#'
+#' Internal function that performs joint matrix factorization using OptSpace across a set of paired train/test compositional tables.
+#' Stacks training matrices horizontally, applies low-rank optimization, splits feature loadings per table,
+#' and evaluates projection error on test data via Frobenius norm.
+#'
+#' @param train.test.pairs A list of paired matrices where each element is a two-item list: \code{[[test, train]]}.
+#' @param n.components Integer specifying number of components to retain in the OptSpace model.
+#' @param max.iter Maximum number of optimization iterations. Default is 50.
+#' @param verbose Logical; whether to print progress messages. Default is \code{TRUE}.
+#'
+#' @return A list with:
+#' \describe{
+#'   \item{U}{Shared sample embedding matrix across all input tables.}
+#'   \item{S}{Singular values matrix from OptSpace decomposition.}
+#'   \item{V_list}{List of per-table feature loading matrices.}
+#'   \item{dists}{Matrix of reconstruction errors (rows: error type, columns: tables).}
+#' }
+#'
+#' @keywords internal
+#' @noRd
+
+.joint_optspace_solve <- function(train.test.pairs, n.components,
+                                  max.iter = 50, verbose = TRUE,
+                                  tol = 1e-5) {
+    # Prepare lists to hold training matrices and dimensions
+    train.matrices <- list()
+    test.matrices <- list()
+    dims <- list()
+
+    for (pair in train.test.pairs) {
+        test.mat <- pair[[1]]
+        train.mat <- pair[[2]]
+        train.matrices <- append(train.matrices, list(train.mat))
+        test.matrices <- append(test.matrices, list(test.mat))
+        dims <- append(dims, list(dim(train.mat)))
+    }
+
+    # Stack training matrices horizontally
+    train.stacked <- do.call(cbind, train.matrices)
+
+    # Apply OptSpace to stacked matrix via vegan
+    if (verbose) {
+        message("Running vegan::optspace() on stacked training data...")
+    }
+
+    fit <- vegan::optspace(
+        x       = train.stacked,
+        ropt    = n.components,
+        niter   = max.iter,
+        tol     = tol,
+        verbose = verbose
+    )
+
+    # Extract sample loadings
+    U.shared <- fit$X
+    S.shared <- fit$S
+
+    # Split V back into per-table pieces
+    feat.indices <- cumsum(vapply(dims, function(d) d[2], numeric(1)))
+    feat.starts <- c(1, head(feat.indices, -1) + 1)
+    V_list <- Map(
+        function(start, end) fit$Y[start:end, , drop = FALSE],
+        feat.starts, feat.indices
+    )
+
+    # Reconstruction error per view (mean_CV / std_CV placeholder)
+    n_views <- length(test.matrices)
+    dists <- matrix(0, nrow = 2, ncol = n_views)
+
+    for (i in seq_along(test.matrices)) {
+        V.k <- V_list[[i]]
+        test.mat <- test.matrices[[i]]
+
+        # Project test samples: U.test = test × V
+        U.test <- as.matrix(test.mat) %*% V.k
+        U.test <- sweep(U.test, 2, diag(S.shared), "/")
+        recon.test <- U.test %*% S.shared %*% t(V.k)
+
+        # Center for consistency
+        recon.test <- scale(recon.test, center = TRUE, scale = FALSE)
+        recon.test <- t(scale(t(recon.test), center = TRUE, scale = FALSE))
+
+        error <- test.mat - recon.test
+        error[is.na(error)] <- 0
+        error.val <- norm(error, "F") / sqrt(sum(!is.na(test.mat)))
+
+        dists[1, i] <- error.val
+        dists[2, i] <- 0
+    }
+
+    return(list(U = U.shared, S = S.shared, V_list = V_list, dists = dists))
 }
