@@ -11,21 +11,21 @@ message("== IBDMDB demo data preparation ==")
 # Config
 # ------------------------------------------------------------------------------
 
-raw_dir <- file.path("inst", "extdata")
+# This script is for DEVELOPERS only.
+# It downloads large raw files and prepares a compact demo dataset (.rda).
+# It is NOT run during R CMD check.
 
-# 2-omic (used in ibdmdb_benchmarking.qmd & ibdmdb_2omic_jointrpca.qmd)
-f_mgx  <- file.path(raw_dir, "taxonomic_profiles_mgx.tsv")
-f_mtx  <- file.path(raw_dir, "ecs_relab.tsv")
-f_meta <- file.path(raw_dir, "hmp2_metadata_2018-08-20.csv")
+cache_dir <- file.path("tools", "cache", "mia_ibdmdb_cache")
+dir.create(cache_dir, recursive = TRUE, showWarnings = FALSE)
 
-# Prevalence thresholds (fraction of samples)
-prev_mgx_frac <- 0.05
-prev_mtx_frac <- 0.02
+# Stable download URLs (Zenodo)
+url_meta <- "https://zenodo.org/records/18280405/files/hmp2_metadata_2018-08-20.csv"
+url_mtx  <- "https://zenodo.org/records/18280535/files/ecs_relab.tsv"
+url_mgx  <- "https://zenodo.org/records/18280521/files/taxonomic_profiles_mgx.tsv"
 
-# Cap feature counts for speed/size
-cap_mgx <- 800L
-cap_mtx <- 800L
-max_samples <- 60L
+f_mgx  <- file.path(cache_dir, "taxonomic_profiles_mgx.tsv")
+f_mtx  <- file.path(cache_dir, "ecs_relab.tsv")
+f_meta <- file.path(cache_dir, "hmp2_metadata_2018-08-20.csv")
 
 # ------------------------------------------------------------------------------
 # Dependencies
@@ -49,6 +49,13 @@ library(MultiAssayExperiment)
 # ------------------------------------------------------------------------------
 # Helpers
 # ------------------------------------------------------------------------------
+
+download_if_missing <- function(url, dest) {
+    if (file.exists(dest)) return(invisible(dest))
+    message("Downloading: ", basename(dest))
+    utils::download.file(url, dest, mode = "wb", quiet = FALSE)
+    invisible(dest)
+}
 
 read_ibdmdb_tsv <- function(path) {
     stopifnot(file.exists(path))
@@ -163,21 +170,18 @@ make_SE <- function(mat, meta_df = NULL, assay_name = "counts") {
 }
 
 # ------------------------------------------------------------------------------
-# I/O guards
+# Download raw inputs (if missing)
 # ------------------------------------------------------------------------------
 
-if (!dir.exists(raw_dir)) stop("Raw input dir not found: ", raw_dir)
-if (!dir.exists("data")) dir.create("data", recursive = TRUE)
+download_if_missing(url_mgx,  f_mgx)
+download_if_missing(url_mtx,  f_mtx)
+download_if_missing(url_meta, f_meta)
 
 # ------------------------------------------------------------------------------
 # Metadata (shared with 2-omic demo)
 # ------------------------------------------------------------------------------
 
-has_meta <- file.exists(f_meta)
-meta_full <- NULL
-if (has_meta) {
-    meta_full <- read_metadata(f_meta)
-}
+meta_full <- read_metadata(f_meta)
 
 demo_samples <- character(0)
 
@@ -185,82 +189,6 @@ demo_samples <- character(0)
 # Prepare 2-omic (MGX + MTX)
 # ------------------------------------------------------------------------------
 
-has_mgx <- file.exists(f_mgx)
-has_mtx <- file.exists(f_mtx)
-
-if (has_mgx && has_mtx) {
-    message("Preparing 2-omic MGX + MTX demo ...")
-    
-    dt_mgx <- read_ibdmdb_tsv(f_mgx)
-    dt_mtx <- read_ibdmdb_tsv(f_mtx)
-    
-    M_mgx <- sanitize_matrix(dedup_rownames(to_matrix(dt_mgx)))
-    M_mtx <- sanitize_matrix(dedup_rownames(to_matrix(dt_mtx)))
-    
-    shared <- intersect(colnames(M_mgx), colnames(M_mtx))
-    shared <- sort(unique(shared[nchar(shared) > 0]))
-    if (length(shared) < 20) {
-        warning("Few shared samples for 2-omic: ", length(shared), " (keeping anyway).")
-    }
-    M_mgx <- M_mgx[, shared, drop = FALSE]
-    M_mtx <- M_mtx[, shared, drop = FALSE]
-    
-    # Per-view prevalence
-    n_samp <- ncol(M_mgx)
-    keep_mgx <- rowSums(M_mgx > 0) >= ceiling(prev_mgx_frac * n_samp)
-    keep_mtx <- rowSums(M_mtx > 0) >= ceiling(prev_mtx_frac * n_samp)
-    M_mgx <- M_mgx[keep_mgx, , drop = FALSE]
-    M_mtx <- M_mtx[keep_mtx, , drop = FALSE]
-    
-    # Drop all-zero samples per view
-    M_mgx <- M_mgx[, colSums(M_mgx) > 0, drop = FALSE]
-    M_mtx <- M_mtx[, colSums(M_mtx) > 0, drop = FALSE]
-    
-    # Recompute strict shared
-    shared2 <- intersect(colnames(M_mgx), colnames(M_mtx))
-    shared2 <- sort(unique(shared2))
-    set.seed(1)
-    if (length(shared2) > max_samples) {
-        shared2 <- sort(sample(shared2, max_samples))
-    }
-    M_mgx <- M_mgx[, shared2, drop = FALSE]
-    M_mtx <- M_mtx[, shared2, drop = FALSE]
-    
-    # Cap by variance
-    M_mgx <- cap_by_var(M_mgx, cap_mgx)
-    M_mtx <- cap_by_var(M_mtx, cap_mtx)
-    
-    # Attach metadata if available
-    meta_df <- if (has_meta) meta_full else NULL
-    se_mgx  <- make_SE(M_mgx, meta_df, assay_name = "mgx")
-    se_mtx  <- make_SE(M_mtx, meta_df, assay_name = "mtx")
-    
-    mae2 <- MultiAssayExperiment::MultiAssayExperiment(
-        experiments = list(MGX = se_mgx, MTX = se_mtx)
-    )
-    
-    # Attach sample metadata at the MAE level (if consistent across experiments)
-    if (!is.null(colData(se_mgx))) {
-        MultiAssayExperiment::colData(mae2) <- colData(se_mgx)
-    }
-    
-    # Track demo sample IDs
-    demo_samples <- union(demo_samples, colnames(M_mgx))
-    
-    # Save demo objects
-    save(
-        se_mgx, se_mtx, mae2,
-        file     = file.path("data", "ibdmdb_2omic_demo.rda"),
-        compress = "xz"
-    )
-    
-    message("Saved: data/ibdmdb_2omic_demo.rda")
-} else {
-    message(
-        "Skipping 2-omic demo (missing files):",
-        "\n  MGX: ", f_mgx, " (", has_mgx, ")",
-        "\n  MTX: ", f_mtx, " (", has_mtx, ")"
-    )
-}
+message("Preparing 2-omic MGX + MTX demo ...")
 
 message("== Done. Re-run devtools::document(); devtools::check(); BiocCheck::BiocCheck(). ==")

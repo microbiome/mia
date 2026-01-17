@@ -420,8 +420,11 @@ NULL
 #'     MTX.}
 #' }
 #'
-#' @source Prepared by \code{inst/scripts/prepare_ibdmdb_demo.R} from
-#'   publicly available IBDMDB/HMP2 taxonomic profiles.
+#' @source The objects in this package are a compact demo prepared by
+#'   \code{inst/scripts/ibdmdb_demo.R}. The script downloads publicly
+#'   available IBDMDB/HMP2 taxonomic profiles and metadata from Zenodo
+#'   (stable record-based URLs) and then subsets/filters the data to create
+#'   a small example for vignettes.
 #'
 #' @references
 #' Lloyd-Price J, Arze C, Ananthakrishnan AN, et al.
