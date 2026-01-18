@@ -5,41 +5,39 @@
 \alias{ibdmdb_2omic_demo}
 \title{IBDMDB 2-omic demo dataset (MGX + MTX)}
 \format{
-A \code{MultiAssayExperiment} object containing:
+A \code{MultiAssayExperiment} with two experiments:
 \describe{
 \item{se_mgx}{A \code{SummarizedExperiment} with MGX abundance data.}
 \item{se_mtx}{A \code{SummarizedExperiment} with MTX abundance data.}
-\item{mae2}{A \code{MultiAssayExperiment} with two experiments: MGX and
-MTX.}
+\item{mae2}{A \code{MultiAssayExperiment} containing both experiments.}
 }
 }
 \source{
-The objects in this package are a compact demo prepared by
-\code{inst/scripts/ibdmdb_demo.R}. The script downloads publicly
-available IBDMDB/HMP2 taxonomic profiles and metadata from Zenodo
-(stable record-based URLs) and then subsets/filters the data to create
-a small example for vignettes.
+Prepared by \code{inst/scripts/prepare_ibdmdb_demo.R}. The script is for
+developers and downloads publicly available IBDMDB/HMP2 taxonomic profiles
+and metadata from Zenodo into a local cache (e.g. \code{tools/cache/}),
+then subsets and filters the raw data to create a small example suitable
+for vignettes.
 }
 \usage{
-data(ibdmdb_2omic_demo)
+data("ibdmdb_2omic_demo")
 }
 \description{
 A compact example derived from the Integrative Human Microbiome Project (iHMP)
 Inflammatory Bowel Disease (IBD) cohort.
 }
 \details{
-This demo contains two experiments:
+The dataset \code{ibdmdb_2omic_demo} is a named list with:
 \itemize{
 \item \code{se_mgx}: metagenomic taxonomic profiles (MGX)
 \item \code{se_mtx}: metatranscriptomic taxonomic profiles (MTX)
-\item \code{mae2}: a
-\link[MultiAssayExperiment]{MultiAssayExperiment}
+\item \code{mae2}: a \link[MultiAssayExperiment]{MultiAssayExperiment}
 containing both experiments
 }
 
 These compact objects are intended for quick examples and vignettes.
 Load with:
-\code{data(ibdmdb_2omic_demo)}.
+\code{data("ibdmdb_2omic_demo")}.
 }
 \references{
 Lloyd-Price J, Arze C, Ananthakrishnan AN, et al.
