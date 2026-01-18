@@ -24,8 +24,8 @@
 
 .require_package <- function(pkg){
     if(!requireNamespace(pkg, quietly = TRUE)){
-        stop("'",pkg,"' package not found. Please install the '",pkg,"' package ",
-             "to use this function.", call. = FALSE)
+    stop("'",pkg,"' package not found. Please install the '",pkg,"' package ",
+        "to use this function.", call. = FALSE)
     }
 }
 
@@ -95,7 +95,7 @@
         assay.type, x, name = .get_name_in_parent(assay.type)){
     if(!.is_non_empty_string(assay.type)){
         stop("'",name,"' must be a single non-empty character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if(!(assay.type %in% names(assays(x)))){
         stop("'",name,"' must be a valid name of assays(x)", call. = FALSE)
@@ -106,11 +106,11 @@
         tree.name, x, name = .get_name_in_parent(tree.name) ){
     if( !.is_non_empty_string(tree.name) ){
         stop("'", name, "' must be a single non-empty character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if( !(tree.name %in% rowTreeNames(x)) ){
         stop("'", name, "' must specify a tree from 'rowTreeNames(x)'.",
-             call. = FALSE)
+            call. = FALSE)
     }
 }
 
@@ -118,11 +118,11 @@
         tree.name, x, name = .get_name_in_parent(tree.name) ){
     if( !.is_non_empty_string(tree.name) ){
         stop("'", name, "' must be a single non-empty character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if( !(tree.name %in% colTreeNames(x)) ){
         stop("'", name, "' must specify a tree from 'colTreeNames(x)'.",
-             call. = FALSE)
+            call. = FALSE)
     }
 }
 
@@ -150,7 +150,7 @@
     }
     # Then check that altExp can be found; name or index.
     if( !is.null(altexp) && !altexp %in% c(
-        altExpNames(tse), seq_len(length(altExps(tse)))) ){
+            altExpNames(tse), seq_len(length(altExps(tse)))) ){
         stop(
             "'", altExpName, "', does not specify an experiment from altExp ",
             "slot of '", tse_name, "'.", call. = FALSE)
@@ -173,8 +173,8 @@
 .check_MARGIN <- function(MARGIN, name = .get_name_in_parent(MARGIN)) {
     # MARGIN must be one of the following options
     if( !(length(MARGIN) == 1L && tolower(MARGIN) %in% c(
-        1, 2, "1", "2", "features", "samples", "columns", "col", "row",
-        "rows", "cols")) ) {
+            1, 2, "1", "2", "features", "samples", "columns", "col", "row",
+            "rows", "cols")) ) {
         stop("'", name,"' must be 'rows' or 'cols'.", call. = FALSE)
     }
     # Convert MARGIN to numeric if it is not.
@@ -188,7 +188,7 @@
         data.type, x, name = .get_name_in_parent(data.type)){
     if( !.is_non_empty_string(data.type) ){
         stop("'" ,name, "' must be a single non-empty character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if( !(data.type %in% names(metadata(x))) ){
         stop("'",name,"' must be a valid name of metadata(x)", call. = FALSE)
@@ -254,7 +254,7 @@
         values,
         name)
     values <- do.call(cbind, values)
-    
+
     # Based on MARGIN, get rowDatra or colData
     FUN <- switch(MARGIN, rowData, colData)
     # If altexp.name was not NULL, then we know that it specifies correctly
@@ -264,7 +264,7 @@
     } else{
         cd <- FUN(x)
     }
-    
+
     # check for duplicated values
     f <- colnames(cd) %in% colnames(values)
     FUN_name <- switch(MARGIN, "rowData", "colData")
@@ -279,7 +279,7 @@
     }
     # Keep only unique values
     cd <- cbind( (cd)[!f], values )
-    
+
     # Replace colData with new one
     x <- .add_to_coldata(x, cd, altexp = altexp, MARGIN = MARGIN)
     return(x)
@@ -354,7 +354,7 @@
 .add_to_altExps <- function(x, values, name = names(values), ...){
     # Check values
     if( !((is(values, "list") || is(values, "SimpleList")) &&
-          length(values) > 0) ){
+            length(values) > 0) ){
         stop("'values' must be non-empty list.", call. = FALSE)
     }
     # Check names
@@ -417,7 +417,7 @@
     }
     if( !identical(rownames(as.matrix(values)), colnames(x)) ){
         stop("Rownames of the matrix should match with colnames(x).",
-             " The result is not added to reducedDims.", call. = FALSE)
+            " The result is not added to reducedDims.", call. = FALSE)
     }
     # Throw warning if values of reducedDim are overwritten
     if( name %in% names(reducedDims(x)) ){
@@ -468,7 +468,7 @@
         colnames(feature_tab) <- rownames(sample_meta) <- samples
         rownames(feature_tab) <- rownames(feature_meta) <- features
     }
-    
+
     # The abundance table takes the precedence, and metadata is modified
     # accordingly. Give warning if there are samples or features that are not
     # included in the metadata.
@@ -497,7 +497,7 @@
                 "are not present in the abundance table and thus being ",
                 "removed. Please check for errors.", call. = FALSE)
     }
-    
+
     # We order the metadata based on abundance table. Moreover, we subset
     # the metadata to match with abundance table if there are additional data.
     ind <- match(colnames(feature_tab), rownames(sample_meta))
@@ -547,9 +547,9 @@
 #' @importFrom S4Vectors DataFrame
 #' @noRd
 .parse_taxonomy <- function(
-        taxa_tab, sep = "; |;", col.name = column_name, column_name = "Taxon",
-        remove.prefix = prefix.rm, prefix.rm = removeTaxaPrefixes,
-        removeTaxaPrefixes = FALSE, ...) {
+    taxa_tab, sep = "; |;", col.name = column_name, column_name = "Taxon",
+    remove.prefix = prefix.rm, prefix.rm = removeTaxaPrefixes,
+    removeTaxaPrefixes = FALSE, ...) {
     ############################### Input check ################################
     # Check sep
     if(!.is_non_empty_string(sep)){
@@ -558,19 +558,19 @@
     # Check col.name
     if( !(.is_non_empty_string(col.name) && col.name %in% colnames(taxa_tab)) ){
         stop("'col.name' must be a single character value defining column ",
-             "that includes information about taxonomic levels.", call. = FALSE)
+            "that includes information about taxonomic levels.", call. = FALSE)
     }
     # Check remove.prefix
     if(!.is_a_bool(remove.prefix)){
         stop("'remove.prefix' must be TRUE or FALSE.", call. = FALSE)
     }
     ############################## Input check end #############################
-    
+
     #  work with any combination of taxonomic ranks available
     all_ranks <- .taxonomy_rank_prefixes
     all_prefixes <- paste0(all_ranks, "__")
     names(all_prefixes) <- names(all_ranks)
-    
+
     # split the taxa strings
     taxa_split <- CharacterList(strsplit(taxa_tab[, col.name],sep))
     # extract present prefixes
@@ -591,16 +591,16 @@
     #
     if(length(unique(lengths(taxa_split))) != 1L){
         stop("Something went wrong while splitting taxonomic ",
-             "levels. Please check that 'sep' is correct.", call. = FALSE)
+            "levels. Please check that 'sep' is correct.", call. = FALSE)
     }
     taxa_tab <- DataFrame(as.matrix(taxa_split))
     colnames(taxa_tab) <- names(all_ranks)
-    
+
     # Subset columns so that include only those columns that have some
     # information
     non_empty <- colSums(is.na(taxa_tab)) != nrow(taxa_tab)
     taxa_tab <- taxa_tab[ , non_empty, drop = FALSE]
-    
+
     return(taxa_tab)
 }
 
