@@ -31,6 +31,8 @@ or \code{philr::philr}.
 to fill reference sample's column in returned assay when calculating alr.
 (Default: \code{NA})
 \item \code{ref_vals} Deprecated. Use \code{reference} instead.
+\item \code{nbins}: \code{Numeric scalar}. For \code{"binning"}, specifies
+the number of bins to use. (Default: \code{4})
 \item \code{percentile}: \code{Numeric scalar} or \code{NULL} (css). Used
 to set the  percentile value that calculates the scaling factors in the css
 normalization. If \code{NULL}, percentile is estimated from the data by
