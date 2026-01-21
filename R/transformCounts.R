@@ -919,6 +919,11 @@ NULL
     }
     nbins <- as.integer(nbins)
 
+    # Check does not contain negative numeric values
+    if( !all(mat >= 0) ) {
+        warning("The assay contains negative numeric values. Resulting bins will not make sense.")
+    }
+
     # Apply binning
     res <- apply(mat, MARGIN = 2, function(x) {
         # Initialize result with 0 (for zero values)
