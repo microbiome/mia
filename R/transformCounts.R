@@ -912,12 +912,12 @@ NULL
 
 ################################ .apply_binning ################################
 # This function divides the data into a specified number of bins.
-.apply_binning <- function(mat, bins = 4, ...){
-    # Check that bins is a single positive numeric value
-    if( !.is_a_numeric(bins) || bins <= 0 ){
-        stop("'bins' must be a single positive numeric value.", call. = FALSE)
+.apply_binning <- function(mat, nbins = 4, ...){
+    # Check that nbins is a single positive numeric value
+    if( !.is_a_numeric(nbins) || nbins <= 0 ){
+        stop("'nbins' must be a single positive numeric value.", call. = FALSE)
     }
-    bins <- as.integer(bins)
+    nbins <- as.integer(nbins)
 
     # Apply binning
     res <- apply(mat, MARGIN = 2, function(x) {
@@ -937,15 +937,15 @@ NULL
             ord <- order(nonzero_values, decreasing = TRUE)
 
             # Calculate bin assignments
-            if( n_nonzero < bins ){
+            if( n_nonzero < nbins ){
                 # For samples with fewer than B non-zero abundance species,
-                # species are distributed proportionally across bins 1 through B
-                bin_values <- round(seq(from = bins, to = 1, length.out = n_nonzero))
+                # species are distributed proportionally across nbins 1 through B
+                bin_values <- round(seq(from = nbins, to = 1, length.out = n_nonzero))
             } else {
                 # Ranks 1 to n_nonzero
                 # Formula: bin = B - ceiling(rank * B / N) + 1
                 ranks <- seq_len(n_nonzero)
-                bin_values <- bins - ceiling(ranks * bins / n_nonzero) + 1
+                bin_values <- nbins - ceiling(ranks * nbins / n_nonzero) + 1
             }
 
             # Assign back
