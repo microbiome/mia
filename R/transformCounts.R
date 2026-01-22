@@ -128,6 +128,12 @@
 #' are taken into account. This method keeps only values greater than
 #' \code{threshold} and replaces all other values with \code{value}.
 #'
+#' \item 'binning': Binning of the abundance values into a specified number of
+#' bins. The non-zero values are sorted and divided into \code{nbins} groups of
+#' equal size (quantiles). The group with the highest abundances is assigned to
+#' bin \code{nbins}, while the group with the lowest non-zero abundances is
+#' assigned to bin 1. Zero values are assigned to bin 0.
+#'
 #' }
 #'
 #' @return
