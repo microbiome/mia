@@ -429,7 +429,7 @@ test_that("transformAssay", {
 
         # Expect warning trying to bin negative values
         tse <- transformAssay(tse, method = "rclr")
-        expect_warning(transformAssay(tse, method = "binning", assay.type = "rclr"))
+        expect_error(transformAssay(tse, method = "binning", assay.type = "rclr"))
 
         # Check that the assay was created
         expect_true("binning" %in% assayNames(tse_bin))
