@@ -927,7 +927,7 @@ NULL
 
     # Check does not contain negative numeric values
     if( !all(mat >= 0) ) {
-        warning("The assay contains negative numeric values. Resulting bins will not make sense.")
+        stop("The assay contains negative numeric values. Resulting bins will not make sense.", call. = FALSE)
     }
 
     # Apply binning
