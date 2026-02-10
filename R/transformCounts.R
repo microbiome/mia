@@ -959,10 +959,13 @@ NULL
                 # species are distributed proportionally across nbins 1 through B
                 bin_values <- round(seq(from = nbins, to = 1, length.out = n_nonzero))
             } else {
-                # Ranks 1 to n_nonzero
-                # Formula: bin = B - ceiling(rank * B / N) + 1
-                ranks <- seq_len(n_nonzero)
-                bin_values <- nbins - ceiling(ranks * nbins / n_nonzero) + 1
+                # Get cut points
+                bin_idx <- cut(
+                    seq_len(n_nonzero),
+                    breaks = seq(0, n_nonzero, length.out = nbins + 1),
+                    labels = FALSE
+                )
+                bin_values <- nbins - bin_idx + 1
             }
 
             # Assign back
