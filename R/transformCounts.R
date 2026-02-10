@@ -132,7 +132,8 @@
 #' bins. The non-zero values are sorted and divided into \code{nbins} groups of
 #' equal size (quantiles). The group with the highest abundances is assigned to
 #' bin \code{nbins}, while the group with the lowest non-zero abundances is
-#' assigned to bin 1. Zero values are assigned to bin 0.
+#' assigned to bin 1. Zero values are assigned to bin 0. This binning approach
+#' is based on the binning strategy described by Medearis et al. (2026).
 #'
 #' }
 #'
@@ -147,6 +148,11 @@
 #' Differential abundance analysis for microbial marker-gene surveys
 #' _Nature Methods_ 10, 1200–1202.
 #' doi:10.1038/nmeth.2658
+#'
+#' Medearis, N. A., Zhu, S., & Zomorrodi, A. R. (2026).
+#' BiomeGPT: A foundation model for the human gut microbiome
+#' _bioRxiv_
+#' doi:10.64898/2026.01.05.697599
 #'
 #' @seealso
 #' \itemize{
