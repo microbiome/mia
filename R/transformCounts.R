@@ -283,7 +283,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 .transform_assay <- function(
         x, assay.type = "counts", assay_name = NULL,
         method = c(
-            "alr", "binning", "chi.square", "clr", "css", "cutoff", "difference", "-",
+            "alr", "binning", "chi.square", "clr", "css", "cutoff",
+            "difference", "-",
             "division", "/", "frequency", "hellinger", "invnorm", "log",
             "log10", "log2", "max", "normalize", "pa", "philr", "pseudocount",
             "range", "rank", "rclr", "relabundance", "rrank", "standardize",
@@ -933,7 +934,8 @@ NULL
 
     # Check does not contain negative numeric values
     if( !all(mat >= 0) ) {
-        stop("The assay contains negative numeric values. Resulting bins will not make sense.", call. = FALSE)
+        stop("The assay contains negative numeric values. Resulting bins will ",
+            "not make sense.", call. = FALSE)
     }
 
     # Apply binning
@@ -945,7 +947,7 @@ NULL
         is_nonzero <- x != 0
         n_nonzero <- sum(is_nonzero)
 
-        if (n_nonzero > 0) {
+        if( n_nonzero > 0 ){
             # Get indices of non-zero values
             nonzero_indices <- which(is_nonzero)
             nonzero_values <- x[nonzero_indices]
@@ -956,8 +958,10 @@ NULL
             # Calculate bin assignments
             if( n_nonzero < nbins ){
                 # For samples with fewer than B non-zero abundance species,
-                # species are distributed proportionally across nbins 1 through B
-                bin_values <- round(seq(from = nbins, to = 1, length.out = n_nonzero))
+                # species are distributed proportionally across nbins 1 through
+                # B
+                bin_values <- round(
+                    seq(from = nbins, to = 1, length.out = n_nonzero))
             } else {
                 # Get cut points
                 bin_idx <- cut(

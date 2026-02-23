@@ -160,6 +160,13 @@ Controlled by \code{offset} (default \code{0.5}; also
 are taken into account. This method keeps only values greater than
 \code{threshold} and replaces all other values with \code{value}.
 
+\item 'binning': Binning of the abundance values into a specified number of
+bins. The non-zero values are sorted and divided into \code{nbins} groups of
+equal size (quantiles). The group with the highest abundances is assigned to
+bin \code{nbins}, while the group with the lowest non-zero abundances is
+assigned to bin 1. Zero values are assigned to bin 0. This binning approach
+is based on the binning strategy described by Medearis et al. (2026).
+
 }
 }
 \examples{
@@ -231,6 +238,11 @@ Paulson, J., Stine, O., Bravo, H. et al. (2013)
 Differential abundance analysis for microbial marker-gene surveys
 \emph{Nature Methods} 10, 1200–1202.
 doi:10.1038/nmeth.2658
+
+Medearis, N. A., Zhu, S., & Zomorrodi, A. R. (2026).
+BiomeGPT: A foundation model for the human gut microbiome
+\emph{bioRxiv}
+doi:10.64898/2026.01.05.697599
 }
 \seealso{
 \itemize{
