@@ -18,7 +18,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.3</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Transform assay</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/rpca/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/rpca/R/transformCounts.R" class="external-link"><code>R/transformCounts.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/transformCounts.R" class="external-link"><code>R/transformCounts.R</code></a></small>
     <div class="hidden name"><code>transformAssay.Rd</code></div>
     </div>
 
@@ -87,6 +87,8 @@ or <code><a href="https://rdrr.io/pkg/philr/man/philr.html" class="external-link
 to fill reference sample's column in returned assay when calculating alr.
 (Default: <code>NA</code>)</p></li>
 <li><p><code>ref_vals</code> Deprecated. Use <code>reference</code> instead.</p></li>
+<li><p><code>nbins</code>: <code>Numeric scalar</code>. For <code>"binning"</code>, specifies
+the number of bins to use. (Default: <code>4</code>)</p></li>
 <li><p><code>percentile</code>: <code>Numeric scalar</code> or <code>NULL</code> (css). Used
 to set the  percentile value that calculates the scaling factors in the css
 normalization. If <code>NULL</code>, percentile is estimated from the data by
@@ -210,6 +212,12 @@ Controlled by <code>offset</code> (default <code>0.5</code>; also
 <li><p>'cutoff': In some ecological studies, only strictly positive values
 are taken into account. This method keeps only values greater than
 <code>threshold</code> and replaces all other values with <code>value</code>.</p></li>
+<li><p>'binning': Binning of the abundance values into a specified number of
+bins. The non-zero values are sorted and divided into <code>nbins</code> groups of
+equal size (quantiles). The group with the highest abundances is assigned to
+bin <code>nbins</code>, while the group with the lowest non-zero abundances is
+assigned to bin 1. Zero values are assigned to bin 0. This binning approach
+is based on the binning strategy described by Medearis et al. (2026).</p></li>
 </ul></div>
     <div id="references">
     <h2>References</h2>
@@ -217,6 +225,10 @@ are taken into account. This method keeps only values greater than
 Differential abundance analysis for microbial marker-gene surveys
 <em>Nature Methods</em> 10, 1200–1202.
 doi:10.1038/nmeth.2658</p>
+<p>Medearis, N. A., Zhu, S., &amp; Zomorrodi, A. R. (2026).
+BiomeGPT: A foundation model for the human gut microbiome
+<em>bioRxiv</em>
+doi:10.64898/2026.01.05.697599</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
