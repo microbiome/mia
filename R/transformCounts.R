@@ -36,6 +36,8 @@
 #'   to fill reference sample's column in returned assay when calculating alr.
 #'   (Default: \code{NA})
 #'   \item \code{ref_vals} Deprecated. Use \code{reference} instead.
+#'   \item \code{nbins}: \code{Numeric scalar}. For \code{"binning"}, specifies
+#'   the number of bins to use. (Default: \code{4})
 #'   \item \code{percentile}: \code{Numeric scalar} or \code{NULL} (css). Used
 #'   to set the  percentile value that calculates the scaling factors in the css
 #'   normalization. If \code{NULL}, percentile is estimated from the data by
@@ -126,6 +128,13 @@
 #' are taken into account. This method keeps only values greater than
 #' \code{threshold} and replaces all other values with \code{value}.
 #'
+#' \item 'binning': Binning of the abundance values into a specified number of
+#' bins. The non-zero values are sorted and divided into \code{nbins} groups of
+#' equal size (quantiles). The group with the highest abundances is assigned to
+#' bin \code{nbins}, while the group with the lowest non-zero abundances is
+#' assigned to bin 1. Zero values are assigned to bin 0. This binning approach
+#' is based on the binning strategy described by Medearis et al. (2026).
+#'
 #' }
 #'
 #' @return
@@ -139,6 +148,11 @@
 #' Differential abundance analysis for microbial marker-gene surveys
 #' _Nature Methods_ 10, 1200–1202.
 #' doi:10.1038/nmeth.2658
+#'
+#' Medearis, N. A., Zhu, S., & Zomorrodi, A. R. (2026).
+#' BiomeGPT: A foundation model for the human gut microbiome
+#' _bioRxiv_
+#' doi:10.64898/2026.01.05.697599
 #'
 #' @seealso
 #' \itemize{
@@ -269,7 +283,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 .transform_assay <- function(
         x, assay.type = "counts", assay_name = NULL,
         method = c(
-            "alr", "chi.square", "clr", "css", "cutoff", "difference", "-",
+            "alr", "binning", "chi.square", "clr", "css", "cutoff",
+            "difference", "-",
             "division", "/", "frequency", "hellinger", "invnorm", "log",
             "log10", "log2", "max", "normalize", "pa", "philr", "pseudocount",
             "range", "rank", "rclr", "relabundance", "rrank", "standardize",
@@ -325,8 +340,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     attr(assay, "pseudocount") <- NULL
     # Calls help function that does the transformation
     # Help function is different for mia and vegan transformations
-    if( method %in% c(
-            "log10", "log2", "css", "difference", "division", "invnorm") ){
+    if( method %in% c("binning", "log10", "log2", "css", "difference",
+            "division", "invnorm") ){
         transformed_table <- .apply_transformation(
             assay, method, MARGIN, ...)
     } else if( method %in% c("philr") ){
@@ -360,6 +375,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     # Function is selected based on the "method" variable
     FUN <- switch(
         method,
+        binning = .apply_binning,
         log10 = .calc_log,
         log2 = .calc_log,
         css = .calc_css,
@@ -903,6 +919,70 @@ NULL
         attr(res, "parameters"),
         list(ties.method = ties.method, offset = offset)
     )
+
+    return(res)
+}
+
+################################ .apply_binning ################################
+# This function divides the data into a specified number of bins.
+.apply_binning <- function(mat, nbins = 4, ...){
+    # Check that nbins is a single positive numeric value
+    if( !.is_a_numeric(nbins) || nbins <= 0 ){
+        stop("'nbins' must be a single positive numeric value.", call. = FALSE)
+    }
+    nbins <- as.integer(nbins)
+
+    # Check does not contain negative numeric values
+    if( !all(mat >= 0) ) {
+        stop("The assay contains negative numeric values. Resulting bins will ",
+            "not make sense.", call. = FALSE)
+    }
+
+    # Apply binning
+    res <- apply(mat, MARGIN = 2, function(x) {
+        # Initialize result with 0 (for zero values)
+        res <- rep(0, length(x))
+
+        # Identify non-zero values
+        is_nonzero <- x != 0
+        n_nonzero <- sum(is_nonzero)
+
+        if( n_nonzero > 0 ){
+            # Get indices of non-zero values
+            nonzero_indices <- which(is_nonzero)
+            nonzero_values <- x[nonzero_indices]
+
+            # Sort indices based on values (descending)
+            ord <- order(nonzero_values, decreasing = TRUE)
+
+            # Calculate bin assignments
+            if( n_nonzero < nbins ){
+                # For samples with fewer than B non-zero abundance species,
+                # species are distributed proportionally across nbins 1 through
+                # B
+                bin_values <- round(
+                    seq(from = nbins, to = 1, length.out = n_nonzero))
+            } else {
+                # Get cut points
+                bin_idx <- cut(
+                    seq_len(n_nonzero),
+                    breaks = seq(0, n_nonzero, length.out = nbins + 1),
+                    labels = FALSE
+                )
+                bin_values <- nbins - bin_idx + 1
+            }
+
+            # Assign back
+            res[nonzero_indices[ord]] <- bin_values
+        }
+        return(res)
+    })
+
+    # Ensure dimensions are preserved (apply simplifies to vector if dim is 1)
+    if( is.null(dim(res)) && !is.null(dim(mat)) ){
+        dim(res) <- dim(mat)
+    }
+    dimnames(res) <- dimnames(mat)
 
     return(res)
 }
