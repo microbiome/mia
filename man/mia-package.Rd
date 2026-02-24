@@ -46,7 +46,7 @@ Other contributors:
   \item Théotime Pralas [contributor]
   \item Shadman Ishraq [contributor]
   \item Eineje Ameh [contributor]
-  \item Artur Sannikov [contributor]
+  \item Artur Sannikov (\href{https://orcid.org/0000-0001-7765-123X}{ORCID}) [contributor]
   \item Hervé Pagès [contributor]
   \item Rajesh Shigdel [contributor]
   \item Katariina Pärnänen [contributor]
@@ -56,6 +56,6 @@ Other contributors:
   \item Jesse Pasanen [contributor]
   \item Eetu Tammi [contributor]
   \item Aituar Bektanov [contributor]
+  \item Rasmus Hindström [contributor]
 }
-
 }
