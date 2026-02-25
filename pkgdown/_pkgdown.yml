@@ -8,6 +8,10 @@ reference:
   - getMediation
   - getPERMANOVA
 
+- title: Joint-RPCA
+  contents:
+    - getJointRPCA
+
 - title: Clustering
 - contents:
   - calculateDMN
@@ -39,6 +43,7 @@ reference:
   - peerj13075
   - Tengeler2020
   - Tito2024QMP
+  - ibdmdb_2omic_demo
 - title: Dataset description
 - contents:
   - getPrevalence

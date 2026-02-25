@@ -55,7 +55,7 @@ Other contributors:
   \item Sam Hillman [contributor]
   \item Jesse Pasanen [contributor]
   \item Eetu Tammi [contributor]
+  \item Aituar Bektanov [contributor]
   \item Rasmus Hindström [contributor]
 }
-
 }
