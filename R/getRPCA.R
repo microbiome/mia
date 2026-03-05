@@ -817,15 +817,43 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         message("* optspace: Step 4: Gradient Descent ...")
     }
     for( i in seq_len(niter) ){
+        sample_loadings <- vector("list", n_tables)
+        singular_list <- vector("list", n_tables)
+
         for( table_i in seq_len(n_tables) ){
-            temp <- .gradient_update_joint_optspace(
-                table_i, observed_list, pa_list, n_features, U_shared, S_shared,
-                V_list, rho)
-            U_shared <- temp[["U_shared"]]
-            S_shared <- temp[["S_shared"]]
-            V_list <- temp[["V_list"]]
+            # Perform gradient update for current table
+            res <- .gradient_update_joint_optspace(
+                table_i, observed_list, pa_list, n_features, U_shared,
+                S_shared, V_list, rho)
+            # Store table-specific updates
+            sample_loadings[[table_i]] <- res[["U_i"]]  # proposal for shared U
+            singular_list[[table_i]] <- res[["S_i"]]    # table singular values
+            V_list[[table_i]] <- res[["V_i"]] # updated feature loadings
         }
+
+        # ---------------------------------------------------------------------
+        # Recompute shared U and S
+        # ---------------------------------------------------------------------
+        # Average U across tables
+        U_shared <- Reduce("+", sample_loadings) / n_tables
+
+        # Compute shared covariance of U
+        X_U <- Reduce(
+            "+", lapply(sample_loadings, function(u) u %*% t(u))) / n_tables
+
+        svd_res <- svd(X_U)
+
+        S_shared <- diag(svd_res$d[seq_len(ropt)])
+        S_shared <- S_shared / norm(S_shared, "F")
+
+        # Rotate feature loadings
+        V_list <- lapply(V_list, function(V) {
+            t(S_shared %*% t(V))
+        })
+
+        # ---------------------------------------------------------------------
         # Compute distortion
+        # ---------------------------------------------------------------------
         new_dist <- .compute_optspace_distortion(
             U_shared, S_shared, V_list, observed_list, pa_list,
             total_non_zeroes)
@@ -990,73 +1018,78 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 }
 
 # -----------------------------------------------------------------------------
-# Perform one gradient descent update step for a single table.
+# Perform one gradient descent update for a single table.
 #
 # Steps
 # -----
-# 1. Compute gradient directions for U and V
-# 2. Compute optimal step length
-# 3. Update U_shared and table-specific V
-# 4. Re-estimate singular values S_shared
+# 1. Compute gradient directions for U (shared) and V (table-specific)
+# 2. Determine optimal step length via line search
+# 3. Update table-specific V and proposal for shared U
+# 4. Recompute table-specific singular values S
 #
-# This procedure minimizes reconstruction error for the given table while
-# keeping the shared sample space consistent across all tables.
+# Note
+# ----
+# U_shared and S_shared are not modified here; this function returns
+# table-specific updates, which can later be aggregated across tables.
 # -----------------------------------------------------------------------------
 .gradient_update_joint_optspace <- function(
         table_i, observed_list, pa_list, n_features, U_shared, S_shared, V_list,
-        rho, step.size = 10000L){
+        rho, step.size = 1e5){
     if( !(.is_an_integer(step.size) && step.size > 0) ){
         stop("'step.size' must be a single positive integer.", call. = FALSE)
     }
-    # Extract data for the selected table
-    pa_tab <- pa_list[[table_i]]            # presence/absence mask
-    observed_tab <- observed_list[[table_i]]# observed values (NA replaced by 0)
-    feature_loadings <- V_list[[table_i]]   # current feature loadings (V_i)
+    obs  <- observed_list[[table_i]]
+    mask <- pa_list[[table_i]]
+    V_i  <- V_list[[table_i]]
 
-    # Compute gradient directions for U_shared and V_i
-    gradient_desc_res <- vegan:::.aux_gradF_t(
+    # -----------------------------
+    # Compute gradient for table i
+    # -----------------------------
+    grad_res <- vegan:::.aux_gradF_t(
         U_shared,
-        feature_loadings,
+        V_i,
         S_shared,
-        observed_tab,
-        pa_tab,
+        obs,
+        mask,
         step.size,
         rho
     )
-    # Gradient updates
-    U_update <- gradient_desc_res[["W"]]    # direction for U_shared
-    V_update <- gradient_desc_res[["Z"]]    # direction for V_i
+    U_update <- grad_res[["W"]]
+    V_update <- grad_res[["Z"]]
 
-    # Compute optimal step size along the gradient direction
-    optimal_step <- vegan:::.aux_getoptT(
+    # -----------------------------
+    # Line search for optimal step
+    # -----------------------------
+    step <- vegan:::.aux_getoptT(
         U_shared,
         U_update,
-        feature_loadings,
+        V_i,
         V_update,
         S_shared,
-        observed_tab,
-        pa_tab,
+        obs,
+        mask,
         step.size,
         rho
     )
 
-    # Apply updates
-    U_shared <- U_shared + optimal_step * U_update
-    V_list[[table_i]] <- feature_loadings + optimal_step * V_update
+    # Update table-specific matrices
+    U_i <- U_shared + step * U_update
+    V_i <- V_i + step * V_update
 
-    # Recompute optimal singular values for updated factors
-    S_shared <- vegan:::.aux_getoptS(
-        U_shared,
-        V_list[[table_i]],
-        observed_tab,
-        pa_tab
+    # Recompute singular values for this table
+    S_i <- vegan:::.aux_getoptS(
+        U_i,
+        V_i,
+        obs,
+        mask
     )
 
     # Return updated parameters
     res <- list(
-        U_shared = U_shared,
-        S_shared = S_shared,
-        V_list = V_list
+        U_i = U_i,
+        S_i = S_i,
+        V_i = V_i
+
     )
     return(res)
 }
