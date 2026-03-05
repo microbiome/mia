@@ -86,7 +86,7 @@ setMethod("getJointRPCA", signature = c(x = "MultiAssayExperiment"),
                 call. = FALSE)
         }
         mat_list <- .prepare_mae_for_joint_rpca(x, experiments, assay.types)
-        res <- .calculate_joint_rpca(mat_list, ...)
+        res <- .run_joint_rpca_analysis(mat_list, ...)
         return(res)
     }
 )
@@ -102,7 +102,7 @@ setMethod("getJointRPCA", signature = c(x = "SingleCellExperiment"),
                 call. = FALSE)
         }
         mat_list <- .prepare_tse_for_joint_rpca(x, experiments, assay.types)
-        res <- .calculate_joint_rpca(mat_list, ...)
+        res <- .run_joint_rpca_analysis(mat_list, ...)
         return(res)
     }
 )
@@ -165,25 +165,9 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     return(mat_list)
 }
 
-# This function runs RPCA to single table
-.calculate_rpca <- function(mat, ncomponents = 3L, ...){
-    # Get lower rank representation of the data
-    opt_results <- .get_lower_rank_mat(mat, ncomponents = ncomponents, ...)
-    # The result might have lower number of columns if they were not able to be
-    # estimated.
-    ncomponents <- opt_results[["raw"]][["S"]] |> ncol()
-    # Apply pca to lower rank representation
-    pca_results <- .calculate_pca(
-        opt_results[["matrix"]], ncomponents = ncomponents, ...)
-    # Calculate distance in PCA space
-    distance <- pca_results[["sample_scores"]] |> dist()
-    # Create a final results to return to user
-    res <- .construct_rpca_result(pca_results, opt_results, distance)
-    return(res)
-}
-
-# This function calculates Joint-RPCA for multiple tables
-.calculate_joint_rpca <- function(mat_list, test.set = NULL, ...){
+# This function calculates Joint-RPCA for multiple tables. It runs the whole
+# analysis from test/train set split to projecting the results to test set.
+.run_joint_rpca_analysis <- function(mat_list, test.set = NULL, ...){
     if( !(is.null(test.set) || is.character(test.set)) ){
         stop(".")
     }
@@ -206,15 +190,10 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         x[test_samples, , drop = FALSE]
     })
 
-    # Create stacked tables for train and test sets
-    train_mat <- do.call(cbind, train_set)
-    test_mat <- do.call(cbind, test_set)
-
-    # Calculate RPCA for stacked train set. The results are calculated as
-    # features were from the same table.
-    pca_result <- .calculate_rpca(train_mat, ...)
-
+    # Calculate RPCA
+    pca_result <- .calculate_joint_rpca(train_set, ...)
     # Project test samples to PCA space determined by train set
+    test_mat <- do.call(cbind, test_set)
     projected <- .project_test_set_to_rpca(pca_result, test_mat)
     # Add test samples to pca results
     attr_list <- attributes(pca_result)
@@ -236,6 +215,43 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     return(pca_result)
 }
 
+# This function runs RPCA to single table
+.calculate_rpca <- function(mat, ncomponents = 3L, ...){
+    # Get lower rank representation of the data
+    opt_results <- .get_lower_rank_mat(mat, ncomponents = ncomponents, ...)
+    # The result might have lower number of columns if they were not able to be
+    # estimated.
+    ncomponents <- opt_results[["raw"]][["S"]] |> ncol()
+    # Apply pca to lower rank representation
+    pca_results <- .calculate_pca(
+        opt_results[["matrix"]], ncomponents = ncomponents, ...)
+    # Calculate distance in PCA space
+    distance <- pca_results[["sample_scores"]] |> dist()
+    # Create a final results to return to user
+    res <- .construct_rpca_result(pca_results, opt_results, distance)
+    return(res)
+}
+
+# This function runs Joint-RPCA. The only difference to .calculate_rpca is that
+# the lower dimension matrix is estimated by optimizing feature loadings
+# separately (sample loadings and singular values are estimated jointly).
+.calculate_joint_rpca <- function(mat_list, ncomponents = 3L, ...){
+    # Get lower rank representation of the data
+    opt_results <- .get_lower_rank_joint_mat(
+        mat_list,  ncomponents = ncomponents, ...)
+    # The result might have lower number of columns if they were not able to be
+    # estimated.
+    ncomponents <- opt_results[["raw"]][["S"]] |> ncol()
+    # Apply pca to lower rank representation
+    pca_results <- .calculate_pca(
+        opt_results[["matrix"]], ncomponents = ncomponents, ...)
+    # Calculate distance in PCA space
+    distance <- pca_results[["sample_scores"]] |> dist()
+    # Create a final results to return to user
+    pca_result <- .construct_rpca_result(pca_results, opt_results, distance)
+    return(pca_result)
+}
+
 # This function constructs a lower rank representation from the data. The idea
 # is to extract the essential from the data and to remove noise.
 #' @importFrom vegan optspace
@@ -245,8 +261,6 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         max.iterations = 5L,
         tol = 1e-5,
         ...){
-    # Add input check
-
     # Create lower rank representation
     opt_result <- optspace(
         x = mat,
@@ -269,6 +283,37 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
     return(res)
 
+}
+
+# Construct lower rank representation from a list of matrices.
+.get_lower_rank_joint_mat <- function(
+        mat_list,
+        ncomponents = pmin(3L, nrow(mat_list[[1L]]), ncol(mat_list[[1L]])),
+        max.iterations = 5L,
+        tol = 1e-5,
+        ...){
+    # Create lower rank representation
+    opt_result <- .joint_optspace(
+        x = mat_list,
+        ropt = ncomponents,
+        niter = max.iterations,
+        tol = tol,
+        verbose = FALSE
+    )
+
+    # Reconstruct the matrix
+    X_hat <- opt_result[["X"]] %*% opt_result[["S"]] %*% t(opt_result[["Y"]])
+    # Add old feature and sample names as they are dropped off
+    nams <- do.call(cbind, mat_list) |> dimnames()
+    dimnames(X_hat) <- nams
+
+    # Create a result list
+    res <- list(
+        matrix = X_hat,
+        raw = opt_result
+    )
+
+    return(res)
 }
 
 # This function applies PCA to the data.
@@ -437,4 +482,484 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     names(errors_per_set) <- names(num_features)
 
     return(errors_per_set)
+}
+
+# -----------------------------------------------------------------------------
+# .joint_optspace
+#
+# Run the *joint OptSpace* matrix completion algorithm on multiple tables that
+# share the same rows (samples) but may contain different feature sets.
+#
+# Goal
+# ----
+# Estimate a shared low-rank representation across several matrices with
+# missing values. Each matrix shares the same sample space (rows) but has
+# its own features (columns). The algorithm learns:
+#
+#   X (U_shared)  : shared sample scores
+#   S (S_shared)  : singular values (component scaling)
+#   Y (V_stacked) : feature loadings across all tables
+#
+# Model approximation:
+#
+#   M_i ≈ U_shared %*% S_shared %*% t(V_i)
+#
+# where M_i is table i and V_i are feature loadings specific to that table.
+#
+# The algorithm follows the OptSpace procedure:
+#
+#   1. Input validation
+#   2. Replace missing entries with zero for optimization
+#   3. Estimate optimal rank if not provided
+#   4. Compute initial SVD guess
+#   5. Refine parameters with gradient descent
+#   6. Stop when distortion converges or max iterations reached
+#
+# References used for implementation guidance:
+#   - gemelli implementation: https://github.com/biocore/gemelli/blob/00e3993f7358006d99a481ad281ee5801c6e159e/gemelli/optspace.py#L200
+#   - vegan::optspace: https://github.com/vegandevs/vegan/blob/5f992e14f1d644d1734195a30042f18028d090b1/R/optspace.R#L12
+#
+# Returns
+# -------
+# list(
+#   X    = sample scores (U_shared)
+#   S    = singular value matrix
+#   Y    = stacked feature loadings
+#   dist = distortion values per iteration
+# )
+# -----------------------------------------------------------------------------
+#
+.joint_optspace <- function(
+        x, ropt = 3, niter = 5, tol = 1e-5, verbose = FALSE){
+    # -------------------------------------------------------------------------
+    # Validate input tables
+    #
+    # Requirements:
+    #   * x must be a list
+    #   * every element must be matrix-like
+    #   * all tables must contain identical number of rows (samples)
+    #
+    # This is required because OptSpace estimates a *shared sample space*.
+    # -------------------------------------------------------------------------
+    if( !(is.list(x) && all(vapply(
+            x, function(mat) is.matrix(mat) || is.data.frame(mat),
+            logical(1L))) ) ){
+        stop("'x' must be a list of matrices.", call. = FALSE)
+    }
+    if( vapply(x, nrow, integer(1L)) |> unique() |> length() != 1L ){
+        stop("All tables must have equal number of samples (rows).",
+            call. = FALSE)
+    }
+    if( do.call(cbind, x) |> is.infinite() |> any() ){
+        stop("Infinite values are not allowed.", call. = FALSE)
+    }
+    if( !.is_an_integer(niter) ){
+        stop("'niter' must be a single integer value.", call. = FALSE)
+    }
+    if( !(.is_an_integer(ropt) || is.null(ropt)) ){
+        stop("'ropt' must be a single integer value or NULL.", call. = FALSE)
+    }
+
+    if( !.is_a_numeric(tol) ){
+        stop("'tol' must be a single numeric value.", call. = FALSE)
+    }
+    if( !.is_a_bool(verbose) ){
+        stop("'verbose' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # -------------------------------------------------------------------------
+    # Convert all tables to matrices to guarantee consistent numeric behavior
+    # during linear algebra operations.
+    # -------------------------------------------------------------------------
+    x <- lapply(x, as.matrix)
+    # Number of input tables
+    n_tables <- x |> length()
+    # Number of samples (rows). Guaranteed equal across tables.
+    n_samples <- x[[1]] |> nrow()
+    # Number of features per table
+    n_features <- vapply(x, ncol, integer(1L))
+    # Total number of features after stacking tables
+    total_n_features <- n_features |> sum()
+    # Smallest feature count among tables
+    # Used for validating maximum rank.
+    min_feat <- n_features |> min()
+    # -------------------------------------------------------------------------
+    # Validate user-provided rank (ropt)
+    #
+    # The rank cannot exceed:
+    #   * number of samples
+    #   * smallest feature dimension
+    #
+    # Otherwise the SVD factorization becomes ill-posed.
+    # -------------------------------------------------------------------------
+    if( .is_an_integer(ropt) &&
+            ((ropt < 1) || (ropt > min_feat) || (ropt > n_samples)) ){
+        stop("'ropt' must be integer in [1, ",
+            min(n_samples, min_feat),
+            "]", call. = FALSE)
+    }
+
+    # -------------------------------------------------------------------------
+    # Prepare two versions of each table:
+    #
+    # observed_list
+    #   Missing values replaced with 0.
+    #   Required because the optimizer expects a fully numeric matrix.
+    #
+    # pa_list (presence/absence mask)
+    #   1 = observed entry
+    #   0 = missing entry
+    #
+    # The mask ensures that reconstruction error is calculated only on
+    # originally observed values.
+    # -------------------------------------------------------------------------
+    observed_list <- lapply(x, function(mat){
+        mat[ is.na(mat) ] <- 0
+        return(mat)
+    })
+    pa_list <- lapply(x, function(mat){
+        temp <- mat
+        mat[ is.na(temp) ] <- 0
+        mat[ !is.na(temp) ] <- 1
+        return(mat)
+    })
+
+    # -------------------------------------------------------------------------
+    # Determine number of latent components.
+    #
+    # If user did not provide 'ropt', estimate it automatically using
+    # vegan's rank guessing heuristic on the smallest table.
+    #
+    # Smaller tables constrain the maximal reliable rank.
+    # -------------------------------------------------------------------------
+    if( is.null(ropt) ){
+        ropt <- .estimate_optimal_rank(x)
+        if( verbose ){
+            message(paste0("Guessing an implicit rank 'ropt': ", ropt))
+        }
+    }
+
+    # -------------------------------------------------------------------------
+    # Stack all tables column-wise into a single matrix.
+    #
+    # This allows the shared sample space to be learned jointly while
+    # preserving table-specific feature blocks.
+    # -------------------------------------------------------------------------
+    observed_stacked <- do.call(cbind, observed_list)
+    pa_stacked <- do.call(cbind, pa_list)
+
+    # -------------------------------------------------------------------------
+    # Estimate sparsity statistics used by OptSpace regularization.
+    #
+    # eps : sampling density scaling factor
+    # rho : regularization weight controlling gradient descent stability
+    #
+    # These values help stabilize optimization when matrices contain
+    # large fractions of missing data.
+    # -------------------------------------------------------------------------
+    total_non_zeroes <- sum(!is.na(pa_stacked))
+    eps <- total_non_zeroes / sqrt(total_n_features * n_samples)
+    rho <- eps * n_samples
+
+    # -------------------------------------------------------------------------
+    # Rescale observed values.
+    #
+    # When many entries are missing, the magnitude of observed entries tends
+    # to underestimate the magnitude of the full matrix. OptSpace compensates
+    # for this by rescaling the observed matrix before optimization.
+    #
+    # The scale factor is reversed at the end of the algorithm.
+    # -------------------------------------------------------------------------
+    rescale_param <- sum(pa_stacked>0) * ropt
+    rescale_param <- sqrt(rescale_param / (norm(observed_stacked, "f")^2))
+    observed_stacked <- rescale_param * observed_stacked
+
+    # -------------------------------------------------------------------------
+    # STEP 2 — INITIAL SVD
+    #
+    # Compute a truncated SVD of the stacked matrix to generate the initial
+    # guess for:
+    #
+    #   U_shared  : sample factors
+    #   S_shared  : singular values
+    #   V_list    : feature loadings split per table
+    #
+    # Good initialization is important because OptSpace is optimized using
+    # gradient descent and can converge to poor local minima otherwise.
+    # -------------------------------------------------------------------------
+    if( verbose ){
+        message("* optspace: Step 2: SVD ...")
+    }
+    init_res <- .initialize_joint_optspace(
+        observed_stacked, observed_list, pa_stacked, pa_list, ropt, eps,
+        n_samples, n_features, total_non_zeroes)
+    U_shared <- init_res[["U_shared"]]
+    S_shared <- init_res[["S_shared"]]
+    V_list <- init_res[["V_list"]]
+    distortions <- init_res[["distortions"]]
+
+    if( verbose ){
+        message("* optspace: Step 3: Initial Guess ...")
+    }
+
+    # -------------------------------------------------------------------------
+    # STEP 4 — GRADIENT DESCENT REFINEMENT
+    #
+    # Iteratively refine U, S and V parameters by minimizing reconstruction
+    # error on observed entries only.
+    #
+    # Each iteration:
+    #   1. Update parameters table-by-table
+    #   2. Recompute distortion
+    #   3. Stop early if convergence threshold is reached
+    #
+    # Distortion = Frobenius reconstruction error over observed entries.
+    # -------------------------------------------------------------------------
+    if( verbose ){
+        message("* optspace: Step 4: Gradient Descent ...")
+    }
+    for( i in seq_len(niter) ){
+        for( table_i in seq_len(n_tables) ){
+            temp <- .gradient_update_joint_optspace(
+                table_i, observed_list, pa_list, n_features, U_shared, S_shared,
+                V_list, rho)
+            U_shared <- temp[["U_shared"]]
+            S_shared <- temp[["S_shared"]]
+            V_list <- temp[["V_list"]]
+        }
+        # Compute distortion
+        new_dist <- .compute_optspace_distortion(
+            U_shared, S_shared, V_list, observed_list, pa_list,
+            total_non_zeroes)
+        distortions <- c(distortions, new_dist)
+        # Stop if the lower rank matrix represents the original matrix well
+        # enough
+        if( new_dist < tol ){
+            break
+        }
+    }
+    # -------------------------------------------------------------------------
+    # Reverse the earlier rescaling so singular values match the scale
+    # of the original input data.
+    # -------------------------------------------------------------------------
+    S_shared = S_shared / rescale_param
+    # -------------------------------------------------------------------------
+    # Ensure components are ordered by decreasing singular value.
+    #
+    # OptSpace updates may change the order during optimization, so
+    # components are re-sorted here for deterministic output.
+    # -------------------------------------------------------------------------
+    index_order <- order(diag(S_shared), decreasing = TRUE)
+    U_shared <- U_shared[, index_order, drop = FALSE]
+    S_shared <- S_shared[index_order, index_order, drop = FALSE]
+    # Combine feature loadings into one matrix
+    V_stacked <- do.call(rbind, V_list)
+    V_stacked <- V_stacked[, index_order, drop = FALSE]
+
+    if( verbose ){
+        message('* optspace: estimation finished.')
+    }
+
+    res <- list(
+        X = U_shared,
+        S = S_shared,
+        Y = V_stacked,
+        dist = distortions
+    )
+    return(res)
+}
+
+# -----------------------------------------------------------------------------
+# Estimate a reasonable latent rank for OptSpace when the user does not
+# specify one. The smallest table is used because it places the strictest
+# constraint on possible rank.
+#
+# Steps:
+#   1. Select table with fewest features
+#   2. Replace NA with zero
+#   3. Count observed entries
+#   4. Use vegan's rank estimation heuristic
+#
+# Returns
+# -------
+# Integer rank estimate.
+# -----------------------------------------------------------------------------
+.estimate_optimal_rank <- function(x){
+    # Get the table with lowest number of features
+    n_features <- lapply(x, ncol) |> unlist()
+    min_n_features <- n_features |> min()
+    num_table <- n_features |> which.min()
+    tab <- x[[num_table]]
+    na_index <- is.na(tab)
+    tab[ na_index ] <- 0
+    num_values <- sum(!na_index)
+    # Guess the rank
+    ropt <- vegan:::.guess_rank(tab, num_values) |>
+        round() |>
+        max(2) |>
+        min(min_n_features - 1)
+    return(ropt)
+}
+
+# -----------------------------------------------------------------------------
+# Estimate a reasonable latent rank for OptSpace when the user does not
+# specify one. The smallest table is used because it places the strictest
+# constraint on possible rank.
+#
+# Steps:
+#   1. Select table with fewest features
+#   2. Replace NA with zero
+#   3. Count observed entries
+#   4. Use vegan's rank estimation heuristic
+#
+# Returns
+# -------
+# Integer rank estimate.
+# -----------------------------------------------------------------------------
+.initialize_joint_optspace <- function(
+        observed_stacked, observed_list, pa_stacked, pa_list, ropt, eps,
+        n_samples, n_features, total_non_zeroes){
+    # Run SVD. Our initial first guess are the loadings generated
+    # by the traditional SVD.
+    svd_res <- svd(observed_stacked)
+    U_shared <- svd_res[["u"]][, seq_len(ropt), drop = FALSE]
+    U_shared <- U_shared[
+        , U_shared |> ncol() |> seq_len() |> rev(), drop = FALSE]
+    S_shared <- svd_res[["d"]][ seq_len(ropt) ] |> rev() |> diag()
+    V_shared <- svd_res[["v"]][, seq_len(ropt), drop = FALSE]
+    V_shared <- V_shared[
+        , V_shared |> ncol() |> seq_len() |> rev(), drop = FALSE]
+
+    # The shape and number of non-zero values
+    # can set the input parameters for the gradient
+    # decent.
+    U_shared <- U_shared * sqrt(n_samples)
+    V_shared <- V_shared * sqrt(sum(n_features))
+    S_shared <- S_shared / eps
+
+    # Generate the new singular values from
+    # the initialization of U and V
+    S_shared <- vegan:::.aux_getoptS(
+        U_shared, V_shared, observed_stacked, pa_stacked)
+
+    # Split feature loadings by table
+    ends   <- cumsum(n_features)
+    starts <- c(1, head(ends, -1) + 1)
+    V_list <- mapply(function(s, e) {
+        V_shared[seq(s, e), , drop = FALSE]
+    }, starts, ends)
+
+    # Initialize the difference between the
+    # observed values of the matrix and the
+    # the imputed matrix generated by the loadings
+    # from this point on we call this "distortion"
+    distortions <- .compute_optspace_distortion(
+        U_shared, S_shared, V_list, observed_list, pa_list, total_non_zeroes)
+
+    res <- list(
+        U_shared = U_shared,
+        S_shared = S_shared,
+        V_list = V_list,
+        distortions = distortions
+    )
+    return(res)
+}
+
+# -----------------------------------------------------------------------------
+# Calculate reconstruction error between observed entries and the matrix
+# reconstructed from current factorization parameters.
+#
+# Distortion is defined as:
+#
+#   sqrt( sum(|| (M_i - U S V_i^T) * mask_i ||_F^2) / N )
+#
+# where:
+#   mask_i = presence/absence matrix
+#   N      = number of observed entries
+#
+# This metric is used as the convergence criterion for gradient descent.
+# -----------------------------------------------------------------------------
+.compute_optspace_distortion <- function(
+        U, S, V_list, obs_list, pa_list, n_nonzeroes){
+    total <- 0
+    for( table_i in seq_len(length(V_list)) ){
+        recon <- U %*% S %*% t(V_list[[table_i]])
+        error <- norm(
+            (obs_list[[table_i]] - recon) * pa_list[[table_i]], "f")^2
+        total <- total + error
+    }
+    total <- sqrt(total / sum(n_nonzeroes))
+    return(total)
+}
+
+# -----------------------------------------------------------------------------
+# Perform one gradient descent update step for a single table.
+#
+# Steps
+# -----
+# 1. Compute gradient directions for U and V
+# 2. Compute optimal step length
+# 3. Update U_shared and table-specific V
+# 4. Re-estimate singular values S_shared
+#
+# This procedure minimizes reconstruction error for the given table while
+# keeping the shared sample space consistent across all tables.
+# -----------------------------------------------------------------------------
+.gradient_update_joint_optspace <- function(
+        table_i, observed_list, pa_list, n_features, U_shared, S_shared, V_list,
+        rho, step.size = 10000L){
+    if( !(.is_an_integer(step.size) && step.size > 0) ){
+        stop("'step.size' must be a single positive integer.", call. = FALSE)
+    }
+    # Extract data for the selected table
+    pa_tab <- pa_list[[table_i]]            # presence/absence mask
+    observed_tab <- observed_list[[table_i]]# observed values (NA replaced by 0)
+    feature_loadings <- V_list[[table_i]]   # current feature loadings (V_i)
+
+    # Compute gradient directions for U_shared and V_i
+    gradient_desc_res <- vegan:::.aux_gradF_t(
+        U_shared,
+        feature_loadings,
+        S_shared,
+        observed_tab,
+        pa_tab,
+        step.size,
+        rho
+    )
+    # Gradient updates
+    U_update <- gradient_desc_res[["W"]]    # direction for U_shared
+    V_update <- gradient_desc_res[["Z"]]    # direction for V_i
+
+    # Compute optimal step size along the gradient direction
+    optimal_step <- vegan:::.aux_getoptT(
+        U_shared,
+        U_update,
+        feature_loadings,
+        V_update,
+        S_shared,
+        observed_tab,
+        pa_tab,
+        step_size,
+        rho
+    )
+
+    # Apply updates
+    U_shared <- U_shared + optimal_step * U_update
+    V_list[[table_i]] <- feature_loadings + optimal_step * V_update
+
+    # Recompute optimal singular values for updated factors
+    S_shared <- vegan:::.aux_getoptS(
+        U_shared,
+        V_list[[table_i]],
+        observed_tab,
+        pa_tab
+    )
+
+    # Return updated parameters
+    res <- list(
+        U_shared = U_shared,
+        S_shared = S_shared,
+        V_list = V_list
+    )
+    return(res)
 }
