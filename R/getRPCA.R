@@ -2,35 +2,120 @@
 #' getRPCA
 #'
 #' @title
-#' Add here
+#' Run (joint) robust principal component analysis (RPCA)
 #'
 #' @description
-#' Add here
+#' These functions implement robust principal component analysis (RPCA)
+#' for single tables and joint RPCA for multiple tables.
+#' \code{*RPCA} functions run RPCA for single table. \code{*JointRPCA} runs the
+#' analysis jointly for multiple tables. \code{get*} functions return the
+#' results of the analysis while \code{add*} adds them to the input object.
 #'
 #' @details
-#' Add here.
+#' These functions perform robust principal component analysis (RPCA) using a
+#' low-rank matrix approximation followed by principal component analysis.
+#' Missing values are handled using matrix completion based on the OptSpace
+#' algorithm.
+#'
+#' \strong{Single-table RPCA}
+#'
+#' For a single assay, the workflow is:
+#' \enumerate{
+#'   \item Extract the selected assay matrix
+#'   \item Estimate a low-rank approximation of the matrix using the OptSpace
+#'   algorithm, which reconstructs missing values and reduces noise.
+#'   \item Apply double centering (row and column centering).
+#'   \item Apply PCA (via singular value decomposition) to the centered matrix.
+#'   \item Return the sample coordinates in PCA space together with additional
+#'   information such as loadings, explained variance, and pairwise distances.
+#' }
+#'
+#' \strong{Joint RPCA}
+#'
+#' When multiple assays are provided, joint RPCA estimates a shared low-rank
+#' representation across all tables. Each table may contain different features,
+#' but they must share the same samples.
+#'
+#' The workflow is:
+#' \enumerate{
+#'   \item Extract the selected experiments and assays.
+#'   \item Estimate a joint low-rank representation using a joint OptSpace
+#'   algorithm that learns shared sample factors while allowing
+#'   table-specific feature loadings.
+#'   \item Apply double centering (row and column centering).
+#'   \item Perform PCA on the centered matrix. to obtain the final
+#'   sample coordinates.
+#'   \item Return the sample coordinates in PCA space together with additional
+#'   information such as loadings, explained variance, and pairwise distances.
+#' }
+#'
+#' To assess generalization, the joint RPCA procedure optionally splits the
+#' samples into training and test sets. The low-rank model is learned using the
+#' training data and the test samples are projected into the resulting PCA
+#' space. Reconstruction error for the test set is returned as a measure of
+#' model fit.
+#'
+#' The returned object contains the PCA sample scores as the main result,
+#' with additional information (e.g., rotation matrix, explained variance,
+#' reconstructed matrix, and reconstruction error) stored in attributes.
+#'
 #'
 #' @return
-#' \code{SummarizedExperiment} object.
+#' \code{matrix}, \code{TreeSummarizedExperiment} or \code{MultiAssayExperiment}
+#' object.
 #'
 #' @inheritParams addAlpha
 #'
 #' @param assay.type \code{Character scalar}. Specifies the name of assay
 #' used in calculation. (Default: \code{"counts"})
 #'
-#' @param ... additional arguments.
+#' @param experiments \code{Character vector} or \code{integer scalar}. Names
+#' or indices of experiments selected from \code{x}.
+#'
+#' @param assay.types \code{Character vector}. Names assays selected from
+#' \code{experiments}.
+#'
+#'@param name \code{Character scalar}. Name of results stored in \code{x}.
+#'(Default: \code{"RPCA"} or \code{"JointRPCA"} depending on the method)
+#'
+#' @param ... additional arguments:
+#' \itemize{
+#'   \item \code{ncomponents}:\code{Integer scalar}. The number of components
+#'   to estimate. (Default: \code{3})
+#'   \item \code{max.iterations}:\code{Integer scalar}. The number of iterations
+#'   run in OptSpace algorithm. (Default: \code{3})
+#'   \item \code{tolerance}:\code{Numeric scalar}. Accepted error between
+#'   lower rank representation obtained by OptSpace algorithm and original
+#'   table. (Default: \code{3})
+#' }
 #'
 #' @examples
+#' data("ibdmdb")
+#' mae <- ibdmdb
 #'
-#' data(GlobalPatterns)
-#' tse <- GlobalPatterns
+#' # Apply data transformations
+#' mae[[1]] <- transformAssay(mae[[1]], assay.type = "mgx", method = "rclr")
+#' mae[[2]] <- transformAssay(mae[[2]], assay.type = "mtx", method = "rclr")
+#'
+#' # Run joint-RPCA
+#' res <- getJointRPCA(
+#'     mae,
+#'     experiments = c(1, 2),
+#'     assay.types = c("rclr", "rclr")
+#' )
+#'
+#' # Run RPCA for single experiment
+#' res <- getRPCA(mae[[1]], assay.type = "rclr")
 #'
 #' @seealso
 #' \code{\link[scater::runPCA]{runPCA}}
 #'
 #' @references
 #'
-#' Add here
+#' Martino, C. and Shenhav, L. et al. (2020)
+#' Context-aware dimensionality reduction deconvolutes gut microbial community
+#' dynamics.
+#' _Nat. Biotechnol._ doi:10.1038/s41587-020-0660-7
 #'
 NULL
 
@@ -191,28 +276,28 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     })
 
     # Calculate RPCA
-    pca_result <- .calculate_joint_rpca(train_set, ...)
+    res <- .calculate_joint_rpca(train_set, ...)
     # Project test samples to PCA space determined by train set
     test_mat <- do.call(cbind, test_set)
-    projected <- .project_test_set_to_rpca(pca_result, test_mat)
+    projected <- .project_test_set_to_rpca(res, test_mat)
     # Add test samples to pca results
-    attr_list <- attributes(pca_result)
-    pca_result <- rbind(pca_result, projected)
+    attr_list <- attributes(res)
+    res <- rbind(res, projected)
     # Sort back to original order
-    pca_result <- pca_result[
+    res <- res[
         order(c(train_samples, test_samples)), , drop = FALSE]
     # Add additional info back
-    attr_list <- c(attributes(pca_result), attr_list)
+    attr_list <- c(attributes(res), attr_list)
     attr_list <- attr_list[ !duplicated(names(attr_list)) ]
-    attributes(pca_result) <- attr_list
+    attributes(res) <- attr_list
 
     # Calculate error between low rank and original test set
     num_features <- vapply(mat_list, ncol, numeric(1L))
     reconstruct_error <- .calculate_reconstruct_error(
-        pca_result, test_set, num_features)
-    attributes(pca_result)[["reconstruct_error"]] <- reconstruct_error
+        res, test_set, num_features)
+    attributes(res)[["reconstruct_error"]] <- reconstruct_error
 
-    return(pca_result)
+    return(res)
 }
 
 # This function runs RPCA to single table
@@ -259,14 +344,14 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         mat,
         ncomponents = pmin(3L, nrow(mat), ncol(mat)),
         max.iterations = 5L,
-        tol = 1e-5,
+        tolerance = 1e-5,
         ...){
     # Create lower rank representation
     opt_result <- optspace(
         x = mat,
         ropt = ncomponents,
         niter = max.iterations,
-        tol = tol,
+        tol = tolerance,
         verbose = FALSE
     )
 
@@ -282,7 +367,6 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     )
 
     return(res)
-
 }
 
 # Construct lower rank representation from a list of matrices.
@@ -290,14 +374,14 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         mat_list,
         ncomponents = pmin(3L, nrow(mat_list[[1L]]), ncol(mat_list[[1L]])),
         max.iterations = 5L,
-        tol = 1e-5,
+        tolerance = 1e-5,
         ...){
     # Create lower rank representation
     opt_result <- .joint_optspace(
         x = mat_list,
         ropt = ncomponents,
         niter = max.iterations,
-        tol = tol,
+        tol = tolerance,
         verbose = FALSE
     )
 
@@ -318,26 +402,27 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
 # This function applies PCA to the data.
 .calculate_pca <- function(
-        mat, ncomponents, center = TRUE, scale = FALSE, ...){
+        mat, ncomponents, center.cols = TRUE, center.rows = TRUE,
+        scale = FALSE, ...){
 
-    if( center ){
-        # Row and column means
+    row_means <- NULL
+    col_means <- NULL
+    grand_mean <- NULL
+    if( center.rows ){
         row_means <- rowMeans(mat)
+        mat <- sweep(mat, 1L, row_means, "-")
+    }
+    if( center.cols ){
         col_means <- colMeans(mat)
-        grand_mean <- mean(mat)
-
+        mat <- sweep(mat, 2L, col_means, "-")
+    }
+    if( center.rows && center.cols ){
         # Do double centering. Add overall mean so that we do not substract the
         # data effectively 2 times. The result is a matrix that has row and
         # column means in zero.
-        mat <- sweep(mat, 1L, row_means, "-")
-        mat <- sweep(mat, 2L, col_means, "-")
+        grand_mean <- mean(mat)
         mat <- mat + grand_mean
-    } else {
-        row_means <- NULL
-        col_means <- NULL
-        grand_mean <- NULL
     }
-
     # Optional column scaling (PCA on correlation matrix)
     if( scale ){
         col_sds <- colSds(mat)
@@ -355,7 +440,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
     # We multiply U by singular values so that the sample coordinates reflect
     # actual variance magnitude rather than just orthonormal directions.
-    # u <- u %*% diag(s) ###################################################### UNCOMMENT
+    u <- u %*% diag(s)
 
     # Subset. There might be more components than requested.
     u <- u[ , seq_len(ncomponents), drop = FALSE]
@@ -372,7 +457,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         sample_scores = u,
         varExplained = s,
         rotation = v,
-        center = c(
+        center = list(
             row = row_means,
             col = col_means,
             grand = grand_mean
@@ -432,14 +517,32 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
 # This function projects test set samples to PCA space that were obtained with
 # train set.
-.project_test_set_to_rpca <- function(pca_result, test_mat){
-    # Get results
-    sample_scores <- pca_result
+.project_test_set_to_rpca <- function(pca_result, mat){
+    # Extract PCA components
     feature_scores <- attributes(pca_result)[["rotation"]]
-    eigenvalues <- attributes(pca_result)[["varExplained"]]
 
-    # Calculate projection
-    projected <- test_mat %*% feature_scores %*% diag(1/eigenvalues)
+    center <- attributes(pca_result)[["center"]]
+    scale  <- attributes(pca_result)[["scale"]]
+
+    # Row centering (new samples)
+    if( !is.null(center[["row"]]) ){
+        mat <- sweep(mat, 1L, rowMeans(mat), "-")
+    }
+    # Column centering (training means)
+    if( !is.null(center[["col"]]) ){
+        mat <- sweep(mat, 2L, center[["col"]], "-")
+    }
+    # Add grand mean to avoid subtracting the mean twice (training means)
+    if( !is.null(center[["grand"]]) ){
+        mat <- mat + center[["grand"]]
+    }
+    # Apply scaling if used during training
+    if( !is.null(scale) ){
+        mat <- sweep(mat, 2L, scale, "/")
+    }
+
+    # Project into PCA space
+    projected <- mat %*% feature_scores
 
     return(projected)
 }
@@ -449,11 +552,11 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 # on parameters learned from train set. The idea is to assess, how well the
 # lower rank representation learns the generic, generalizable patterns from the
 # data.
-.calculate_reconstruct_error <- function(pca_result, test_set, num_features){
-    # Get learned parametes
-    u_shared <- attributes(pca_result)[["X"]]
-    s_shared <- attributes(pca_result)[["S"]]
-    y_shared <- attributes(pca_result)[["Y"]]
+.calculate_reconstruct_error <- function(res, test_set, num_features){
+    # Get learned parameters
+    u_shared <- attributes(res)[["X"]]
+    s_shared <- attributes(res)[["S"]]
+    y_shared <- attributes(res)[["Y"]]
 
     # Split feature loadings by table
     ends   <- cumsum(num_features)
@@ -469,10 +572,6 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         u_test <- test_mat %*% y_individual[[i]]
         u_test <- sweep(u_test, 2, diag(s_shared), "/")
         recon_test <- u_test %*% s_shared %*% t(y_individual[[i]])
-        ########################################################################### REMOVE THESE LINES
-        # Center for consistency
-        recon_test <- scale(recon_test, center = TRUE, scale = FALSE)
-        recon_test <- t(scale(t(recon_test), center = TRUE, scale = FALSE))
         # Calculate error between actual values and lower rank representation
         error <- test_mat - recon_test
         error[is.na(error)] <- 0
@@ -618,10 +717,9 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         return(mat)
     })
     pa_list <- lapply(x, function(mat){
-        temp <- mat
-        mat[ is.na(temp) ] <- 0
-        mat[ !is.na(temp) ] <- 1
-        return(mat)
+        mask <- !is.na(mat)
+        storage.mode(mask) <- "integer"
+        return(mask)
     })
 
     # -------------------------------------------------------------------------
@@ -671,7 +769,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     # The scale factor is reversed at the end of the algorithm.
     # -------------------------------------------------------------------------
     rescale_param <- sum(pa_stacked>0) * ropt
-    rescale_param <- sqrt(rescale_param / (norm(observed_stacked, "f")^2))
+    rescale_param <- sqrt(rescale_param / (norm(observed_stacked, "F")^2))
     observed_stacked <- rescale_param * observed_stacked
 
     # -------------------------------------------------------------------------
@@ -796,8 +894,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     # Guess the rank
     ropt <- vegan:::.guess_rank(tab, num_values) |>
         round() |>
-        max(2) |>
-        min(min_n_features - 1)
+        max(1)
     return(ropt)
 }
 
@@ -885,10 +982,10 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     for( table_i in seq_len(length(V_list)) ){
         recon <- U %*% S %*% t(V_list[[table_i]])
         error <- norm(
-            (obs_list[[table_i]] - recon) * pa_list[[table_i]], "f")^2
+            (obs_list[[table_i]] - recon) * pa_list[[table_i]], "F")^2
         total <- total + error
     }
-    total <- sqrt(total / sum(n_nonzeroes))
+    total <- sqrt(total / n_nonzeroes)
     return(total)
 }
 
@@ -939,7 +1036,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         S_shared,
         observed_tab,
         pa_tab,
-        step_size,
+        step.size,
         rho
     )
 
