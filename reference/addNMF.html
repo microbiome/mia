@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.5</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Non-negative Matrix Factorization</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/addNMF.R" class="external-link"><code>R/addNMF.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/pca_clustering/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/pca_clustering/R/addNMF.R" class="external-link"><code>R/addNMF.R</code></a></small>
     <div class="hidden name"><code>addNMF.Rd</code></div>
     </div>
 
@@ -170,12 +170,12 @@ values contained in k, and the best fit is selected based on
 <span class="r-in"><span><span class="va">loadings_NMF</span> <span class="op">&lt;-</span> <span class="fu"><a href="utilization_functions.html">getReducedDimAttribute</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"NMF"</span>, <span class="st">"loadings"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">loadings_NMF</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         [,1]         [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AD3             1.797648e-07 7.635452e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Acidobacteria   1.751856e-05 2.833056e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  3.296424e-02 8.478666e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Armatimonadetes 2.220446e-16 4.113226e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BRC1            9.691581e-08 5.520033e-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   2.487102e-01 7.497906e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AD3             1.369061e-07 8.140526e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Acidobacteria   1.334188e-05 3.020459e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  2.510508e-02 9.039517e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Armatimonadetes 2.220446e-16 4.385310e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BRC1            7.380967e-08 5.885175e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   1.894141e-01 7.993879e-02</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Estimate models with number of topics from 2 to 4. Perform 2 runs.</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addNMF</span><span class="op">(</span><span class="va">tse</span>, k <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>, name <span class="op">=</span> <span class="st">"NMF_4"</span>, nrun <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
@@ -196,12 +196,12 @@ values contained in k, and the best fit is selected based on
 <span class="r-in"><span><span class="va">loadings_NMF_4</span> <span class="op">&lt;-</span> <span class="fu"><a href="utilization_functions.html">getReducedDimAttribute</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"NMF_4"</span>, <span class="st">"loadings"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">loadings_NMF_4</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         [,1]         [,2]         [,3]         [,4]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AD3             2.220446e-16 1.445435e-03 8.620202e-08 2.220446e-16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Acidobacteria   2.029072e-10 5.352125e-02 2.337403e-05 4.185550e-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  7.091942e-02 1.580967e-02 1.217112e-02 5.252424e-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Armatimonadetes 5.026734e-05 4.160350e-04 2.220446e-16 1.123469e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BRC1            2.220446e-16 9.936617e-05 7.607841e-08 2.315111e-06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   7.744470e-02 1.831469e-02 1.654822e-01 1.460432e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AD3             2.220446e-16 2.220446e-16 6.611784e-04 1.032251e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Acidobacteria   1.432004e-11 1.932809e-03 2.264695e-02 2.220446e-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  1.491274e-02 9.732399e-03 7.389411e-02 2.220446e-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Armatimonadetes 2.220446e-16 1.295729e-04 2.291239e-04 2.220446e-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BRC1            2.220446e-16 9.011202e-06 3.898885e-05 5.602774e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   1.622268e-02 1.806027e-04 1.805456e-02 3.064455e-01</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
