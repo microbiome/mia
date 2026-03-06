@@ -4,7 +4,10 @@
 \alias{getCluster}
 \alias{addCluster}
 \alias{addCluster,SummarizedExperiment-method}
+\alias{addCluster,SingleCellExperiment-method}
 \alias{getCluster,SummarizedExperiment-method}
+\alias{getCluster,SingleCellExperiment-method}
+\alias{getCluster,ANY-method}
 \title{Clustering wrapper}
 \usage{
 getCluster(x, ...)
@@ -12,6 +15,19 @@ getCluster(x, ...)
 addCluster(x, ...)
 
 \S4method{addCluster}{SummarizedExperiment}(
+  x,
+  BLUSPARAM,
+  assay.type = assay_name,
+  assay_name = NULL,
+  by = MARGIN,
+  MARGIN = "rows",
+  name = "clustering",
+  clust.col = "cluster",
+  full = FALSE,
+  ...
+)
+
+\S4method{addCluster}{SingleCellExperiment}(
   x,
   BLUSPARAM,
   assay.type = assay_name,
@@ -30,12 +46,23 @@ addCluster(x, ...)
   BLUSPARAM,
   assay.type = assay_name,
   assay_name = NULL,
+  by = MARGIN,
+  MARGIN = "rows",
+  ...
+)
+
+\S4method{getCluster}{SingleCellExperiment}(
+  x,
+  BLUSPARAM,
+  assay.type = assay_name,
+  assay_name = NULL,
   dimred = NULL,
   by = MARGIN,
   MARGIN = "rows",
-  full = FALSE,
   ...
 )
+
+\S4method{getCluster}{ANY}(x, BLUSPARAM, by = MARGIN, MARGIN = "rows", full = FALSE, ...)
 }
 \arguments{
 \item{x}{A
@@ -46,8 +73,8 @@ object.}
 
 \item{BLUSPARAM}{A \linkS4class{BlusterParam} object specifying the algorithm to use.}
 
-\item{assay.type}{\code{Character scalar}. Specifies the name of the
-assay used in calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character scalar}. Specifies the name of assay
+used in calculation.}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
@@ -65,6 +92,10 @@ Must be \code{'rows'} or \code{'cols'}.}
 (Default: \code{"clusters"})}
 
 \item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
+
+\item{dimred}{\code{Character scalar} or \code{integer scalar}.
+Specifies dimension reduction results used in calculation. Either
+\code{dimred} or \code{assay.type} must be specified.}
 }
 \value{
 \code{addCluster} returns an object of the same type as the \code{x}

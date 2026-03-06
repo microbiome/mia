@@ -7,6 +7,13 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
 #'
+#' @param assay.type \code{Character scalar}. Specifies the name of assay
+#' used in calculation.
+#'
+#' @param dimred \code{Character scalar} or \code{integer scalar}.
+#' Specifies dimension reduction results used in calculation. Either
+#' \code{dimred} or \code{assay.type} must be specified.
+#'
 #' @param by \code{Character scalar}. Determines if association is calculated
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}.
@@ -80,6 +87,46 @@ NULL
 setMethod("addCluster", signature = c(x = "SummarizedExperiment"),
     function(
             x, BLUSPARAM, assay.type = assay_name,
+            assay_name = NULL, by = MARGIN, MARGIN = "rows",
+            name = "clustering", clust.col = "cluster", full = FALSE, ...){
+        by <- .check_MARGIN(by)
+        if( !.is_a_string(name) ){
+            stop("'name' must be a non-empty single character value.",
+            call. = FALSE)
+        }
+        if( !.is_a_string(clust.col) ){
+            stop("'clust.col' must be a non-empty single character value.",
+            call. = FALSE)
+        }
+        if( !.is_a_bool(full) ){
+            stop("'full' must be TRUE or FALSE.", call. = FALSE)
+        }
+        #
+        result <- getCluster(
+            x = x, BLUSPARAM = BLUSPARAM, assay.type = assay.type,
+            dimred = dimred, by = by, full = full, ...)
+        # If user has specified full=TRUE, result includes additional info
+        # that will be stored to metadata.
+        if( full ){
+            clusters <- result$clusters
+        x <- .add_values_to_metadata(x, name, result$objects, ...)
+        } else {
+            clusters <- result
+        }
+        # Setting clusters in the object. The adding function requires data as
+        # list
+        clusters <- list(clusters)
+        x <- .add_values_to_colData(
+            x, clusters, clust.col, MARGIN = by, colname = "clust.col", ...)
+        return(x)
+    }
+)
+
+#' @rdname addCluster
+#' @export
+setMethod("addCluster", signature = c(x = "SingleCellExperiment"),
+    function(
+            x, BLUSPARAM, assay.type = assay_name,
             assay_name = NULL, dimred = NULL, by = MARGIN, MARGIN = "rows",
             name = "clustering", clust.col = "cluster", full = FALSE, ...){
         by <- .check_MARGIN(by)
@@ -125,9 +172,29 @@ setMethod("addCluster", signature = c(x = "SummarizedExperiment"),
 setMethod("getCluster", signature = c(x = "SummarizedExperiment"),
     function(
             x, BLUSPARAM, assay.type = assay_name,
+            assay_name = NULL, by = MARGIN, MARGIN = "rows", ...){
+        # Checking parameters
+        by <- .check_MARGIN(by)
+        x <- .check_and_get_altExp(x, ...)
+        # Get assay
+        .check_assay_present(assay.type, x)
+        mat <- assay(x, assay.type)
+        #
+        # Get clusters
+        result <- getCluster(
+            x = mat, BLUSPARAM = BLUSPARAM, by = by, ...)
+        return(result)
+    }
+)
+
+#' @rdname addCluster
+#' @export
+#' @importFrom bluster clusterRows
+setMethod("getCluster", signature = c(x = "SingleCellExperiment"),
+    function(
+            x, BLUSPARAM, assay.type = assay_name,
             assay_name = NULL, dimred = NULL, by = MARGIN, MARGIN = "rows",
-            full = FALSE, ...){
-        .require_package("bluster")
+            ...){
         # Checking parameters
         by <- .check_MARGIN(by)
         x <- .check_and_get_altExp(x, ...)
@@ -151,16 +218,34 @@ setMethod("getCluster", signature = c(x = "SummarizedExperiment"),
             # assay they are in columns.
             mat <- reducedDim(x, dimred) |> t()
         }
+        #
+        # Get clusters
+        result <- getCluster(
+            x = mat, BLUSPARAM = BLUSPARAM, by = by, ...)
+        return(result)
+    }
+)
+
+#' @rdname addCluster
+#' @export
+#' @importFrom bluster clusterRows
+setMethod("getCluster", signature = c(x = "ANY"),
+    function(x, BLUSPARAM, by = MARGIN, MARGIN = "rows", full = FALSE, ...){
+        .require_package("bluster")
+        if( !is.matrix(x) ){
+            stop("'x' must be a matrix.", call. = FALSE)
+        }
+        by <- .check_MARGIN(by)
         if( !.is_a_bool(full) ){
             stop("'full' must be TRUE or FALSE.", call. = FALSE)
         }
         #
         # Transpose if clustering on the columns
         if(by == 2){
-            mat <- t(mat)
+            x <- x |> t()
         }
         # Get clusters
-        result <- clusterRows(mat, BLUSPARAM, full)
+        result <- clusterRows(x, BLUSPARAM, full)
         return(result)
     }
 )
