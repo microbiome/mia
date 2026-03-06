@@ -58,4 +58,5 @@ Other contributors:
   \item Aituar Bektanov [contributor]
   \item Rasmus Hindström [contributor]
 }
+
 }
