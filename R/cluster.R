@@ -168,7 +168,6 @@ setMethod("addCluster", signature = c(x = "SingleCellExperiment"),
 
 #' @rdname addCluster
 #' @export
-#' @importFrom bluster clusterRows
 setMethod("getCluster", signature = c(x = "SummarizedExperiment"),
     function(
             x, BLUSPARAM, assay.type = assay_name,
@@ -189,7 +188,6 @@ setMethod("getCluster", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname addCluster
 #' @export
-#' @importFrom bluster clusterRows
 setMethod("getCluster", signature = c(x = "SingleCellExperiment"),
     function(
             x, BLUSPARAM, assay.type = assay_name,
