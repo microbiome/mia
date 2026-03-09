@@ -10,9 +10,9 @@
 #'
 #' @param assay.type \code{Character scalar}. Specifies the name of the
 #'   assay used in calculation. (Default: \code{"counts"})
-#'   
+#'
 #' @param exprs_values Deprecated. Use \code{assay.type} instead.
-#'   
+#'
 #' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'
 #' @param k \code{Numeric scalar}. The number of Dirichlet components to fit.
@@ -73,29 +73,36 @@
 #' pheno <- factor(lvls[pheno0 + 1], levels=lvls)
 #' colData <- DataFrame(pheno = pheno)
 #'
-#' tse <- TreeSummarizedExperiment(assays = list(counts = counts),
-#'                                 colData = colData)
+#' tse <- TreeSummarizedExperiment(
+#'     assays = list(counts = counts),
+#'     colData = colData)
 #'
 #' library(bluster)
-#' 
+#'
 #' # Compute DMM algorithm and store result in metadata
-#' tse <- addCluster(tse, name = "DMM", DmmParam(k = 1:3, type = "laplace"),
-#'                by = "samples", full = TRUE)
-#' 
+#' tse <- addCluster(
+#'     tse,
+#'     assay.type = "counts",
+#'     name = "DMM",
+#'     DmmParam(k = 1:3, type = "laplace"),
+#'     by = "samples",
+#'     full = TRUE
+#' )
+#'
 #' # Get the list of DMN objects
 #' metadata(tse)$DMM$dmm
-#' 
+#'
 #' # Get and display which objects fits best
 #' bestFit <- metadata(tse)$DMM$best
 #' bestFit
-#' 
+#'
 #' # Get the model that generated the best fit
 #' bestModel <- metadata(tse)$DMM$dmm[[bestFit]]
 #' bestModel
-#' 
+#'
 #' # Get the sample-cluster assignment probability matrix
 #' head(metadata(tse)$DMM$prob)
-#' 
+#'
 #' # Get the weight of each component for the best model
 #' bestModel@mixture$Weight
 NULL
@@ -120,7 +127,7 @@ NULL
         bpstart(BPPARAM)
         on.exit(bpstop(BPPARAM), add = TRUE)
     }
-    
+
     ans <- BiocParallel::bplapply(k, DirichletMultinomial::dmn, count = x,
                                     seed = seed, ...,
                                     BPPARAM = BPPARAM)
@@ -136,8 +143,8 @@ setMethod("calculateDMN", signature = c(x = "ANY"), .calculate_DMN)
 setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = exprs_values,
             exprs_values = "counts", transposed = FALSE, ...){
-        .Deprecated(old="calculateDMN", new="cluster", 
-                    "Now calculateDMN is deprecated. 
+        .Deprecated(old="calculateDMN", new="cluster",
+                    "Now calculateDMN is deprecated.
                     Use cluster with DMMParam parameter instead.")
         mat <- assay(x, assay.type)
         if(!transposed){
@@ -151,8 +158,8 @@ setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
 #' @importFrom S4Vectors metadata<-
 #' @export
 runDMN <- function(x, name = "DMN", ...){
-    .Deprecated(old="runDMN", new="cluster", 
-                "Now runDMN is deprecated. 
+    .Deprecated(old="runDMN", new="cluster",
+                "Now runDMN is deprecated.
                 Use cluster with DMMParam parameter instead.")
     if(!is(x,"SummarizedExperiment")){
         stop("'x' must be a SummarizedExperiment")
@@ -191,9 +198,9 @@ runDMN <- function(x, name = "DMN", ...){
 #' @export
 setMethod("getDMN", signature = c(x = "SummarizedExperiment"),
             function(x, name = "DMN"){
-                .Deprecated(old="getDMN", new="cluster", 
-                            "Now getDMN is deprecated. 
-                            Use cluster with DMMParam parameter 
+                .Deprecated(old="getDMN", new="cluster",
+                            "Now getDMN is deprecated.
+                            Use cluster with DMMParam parameter
                             and full parameter set as true instead.")
                 .get_dmn(x, name)
             }
@@ -210,9 +217,9 @@ setMethod("getDMN", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("bestDMNFit", signature = c(x = "SummarizedExperiment"),
             function(x, name = "DMN", type = c("laplace","AIC","BIC")){
-                .Deprecated(old="bestDMNFit", new="cluster", 
+                .Deprecated(old="bestDMNFit", new="cluster",
                             "Now bestDMNFit is deprecated.
-                            Use cluster with DMMParam parameter 
+                            Use cluster with DMMParam parameter
                             and full parameter set as true instead.")
                 #
                 dmn <- getDMN(x, name)
@@ -227,9 +234,9 @@ setMethod("bestDMNFit", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("getBestDMNFit", signature = c(x = "SummarizedExperiment"),
             function(x, name = "DMN", type = c("laplace","AIC","BIC")){
-                .Deprecated(old="getBestDMNFit", new="cluster", 
-                            "Now getBestDMNFit is deprecated. 
-                            Use cluster with DMMParam parameter 
+                .Deprecated(old="getBestDMNFit", new="cluster",
+                            "Now getBestDMNFit is deprecated.
+                            Use cluster with DMMParam parameter
                             and full parameter set as true instead.")
                 dmn <- getDMN(x, name)
                 fit_FUN <- .get_dmn_fit_FUN(type)
@@ -262,8 +269,8 @@ setMethod("calculateDMNgroup", signature = c(x = "ANY"), .calculate_DMNgroup)
 #' @rdname calculateDMN
 #' @export
 setMethod("calculateDMNgroup", signature = c(x = "SummarizedExperiment"),
-            function(x, variable, 
-                    assay.type = assay_name, assay_name = exprs_values, 
+            function(x, variable,
+                    assay.type = assay_name, assay_name = exprs_values,
                     exprs_values = "counts", transposed = FALSE, ...){
                 mat <- assay(x, assay.type)
                 if(!transposed){
@@ -307,8 +314,8 @@ setMethod("performDMNgroupCV", signature = c(x = "ANY"), .perform_DMNgroup_cv)
 #' @rdname calculateDMN
 #' @export
 setMethod("performDMNgroupCV", signature = c(x = "SummarizedExperiment"),
-            function(x, variable, 
-                    assay.type = assay_name, assay_name = exprs_values, 
+            function(x, variable,
+                    assay.type = assay_name, assay_name = exprs_values,
                     exprs_values = "counts", transposed = FALSE, ...){
                 mat <- assay(x, assay.type)
                 if(!transposed){
