@@ -46,7 +46,7 @@ package"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Dirichlet-Multinomial Mixture Model: Machine Learning for Microbiome Data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/getTop/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/getTop/R/calculateDMM.R" class="external-link"><code>R/calculateDMM.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/mds/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/mds/R/calculateDMM.R" class="external-link"><code>R/calculateDMM.R</code></a></small>
     <div class="hidden name"><code>calculateDMN.Rd</code></div>
     </div>
 
@@ -261,13 +261,13 @@ returns a single <code>DMN</code> object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38872.71 BIC: 39588.93 AIC: 39115.53 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38872.67 BIC: 39588.93 AIC: 39115.53 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[3]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38854.74 BIC: 40001.15 AIC: 39290.14 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38854.73 BIC: 40001.15 AIC: 39290.14 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get and display which objects fits best</span></span></span>
@@ -281,21 +281,21 @@ returns a single <code>DMN</code> object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38854.74 BIC: 40001.15 AIC: 39290.14 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38854.73 BIC: 40001.15 AIC: 39290.14 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get the sample-cluster assignment probability matrix</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">DMM</span><span class="op">$</span><span class="va">prob</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    1            2            3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS1.2   9.999997e-01 2.998427e-07 4.862500e-09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS10.2  9.516128e-01 8.376265e-09 4.838717e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS100.2 4.435136e-08 8.560372e-02 9.143962e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS100   9.919535e-01 8.046118e-03 4.122407e-07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS101.2 1.352793e-12 4.161350e-07 9.999996e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS103.2 9.999977e-01 7.467271e-10 2.313107e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS1.2   9.999997e-01 2.997879e-07 4.861939e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS10.2  9.516123e-01 8.370616e-09 4.838765e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS100.2 4.436230e-08 8.557127e-02 9.144287e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS100   9.919577e-01 8.041856e-03 4.123973e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS101.2 1.352920e-12 4.159225e-07 9.999996e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS103.2 9.999977e-01 7.464722e-10 2.313054e-06</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get the weight of each component for the best model</span></span></span>
 <span class="r-in"><span><span class="va">bestModel</span><span class="op">@</span><span class="va">mixture</span><span class="op">$</span><span class="va">Weight</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5655863 0.2227182 0.2116956</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5655882 0.2227153 0.2116965</span>
 </code></pre></div>
     </div>
   </div>
