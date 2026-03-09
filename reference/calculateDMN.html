@@ -46,7 +46,7 @@ package"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Dirichlet-Multinomial Mixture Model: Machine Learning for Microbiome Data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/mds/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/mds/R/calculateDMM.R" class="external-link"><code>R/calculateDMM.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/ref/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/ref/R/calculateDMM.R" class="external-link"><code>R/calculateDMM.R</code></a></small>
     <div class="hidden name"><code>calculateDMN.Rd</code></div>
     </div>
 
@@ -213,6 +213,14 @@ returns a single <code>DMN</code> object.</p>
 <code><a href="https://mtmorgan.github.io/DirichletMultinomial/reference/DMNGroup-class.html" class="external-link">DMNGroup</a></code> object</p>
 <p><code>performDMNgroupCV</code> returns a <code>data.frame</code></p>
     </div>
+    <div id="references">
+    <h2>References</h2>
+    <p>Holmes I, Harris K, Quince C (2012).
+“Dirichlet Multinomial Mixtures: Generative Models for Microbial Metagenomics.”
+<em>PLOS ONE</em>, <b>7</b>(2), e30126.
+<a href="https://doi.org/10.1371/journal.pone.0030126" class="external-link">doi:10.1371/journal.pone.0030126</a>
+.</p>
+    </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="https://mtmorgan.github.io/DirichletMultinomial/reference/DMN-class.html" class="external-link">DMN-class</a></code>,
@@ -261,13 +269,13 @@ returns a single <code>DMN</code> object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38872.71 BIC: 39588.93 AIC: 39115.53 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38872.7 BIC: 39588.93 AIC: 39115.53 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[3]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38854.73 BIC: 40001.15 AIC: 39290.14 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38854.74 BIC: 40001.15 AIC: 39290.14 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get and display which objects fits best</span></span></span>
@@ -281,21 +289,21 @@ returns a single <code>DMN</code> object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38854.73 BIC: 40001.15 AIC: 39290.14 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38854.74 BIC: 40001.15 AIC: 39290.14 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get the sample-cluster assignment probability matrix</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">DMM</span><span class="op">$</span><span class="va">prob</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    1            2            3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS1.2   9.999997e-01 2.997387e-07 4.862530e-09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS10.2  9.516100e-01 8.369460e-09 4.839000e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS100.2 4.435734e-08 8.555987e-02 9.144401e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS100   9.919606e-01 8.038954e-03 4.122727e-07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS101.2 1.353243e-12 4.159077e-07 9.999996e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS103.2 9.999977e-01 7.463460e-10 2.313194e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS1.2   9.999997e-01 2.998427e-07 4.862500e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS10.2  9.516128e-01 8.376265e-09 4.838717e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS100.2 4.435136e-08 8.560372e-02 9.143962e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS100   9.919535e-01 8.046118e-03 4.122407e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS101.2 1.352793e-12 4.161350e-07 9.999996e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS103.2 9.999977e-01 7.467271e-10 2.313107e-06</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get the weight of each component for the best model</span></span></span>
 <span class="r-in"><span><span class="va">bestModel</span><span class="op">@</span><span class="va">mixture</span><span class="op">$</span><span class="va">Weight</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5655906 0.2227130 0.2116965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5655863 0.2227182 0.2116956</span>
 </code></pre></div>
     </div>
   </div>
