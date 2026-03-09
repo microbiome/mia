@@ -17,12 +17,13 @@
 #' difference is that these functions apply microbiome-specific options such
 #' as \code{getDissimilarity} function by default.
 #'
-#' By default \code{scater::calculateMDS} keeps only the \code{ntop = 500}
-#' most variable features. When rarefaction is enabled (\code{niter > 0}) the
-#' sampling depth is evaluated on this filtered matrix, so samples whose depth
-#' falls below the requested \code{sample} are dropped. Pass \code{ntop = Inf}
-#' (or specify \code{subset.row}) if you need to retain all taxa so that the
-#' minimum depth of \code{assay(x, assay.type)} remains reachable.
+#' By default mia does not filter features (sets \code{ntop = Inf}), so all
+#' taxa are retained before running MDS. Note that
+#' \code{scater::calculateMDS} itself uses \code{ntop = 500} by default.
+#' When rarefaction is enabled (\code{niter > 0}) the sampling depth is
+#' evaluated on the retained matrix, so samples whose depth falls below the
+#' requested \code{sample} are dropped. Use \code{subset.row} to explicitly
+#' subset rows if desired.
 #'
 #' See \code{\link[scater:runMDS]{scater::calculateMDS}} for details.
 #'
@@ -50,10 +51,11 @@
 #'
 #'     \item \code{ntop}: \code{Numeric scalar}. Forwarded to
 #'     \code{scater::calculateMDS}. Controls how many of the most variable
-#'     features are kept before MDS is run. (Default: \code{500}). Set
-#'     \code{ntop = Inf} (or supply \code{subset.row}) when you need the full
-#'     assay for operations such as rarefaction where absolute library sizes
-#'     matter.
+#'     features are kept before MDS is run. (Default: \code{Inf}). Set
+#'     a finite \code{ntop} (or supply \code{subset.row}) when you want to
+#'     filter features before running MDS; use \code{ntop = Inf} when the full
+#'     assay is required (for example, for rarefaction where absolute library
+#'     sizes matter).
 #' }
 #'
 #' @examples
@@ -148,6 +150,11 @@ setMethod("getMDS", signature = c(x = "TreeSummarizedExperiment"),
 # This function is used to set default options for SCE
 .get_mds_args <- function(x, assay.type, FUN = getDissimilarity, ...){
     args <- c(list(x = x, assay.type = assay.type, FUN = FUN), list(...))
+    # Default to no filtering (retain all features) unless user provided ntop
+    arg_names <- names(args)
+    if( is.null(arg_names) || !("ntop" %in% arg_names) ){
+        args$ntop <- Inf
+    }
     return(args)
 }
 
