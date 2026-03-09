@@ -45,7 +45,7 @@ Mothur files provided as input."><!-- mathjax --><script src="https://cdnjs.clou
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Import Mothur results as a <code>TreeSummarizedExperiment</code></h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/ref/R/importMothur.R" class="external-link"><code>R/importMothur.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/imp/R/importMothur.R" class="external-link"><code>R/importMothur.R</code></a></small>
     <div class="hidden name"><code>importMothur.Rd</code></div>
     </div>
 
@@ -61,7 +61,8 @@ Mothur files provided as input."><!-- mathjax --><script src="https://cdnjs.clou
 <span>  taxonomyFile <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  row.file <span class="op">=</span> <span class="va">taxonomyFile</span>,</span>
 <span>  designFile <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  col.file <span class="op">=</span> <span class="va">designFile</span></span>
+<span>  col.file <span class="op">=</span> <span class="va">designFile</span>,</span>
+<span>  tree.file <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -98,6 +99,12 @@ documentation. (Default: <code>NULL</code>).</p></dd>
 <dd><p><code>Character scalar</code>. Defines file path of
 the sample metadata to be imported. The File has to be in <code>design
   file</code> format as defined in Mothur documentation. (Default: <code>NULL</code>).</p></dd>
+
+
+<dt id="arg-tree-file">tree.file<a class="anchor" aria-label="anchor" href="#arg-tree-file"></a></dt>
+<dd><p><code>Character scalar</code>. Optional path to a phylogenetic
+tree in Newick format. If provided, the tree is attached as
+<code>rowTree</code>.</p></dd>
 
 </dl></div>
     <div id="value">
