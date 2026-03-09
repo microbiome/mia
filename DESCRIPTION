@@ -91,25 +91,25 @@ Imports:
     utils,
     vegan
 Suggests:
-    ade4
-    BiocStyle
-    biomformat
-    dada2
-    knitr
-    mediation
-    miaTime
-    miaViz
-    microbiomeDataSets
-    NMF
-    patchwork
-    philr
-    phyloseq
-    reldist
-    rhdf5
-    rmarkdown
-    testthat
-    topicdoc
-    topicmodels
+    ade4,
+    BiocStyle,
+    biomformat,
+    dada2,
+    knitr,
+    mediation,
+    miaTime,
+    miaViz,
+    microbiomeDataSets,
+    NMF,
+    patchwork,
+    philr,
+    phyloseq,
+    reldist,
+    rhdf5,
+    rmarkdown,
+    testthat,
+    topicdoc,
+    topicmodels,
     yaml
 LinkingTo:
     Rcpp
