@@ -154,14 +154,21 @@ lvls <- c("Lean", "Obese", "Overwt")
 pheno <- factor(lvls[pheno0 + 1], levels=lvls)
 colData <- DataFrame(pheno = pheno)
 
-tse <- TreeSummarizedExperiment(assays = list(counts = counts),
-                                colData = colData)
+tse <- TreeSummarizedExperiment(
+    assays = list(counts = counts),
+    colData = colData)
 
 library(bluster)
 
 # Compute DMM algorithm and store result in metadata
-tse <- addCluster(tse, name = "DMM", DmmParam(k = 1:3, type = "laplace"),
-               by = "samples", full = TRUE)
+tse <- addCluster(
+    tse,
+    assay.type = "counts",
+    name = "DMM",
+    DmmParam(k = 1:3, type = "laplace"),
+    by = "samples",
+    full = TRUE
+)
 
 # Get the list of DMN objects
 metadata(tse)$DMM$dmm
