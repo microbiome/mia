@@ -73,11 +73,13 @@ Imports:
     DelayedMatrixStats,
     DirichletMultinomial,
     dplyr,
+    ecodive,
     IRanges,
     MASS,
     MatrixGenerics,
     methods,
-    ecodive,
+    Rcpp,
+    Rdpack,
     rlang,
     S4Vectors,
     scater,
@@ -87,29 +89,27 @@ Imports:
     tibble,
     tidyr,
     utils,
-    vegan,
-    Rdpack,
-    Rcpp
+    vegan
 Suggests:
-    ade4,
-    BiocStyle,
-    biomformat,
-    dada2,
-    knitr,
-    mediation,
-    miaTime,
-    miaViz,
-    microbiomeDataSets,
-    NMF,
-    patchwork,
-    philr,
-    phyloseq,
-    reldist,
-    rhdf5,
-    rmarkdown,
-    testthat,
-    topicdoc,
-    topicmodels,
+    ade4
+    BiocStyle
+    biomformat
+    dada2
+    knitr
+    mediation
+    miaTime
+    miaViz
+    microbiomeDataSets
+    NMF
+    patchwork
+    philr
+    phyloseq
+    reldist
+    rhdf5
+    rmarkdown
+    testthat
+    topicdoc
+    topicmodels
     yaml
 LinkingTo:
     Rcpp
