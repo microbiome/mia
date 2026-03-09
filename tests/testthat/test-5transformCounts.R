@@ -423,6 +423,54 @@ test_that("transformAssay", {
             "'value' must be a single numeric value or NA"
         )
 
+        ############################## BINNING ###############################
+        # Test that binning transformation works
+        tse_bin <- transformAssay(tse, method = "binning", nbins = 3)
+
+        # Expect warning trying to bin negative values
+        tse <- transformAssay(tse, method = "rclr")
+        expect_error(transformAssay(tse, method = "binning", assay.type = "rclr"))
+
+        # Check that the assay was created
+        expect_true("binning" %in% assayNames(tse_bin))
+
+        # Check that values are between 0 and 3
+        binned_assay <- assay(tse_bin, "binning")
+        expect_true(all(binned_assay >= 0 & binned_assay <= 3, na.rm = TRUE))
+
+        # Check that 0s are 0
+        counts <- assay(tse, "counts")
+        expect_true(all(binned_assay[counts == 0] == 0))
+
+        # Check non-zeros are > 0
+        expect_true(all(binned_assay[counts != 0] > 0))
+
+        # Manual check for N < B case
+        # 2 non-zero values, 4 nbins. Should map to 4 and 1.
+        test_mat <- matrix(c(10, 5, 0, 0), ncol=1)
+        tse_test <- SummarizedExperiment(assays = list(counts = test_mat))
+        tse_test <- transformAssay(tse_test, method = "binning", nbins = 4)
+        expect_equal(as.vector(assay(tse_test, "binning")), c(4, 1, 0, 0))
+
+        # Test error
+        expect_error(transformAssay(tse, method = "binning", nbins = "a"))
+        expect_error(transformAssay(tse, method = "binning", nbins = 0))
+
+        # Test feature-wise binning
+        tse_bin_feat <- transformAssay(tse, method = "binning", nbins = 3, MARGIN = "features")
+        expect_equal(dim(assay(tse_bin_feat, "binning")), dim(assay(tse, "counts")))
+
+        # Manual check for feature-wise
+        # 2 features, 3 samples
+        mat_feat <- matrix(c(10, 5, 0, 20, 0, 10), nrow=2, byrow=TRUE)
+        tse_feat <- SummarizedExperiment(assays = list(counts = mat_feat))
+        tse_feat <- transformAssay(tse_feat, method = "binning", nbins = 3, MARGIN = "features")
+        res_feat <- assay(tse_feat, "binning")
+
+        # Check rows (features)
+        expect_equal(as.vector(res_feat[1,]), c(3, 1, 0))
+        expect_equal(as.vector(res_feat[2,]), c(3, 0, 1))
+
 	      ############################## DIFFERENCE #############################
         # Test that difference transformation works on GlobalPatterns subset
         # Load data
