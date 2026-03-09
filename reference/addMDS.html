@@ -46,7 +46,7 @@ scater::calculateMDS."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Perform multi-dimensional scaling (MDS)</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/mds/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/mds/R/getMDS.R" class="external-link"><code>R/getMDS.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/imp/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/imp/R/getMDS.R" class="external-link"><code>R/getMDS.R</code></a></small>
     <div class="hidden name"><code>addMDS.Rd</code></div>
     </div>
 
@@ -84,14 +84,7 @@ Analysis (PCoA). These functions are wrappers for
 calculate dissimilarity. (Default: <code>getDissimilarity</code>)</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>\item \code{subset.result}<span class="sc">:</span> \code{Logical result}. Specifies whether to</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>subset \code{x} to match the result <span class="cf">if</span> some samples were removed during</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">calculation.</span> (Default<span class="sc">:</span> \code{<span class="cn">TRUE</span>})</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>\item \code{ntop}<span class="sc">:</span> \code{Numeric scalar}. Forwarded to</span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>\code{scater<span class="sc">::</span>calculateMDS}. Controls how many of the most variable</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>features are kept before MDS is <span class="fu">run.</span> (Default<span class="sc">:</span> \code{<span class="dv">500</span>}). Set</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>\code{ntop <span class="ot">=</span> <span class="cn">Inf</span>} (or supply \code{subset.row}) when you need the full</span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>assay <span class="cf">for</span> operations such as rarefaction where absolute library sizes</span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>matter.</span></code></pre><p></p></div></li>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">calculation.</span> (Default<span class="sc">:</span> \code{<span class="cn">TRUE</span>})</span></code></pre><p></p></div></li>
 </ul></dd>
 
 
@@ -119,12 +112,6 @@ used in calculation. (Default: <code>"counts"</code>)</p></dd>
 returns the results, <code>addMDS</code> adds them to <code>reducedDim(x)</code>. The
 difference is that these functions apply microbiome-specific options such
 as <code>getDissimilarity</code> function by default.</p>
-<p>By default <code><a href="https://rdrr.io/pkg/scater/man/runMDS.html" class="external-link">scater::calculateMDS</a></code> keeps only the <code>ntop = 500</code>
-most variable features. When rarefaction is enabled (<code>niter &gt; 0</code>) the
-sampling depth is evaluated on this filtered matrix, so samples whose depth
-falls below the requested <code>sample</code> are dropped. Pass <code>ntop = Inf</code>
-(or specify <code>subset.row</code>) if you need to retain all taxa so that the
-minimum depth of <code>assay(x, assay.type)</code> remains reachable.</p>
 <p>See <code><a href="https://rdrr.io/pkg/scater/man/runMDS.html" class="external-link">scater::calculateMDS</a></code> for details.</p>
     </div>
     <div id="see-also">
@@ -154,22 +141,6 @@ minimum depth of <code>assay(x, assay.type)</code> remains reachable.</p>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addMDS</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"unifrac"</span>, name <span class="op">=</span> <span class="st">"unifrac_rare"</span>, niter <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Pruning tree...</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Pruning tree...</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Disable feature filtering when rarefying at the minimum depth</span></span></span>
-<span class="r-in"><span><span class="va">min_depth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"counts"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addMDS</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
-<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
-<span class="r-in"><span>    method <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
-<span class="r-in"><span>    niter <span class="op">=</span> <span class="fl">2L</span>,</span></span>
-<span class="r-in"><span>    sample <span class="op">=</span> <span class="va">min_depth</span>,</span></span>
-<span class="r-in"><span>    ntop <span class="op">=</span> <span class="cn">Inf</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"MDS"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]        [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3 0.1007815  0.02161885</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1 0.1248784  0.02174467</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1 0.0861067 -0.01559749</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Visualize results</span></span></span>
 <span class="r-in"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"unifrac"</span>, colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span> <span class="op">+</span></span></span>

@@ -46,7 +46,7 @@ reducedDims and are available for all the expected functions."><!-- mathjax --><
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculation of Double Principal Correspondence analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/mds/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/mds/R/runDPCoA.R" class="external-link"><code>R/runDPCoA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/imp/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/imp/R/runDPCoA.R" class="external-link"><code>R/runDPCoA.R</code></a></small>
     <div class="hidden name"><code>runDPCoA.Rd</code></div>
     </div>
 
@@ -202,9 +202,9 @@ returned as attributes as well.</p>
 <span class="r-in"><span><span class="va">dpcoa</span> <span class="op">&lt;-</span> <span class="fu">getDPCoA</span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dpcoa</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]         [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> B -0.05368615 -0.046589779</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C -0.04324591  0.039790060</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> D  0.10011870 -0.003144932</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> B -0.05368615  0.046589779</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C -0.04324591 -0.039790060</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> D  0.10011870  0.003144932</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu">addDPCoA</span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDims</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
