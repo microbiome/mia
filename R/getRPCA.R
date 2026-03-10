@@ -1078,7 +1078,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
     # Recompute singular values for this table
     S_i <- vegan:::.aux_getoptS(
-        U_i,
+        U_shared,
         V_i,
         obs,
         mask
