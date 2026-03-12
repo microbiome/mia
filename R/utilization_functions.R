@@ -49,6 +49,7 @@
 #'
 NULL
 
+#'
 #' @export
 #' @rdname utilization_functions
 #' @importFrom SingleCellExperiment reducedDim
@@ -67,35 +68,6 @@ setMethod("getReducedDimAttribute", "SingleCellExperiment",
         return(values)
     }
 )
-
-#' @export
-#' @rdname utilization_functions
-#' @importFrom SingleCellExperiment reducedDims
-setMethod("convertToMAE", "SingleCellExperiment",
-    function(x, name = "main", ...){
-        exps <- setNames(list(x), name)
-        exps <- c(exps, altExps(x) |> as.list()) |> ExperimentList()
-        mae <- MultiAssayExperiment(experiments = exps, colData = colData(x))
-        return(mae)
-    }
-)
-
-#' @export
-#' @rdname utilization_functions
-#' @importFrom MultiAssayExperiment intersectColumns experiments
-setMethod("convertToTreeSE", "MultiAssayExperiment",
-    function(x, ...){
-        x <- intersectColumns(x)
-        exps <- experiments(x)
-        if( !all(vapply(exps, function(x) is(x, "SummarizedExperiment"), logical(1L))) ){
-            stop("All experiments must be SummarizedExperiment objects.", call. = FALSE)
-        }
-        tse <- exps[[1L]] |> as("TreeSummarizedExperiment")
-        altExps(tse) <- exps[-1]
-        return(tse)
-    }
-)
-
 
 ################################ HELP FUNCTIONS ################################
 
