@@ -46,7 +46,7 @@
 #' @export
 NULL
 
-.getJointRPCA <- function(x,
+getJointRPCA <- function(x,
                          experiments = NULL,
                          altexp = NULL,
                          name = "JointRPCA",
@@ -349,8 +349,8 @@ jointRPCAuniversal <- function(x, experiments = NULL,
         coln <- colnames(mat)
 
         if (transform == "rclr") {
-            # mat[!is.finite(mat)] <- 0
-            # mat[mat < 0] <- 0
+            mat[!is.finite(mat)] <- 0
+            mat[mat < 0] <- 0
             out <- vegan::decostand(mat, method = "rclr", MARGIN = 2)
             dimnames(out) <- list(rown, coln)
             out
@@ -562,7 +562,7 @@ jointRPCAuniversal <- function(x, experiments = NULL,
     cv.dist$iteration <- seq_len(nrow(cv.dist))
     rownames(cv.dist) <- seq_len(nrow(cv.dist))
 
-    return(list(ord_res = ord_res, dist = dist.res, cv_stats = cv.dist, opt.result = opt.result))
+    return(list(ord_res = ord_res, dist = dist.res, cv_stats = cv.dist))
 }
 
 #' Apply Projection of New Compositional Tables to Existing Ordination

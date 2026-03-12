@@ -79,13 +79,13 @@ read_ibdmdb_tsv <- function(path) {
     if (length(comment_idx) == 0L) {
         stop("No commented header line found in: ", path)
     }
-
+    
     header_line <- first[max(comment_idx)]
     header_line <- sub("^#\\s*", "", header_line)
     header_line <- sub("^\ufeff", "", header_line)
     header_vec  <- strsplit(header_line, "\t", fixed = TRUE)[[1]]
     header_vec  <- gsub('^"|"$', "", header_vec)
-
+    
     dt <- data.table::fread(
         path,
         skip   = length(comment_idx),
@@ -152,34 +152,34 @@ make_SE <- function(mat, meta_df = NULL, assay_name = "counts") {
             colData = S4Vectors::DataFrame(row.names = colnames(mat))
         ))
     }
-
+    
     md <- as.data.frame(meta_df, stringsAsFactors = FALSE, check.names = FALSE)
-
+    
     overlaps <- vapply(
         md,
         function(col) sum(as.character(col) %in% colnames(mat)),
         numeric(1)
     )
     best <- names(overlaps)[which.max(overlaps)]
-
+    
     if (length(best) == 0 || overlaps[[best]] == 0) {
         return(SummarizedExperiment::SummarizedExperiment(
             assays  = setNames(list(mat), assay_name),
             colData = S4Vectors::DataFrame(row.names = colnames(mat))
         ))
     }
-
+    
     md_sub <- md[md[[best]] %in% colnames(mat), , drop = FALSE]
     md_sub <- md_sub[!duplicated(md_sub[[best]]), , drop = FALSE]
-
+    
     rownames(md_sub) <- as.character(md_sub[[best]])
     md_sub <- md_sub[colnames(mat), , drop = FALSE]
-
+    
     if (anyDuplicated(rownames(md_sub))) {
         rownames(md_sub) <- make.unique(rownames(md_sub), sep = "_dup")
     }
     stopifnot(identical(rownames(md_sub), colnames(mat)))
-
+    
     SummarizedExperiment::SummarizedExperiment(
         assays  = setNames(list(mat), assay_name),
         colData = S4Vectors::DataFrame(md_sub)
@@ -256,21 +256,22 @@ meta_df <- meta_full
 se_mgx  <- make_SE(M_mgx, meta_df, assay_name = "mgx")
 se_mtx  <- make_SE(M_mtx, meta_df, assay_name = "mtx")
 
-mae <- MultiAssayExperiment::MultiAssayExperiment(
+mae2 <- MultiAssayExperiment::MultiAssayExperiment(
     experiments = list(MGX = se_mgx, MTX = se_mtx)
 )
 
 if (!is.null(SummarizedExperiment::colData(se_mgx))) {
-    MultiAssayExperiment::colData(mae) <- SummarizedExperiment::colData(se_mgx)
+    MultiAssayExperiment::colData(mae2) <- SummarizedExperiment::colData(se_mgx)
 }
 
 # Save only one dataset object
-ibdmdb <- mae
+ibdmdb_2omic_demo <- mae2
+
 save(
-    ibdmdb,
-    file     = file.path("data", "ibdmdb.rda"),
+    ibdmdb_2omic_demo,
+    file     = file.path("data", "ibdmdb_2omic_demo.rda"),
     compress = "xz"
 )
 
-message("Saved: data/ibdmdb.rda")
+message("Saved: data/ibdmdb_2omic_demo.rda")
 message("== Done. Re-run devtools::document(); devtools::check(); BiocCheck::BiocCheck(). ==")
