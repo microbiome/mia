@@ -275,7 +275,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         x[test_samples, , drop = FALSE]
     })
     # If user did not specify test set, use training set as test set
-    if( nrow(test_set) == 0L ){
+    if( all(lengths(test_set) == 0L) ){
         test_set <- train_set
     }
 
@@ -313,7 +313,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     ncomponents <- opt_results[["raw"]][["S"]] |> ncol()
     # Apply pca to lower rank representation
     pca_results <- .calculate_pca(
-        opt_results[["matrix"]], ncomponents = ncomponents, ...)
+        opt_results[["matrix"]], ncomponents = ncomponents)
     # Calculate distance in PCA space
     distance <- pca_results[["sample_scores"]] |> dist()
     # Create a final results to return to user
@@ -333,7 +333,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     ncomponents <- opt_results[["raw"]][["S"]] |> ncol()
     # Apply pca to lower rank representation
     pca_results <- .calculate_pca(
-        opt_results[["matrix"]], ncomponents = ncomponents, ...)
+        opt_results[["matrix"]], ncomponents = ncomponents)
     # Calculate distance in PCA space
     distance <- pca_results[["sample_scores"]] |> dist()
     # Create a final results to return to user
@@ -403,9 +403,9 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 }
 
 # This function applies PCA to the data.
-.calculate_pca <- function(mat, ncomponents, ...){
+.calculate_pca <- function(mat, ncomponents){
     # Double center the data
-    mat <- .apply_double_centering(mat, ...)
+    mat <- .apply_double_centering(mat)
 
     # Run PCA
     svd_result <- mat |> svd()
@@ -415,7 +415,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
     # We multiply U by singular values so that the sample coordinates reflect
     # actual variance magnitude rather than just orthonormal directions.
-    u <- u %*% diag(s)
+    # u <- u %*% diag(s)
 
     # Subset. There might be more components than requested.
     u <- u[ , seq_len(ncomponents), drop = FALSE]
