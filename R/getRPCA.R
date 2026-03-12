@@ -718,7 +718,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
     # Reverse the earlier rescaling so singular values match the scale
     # of the original input data.
-    S_shared = S_shared / rescale_param
+    S_shared <- S_shared / rescale_param
 
     # Ensure components are ordered by decreasing singular value.
     index_order <- order(diag(S_shared), decreasing = TRUE)
