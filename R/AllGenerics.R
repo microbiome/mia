@@ -410,3 +410,13 @@ setGeneric("addMDS", signature = "x", function(x, ...)
 #' @export
 setGeneric("getReducedDimAttribute", signature = "x", function(x, ...)
     standardGeneric("getReducedDimAttribute"))
+
+#' @rdname utilization_functions
+#' @export
+setGeneric("convertToMAE", signature = "x", function(x, ...)
+    standardGeneric("convertToMAE"))
+
+#' @rdname utilization_functions
+#' @export
+setGeneric("convertToTreeSE", signature = "x", function(x, ...)
+    standardGeneric("convertToTreeSE"))
