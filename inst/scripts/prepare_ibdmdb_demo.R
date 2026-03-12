@@ -1,7 +1,7 @@
 # Build compact demo objects (.rda) for IBDMDB examples/vignettes.
 #
 # Produces:
-#   data/ibdmdb_2omic_demo.rda  (ibdmdb_2omic_demo)
+#   data/ibdmdb.rda  (ibdmdb)
 #
 # Source raw inputs from inst/extdata and pre-process for speed/size.
 #
@@ -15,7 +15,7 @@ message("== IBDMDB demo data preparation ==")
 
 # This script is for DEVELOPERS only.
 # It downloads large raw files into a local cache (NOT committed to git),
-# then creates a compact demo dataset in data/ibdmdb_2omic_demo.rda.
+# then creates a compact demo dataset in data/ibdmdb.rda.
 # It is NOT run during R CMD check.
 
 cache_dir <- file.path("tools", "cache", "mia_ibdmdb_cache")
