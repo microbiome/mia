@@ -490,17 +490,22 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 .project_test_set_to_rpca <- function(pca_result, mat){
     # Extract PCA components
     feature_scores <- attributes(pca_result)[["rotation"]]
+    singular_values <- attributes(pca_result)[["varExplained"]]
 
     center <- attributes(pca_result)[["center"]]
     # Row centering (new samples)
     mat <- sweep(mat, 1L, rowMeans(mat), "-")
     # Column centering (training means)
-    mat <- sweep(mat, 2L, center[["col"]], "-")
+    # mat <- sweep(mat, 2L, center[["col"]], "-")
+    mat <- sweep(mat, 2L, colMeans(mat), "-")
     # Add grand mean to avoid subtracting the mean twice (training means)
     # mat <- mat + center[["grand"]]
 
     # Project into PCA space
     projected <- mat %*% feature_scores
+
+    # Normalize based on singular values
+    projected <- projected / sqrt(sum(singular_values^2))
 
     return(projected)
 }
