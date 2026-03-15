@@ -108,7 +108,7 @@
 #' res <- getRPCA(mae[[1]], assay.type = "rclr")
 #'
 #' @seealso
-#' \code{\link[scater::runPCA]{runPCA}}
+#' \code{\link[scater:runPCA]{scater::runPCA}}
 #'
 #' @references
 #'
@@ -213,11 +213,12 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
             stop("'name' must be a single character value.", call. = FALSE)
         }
         res <- getJointRPCA(x, ...)
-        x <- .add_values_to_mae_metadata(x, res, name = name, ...)
+        x <- .add_values_to_mae_metadata(x, res, names = name, ...)
         return(x)
     }
 )
-##########################
+
+################################ HELP FUNCTIONS ################################
 
 # This function retrieves specific tables from MAE
 #' @importFrom MultiAssayExperiment intersectColumns
@@ -305,6 +306,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 }
 
 # This function runs RPCA to single table
+#' @importFrom stats dist
 .calculate_rpca <- function(mat, ncomponents = 3L, ...){
     # Get lower rank representation of the data
     opt_results <- .get_lower_rank_mat(mat, ncomponents = ncomponents, ...)
@@ -324,6 +326,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 # This function runs Joint-RPCA. The only difference to .calculate_rpca is that
 # the lower dimension matrix is estimated by optimizing feature loadings
 # separately (sample loadings and singular values are estimated jointly).
+#' @importFrom stats dist
 .calculate_joint_rpca <- function(mat_list, test_set, ncomponents = 3L, ...){
     # Get lower rank representation of the data
     opt_results <- .get_lower_rank_joint_mat(
@@ -767,7 +770,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
     # Generate the new singular values from
     # the initialization of U and V
-    S_shared <- vegan:::.aux_getoptS(
+    S_shared <- .aux_getoptS(
         U_shared, V_shared, observed_stacked, mask_stacked)
 
     # Split feature loadings by table
@@ -801,7 +804,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     V_i  <- V_list[[table_i]]
 
     # Compute gradient for table i
-    grad_res <- vegan:::.aux_gradF_t(
+    grad_res <- .aux_gradF_t(
         U_shared,
         V_i,
         S_shared,
@@ -814,7 +817,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     V_update <- grad_res[["Z"]]
 
     # Line search for optimal step
-    step <- vegan:::.aux_getoptT(
+    step <- .aux_getoptT(
         U_shared,
         U_update,
         V_i,
@@ -831,7 +834,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     V_i <- V_i - sign.correction * step * V_update
 
     # Recompute singular values for this table
-    S_i <- vegan:::.aux_getoptS(
+    S_i <- .aux_getoptS(
         U_shared,
         V_i,
         obs,

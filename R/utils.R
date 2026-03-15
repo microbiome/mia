@@ -18,6 +18,10 @@
 
 .get_mat_from_sce <- scater:::.get_mat_from_sce
 .get_mat_for_reddim <- scater:::.get_mat_for_reddim
+.aux_getoptS <- vegan:::.aux_getoptS
+.aux_gradF_t <- vegan:::.aux_gradF_t
+.aux_getoptT <- vegan:::.aux_getoptT
+.aux_getoptS <- vegan:::.aux_getoptS
 
 ################################################################################
 # integration with other packages
@@ -774,6 +778,7 @@
 }
 
 # Select optionally alternative experiments
+#' @importFrom SingleCellExperiment altExps
 .select_altexps <- function(mae, altexps = NULL, ...) {
     # Check that value is correct
     is_name <- is.character(altexps) && length(altexps) > 0 &&
@@ -844,6 +849,7 @@
     return(mae)
 }
 
+#' @importFrom SingleCellExperiment altExps
 .select_experiments_from_tse <- function(tse, experiments) {
     tse_list <- altExps(tse)
     main_name <- "main"
@@ -863,7 +869,7 @@
         all(experiments %in% names(tse_list))
     is_index <- is.numeric(experiments) && all(experiments%%1==0) &&
         length(experiments) > 0 &&
-        length(experiments) <= length(experiments(mae)) &&
+        length(experiments) <= length(tse_list) &&
         all(experiments>0 & experiments<=length(tse_list))
     if( !(is_name || is_index) ){
         stop("'experiments' must specify names or index of alternative ",

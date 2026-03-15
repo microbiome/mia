@@ -147,5 +147,5 @@ dynamics.
 \emph{Nat. Biotechnol.} doi:10.1038/s41587-020-0660-7
 }
 \seealso{
-\code{\link[scater::runPCA]{runPCA}}
+\code{\link[scater:runPCA]{scater::runPCA}}
 }
