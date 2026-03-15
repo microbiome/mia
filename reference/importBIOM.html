@@ -22,7 +22,7 @@ objects to phyloseq objects."><!-- mathjax --><script src="https://cdnjs.cloudfl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.6</span>
       </span>
     </div>
 
@@ -49,7 +49,7 @@ objects to phyloseq objects."><!-- mathjax --><script src="https://cdnjs.cloudfl
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Convert a <code>TreeSummarizedExperiment</code> object to/from ‘BIOM’ results</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/imp/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/imp/R/convertFromBIOM.R" class="external-link"><code>R/convertFromBIOM.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/improve_rpca/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/improve_rpca/R/convertFromBIOM.R" class="external-link"><code>R/convertFromBIOM.R</code></a></small>
     <div class="hidden name"><code>importBIOM.Rd</code></div>
     </div>
 
@@ -65,7 +65,7 @@ objects to phyloseq objects.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">convertToBIOM</span><span class="op">(</span><span class="va">x</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">importBIOM</span><span class="op">(</span><span class="va">file</span>, col.data <span class="op">=</span> <span class="cn">NULL</span>, tree.file <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">importBIOM</span><span class="op">(</span><span class="va">file</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">convertFromBIOM</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
@@ -101,17 +101,6 @@ objects to phyloseq objects.</p>
 
 <dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
 <dd><p>BIOM file location</p></dd>
-
-
-<dt id="arg-col-data">col.data<a class="anchor" aria-label="anchor" href="#arg-col-data"></a></dt>
-<dd><p>a DataFrame-like object that includes sample names in
-rownames, or a single <code>character</code> value defining the file
-path of the sample metadata file (tsv). (Default: <code>NULL</code>).</p></dd>
-
-
-<dt id="arg-tree-file">tree.file<a class="anchor" aria-label="anchor" href="#arg-tree-file"></a></dt>
-<dd><p><code>Character scalar</code>. Optional path to a phylogenetic
-tree. If provided, replaces any tree stored in the BIOM metadata.</p></dd>
 
 
 <dt id="arg-prefix-rm">prefix.rm<a class="anchor" aria-label="anchor" href="#arg-prefix-rm"></a></dt>
