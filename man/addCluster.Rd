@@ -71,7 +71,7 @@ object.}
 
 \item{...}{Additional parameters to use altExps for example}
 
-\item{BLUSPARAM}{A \linkS4class{BlusterParam} object specifying the algorithm to use.}
+\item{BLUSPARAM}{A \link[bluster]{BlusterParam-class} object specifying the algorithm to use.}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation.}
