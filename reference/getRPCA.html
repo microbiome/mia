@@ -48,7 +48,7 @@ results of the analysis while add* adds them to the input object."><!-- mathjax 
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Run (joint) robust principal component analysis (RPCA)</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/getRPCA.R" class="external-link"><code>R/getRPCA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/joint_rpca/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/joint_rpca/R/getRPCA.R" class="external-link"><code>R/getRPCA.R</code></a></small>
     <div class="hidden name"><code>getRPCA.Rd</code></div>
     </div>
 
@@ -181,6 +181,17 @@ dynamics.
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">scater::runPCA</a></code></p></div>
+    </div>
+    <div id="author">
+    <h2>Author</h2>
+    <p>The RPCA method is reported in Martino et al. (2020) and the
+R/Bioconductor implementation utilizes the robust Aitchison
+distance from <code><a href="https://vegandevs.github.io/vegan/reference/decostand.html" class="external-link">vegan::decostand</a></code>.</p>
+<p>The Joint-RPCA method was adapted from the original
+Python-based implementation in biocore/Gemelli by
+Bianca Cordazzo Vargas, Liat Shenhav, and Cameron Martino.
+The R/Bioconductor implementation was subsequently prepared by
+Aituar Bektanov, Tuomas Borman, and Leo Lahti.</p>
     </div>
 
     <div id="ref-examples">
