@@ -149,3 +149,14 @@ dynamics.
 \seealso{
 \code{\link[scater:runPCA]{scater::runPCA}}
 }
+\author{
+The RPCA method is reported in Martino et al. (2020) and the
+R/Bioconductor implementation utilizes the robust Aitchison
+distance from \code{\link[vegan:decostand]{vegan::decostand}}.
+
+The Joint-RPCA method was adapted from the original
+Python-based implementation in biocore/Gemelli by
+Bianca Cordazzo Vargas, Liat Shenhav, and Cameron Martino.
+The R/Bioconductor implementation was subsequently prepared by
+Aituar Bektanov, Tuomas Borman, and Leo Lahti.
+}
