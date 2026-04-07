@@ -78,7 +78,6 @@
 NULL
 
 #' @rdname fetchMetalogTSE
-#' @importFrom Matrix sparseMatrix rowSums
 #' @importFrom TreeSummarizedExperiment TreeSummarizedExperiment
 #' @importFrom S4Vectors SimpleList DataFrame metadata metadata<-
 #' @importFrom data.table fread setnames setkey dcast tstrsplit
@@ -275,7 +274,7 @@ fetchMetalogTSE <- function(
     list(assay = assay_file, md = md_file)
 }
 
-# Load MetaPhlAn4 profiles into a sparse matrix (rows = taxa, cols = samples)
+# Load MetaPhlAn4 profiles into a dense matrix (rows = taxa, cols = samples)
 .load_metalog_assay <- function(path, sep = "\t") {
     # data.table NSE bindings
     clade_name <- rel_abund <- sample_alias <- NULL
@@ -291,13 +290,15 @@ fetchMetalogTSE <- function(
         by = .(clade_name, sample_alias)]
     taxa <- sort(unique(dt$clade_name))
     samples <- sort(unique(dt$sample_alias))
-    i <- match(dt$clade_name, taxa)
-    j <- match(dt$sample_alias, samples)
-    X <- Matrix::sparseMatrix(
-        i = i, j = j, x = dt$rel_abund,
-        dims = c(length(taxa), length(samples)),
+    X <- matrix(
+        0, nrow = length(taxa), ncol = length(samples),
         dimnames = list(taxa, samples)
     )
+    idx <- cbind(
+        match(dt$clade_name, taxa),
+        match(dt$sample_alias, samples)
+    )
+    X[idx] <- dt$rel_abund
     list(assay = X, taxa = taxa, samples = samples)
 }
 
@@ -411,7 +412,7 @@ fetchMetalogTSE <- function(
     assay_list$assay <- assay_list$assay[, keep_samples, drop = FALSE]
     assay_list$samples <- keep_samples
     # Drop taxa with zero abundance
-    row_sums <- Matrix::rowSums(assay_list$assay)
+    row_sums <- rowSums(assay_list$assay)
     keep_taxa <- names(row_sums[row_sums > 0])
     assay_list$assay <- assay_list$assay[keep_taxa, , drop = FALSE]
     assay_list$taxa <- keep_taxa
