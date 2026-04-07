@@ -82,6 +82,7 @@ NULL
 #' @importFrom TreeSummarizedExperiment TreeSummarizedExperiment
 #' @importFrom S4Vectors SimpleList DataFrame metadata metadata<-
 #' @importFrom data.table fread setnames setkey dcast tstrsplit
+#' @importFrom ape read.tree keep.tip
 #' @export
 fetchMetalogTSE <- function(
         collection,
@@ -149,11 +150,15 @@ fetchMetalogTSE <- function(
         data_files[["md"]], assay_list[["samples"]])
     # Map SGBs to full taxonomic lineage
     tax <- .construct_metalog_taxmap(mapping_db, assay_list[["taxa"]])
+    # Download and prune the MetaPhlAn4 SGB phylogeny to taxa in the data
+    tree_info <- .construct_metalog_tree(assay_list[["taxa"]], use.cache)
 
     tse <- TreeSummarizedExperiment(
         assays = SimpleList("relabundance" = assay_list[["assay"]]),
         colData = DataFrame(md_df),
-        rowData = DataFrame(tax)
+        rowData = DataFrame(tax),
+        rowTree = tree_info[["tree"]],
+        rowNodeLab = tree_info[["node_lab"]]
     )
 
     # Store provenance information
@@ -348,6 +353,40 @@ fetchMetalogTSE <- function(
     result <- as.data.frame(taxmap[, lineage_cols, with = FALSE])
     rownames(result) <- taxa
     result
+}
+
+# Download the MetaPhlAn4 SGB phylogeny and prune to taxa in the dataset.
+# Returns a list with the pruned tree and a per-taxon tip label vector
+# (NA for taxa absent from the tree) suitable for rowNodeLab.
+.construct_metalog_tree <- function(taxa, use.cache) {
+    tree_url <- paste0(
+        "http://cmprod1.cibio.unitn.it/biobakery4/metaphlan_databases/",
+        "mpa_vJun23_CHOCOPhlAnSGB_202307.nwk"
+    )
+    tree_file <- .download_metalog_file(tree_url, use.cache = use.cache)
+    tree <- ape::read.tree(tree_file)
+    # Tree tips are bare numeric SGB ids (e.g. "122987"); taxa are
+    # MetaPhlAn clade names like "t__SGB1234" or "t__SGB1234_group".
+    # Extract the numeric id from each taxon to match tips.
+    taxa_id <- vapply(taxa, function(x) {
+        m <- regmatches(x, regexpr("SGB[0-9]+", x))
+        if (length(m) == 0) NA_character_ else sub("^SGB", "", m)
+    }, character(1))
+    node_lab <- ifelse(taxa_id %in% tree$tip.label, taxa_id, NA_character_)
+    keep <- node_lab[!is.na(node_lab)]
+    n_missing <- sum(is.na(node_lab))
+    if (n_missing > 0) {
+        warning(
+            n_missing, " of ", length(taxa),
+            " taxa could not be matched to a tip in the SGB tree.",
+            call. = FALSE
+        )
+    }
+    if (length(keep) == 0) {
+        stop("No taxa matched any tip in the SGB tree.", call. = FALSE)
+    }
+    tree <- ape::keep.tip(tree, keep)
+    list(tree = tree, node_lab = node_lab)
 }
 
 # Filter assay data to samples listed in a sample list file
