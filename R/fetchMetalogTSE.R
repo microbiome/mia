@@ -8,12 +8,18 @@
 #' provided to retrieve only a subset of samples (exported from the Metalog
 #' web UI).
 #'
-#' @param collection \code{Character scalar}. The Metalog collection to
-#'   download. Must be one of \code{"human"}, \code{"animal"}, \code{"ocean"},
-#'   or \code{"environmental"}.
+#' @param collection \code{Character vector}. One or more Metalog collections
+#'   to download. Each value must be one of \code{"human"}, \code{"animal"},
+#'   \code{"ocean"}, or \code{"environmental"}. When multiple collections are
+#'   given, their assays and metadata are merged before constructing the
+#'   final object; a \code{collection} column is added to \code{colData}
+#'   identifying the source collection of each sample.
 #'
 #' @param meta.type \code{Character scalar}. The metadata scope to download.
-#'   Must be one of \code{"core"}, \code{"extended"}, or \code{"all"}.
+#'   Must be one of \code{"core"}, \code{"extended"}, \code{"all"}, or
+#'   \code{"none"}. When \code{"none"}, no sample metadata is downloaded and
+#'   \code{colData} is empty (in the multi-collection case it retains only
+#'   the \code{collection} column identifying the source of each sample).
 #'   (Default: \code{"core"}).
 #'
 #' @param samplelist \code{Character scalar} or \code{NULL}. File path to a
@@ -26,6 +32,13 @@
 #' @param use.cache \code{Logical scalar}. Should previously downloaded files
 #'   be reused? When \code{TRUE}, cached files in the download directory are
 #'   used if available. (Default: \code{TRUE}).
+#'
+#' @param make.dense \code{Logical scalar}. Should the assay be returned as a
+#'   dense base R matrix? Internally the assay is built as a sparse matrix to
+#'   conserve memory while loading and merging collections. When \code{TRUE}
+#'   (the default), it is converted to a dense matrix as a final step for
+#'   broader compatibility with downstream tools. Set to \code{FALSE} to
+#'   retain the sparse representation. (Default: \code{TRUE}).
 #'
 #' @details
 #' Data is downloaded from the Metalog database
@@ -73,6 +86,9 @@
 #'
 #' # Fetch a subset of samples using a sample list
 #' tse <- fetchMetalogTSE("human", samplelist = "my_samples.csv")
+#'
+#' # Fetch and merge multiple collections
+#' tse <- fetchMetalogTSE(c("human", "animal"))
 #' }
 #'
 NULL
@@ -87,18 +103,21 @@ fetchMetalogTSE <- function(
         collection,
         meta.type = "core",
         samplelist = NULL,
-        use.cache = TRUE) {
+        use.cache = TRUE,
+        make.dense = TRUE) {
     ################################ Input check ###############################
     allowed_collections <- c("human", "animal", "ocean", "environmental")
-    if (!.is_non_empty_string(collection) ||
-            !collection %in% allowed_collections) {
+    if (!is.character(collection) || length(collection) < 1 ||
+            anyNA(collection) || !all(nzchar(collection)) ||
+            !all(collection %in% allowed_collections)) {
         stop(
-            "'collection' must be one of: ",
+            "'collection' must be a character vector with values from: ",
             paste(dQuote(allowed_collections), collapse = ", "),
             call. = FALSE
         )
     }
-    allowed_meta_types <- c("core", "extended", "all")
+    collection <- unique(collection)
+    allowed_meta_types <- c("core", "extended", "all", "none")
     if (!.is_non_empty_string(meta.type) ||
             !meta.type %in% allowed_meta_types) {
         stop(
@@ -129,31 +148,50 @@ fetchMetalogTSE <- function(
     if (!.is_a_bool(use.cache)) {
         stop("'use.cache' must be TRUE or FALSE.", call. = FALSE)
     }
+    if (!.is_a_bool(make.dense)) {
+        stop("'make.dense' must be TRUE or FALSE.", call. = FALSE)
+    }
     ############################## Input check end #############################
-    # Construct download URLs, download and cache
-    data_files <- .resolve_metalog_url(collection, meta.type, use.cache)
-    # Latest database file for taxonomy mapping
+    # Latest database file for taxonomy mapping (shared across collections)
     mapping_db <- .download_metalog_file(
         "https://metalog.embl.de/static/download/profiles/metaphlan4_clades.tsv.gz",
         use.cache = use.cache
     )
-    # Load assay as sparse matrix
-    assay_list <- .load_metalog_assay(data_files[["assay"]])
-    # Optional filtering to requested samples
-    if (!is.null(samplelist)) {
-        message("Filtering to requested samples...")
-        assay_list <- .filter_metalog_samples(assay_list, samplelist)
+    # Per-collection: download, load assay, optional sample filter, load md
+    data_files_list <- lapply(collection, .resolve_metalog_url,
+        meta.type = meta.type, use.cache = use.cache)
+    names(data_files_list) <- collection
+    per_coll <- lapply(collection, function(co) {
+        df <- data_files_list[[co]]
+        al <- .load_metalog_assay(df[["assay"]])
+        if (!is.null(samplelist)) {
+            message("Filtering to requested samples in '", co, "'...")
+            al <- .filter_metalog_samples(al, samplelist)
+        }
+        md <- if (identical(meta.type, "none")) {
+            data.frame(row.names = al[["samples"]])
+        } else {
+            .load_metalog_metadata(df[["md"]], al[["samples"]])
+        }
+        list(assay_list = al, md = md)
+    })
+    names(per_coll) <- collection
+    # Merge assays and metadata across collections
+    merged <- .merge_metalog_assays(lapply(per_coll, `[[`, "assay_list"))
+    if (make.dense) {
+        merged[["assay"]] <- as.matrix(merged[["assay"]])
     }
-    # Load metadata (pivoted to wide format)
-    md_df <- .load_metalog_metadata(
-        data_files[["md"]], assay_list[["samples"]])
+    md_df <- .merge_metalog_metadata(
+        lapply(per_coll, `[[`, "md"), collection, merged[["samples"]],
+        add.collection = !(identical(meta.type, "none") &&
+            length(collection) == 1))
     # Map SGBs to full taxonomic lineage
-    tax <- .construct_metalog_taxmap(mapping_db, assay_list[["taxa"]])
+    tax <- .construct_metalog_taxmap(mapping_db, merged[["taxa"]])
     # Download and prune the MetaPhlAn4 SGB phylogeny to taxa in the data
-    tree_info <- .construct_metalog_tree(assay_list[["taxa"]], use.cache)
+    tree_info <- .construct_metalog_tree(merged[["taxa"]], use.cache)
 
     tse <- TreeSummarizedExperiment(
-        assays = SimpleList("relabundance" = assay_list[["assay"]]),
+        assays = SimpleList("relabundance" = merged[["assay"]]),
         colData = DataFrame(md_df),
         rowData = DataFrame(tax),
         rowTree = tree_info[["tree"]],
@@ -161,16 +199,93 @@ fetchMetalogTSE <- function(
     )
 
     # Store provenance information
+    date_profile <- vapply(data_files_list,
+        function(df) .parse_metalog_date(df[["assay"]]), character(1))
+    date_metadata <- vapply(data_files_list, function(df) {
+        if (is.na(df[["md"]])) NA_character_
+        else .parse_metalog_date(df[["md"]])
+    }, character(1))
     metadata(tse)$metalog <- list(
         source = "https://metalog.embl.de/",
         license = "Open Database License (ODbL) v1.0",
         collection = collection,
         meta.type = meta.type,
-        date_profile = .parse_metalog_date(data_files[["assay"]]),
-        date_metadata = .parse_metalog_date(data_files[["md"]]),
+        date_profile = date_profile,
+        date_metadata = date_metadata,
         date_fetched = Sys.Date()
     )
     return(tse)
+}
+
+# Merge per-collection assay matrices into a single matrix.
+# Rows (taxa) are the union; columns (samples) are concatenated. Sample
+# alias collisions across collections trigger a hard error.
+#' @importFrom Matrix sparseMatrix
+.merge_metalog_assays <- function(assay_lists) {
+    if (length(assay_lists) == 1) {
+        al <- assay_lists[[1]]
+        return(list(
+            assay = al[["assay"]],
+            taxa = al[["taxa"]],
+            samples = al[["samples"]]
+        ))
+    }
+    taxa <- sort(unique(unlist(
+        lapply(assay_lists, `[[`, "taxa"), use.names = FALSE)))
+    samples <- unlist(
+        lapply(assay_lists, `[[`, "samples"), use.names = FALSE)
+    dups <- unique(samples[duplicated(samples)])
+    if (length(dups) > 0) {
+        stop(
+            "Duplicate sample aliases across collections: ",
+            paste(dQuote(utils::head(dups, 5)), collapse = ", "),
+            if (length(dups) > 5) ", ..." else "",
+            call. = FALSE
+        )
+    }
+    # Collect (i, j, x) triplets from each per-collection sparse matrix and
+    # remap them into the merged taxa/sample index space.
+    sample_offset <- 0L
+    triplets <- lapply(assay_lists, function(al) {
+        m <- methods::as(al[["assay"]], "TsparseMatrix")
+        i <- match(rownames(m)[m@i + 1L], taxa)
+        j <- m@j + 1L + sample_offset
+        sample_offset <<- sample_offset + ncol(m)
+        list(i = i, j = j, x = m@x)
+    })
+    X <- Matrix::sparseMatrix(
+        i = unlist(lapply(triplets, `[[`, "i"), use.names = FALSE),
+        j = unlist(lapply(triplets, `[[`, "j"), use.names = FALSE),
+        x = unlist(lapply(triplets, `[[`, "x"), use.names = FALSE),
+        dims = c(length(taxa), length(samples)),
+        dimnames = list(taxa, samples)
+    )
+    list(assay = X, taxa = taxa, samples = samples)
+}
+
+# Merge per-collection metadata data.frames. Adds a 'collection' column
+# identifying the source collection of each sample. Non-overlapping
+# columns are filled with NA.
+.merge_metalog_metadata <- function(md_list, collections, samples,
+        add.collection = TRUE) {
+    if (add.collection) {
+        for (i in seq_along(md_list)) {
+            md_list[[i]][["collection"]] <- collections[[i]]
+        }
+    }
+    combined <- data.table::rbindlist(
+        lapply(md_list, function(x) {
+            x[["sample_alias"]] <- rownames(x)
+            x
+        }),
+        fill = TRUE, use.names = TRUE
+    )
+    df <- as.data.frame(combined)
+    rownames(df) <- df[["sample_alias"]]
+    df[["sample_alias"]] <- NULL
+    # Reorder to match merged sample order
+    df <- df[samples, , drop = FALSE]
+    df
 }
 
 ################################ HELP FUNCTIONS ################################
@@ -266,15 +381,20 @@ fetchMetalogTSE <- function(
         download_dir = cache_dir,
         use.cache = use.cache
     )
-    md_file <- .download_metalog_file(
-        target_url = md_url,
-        download_dir = cache_dir,
-        use.cache = use.cache
-    )
+    md_file <- if (identical(meta.type, "none")) {
+        NA_character_
+    } else {
+        .download_metalog_file(
+            target_url = md_url,
+            download_dir = cache_dir,
+            use.cache = use.cache
+        )
+    }
     list(assay = assay_file, md = md_file)
 }
 
-# Load MetaPhlAn4 profiles into a dense matrix (rows = taxa, cols = samples)
+# Load MetaPhlAn4 profiles into a sparse matrix (rows = taxa, cols = samples)
+#' @importFrom Matrix sparseMatrix
 .load_metalog_assay <- function(path, sep = "\t") {
     # data.table NSE bindings
     clade_name <- rel_abund <- sample_alias <- NULL
@@ -290,15 +410,13 @@ fetchMetalogTSE <- function(
         by = .(clade_name, sample_alias)]
     taxa <- sort(unique(dt$clade_name))
     samples <- sort(unique(dt$sample_alias))
-    X <- matrix(
-        0, nrow = length(taxa), ncol = length(samples),
+    X <- Matrix::sparseMatrix(
+        i = match(dt$clade_name, taxa),
+        j = match(dt$sample_alias, samples),
+        x = dt$rel_abund,
+        dims = c(length(taxa), length(samples)),
         dimnames = list(taxa, samples)
     )
-    idx <- cbind(
-        match(dt$clade_name, taxa),
-        match(dt$sample_alias, samples)
-    )
-    X[idx] <- dt$rel_abund
     list(assay = X, taxa = taxa, samples = samples)
 }
 
