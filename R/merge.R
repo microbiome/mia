@@ -105,19 +105,18 @@
     # can control this behavior; it can specify the preserved rows for every
     # group or index.
     archetype <- .norm_archetype(f, archetype)
-    # Get assays
-    assays <- assays(x)
     # Merge assays
     assays <- mapply(
-        .agglomerate_assay, assayNames(x), assays,
+        .agglomerate_assay, assayNames(x), assays(x),
         MoreArgs = list(
-            ids = f, by = by, na.rm = na.rm, average = average,
+            by = by, ids = f, na.rm = na.rm, average = average,
             check.assay = check.assays
         ),
         SIMPLIFY = FALSE
     )
     # Convert to SimpleList
     assays <- assays |> SimpleList()
+    print(tail(assays[[1]]))
     # Now we have agglomerated assays, but TreeSE has still the original form.
     # We take specified rows/columns from the TreeSE.
     idx <- .get_element_pos(f, archetype = archetype)
@@ -183,8 +182,6 @@
     if( by == 2L ){
         assay <- t(assay)
     }
-    # Check if NAs are present
-    is_not_na <- !is.na(assay)
     # Sum counts across features
     assay <- .sum_counts_accross_features(assay, ids, average, na.rm)
     # Transpose back to original orientation
