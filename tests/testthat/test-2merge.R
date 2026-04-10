@@ -110,7 +110,7 @@ test_that("merge", {
         return(res)
     }
     # Generate data
-    tse <- mockSCE()
+    tse <- scuttle::mockSCE()
     rowData(tse)[["group"]] <- sample(LETTERS, nrow(tse), replace = TRUE)
     colData(tse)[["group"]] <- sample(LETTERS, ncol(tse), replace = TRUE)
     # Create a data with NAs
