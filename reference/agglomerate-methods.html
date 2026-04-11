@@ -37,7 +37,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.8</span>
       </span>
     </div>
 
@@ -64,7 +64,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Agglomerate data using taxonomic information or other grouping</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/patch/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/patch/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/patch/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
     <div class="hidden name"><code>agglomerate-methods.Rd</code></div>
     </div>
 
@@ -336,7 +336,7 @@ With certain assays, e.g. those that include binary or negative values, this
 summing can produce meaningless values. In those cases, consider performing
 agglomeration first, and then applying the transformation afterwards.</p>
 <p><code>agglomerateByVariable</code> works similarly to
-<code><a href="https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html" class="external-link">sumCountsAcrossFeatures</a></code>.
+<code>aggregateAcrossGenes</code>.
 However, additional support for <code>TreeSummarizedExperiment</code> was added and
 science field agnostic names were used. In addition the <code>archetype</code>
 argument lets the user select how to preserve row or column data. For merge
@@ -368,7 +368,6 @@ the <code>colData</code> of the base object is kept.</p>
     <div class="dont-index"><p><code><a href="splitOn.html">splitOn</a></code>
 <code><a href="splitOn.html">unsplitOn</a></code>
 <code>agglomerateByVariable</code>,
-<code><a href="https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html" class="external-link">sumCountsAcrossFeatures</a></code>,
 <code>agglomerateByRank</code>,
 <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></code>,
 <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/splitAltExps.html" class="external-link">splitAltExps</a></code></p></div>
