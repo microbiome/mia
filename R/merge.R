@@ -67,7 +67,6 @@
 
 # This function merges assays and row/colData.
 #' @importFrom S4Vectors SimpleList
-#' @importFrom scrapper aggregateAcrossGenes
 .merge_rows_or_cols <- function(
         x, f, by, archetype = 1L, average = FALSE, check.assays = TRUE,
         na.rm = FALSE, ...){
@@ -105,9 +104,22 @@
     # can control this behavior; it can specify the preserved rows for every
     # group or index.
     archetype <- .norm_archetype(f, archetype)
+    # Now we have agglomerated assays, but TreeSE has still the original form.
+    # We take specified rows/columns from the TreeSE.
+    idx <- .get_element_pos(f, archetype = archetype)
+    # Retrieve experiment assays
+    assays <- assays(x)
+    # Remove rows with NA group from assays
+    to_remove <- which(is.na(f))
+    if( length(to_remove) != 0L ){
+        # Remove NA groups
+        f <- f[-to_remove]
+        # Remove assays rows corresponding to NA groups
+        assays <- lapply(assays, `[`, -to_remove, )
+    }
     # Merge assays
     assays <- mapply(
-        .agglomerate_assay, assayNames(x), assays(x),
+        .agglomerate_assay, assayNames(x), assays,
         MoreArgs = list(
             by = by, ids = f, na.rm = na.rm, average = average,
             check.assay = check.assays
@@ -116,10 +128,6 @@
     )
     # Convert to SimpleList
     assays <- assays |> SimpleList()
-    print(tail(assays[[1]]))
-    # Now we have agglomerated assays, but TreeSE has still the original form.
-    # We take specified rows/columns from the TreeSE.
-    idx <- .get_element_pos(f, archetype = archetype)
     if( by == 1L ){
         x <- x[idx, ]
     } else{
@@ -143,9 +151,7 @@
     # Aggregate data to certain groups
     x <- rowsum(x, ids, na.rm = na.rm)
     # Calculate average if specified
-    if( average ){
-        x <- x/rowsum(is_not_na, ids)
-    }
+    if( average ) x <- x / rowsum(is_not_na, ids)
     return(x)
 }
 

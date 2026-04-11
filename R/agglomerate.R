@@ -64,8 +64,7 @@
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
-#'   to \code{\link[=agglomerate-methods]{agglomerateByVariable}} and
-#'   \code{\link[scrapper:aggregateAcrossGenes]{aggregateAcrossGenes}},
+#'   to \code{\link[=agglomerate-methods]{agglomerateByVariable}},
 #'   to \code{getPrevalence} and \code{getPrevalentTaxa} and used in
 #'   \code{agglomeratebyPrevalence}
 #'   \itemize{
@@ -252,7 +251,6 @@
 #' \code{\link[=splitOn]{splitOn}}
 #' \code{\link[=unsplitOn]{unsplitOn}}
 #' \code{\link[=agglomerate-methods]{agglomerateByVariable}},
-#' \code{\link[scrapper:aggregateAcrossGenes]{aggregateAcrossGenes}},
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
 #' \code{\link[SingleCellExperiment:altExps]{altExps}},
 #' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
