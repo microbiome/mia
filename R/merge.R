@@ -67,9 +67,10 @@
 
 # This function merges assays and row/colData.
 #' @importFrom S4Vectors SimpleList
+#' @importFrom BiocParallel bpmapply SerialParam
 .merge_rows_or_cols <- function(
-        x, f, by, archetype = 1L, average = FALSE, check.assays = TRUE,
-        na.rm = FALSE, ...){
+        x, f, by, archetype = 1L, average = FALSE, BPPARAM = SerialParam(),
+        check.assays = TRUE, na.rm = FALSE, ...){
     # input check
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
@@ -118,13 +119,13 @@
         assays <- lapply(assays, `[`, -to_remove, )
     }
     # Merge assays
-    assays <- mapply(
+    assays <- bpmapply(
         .agglomerate_assay, assayNames(x), assays,
         MoreArgs = list(
             by = by, ids = f, na.rm = na.rm, average = average,
             check.assay = check.assays
         ),
-        SIMPLIFY = FALSE
+        SIMPLIFY = FALSE, BPPARAM = BPPARAM
     )
     # Convert to SimpleList
     assays <- assays |> SimpleList()
@@ -144,14 +145,16 @@
 # This function works similarly to scrapper::aggregateAcrossGenes but it returns
 # same-class matrix instead of list of vectors
 #' @importFrom DelayedArray DelayedArray type rowsum
-.sum_counts_accross_features <- function(x, ids, average, na.rm){
+.sum_counts_across_features <- function(x, ids, average, na.rm){
     # Which cell is not NA?
     is_not_na <- !is.na(x)
     type(is_not_na) <- "integer"
     # Aggregate data to certain groups
     x <- rowsum(x, ids, na.rm = na.rm)
     # Calculate average if specified
-    if( average ) x <- x / rowsum(is_not_na, ids)
+    if( average ){
+        x <- x/rowsum(is_not_na, ids)
+    }
     return(x)
 }
 
@@ -189,7 +192,7 @@
         assay <- t(assay)
     }
     # Sum counts across features
-    assay <- .sum_counts_accross_features(assay, ids, average, na.rm)
+    assay <- .sum_counts_across_features(assay, ids, average, na.rm)
     # Transpose back to original orientation
     if( by == 2L ){
         assay <- t(assay)

@@ -86,7 +86,7 @@
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
     # Merge assay based on nodeLabs
-    x <- .sum_counts_accross_features(
+    x <- .sum_counts_across_features(
         x, node.label, average = average, na.rm = FALSE
     )
     # Remove NAs from node.label
