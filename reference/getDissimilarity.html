@@ -23,7 +23,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.8</span>
       </span>
     </div>
 
@@ -50,7 +50,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate dissimilarities</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/convert_mae/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/convert_mae/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
     <div class="hidden name"><code>getDissimilarity.Rd</code></div>
     </div>
 
@@ -190,8 +190,8 @@ similarity is. When using relative abundances, overlap value 1 means that
 all the abundances of features are equal between two samples, and 0 means
 that samples have completely different relative abundances.</p>
 <p>Unifrac is calculated with <code>
-<a href="https://cmmr.github.io/ecodive/reference/bdiv_functions.html" class="external-link">ecodive:unweighted_unifrac()</a></code>
-or <code><a href="https://cmmr.github.io/ecodive/reference/bdiv_functions.html" class="external-link">ecodive:weighted_unifrac()</a></code>.</p>
+<a href="https://cmmr.github.io/ecodive/reference/unweighted_unifrac.html" class="external-link">ecodive:unweighted_unifrac()</a></code>
+or <code><a href="https://cmmr.github.io/ecodive/reference/weighted_unifrac.html" class="external-link">ecodive:weighted_unifrac()</a></code>.</p>
 <p>If rarefaction is enabled, <code><a href="https://vegandevs.github.io/vegan/reference/avgdist.html" class="external-link">vegan:avgdist()</a></code> is
 utilized.</p>
 <p>Rarefaction can be used to control uneven sequencing depths. Although,
