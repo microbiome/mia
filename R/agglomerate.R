@@ -29,7 +29,7 @@
 #' agglomeration first, and then applying the transformation afterwards.
 #'
 #' \code{agglomerateByVariable} works similarly to
-#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+#' \code{\link[scrapper:aggregateAcrossGenes]{aggregateAcrossGenes}}.
 #' However, additional support for \code{TreeSummarizedExperiment} was added and
 #' science field agnostic names were used. In addition the \code{archetype}
 #' argument lets the user select how to preserve row or column data. For merge
@@ -64,8 +64,7 @@
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
-#'   to \code{\link[=agglomerate-methods]{agglomerateByVariable}} and
-#'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
+#'   to \code{\link[=agglomerate-methods]{agglomerateByVariable}},
 #'   to \code{getPrevalence} and \code{getPrevalentTaxa} and used in
 #'   \code{agglomeratebyPrevalence}
 #'   \itemize{
@@ -252,7 +251,6 @@
 #' \code{\link[=splitOn]{splitOn}}
 #' \code{\link[=unsplitOn]{unsplitOn}}
 #' \code{\link[=agglomerate-methods]{agglomerateByVariable}},
-#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
 #' \code{\link[SingleCellExperiment:altExps]{altExps}},
 #' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
