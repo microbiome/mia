@@ -77,14 +77,14 @@ test_that("merge", {
     xtse <- TreeSummarizedExperiment(assays = list(mat = mat),
                                      rowRanges = unname(grl))
     FUN_check_x <- function(x,archetype=1){
-        actual <- agglomerateByVariable(x, by = "rows", f, archetype, 
+        actual <- agglomerateByVariable(x, by = "rows", f, archetype,
             update.tree = FALSE)
         expect_s4_class(actual,class(x))
         expect_equal(dim(actual),c(2,10))
     }
     lapply(list(xtse),FUN_check_x)
     lapply(list(xtse),FUN_check_x,archetype=2)
-    
+
     # Check that average works as expected. average parameter controls whether
     # to calculate mean or sum. Check that mean is correctly calculated when
     # there are NAs
@@ -158,7 +158,7 @@ test_that("merge", {
     expect_equal(assay(res_sum_na), ref[["sum_na"]], check.attributes = FALSE)
     expect_equal(assay(res_mean), ref[["mean"]], check.attributes = FALSE)
     expect_equal(assay(res_mean_na), ref[["mean_na"]], check.attributes = FALSE)
-    
+
     # Check that agglomerateByRank and agglomerateByVariable work correctly
     # with na.rm
     data(GlobalPatterns, package="mia")
@@ -199,7 +199,7 @@ test_that("merge", {
     ref_mat2 <- tse_sub |> assay()
     expect_equal(test_mat, test_mat2)
     expect_equal(ref_mat, ref_mat2)
-    
+
     # Check multiple rowTrees
     data(esophagus, package="mia")
     # Add arbitrary groups

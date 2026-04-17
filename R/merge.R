@@ -110,14 +110,6 @@
     idx <- .get_element_pos(f, archetype = archetype)
     # Retrieve experiment assays
     assays <- assays(x)
-    # Remove rows with NA group from assays
-    to_remove <- which(is.na(f))
-    if( length(to_remove) != 0L ){
-        # Remove NA groups
-        f <- f[-to_remove]
-        # Remove assays rows corresponding to NA groups
-        assays <- lapply(assays, `[`, -to_remove, )
-    }
     # Merge assays
     assays <- bpmapply(
         .agglomerate_assay, assayNames(x), assays,
@@ -146,6 +138,15 @@
 # same-class matrix instead of list of vectors
 #' @importFrom DelayedArray DelayedArray type rowsum
 .sum_counts_across_features <- function(x, ids, average, na.rm){
+    # Remove rows with NA group from assay. This behavior is similar to what
+    # aggregateAcrossGenes does; rows without a group are dropped.
+    to_remove <- ids |> is.na() |> which()
+    if( length(to_remove) != 0L ){
+        # Remove NA groups
+        ids <- ids[-to_remove]
+        # Remove assay rows corresponding to NA groups
+        x <- x[-to_remove, , drop = FALSE]
+    }
     # Which cell is not NA?
     is_not_na <- !is.na(x)
     type(is_not_na) <- "integer"
