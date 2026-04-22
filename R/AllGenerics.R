@@ -105,6 +105,21 @@ setGeneric("convertToBIOM", signature = c("x"),
 setGeneric("convertToPhyloseq", signature = c("x"), function(x, ...)
     standardGeneric("convertToPhyloseq"))
 
+#' @rdname export-methods
+#' @export
+setGeneric("exportRaw", signature = c("x"), function(x, ...)
+    standardGeneric("exportRaw"))
+
+#' @rdname export-methods
+#' @export
+setGeneric("exportQIIME2", signature = c("x"), function(x, ...)
+    standardGeneric("exportQIIME2"))
+
+#' @rdname export-methods
+#' @export
+setGeneric("exportMothur", signature = c("x"), function(x, ...)
+    standardGeneric("exportMothur"))
+
 #' @rdname isContaminant
 #' @export
 setGeneric("addContaminantQC", signature = c("x"),
