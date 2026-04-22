@@ -190,7 +190,7 @@ setMethod("exportQIIME2", signature = c(x = "TreeSummarizedExperiment"),
     row_tree <- rowTree(x, tree.name)
     
     if( !is.null(row_tree) ){
-        write.tree(row_tree, paste(dpath, "tree.nwk"))
+        write.tree(row_tree, paste0(dpath, "tree.nwk"))
     }
     
     if( !is.null(referenceSeq(x)) ){
@@ -241,7 +241,7 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
     row_tree <- rowTree(x, tree.name)
     
     if( !is.null(row_tree) ){
-        write.tree(row_tree, paste(dpath, "tree.nwk"))
+        write.tree(row_tree, paste0(dpath, "tree.nwk"))
     }
     
     if( !is.null(referenceSeq(x)) ){
