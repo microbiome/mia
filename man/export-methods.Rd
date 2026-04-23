@@ -33,11 +33,16 @@ exportMothur(x, ...)
 \S4method{exportMothur}{TreeSummarizedExperiment}(x, dpath, assay.type = "counts", tree.name = "phylo")
 }
 \arguments{
-\item{x}{a \code{\link[TreeSummarizedExperiment]{TreeSummarizedExperiment}} object.}
+\item{x}{a \code{\link[TreeSummarizedExperiment]{TreeSummarizedExperiment}}
+object.}
 
 \item{...}{Unused.}
 
 \item{dpath}{\code{Character scalar}.}
+
+\item{rowdata.file}{\code{Character scalar}. (Default: \code{"rowdata"})}
+
+\item{coldata.file}{\code{Character scalar}. (Default: \code{"coldata"})}
 
 \item{assay.dir}{\code{Character scalar}. (Default: \code{"assays"})}
 
@@ -51,9 +56,7 @@ exportMothur(x, ...)
 
 \item{assay.type}{\code{Character scalar}. (Default: \code{"counts"})}
 
-\item{rowdata}{\code{Character scalar}. (Default: \code{"rowdata"})}
-
-\item{coldata}{\code{Character scalar}. (Default: \code{"coldata"})}
+\item{tree.name}{\code{Character scalar}. (Default: \code{"phylo"})}
 }
 \value{
 Directory at \code{dpath} with components of \code{x} each stored
@@ -85,6 +88,7 @@ library(TreeSummarizedExperiment)
 
 tse <- makeTSE()
 assayNames(tse) <- "counts"
+names(rowData(tse))[1] <- "Genus"
 
 # Export raw TreeSE components in custom directory
 exportRaw(tse, "out")

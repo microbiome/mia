@@ -14,15 +14,18 @@
 #' migrating from mia to an external system is still a bad idea, but at least it
 #' is fairly straightforward.
 #' 
-#' @param x a \code{\link[TreeSummarizedExperiment]{TreeSummarizedExperiment}} object.
+#' @param x a \code{\link[TreeSummarizedExperiment]{TreeSummarizedExperiment}}
+#'   object.
 #' 
 #' @param dpath \code{Character scalar}.
 #' 
 #' @param assay.type \code{Character scalar}. (Default: \code{"counts"})
 #' 
-#' @param rowdata \code{Character scalar}. (Default: \code{"rowdata"})
+#' @param tree.name \code{Character scalar}. (Default: \code{"phylo"})
 #' 
-#' @param coldata \code{Character scalar}. (Default: \code{"coldata"})
+#' @param rowdata.file \code{Character scalar}. (Default: \code{"rowdata"})
+#' 
+#' @param coldata.file \code{Character scalar}. (Default: \code{"coldata"})
 #' 
 #' @param assay.dir \code{Character scalar}. (Default: \code{"assays"})
 #' 
@@ -50,6 +53,7 @@
 #' 
 #' tse <- makeTSE()
 #' assayNames(tse) <- "counts"
+#' names(rowData(tse))[1] <- "Genus"
 #' 
 #' # Export raw TreeSE components in custom directory
 #' exportRaw(tse, "out")
@@ -154,10 +158,10 @@ setMethod("exportQIIME2", signature = c(x = "TreeSummarizedExperiment"),
     if( !endsWith(dpath, "/") ) dpath <- paste0(dpath, "/")
     if( !dir.exists(dpath) ) dir.create(dpath)
     
-    row_data <- apply(rowData(x), 1L, paste, collapse = ";_")
-    row_data <- gsub(";_$", "", row_data)
+    row_data <- apply(rowData(x)[taxonomyRanks(x)], 1L, paste, collapse = ";_")
+    row_data <- gsub("(;_|;_NA)+$", "", row_data)
     
-    row_data <- cbind(names(row_data), row_data, 1L)
+    row_data <- data.frame(rownames(x), row_data, 1L, row.names = NULL)
     colnames(row_data) <- c("Feature ID", "Taxon", "Confidence")
     
     write.table(
@@ -166,21 +170,24 @@ setMethod("exportQIIME2", signature = c(x = "TreeSummarizedExperiment"),
     
     col_data <- as.data.frame(colData(x))
     
+    col_data[] <- lapply(
+        col_data, function(col) if( is.factor(col) ) as.character(col) else col
+    )
+    
     col_types <- apply(
         col_data, 2L, function(col) switch(
         type(col), character = "categorical", integer = , double = "numeric")
     )
     
     col_data <- rbind(col_types, col_data)
-    col_data <- cbind(`sample-id` = rownames(col_data), col_data)
-    col_data[1L, "sample-id"] <- "#q2:types"
+    col_data <- cbind(`sample-id` = c("#q2:types", colnames(x)), col_data)
     
     write.table(
         col_data, paste0(dpath, "metadata.tsv"), sep = "\t", row.names = FALSE
     )
     
-    sel_assay <- assay(x, assay.type)
-    sel_assay <- cbind(`#OTU ID` = rownames(sel_assay), sel_assay)
+    sel_assay <- data.frame(rownames(x), assay(x, assay.type), row.names = NULL)
+    colnames(sel_assay)[1L] <- "#OTU ID"
     
     write.table(
         sel_assay, paste0(dpath, assay.type, ".tsv"),
@@ -208,30 +215,31 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
     if( !endsWith(dpath, "/") ) dpath <- paste0(dpath, "/")
     if( !dir.exists(dpath) ) dir.create(dpath)
     
-    row_data <- apply(rowData(x), 1L, paste, collapse = ";")
-    row_data <- gsub(";$", "", row_data)
+    row_data <- apply(rowData(x)[taxonomyRanks(x)], 1L, paste, collapse = ";")
+    row_data <- gsub("(;|;NA)+$", "", row_data)
     
     sel_assay <- assay(x, assay.type)
     row_sums <- rowSums(sel_assay)
     
-    row_data <- cbind(names(row_data), row_sums, row_data)
+    row_data <- data.frame(
+        names(row_data), row_sums, row_data, row.names = NULL
+    )
     colnames(row_data) <- c("OTU", "Size", "Taxonomy")
     
     write.table(
         row_data, paste0(dpath, "taxonomy.tsv"), sep = "\t", row.names = FALSE
     )
     
-    col_data <- as.data.frame(colData(x))
-    col_data <- cbind(group = rownames(col_data), col_data)
+    col_data <- data.frame(group = colnames(x), colData(x), row.names = NULL)
 
     write.table(
         col_data, paste0(dpath, "metadata.tsv"), sep = "\t", row.names = FALSE
     )
     
-    sel_assay <- cbind(
-        `Representative Sequence` = rownames(sel_assay),
-        total = row_sums, sel_assay
+    sel_assay <- data.frame(
+        rownames(sel_assay), total = row_sums, sel_assay, row.names = NULL
     )
+    colnames(sel_assay)[1L] <- "Representative Sequence"
     
     write.table(
         sel_assay, paste0(dpath, assay.type, ".tsv"),
