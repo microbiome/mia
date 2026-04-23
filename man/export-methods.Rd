@@ -30,7 +30,13 @@ exportMothur(x, ...)
 
 \S4method{exportQIIME2}{TreeSummarizedExperiment}(x, dpath, assay.type = "counts", tree.name = "phylo")
 
-\S4method{exportMothur}{TreeSummarizedExperiment}(x, dpath, assay.type = "counts", tree.name = "phylo")
+\S4method{exportMothur}{TreeSummarizedExperiment}(
+  x,
+  dpath,
+  assay.type = "counts",
+  tree.name = "phylo",
+  group.var = NULL
+)
 }
 \arguments{
 \item{x}{a \code{\link[TreeSummarizedExperiment]{TreeSummarizedExperiment}}
@@ -57,6 +63,8 @@ object.}
 \item{assay.type}{\code{Character scalar}. (Default: \code{"counts"})}
 
 \item{tree.name}{\code{Character scalar}. (Default: \code{"phylo"})}
+
+\item{group.var}{\code{Character scalar}. (Default: \code{NULL})}
 }
 \value{
 Directory at \code{dpath} with components of \code{x} each stored

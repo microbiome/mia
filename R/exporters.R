@@ -19,10 +19,6 @@
 #' 
 #' @param dpath \code{Character scalar}.
 #' 
-#' @param assay.type \code{Character scalar}. (Default: \code{"counts"})
-#' 
-#' @param tree.name \code{Character scalar}. (Default: \code{"phylo"})
-#' 
 #' @param rowdata.file \code{Character scalar}. (Default: \code{"rowdata"})
 #' 
 #' @param coldata.file \code{Character scalar}. (Default: \code{"coldata"})
@@ -36,6 +32,12 @@
 #' @param dimred.dir \code{Character scalar}. (Default: \code{"dim_reds"})
 #' 
 #' @param altexp.dir \code{Character scalar}. (Default: \code{"alt_exps"})
+#' 
+#' @param assay.type \code{Character scalar}. (Default: \code{"counts"})
+#' 
+#' @param tree.name \code{Character scalar}. (Default: \code{"phylo"})
+#' 
+#' @param group.var \code{Character scalar}. (Default: \code{NULL})
 #' 
 #' @param ... Unused.
 #' 
@@ -212,13 +214,28 @@ setMethod("exportQIIME2", signature = c(x = "TreeSummarizedExperiment"),
 #' @rdname export-methods
 #' @importFrom ape write.tree write.FASTA
 setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, dpath, assay.type = "counts", tree.name = "phylo"){
+    function(x, dpath, assay.type = "counts", tree.name = "phylo",
+    group.var = NULL){
     
     if( !endsWith(dpath, "/") ) dpath <- paste0(dpath, "/")
     if( !dir.exists(dpath) ) dir.create(dpath)
     
+    rownames(x) <- gsub("-", "_", rownames(x), fixed = TRUE)
+    
+    if( !is.null(group.var) ){
+        
+        group <- rowData(x)[group.var]
+        group[[group.var]] <- gsub("-", "_", group[[group.var]])
+        
+        write.table(
+            group, paste0(dpath, group.var, ".group"),
+            sep = "\t", quote = FALSE, col.names = FALSE
+        )
+    }
+    
     row_data <- apply(rowData(x)[taxonomyRanks(x)], 1L, paste, collapse = ";")
     row_data <- gsub("(;|;NA)+$", "", row_data)
+    row_data <- gsub("-", "_", row_data, fixed = TRUE)
     
     sel_assay <- assay(x, assay.type)
     row_sums <- rowSums(sel_assay)
@@ -253,6 +270,7 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
     row_tree <- rowTree(x, tree.name)
     
     if( !is.null(row_tree) ){
+        row_tree$tip.label <- gsub("-", "_", row_tree$tip.label)
         write.tree(row_tree, paste0(dpath, "tree.nwk"))
     }
     
