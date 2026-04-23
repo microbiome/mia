@@ -96,7 +96,13 @@ is fairly straightforward.</p>
 <span><span class="fu">exportQIIME2</span><span class="op">(</span><span class="va">x</span>, <span class="va">dpath</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, tree.name <span class="op">=</span> <span class="st">"phylo"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
-<span><span class="fu">exportMothur</span><span class="op">(</span><span class="va">x</span>, <span class="va">dpath</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, tree.name <span class="op">=</span> <span class="st">"phylo"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">exportMothur</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">dpath</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  tree.name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
+<span>  group.var <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -150,6 +156,10 @@ object.</p></dd>
 
 <dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
 <dd><p><code>Character scalar</code>. (Default: <code>"phylo"</code>)</p></dd>
+
+
+<dt id="arg-group-var">group.var<a class="anchor" aria-label="anchor" href="#arg-group-var"></a></dt>
+<dd><p><code>Character scalar</code>. (Default: <code>NULL</code>)</p></dd>
 
 </dl></div>
     <div id="value">
