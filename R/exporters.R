@@ -165,7 +165,8 @@ setMethod("exportQIIME2", signature = c(x = "TreeSummarizedExperiment"),
     colnames(row_data) <- c("Feature ID", "Taxon", "Confidence")
     
     write.table(
-        row_data, paste0(dpath, "taxonomy.tsv"), sep = "\t", row.names = FALSE
+        row_data, paste0(dpath, "taxonomy.tsv"),
+        sep = "\t", quote = FALSE, row.names = FALSE
     )
     
     col_data <- as.data.frame(colData(x))
@@ -183,7 +184,8 @@ setMethod("exportQIIME2", signature = c(x = "TreeSummarizedExperiment"),
     col_data <- cbind(`sample-id` = c("#q2:types", colnames(x)), col_data)
     
     write.table(
-        col_data, paste0(dpath, "metadata.tsv"), sep = "\t", row.names = FALSE
+        col_data, paste0(dpath, "metadata.tsv"),
+        sep = "\t", quote = FALSE, row.names = FALSE
     )
     
     sel_assay <- data.frame(rownames(x), assay(x, assay.type), row.names = NULL)
@@ -191,7 +193,7 @@ setMethod("exportQIIME2", signature = c(x = "TreeSummarizedExperiment"),
     
     write.table(
         sel_assay, paste0(dpath, assay.type, ".tsv"),
-        sep = "\t", row.names = FALSE
+        sep = "\t", quote = FALSE, row.names = FALSE
     )
     
     row_tree <- rowTree(x, tree.name)
@@ -227,23 +229,25 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
     colnames(row_data) <- c("OTU", "Size", "Taxonomy")
     
     write.table(
-        row_data, paste0(dpath, "taxonomy.tsv"), sep = "\t", row.names = FALSE
+        row_data, paste0(dpath, "taxonomy.tsv"),
+        sep = "\t", quote = FALSE, row.names = FALSE
     )
     
     col_data <- data.frame(group = colnames(x), colData(x), row.names = NULL)
 
     write.table(
-        col_data, paste0(dpath, "metadata.tsv"), sep = "\t", row.names = FALSE
+        col_data, paste0(dpath, "metadata.tsv"),
+        sep = "\t", quote = FALSE, row.names = FALSE
     )
     
     sel_assay <- data.frame(
         rownames(sel_assay), total = row_sums, sel_assay, row.names = NULL
     )
-    colnames(sel_assay)[1L] <- "Representative Sequence"
+    colnames(sel_assay)[1L] <- "Representative_Sequence"
     
     write.table(
         sel_assay, paste0(dpath, assay.type, ".tsv"),
-        sep = "\t", row.names = FALSE
+        sep = "\t", quote = FALSE, row.names = FALSE
     )
     
     row_tree <- rowTree(x, tree.name)
