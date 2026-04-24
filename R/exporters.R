@@ -155,10 +155,24 @@ setMethod("exportRaw", signature = c(x = "TreeSummarizedExperiment"),
 #' @rdname export-methods
 #' @importFrom ape write.tree write.FASTA
 setMethod("exportQIIME2", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, dpath, assay.type = "counts", tree.name = "phylo"){
+    function(x, dpath, assay.type = "counts", tree.name = "phylo",
+    group.var = NULL){
     
     if( !endsWith(dpath, "/") ) dpath <- paste0(dpath, "/")
     if( !dir.exists(dpath) ) dir.create(dpath)
+    
+    if( !is.null(group.var) ){
+        
+        group <- rowData(x)[[group.var]]
+        group <- gsub("-", "_", group)
+        group <- cbind(rownames(x), group)
+        colnames(group) <- c("Feature ID", group.var)
+        
+        write.table(
+            group, paste0(dpath, group.var, ".tsv"),
+            sep = "\t", quote = FALSE, row.names = FALSE
+        )
+    }
     
     row_data <- apply(rowData(x)[taxonomyRanks(x)], 1L, paste, collapse = ";_")
     row_data <- gsub("(;_|;_NA)+$", "", row_data)
@@ -221,6 +235,7 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
     if( !dir.exists(dpath) ) dir.create(dpath)
     
     rownames(x) <- gsub("-", "_", rownames(x), fixed = TRUE)
+    colnames(x) <- gsub("-", "_", colnames(x), fixed = TRUE)
     
     if( !is.null(group.var) ){
         
