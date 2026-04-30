@@ -81,15 +81,14 @@
 # Aggregate matrix based on nodeLabs. At the same time, rename rows based on
 # node.label
 # --> each row represent specific node of tree
-#' @importFrom scuttle sumCountsAcrossFeatures
 .merge_assay_by_rows <- function(x, node.label, average = FALSE, ...){
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
     # Merge assay based on nodeLabs
-    x <- sumCountsAcrossFeatures(
-        x, ids = node.label, subset.row = NULL, subset.col = NULL,
-        average = average)
+    x <- .sum_counts_across_features(
+        x, node.label, average = average, na.rm = FALSE
+    )
     # Remove NAs from node.label
     node.label <- node.label[ !is.na(node.label) ]
     # Get the original order back

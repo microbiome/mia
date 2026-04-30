@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.19.7
+Version: 1.19.8
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -84,7 +84,6 @@ Imports:
     rlang,
     S4Vectors,
     scater,
-    scuttle,
     stats,
     stringr,
     tibble,
@@ -109,6 +108,7 @@ Suggests:
     reldist,
     rhdf5,
     rmarkdown,
+    scuttle,
     testthat,
     topicdoc,
     topicmodels,

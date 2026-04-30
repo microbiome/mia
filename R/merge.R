@@ -67,7 +67,7 @@
 
 # This function merges assays and row/colData.
 #' @importFrom S4Vectors SimpleList
-#' @importFrom scuttle sumCountsAcrossFeatures
+#' @importFrom BiocParallel bpmapply SerialParam
 .merge_rows_or_cols <- function(
         x, f, by, archetype = 1L, average = FALSE, BPPARAM = SerialParam(),
         check.assays = TRUE, na.rm = FALSE, ...){
@@ -91,7 +91,7 @@
         f <- rowData_FUN(x)[[ f ]]
     } else if( .is_a_string(f) && !f %in% colnames(rowData_FUN(x)) &&
                 nrow_FUN(x) != 1L){
-        stop("Specified grouoing variable ('group' or 'rank' argument) must ",
+        stop("Specified grouping variable ('group' or 'rank' argument) must ",
             "specify a column from ", switch(by, "row", "col"), "Data(x).",
             call. = FALSE)
     }
@@ -105,17 +105,22 @@
     # can control this behavior; it can specify the preserved rows for every
     # group or index.
     archetype <- .norm_archetype(f, archetype)
-    # Get assays
-    assays <- assays(x)
-    # Merge assays
-    assays <- mapply(.agglomerate_assay, assayNames(x), assays, MoreArgs = list(
-        ids = f, by = by, na.rm = na.rm, average = average, BPPARAM = BPPARAM,
-        check.assay = check.assays), SIMPLIFY = FALSE)
-    # Convert to SimpleList
-    assays <- assays |> SimpleList()
     # Now we have agglomerated assays, but TreeSE has still the original form.
     # We take specified rows/columns from the TreeSE.
     idx <- .get_element_pos(f, archetype = archetype)
+    # Retrieve experiment assays
+    assays <- assays(x)
+    # Merge assays
+    assays <- bpmapply(
+        .agglomerate_assay, assayNames(x), assays,
+        MoreArgs = list(
+            by = by, ids = f, na.rm = na.rm, average = average,
+            check.assay = check.assays
+        ),
+        SIMPLIFY = FALSE, BPPARAM = BPPARAM
+    )
+    # Convert to SimpleList
+    assays <- assays |> SimpleList()
     if( by == 1L ){
         x <- x[idx, ]
     } else{
@@ -129,15 +134,24 @@
     return(x)
 }
 
-# This function works similarly to scuttle::sumCountsAcrossFeatures but this
-# excludes NAs from the data. The scuttle function cannot handle NAs.
+# This function works similarly to scrapper::aggregateAcrossGenes but it returns
+# same-class matrix instead of list of vectors
 #' @importFrom DelayedArray DelayedArray type rowsum
-.sum_counts_accross_features_na <- function(x, average, ids, ...){
+.sum_counts_across_features <- function(x, ids, average, na.rm){
+    # Remove rows with NA group from assay. This behavior is similar to what
+    # aggregateAcrossGenes does; rows without a group are dropped.
+    to_remove <- ids |> is.na() |> which()
+    if( length(to_remove) != 0L ){
+        # Remove NA groups
+        ids <- ids[-to_remove]
+        # Remove assay rows corresponding to NA groups
+        x <- x[-to_remove, , drop = FALSE]
+    }
     # Which cell is not NA?
     is_not_na <- !is.na(x)
     type(is_not_na) <- "integer"
     # Aggregate data to certain groups
-    x <- rowsum(x, ids, na.rm = TRUE)
+    x <- rowsum(x, ids, na.rm = na.rm)
     # Calculate average if specified
     if( average ){
         x <- x/rowsum(is_not_na, ids)
@@ -167,9 +181,8 @@
 }
 
 #' @importFrom DelayedArray DelayedArray type rowsum
-#' @importFrom scuttle sumCountsAcrossFeatures
 .agglomerate_assay <- function(
-    assay.type, assay, by, ids, na.rm, average, BPPARAM, check.assay
+    assay.type, assay, by, ids, na.rm, average, check.assay
     ){
     # Check assay
     if( check.assay ){
@@ -179,14 +192,8 @@
     if( by == 2L ){
         assay <- t(assay)
     }
-    # Check if NAs are present
-    is_not_na <- !is.na(assay)
-    # Get the aggregation function based on whether user wants to exclude NAs
-    # and if there are any NAs. scuttle::sumCountsAcrossFeatures cannot handle
-    # NAs so if user wants to exclude them, we use own implementation.
-    FUN <- if( na.rm && any(!is_not_na) ) .sum_counts_accross_features_na else
-        sumCountsAcrossFeatures
-    assay <- FUN(assay, ids, average = average, BPPARAM = BPPARAM)
+    # Sum counts across features
+    assay <- .sum_counts_across_features(assay, ids, average, na.rm)
     # Transpose back to original orientation
     if( by == 2L ){
         assay <- t(assay)
