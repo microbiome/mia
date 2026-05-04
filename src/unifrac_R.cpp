@@ -65,7 +65,11 @@ Rcpp::List unifrac_cpp(const Rcpp::NumericMatrix & assay,
     su::Assay table = su::Assay(assay);
     std::string method = "unweighted";
     
+    Rcpp::Rcout << "Start\n";
+    
     su::mat_t results = su::one_off(table, tree, method, 1.0, false, false);
+    
+    Rcpp::Rcout << "All done\n";
     
     //condensed_form is the main values, returned in result
     //Sample_ids can be handled with a map?

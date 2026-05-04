@@ -56,7 +56,7 @@ namespace su {
       const uint64_t  n_samples_r;
       std::vector<double> buf;
 
-      UnifracTaskVector(su::StripeMap _dm_stripes,
+      UnifracTaskVector(su::StripeMap & _dm_stripes,
                         const su::task_parameters _task_p)
       : task_p(_task_p), dm_stripes(_dm_stripes)
       , start_idx(task_p.start), n_samples(task_p.n_samples)
@@ -120,8 +120,8 @@ namespace su {
         std::vector<TEmb> embedded_proportions; //Continuous vector - each stripe has n_samples_r elements, for complex reasons?
         //Has at most max_embs stripes - when filled, results stored in task _run() and embeds cleared to continue
         
-        UnifracTaskBase(su::StripeMap _dm_stripes,
-                        su::StripeMap _dm_stripes_total,
+        UnifracTaskBase(su::StripeMap & _dm_stripes,
+                        su::StripeMap & _dm_stripes_total,
                         unsigned int _max_embs,
                         su::task_parameters _task_p)
             : dm_stripes(_dm_stripes,_task_p),
@@ -313,7 +313,7 @@ namespace su {
         
     public:
         
-        UnifracTask(su::StripeMap _dm_stripes, su::StripeMap _dm_stripes_total, unsigned int _max_embs, su::task_parameters _task_p)
+        UnifracTask(su::StripeMap & _dm_stripes, su::StripeMap & _dm_stripes_total, unsigned int _max_embs, su::task_parameters _task_p)
             : UnifracTaskBase<TEmb>(_dm_stripes, _dm_stripes_total, _max_embs, _task_p) {}
         
         virtual ~UnifracTask() {}
@@ -338,7 +338,7 @@ namespace su {
         static const unsigned int RECOMMENDED_MAX_EMBS = UnifracTask<uint64_t>::RECOMMENDED_MAX_EMBS_BOOL;
         
         // Note: _max_emb MUST be multiple of 64
-        UnifracUnweightedTask(su::StripeMap _dm_stripes, su::StripeMap _dm_stripes_total, unsigned int _max_embs, su::task_parameters _task_p)
+        UnifracUnweightedTask(su::StripeMap & _dm_stripes, su::StripeMap & _dm_stripes_total, unsigned int _max_embs, su::task_parameters _task_p)
             : UnifracTask<uint64_t>(_dm_stripes,_dm_stripes_total,_max_embs,_task_p) 
             {
                 const unsigned int bsize = _max_embs*32;

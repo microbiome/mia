@@ -12,10 +12,17 @@
 #include <thread>
 #include <algorithm>
 
+//for sleep
+#include <windows.h>
+#include <unistd.h>
+
 #include "tree.h"
 #include "unifrac_task.h"
 
 void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<double> lengths) {
+    
+    Rcpp::Rcout << "start UnifracUnweightedTask::_run\n";
+    sleep(2);
     
     //Parameter finding
     
@@ -38,6 +45,9 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
     std::vector<double> dm_stripes_total_buf = this->dm_stripes_total.buf;
     std::vector<double> sums = this->sums;
     
+    Rcpp::Rcout << "buffers done\n";
+    sleep(2);
+    
     const uint64_t step_size = su::UnifracUnweightedTask::step_size;
     const uint64_t sample_steps = (n_samples+(step_size-1))/step_size; // round up
     
@@ -47,6 +57,11 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
     const uint64_t filled_embs_els_round = (filled_embs+63)/64;
     
     
+    Rcpp::Rcout << "params done\n";
+    sleep(2);
+    
+    Rcpp::Rcout << "start pre-compute\n";
+    sleep(2);
     
     // pre-compute sums of length elements, since they are likely to be accessed many times
     // We will use a 8-bit map, to keep it small enough to keep in L1 cache
@@ -88,6 +103,10 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
         }
     }
     
+    Rcpp::Rcout << "pre-compute done\n";
+    sleep(2);
+    Rcpp::Rcout << "start overflow elements\n";
+    sleep(2);
     
     if (filled_embs_rem>0) { // add also the overflow elements
         const uint64_t emb_el=filled_embs_els;
@@ -117,10 +136,21 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
                       std::begin(sums) + (emb8<<8));
         }
     }
+    Rcpp::Rcout << "overflow elements done\n";
+    sleep(2);
     
+    //problem occurs here
+    Rcpp::Rcout << "start stripes\n";
+    sleep(2);
     // point of thread
     for(uint64_t sk = 0; sk < sample_steps ; sk++) {
+        Rcpp::Rcout << "sk: " << sk << "\n";
+        //sleep(2);
+        
         for(uint64_t stripe = start_idx; stripe < stop_idx; stripe++) {
+            
+            Rcpp::Rcout << "    stripe: " << stripe << "\n";
+            //sleep(2);
             
             const uint64_t idx = stripe-start_idx;
             
@@ -128,6 +158,10 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
             std::vector<double> dm_stripe_total = this->dm_stripes_total.dm_stripes.get(idx);
             
             for(uint64_t ik = 0; ik < step_size ; ik++) {
+                
+                Rcpp::Rcout << "        ik: " << ik << "\n";
+                //sleep(2);
+                
                 const uint64_t k = sk*step_size + ik; // within-stripe index (0:n_samples-1)
                 //const uint64_t idx = (stripe-start_idx) * n_samples_r; //n_samples_r seems to relate to continuous buffer shenanigans
                 
@@ -148,6 +182,8 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
                 //This is the main calculation phase
                 
                 for (uint64_t emb_el=0; emb_el<filled_embs_els_round; emb_el++) {
+                    Rcpp::Rcout << "            emb_el: " << emb_el << "\n";
+                    //sleep(2);
                     const uint64_t offset = n_samples_r * emb_el;
                     //const TFloat * __restrict__ psum = &(sums[emb_el*0x800]);
                     
@@ -161,6 +197,8 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
                     uint64_t o1 = u1 | v1;
                     
                     if (o1!=0) {  // zeros are prevalent
+                        Rcpp::Rcout << "                update\n";
+                        //sleep(2);
                         did_update=true;
                         uint64_t x1 = u1 ^ v1;
                         
@@ -197,8 +235,14 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
             
             this->dm_stripes.dm_stripes.update(idx, dm_stripe);
             this->dm_stripes_total.dm_stripes.update(idx, dm_stripe_total);
+            
         }
     }
+    Rcpp::Rcout << "stripes done\n";
+    sleep(2);
+    
+    Rcpp::Rcout << "UnifracUnweightedTask::_run done\n";
+    sleep(2);
 }
 
 // 

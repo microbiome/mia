@@ -57,6 +57,8 @@ su::mat_t su::one_off(const su::Assay & table,
                       bool variance_adjust,
                       bool bypass_tips) {
     
+    Rcpp::Rcout << "Start one_off\n";
+    
     //Check that method is valid - pass it as something other than string?
     su::Method method = set_method(unifrac_method);
     
@@ -97,6 +99,8 @@ su::mat_t su::one_off(const su::Assay & table,
                 task,
                 variance_adjust);
     
+    Rcpp::Rcout << "unifrac done\n";
+    
     //Only use of std::thread in this version of code was for stripes to condensed form
     //Basically each thread calls stripes_to_condensed_form
     //Which is just a bunch of binomial calculations
@@ -111,11 +115,92 @@ su::mat_t su::one_off(const su::Assay & table,
                                                             task.start,
                                                             task.stop);
     
+    Rcpp::Rcout << "one_off done\n";
+    
     return result;
 }
 
 
 
+
+void su::unifrac(const su::Assay &table,
+                 const su::BPTree &tree,
+                 su::Method unifrac_method,
+                 su::StripeMap & dm_stripes,
+                 su::StripeMap & dm_stripes_total,
+                 const su::task_parameters task_p,
+                 bool variance_adjust)
+{
+    
+    Rcpp::Rcout << "Start unifrac\n";
+    
+    if(variance_adjust)
+    {
+        /*
+         switch(unifrac_method) {
+    case su::unweighted:
+         unifrac_vawTT<SUCMP_NM::UnifracVawUnweightedTask<double>,double>(           table, tree, true,  dm_stripes,dm_stripes_total,task_p);
+         break;
+    case su::weighted_normalized:
+         unifrac_vawTT<SUCMP_NM::UnifracVawNormalizedWeightedTask<double>,double>(   table, tree, true,  dm_stripes,dm_stripes_total,task_p);
+         break;
+    case su::weighted_unnormalized:
+         unifrac_vawTT<SUCMP_NM::UnifracVawUnnormalizedWeightedTask<double>,double>( table, tree, false, dm_stripes,dm_stripes_total,task_p);
+         break;
+    case su::generalized:
+         unifrac_vawTT<SUCMP_NM::UnifracVawGeneralizedTask<double>,double>(          table, tree, true,  dm_stripes,dm_stripes_total,task_p);
+         break;
+    case su::unweighted_fp32:
+         unifrac_vawTT<SUCMP_NM::UnifracVawUnweightedTask<float >,float >(           table, tree, true,  dm_stripes,dm_stripes_total,task_p);
+         break;
+    case su::weighted_normalized_fp32:
+         unifrac_vawTT<SUCMP_NM::UnifracVawNormalizedWeightedTask<float >,float >(   table, tree, true,  dm_stripes,dm_stripes_total,task_p);
+         break;
+    case su::weighted_unnormalized_fp32:
+         unifrac_vawTT<SUCMP_NM::UnifracVawUnnormalizedWeightedTask<float >,float >( table, tree, false, dm_stripes,dm_stripes_total,task_p);
+         break;
+    case su::generalized_fp32:
+         unifrac_vawTT<SUCMP_NM::UnifracVawGeneralizedTask<float >,float >(          table, tree, true,  dm_stripes,dm_stripes_total,task_p);
+         break;
+    default:
+         fprintf(stderr, "Unknown unifrac task\n");
+         exit(1);
+         break;
+         }
+         */
+    }
+    else
+    {
+        switch(unifrac_method)
+        {
+        case su::unweighted:
+            unifracTT<su::UnifracUnweightedTask>(
+                table, tree, true,  dm_stripes,dm_stripes_total,
+                task_p );
+            break;
+            /*case su::weighted_normalized:
+             unifracTT<su::UnifracNormalizedWeightedTask<double>,double>(
+             table, tree, true,  dm_stripes,dm_stripes_total,
+             task_p );
+             break;
+        case su::weighted_unnormalized:
+             unifracTT<su::UnifracUnnormalizedWeightedTask<double>,
+             double>(table, tree, false, dm_stripes,
+             dm_stripes_total, task_p );
+             break;
+        case su::generalized:
+             unifracTT<su::UnifracGeneralizedTask<double>,double>(
+             table, tree, true,  dm_stripes,dm_stripes_total,
+             task_p );
+             break;
+             */
+        default:
+            fprintf(stderr, "Unknown unifrac task\n");
+        exit(1);
+        break;
+        }
+    }
+}
 
 
 
@@ -125,10 +210,12 @@ template<class TaskT>
 inline void su::unifracTT(const su::Assay & table,
                       const su::BPTree & tree,
                       const bool want_total,
-                      su::StripeMap dm_stripes,
-                      su::StripeMap dm_stripes_total,
+                      su::StripeMap & dm_stripes,
+                      su::StripeMap & dm_stripes_total,
                       const su::task_parameters & task_p)
 {
+    
+    Rcpp::Rcout << "Start unifracTT\n";
     
     if(table.n_samples != task_p.n_samples) {
         fprintf(stderr, "Task and table n_samples not equal\n");
@@ -144,7 +231,13 @@ inline void su::unifracTT(const su::Assay & table,
     
     const unsigned int max_emb =  TaskT::RECOMMENDED_MAX_EMBS;
     
+    
+    
+    Rcpp::Rcout << "Start taskObj\n";
+    
     TaskT taskObj(dm_stripes, dm_stripes_total, max_emb, task_p);
+    
+    Rcpp::Rcout << "taskObj done\n";
     
     std::vector<double> lengths = std::vector<double>(max_emb);
     
@@ -193,6 +286,8 @@ inline void su::unifracTT(const su::Assay & table,
      * (see C) but that is small over large N.
      */
     
+    Rcpp::Rcout << "Start calcs\n";
+    
     unsigned int k = 0; // index in tree
     const unsigned int max_k = (tree.nparens / 2) - 1;
     
@@ -234,7 +329,10 @@ inline void su::unifracTT(const su::Assay & table,
             //store the proportions inside the taskobject's continuous buffer
             //Shouldn't modify node_proportions
             std::vector<double> node_proportions = propmap.get(node);
+            
+            //Rcpp::Rcout << "start embed_proportions_range\n";
             taskObj.embed_proportions_range(node_proportions, tstart, tend, my_filled_emb);
+            //Rcpp::Rcout << "embed_proportions_range done\n";
             my_filled_emb++;
         }
          
@@ -243,11 +341,16 @@ inline void su::unifracTT(const su::Assay & table,
         //This is used to keep track of filled embeds over different threads?
         //Does nothing without openacc
         //taskObj.sync_embedded_proportions(filled_emb);
-
+        
+        Rcpp::Rcout << "start taskObj._run\n";
         taskObj._run(filled_emb,lengths);
+        Rcpp::Rcout << "taskObj._run done\n";
         
         filled_emb=0;
     }
+    
+    
+    Rcpp::Rcout << "calcs done\n";
     
     
     //I suppose want_total is used if you want the results as a percentage of the total?
@@ -282,6 +385,8 @@ inline void su::unifracTT(const su::Assay & table,
              */
         }
     }
+    
+    Rcpp::Rcout << "unifracTT done\n";
 }
 
 
@@ -318,82 +423,6 @@ std::vector<double> su::set_proportions_range(const su::BPTree & tree,
 
 
 
-
-void su::unifrac(const su::Assay &table,
-                 const su::BPTree &tree,
-                 su::Method unifrac_method,
-                 su::StripeMap &dm_stripes,
-                 su::StripeMap &dm_stripes_total,
-                 const su::task_parameters task_p,
-                 bool variance_adjust)
-{
-    if(variance_adjust)
-    {
-        /*
-         switch(unifrac_method) {
-    case su::unweighted:
-         unifrac_vawTT<SUCMP_NM::UnifracVawUnweightedTask<double>,double>(           table, tree, true,  dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::weighted_normalized:
-         unifrac_vawTT<SUCMP_NM::UnifracVawNormalizedWeightedTask<double>,double>(   table, tree, true,  dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::weighted_unnormalized:
-         unifrac_vawTT<SUCMP_NM::UnifracVawUnnormalizedWeightedTask<double>,double>( table, tree, false, dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::generalized:
-         unifrac_vawTT<SUCMP_NM::UnifracVawGeneralizedTask<double>,double>(          table, tree, true,  dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::unweighted_fp32:
-         unifrac_vawTT<SUCMP_NM::UnifracVawUnweightedTask<float >,float >(           table, tree, true,  dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::weighted_normalized_fp32:
-         unifrac_vawTT<SUCMP_NM::UnifracVawNormalizedWeightedTask<float >,float >(   table, tree, true,  dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::weighted_unnormalized_fp32:
-         unifrac_vawTT<SUCMP_NM::UnifracVawUnnormalizedWeightedTask<float >,float >( table, tree, false, dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::generalized_fp32:
-         unifrac_vawTT<SUCMP_NM::UnifracVawGeneralizedTask<float >,float >(          table, tree, true,  dm_stripes,dm_stripes_total,task_p);
-         break;
-    default:
-         fprintf(stderr, "Unknown unifrac task\n");
-         exit(1);
-         break;
-         }
-         */
-    }
-    else
-    {
-        switch(unifrac_method)
-        {
-        case su::unweighted:
-            unifracTT<su::UnifracUnweightedTask>(
-                    table, tree, true,  dm_stripes,dm_stripes_total,
-                    task_p );
-            break;
-        /*case su::weighted_normalized:
-            unifracTT<su::UnifracNormalizedWeightedTask<double>,double>(
-                    table, tree, true,  dm_stripes,dm_stripes_total,
-                    task_p );
-            break;
-        case su::weighted_unnormalized:
-            unifracTT<su::UnifracUnnormalizedWeightedTask<double>,
-                      double>(table, tree, false, dm_stripes,
-                              dm_stripes_total, task_p );
-            break;
-        case su::generalized:
-            unifracTT<su::UnifracGeneralizedTask<double>,double>(
-                    table, tree, true,  dm_stripes,dm_stripes_total,
-                    task_p );
-            break;
-         */
-        default:
-            fprintf(stderr, "Unknown unifrac task\n");
-        exit(1);
-        break;
-        }
-    }
-}
 
 std::vector<double> su::stripes_to_condensed_form(su::StripeMap stripes,
                                    uint32_t n,

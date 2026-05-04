@@ -70,8 +70,8 @@
         void unifrac(const su::Assay &table,
                      const su::BPTree &tree,
                      su::Method unifrac_method,
-                     su::StripeMap &dm_stripes,
-                     su::StripeMap &dm_stripes_total,
+                     su::StripeMap & dm_stripes,
+                     su::StripeMap & dm_stripes_total,
                      const su::task_parameters task_p,
                      bool variance_adjust);
         
@@ -91,8 +91,8 @@
         inline void unifracTT(const su::Assay & table,
                               const su::BPTree & tree,
                               const bool want_total,
-                              su::StripeMap dm_stripes,
-                              su::StripeMap dm_stripes_total,
+                              su::StripeMap & dm_stripes,
+                              su::StripeMap & dm_stripes_total,
                               const su::task_parameters & task_p);
         
         inline uint64_t comb_2(uint64_t N) {

@@ -11,6 +11,10 @@
 #include "assay.h"
 #include "stripemap.h"
 
+//for sleep
+#include <windows.h>
+#include <unistd.h>
+
 #include <Rcpp.h>
 
 using namespace su;
@@ -41,6 +45,12 @@ void StripeMap::clear(uint32_t i){
 }
 
 void StripeMap::update(uint32_t node, std::vector<double> vec){
+    
+    Rcpp::Rcout << "node: "<< node << "\n";
+    Rcpp::Rcout << "n_stripes: "<< n_stripes << "\n";
+    Rcpp::Rcout << "vecsize: "<< vecsize << "\n";
+    Rcpp::Rcout << "vec size: "<< vec.size() << "\n";
+    
     stripe_map[node] = vec;
 }
 
