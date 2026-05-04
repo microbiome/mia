@@ -1,29 +1,44 @@
+/*
+ * BSD 3-Clause License
+ *
+ * Copyright (c) 2016-2021, UniFrac development team.
+ * All rights reserved.
+ *
+ * See LICENSE file for more details
+ */
 
-#include "unifrac_task.hpp"
-
-#include <algorithm> 
+#include <unordered_map>
 #include <cstdlib>
+#include <thread>
+#include <algorithm>
 
+#include "tree.h"
+#include "unifrac_task.h"
 
-void su::UnifracUnweightedTask::_run(unsigned int filled_embs, const TFloat * __restrict__ lengths) {
+void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<double> lengths) {
     
     //Parameter finding
     
     //Task parameters determine stuff
-    const uint64_t start_idx = this->task_p->start;
-    const uint64_t stop_idx = this->task_p->stop;
-    const uint64_t n_samples = this->task_p->n_samples;
+    const uint64_t start_idx = this->task_p.start;
+    const uint64_t stop_idx = this->task_p.stop;
+    const uint64_t n_samples = this->task_p.n_samples;
     const uint64_t n_samples_r = this->dm_stripes.n_samples_r;
     
-    
+    /*
     // openacc only works well with local variables
     const uint64_t * const __restrict__ embedded_proportions = this->embedded_proportions;
     TFloat * const __restrict__ dm_stripes_buf = this->dm_stripes.buf;
     TFloat * const __restrict__ dm_stripes_total_buf = this->dm_stripes_total.buf;
-    
     TFloat * const __restrict__ sums = this->sums;
+     */
     
-    const uint64_t step_size = SUCMP_NM::UnifracUnweightedTask<TFloat>::step_size;
+    std::vector<uint64_t> embedded_proportions = this->embedded_proportions;
+    std::vector<double> dm_stripes_buf = this->dm_stripes.buf;
+    std::vector<double> dm_stripes_total_buf = this->dm_stripes_total.buf;
+    std::vector<double> sums = this->sums;
+    
+    const uint64_t step_size = su::UnifracUnweightedTask::step_size;
     const uint64_t sample_steps = (n_samples+(step_size-1))/step_size; // round up
     
     const uint64_t filled_embs_els = filled_embs/64;
@@ -38,8 +53,20 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, const TFloat * __
     for (uint64_t emb_el=0; emb_el<filled_embs_els; emb_el++) {
         for (uint64_t sub8=0; sub8<8; sub8++) {
             const uint64_t emb8 = emb_el*8+sub8;
-            std::vector<double> psum = &(sums[emb8<<8]);
-            const TFloat * __restrict__ pl   = &(lengths[emb8*8]);
+            
+            //TFloat * __restrict__ psum = &(sums[emb8<<8]);
+            //const TFloat * __restrict__ pl   = &(lengths[emb8*8]);
+            
+            std::vector<double> psum   = std::vector<double>(256);
+            std::vector<double> pl   = std::vector<double>(8);
+            
+            std::copy(  std::begin(sums) + (emb8<<8),
+                        std::begin(sums) + (emb8<<8) + 256,
+                        std::begin(psum) );
+                
+            std::copy(  std::begin(lengths) + (emb8*8),
+                        std::begin(lengths) + (emb8*8) + 8,
+                        std::begin(pl) );
             
             // compute all the combinations for this block (8-bits total)
             // psum[0] = 0.0   // +0*pl[0]+0*pl[1]+0*pl[2]+...
@@ -55,9 +82,11 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, const TFloat * __
                     (((b8_i >> 4) & 1) * pl[4]) + (((b8_i >> 5) & 1) * pl[5]) +
                     (((b8_i >> 6) & 1) * pl[6]) + (((b8_i >> 7) & 1) * pl[7]);
             }
+            
+            std::copy(std::begin(psum), std::end(psum),
+                      std::begin(sums) + (emb8<<8));
         }
     }
-    
     
     
     if (filled_embs_rem>0) { // add also the overflow elements
@@ -65,45 +94,67 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, const TFloat * __
         for (uint64_t sub8=0; sub8<8; sub8++) {
             // we are summing we have enough buffer in sums
             const uint64_t emb8 = emb_el*8+sub8;
-            TFloat * __restrict__ psum = &(sums[emb8<<8]);
+            
+            //TFloat * __restrict__ psum = &(sums[emb8<<8]);
+            
+            std::vector<double> psum   = std::vector<double>(256);
+            std::copy(  std::begin(sums) + (emb8<<8),
+                        std::begin(sums) + (emb8<<8) + 256,
+                        std::begin(psum) );
+                
             
             // compute all the combinations for this block, set to 0 any past the limit
             // as above
             for (uint64_t b8_i=0; b8_i<0x100; b8_i++) {
-                TFloat val= 0;
+                double val= 0;
                 for (uint64_t li=(emb8*8); li<filled_embs; li++) {
                     val += ((b8_i >>  (li-(emb8*8))) & 1) * lengths[li];
                 }
                 psum[b8_i] = val;
             }
+            
+            std::copy(std::begin(psum), std::end(psum),
+                      std::begin(sums) + (emb8<<8));
         }
     }
     
     // point of thread
     for(uint64_t sk = 0; sk < sample_steps ; sk++) {
         for(uint64_t stripe = start_idx; stripe < stop_idx; stripe++) {
+            
+            const uint64_t idx = stripe-start_idx;
+            
+            std::vector<double> dm_stripe = this->dm_stripes.dm_stripes.get(idx);
+            std::vector<double> dm_stripe_total = this->dm_stripes_total.dm_stripes.get(idx);
+            
             for(uint64_t ik = 0; ik < step_size ; ik++) {
-                const uint64_t k = sk*step_size + ik;
-                const uint64_t idx = (stripe-start_idx) * n_samples_r;
-                TFloat * const __restrict__ dm_stripe = dm_stripes_buf+idx;
-                TFloat * const __restrict__ dm_stripe_total = dm_stripes_total_buf+idx;
-                //TFloat *dm_stripe = dm_stripes[stripe];
-                //TFloat *dm_stripe_total = dm_stripes_total[stripe];
+                const uint64_t k = sk*step_size + ik; // within-stripe index (0:n_samples-1)
+                //const uint64_t idx = (stripe-start_idx) * n_samples_r; //n_samples_r seems to relate to continuous buffer shenanigans
+                
+                //TFloat * const __restrict__ dm_stripe = dm_stripes_buf+idx;
+                //TFloat * const __restrict__ dm_stripe_total = dm_stripes_total_buf+idx;
+                ////TFloat *dm_stripe = dm_stripes[stripe];
+                ////TFloat *dm_stripe_total = dm_stripes_total[stripe];
                 
                 if (k>=n_samples) continue; // past the limit
                 
                 const uint64_t l1 = (k + stripe + 1)%n_samples; // wraparound
                 
                 bool did_update = false;
-                TFloat my_stripe = 0.0;
-                TFloat my_stripe_total = 0.0;
+                double my_stripe = 0.0;
+                double my_stripe_total = 0.0;
                 
                 
                 //This is the main calculation phase
                 
                 for (uint64_t emb_el=0; emb_el<filled_embs_els_round; emb_el++) {
                     const uint64_t offset = n_samples_r * emb_el;
-                    const TFloat * __restrict__ psum = &(sums[emb_el*0x800]);
+                    //const TFloat * __restrict__ psum = &(sums[emb_el*0x800]);
+                    
+                    std::vector<double> psum   = std::vector<double>(2048);
+                    std::copy(  std::begin(sums) + (emb_el * 2048),
+                                std::begin(sums) + (emb_el * 2048) + 2048,
+                                std::begin(psum) );
                     
                     uint64_t u1 = embedded_proportions[offset + k];
                     uint64_t v1 = embedded_proportions[offset + l1];
@@ -141,7 +192,11 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, const TFloat * __
                     dm_stripe[k]       += my_stripe;
                     dm_stripe_total[k] += my_stripe_total;
                 }
+                
             }
+            
+            this->dm_stripes.dm_stripes.update(idx, dm_stripe);
+            this->dm_stripes_total.dm_stripes.update(idx, dm_stripe_total);
         }
     }
 }

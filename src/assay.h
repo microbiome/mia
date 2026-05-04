@@ -41,14 +41,23 @@ class Assay {
         /* Get a dense vector of observation data
          *
          * @param id The observation ID to fetch
-         * @param out An allocated array of at least size n_samples. 
-         *      Values of an index position [0, n_samples) which do not
-         *      have data will be zero'd.
          */
         std::vector<double> get_obs_data(const std::string &id) const;
         
-    private:
-        Rcpp::NumericMatrix table; // Access to raw sample counts in R's memory
+        /* get a dense vector of a range of observation data
+         *
+         * @param id The observation ID to fetch
+         * @param start Initial index
+         * @param end   First index past the end
+         * @param normalize If set, divide by sample_counts
+         */
+        std::vector<double> get_obs_data_range(const std::string &id,
+                                               unsigned int start,
+                                               unsigned int end,
+                                               bool normalize) const;
+        
+private:
+    Rcpp::NumericMatrix table; // Access to raw sample counts in R's memory
         
         std::vector<double> get_sample_counts();
         
@@ -58,14 +67,14 @@ class Assay {
         std::unordered_map<std::string, uint32_t> obs_id_index;
         
         /* Create an index mapping an ID to its corresponding index 
-        * position.
-        *
-        * @param ids A vector of IDs to index
-        * @param map A hash table to populate
-        */
+         * position.
+         *
+         * @param ids A vector of IDs to index
+         * @param map A hash table to populate
+         */
         void create_id_index(std::vector<std::string> &ids, 
-                                std::unordered_map<std::string,
-                                uint32_t> &map);
+                             std::unordered_map<std::string,
+                                                uint32_t> &map);
     };
 }
 

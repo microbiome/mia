@@ -7,16 +7,18 @@
  * See LICENSE file for more details
  */
 
+#ifndef __UNIFRAC
+#define __UNIFRAC 1
+
 #include <stack>
+#include <string>
 #include <vector>
 #include <unordered_map>
-#include <thread>
-#include <pthread.h>
 
-#ifndef __UNIFRAC
-
-#include "task_parameters.hpp"
-#include "biom_interface.hpp"
+#include "assay.h"
+#include "tree.h"
+#include "propmap.h"
+#include "unifrac_task.h"
 
     namespace su {
         
@@ -27,22 +29,62 @@
             std::vector<double> condensed_form;
             std::vector<std::string> sample_ids;
         } mat_t;
+    
+        enum Method {unweighted,
+                     weighted_normalized,
+                     weighted_unnormalized,
+                     generalized,
+                     unknown};
         
-        // process the stripes described by tasks
-        void process_stripes(const su::Assay & table, 
-                             const su::BPTree & tree_sheared, 
-                             Method method,
-                             bool variance_adjust,
-                             su::StripeMap dm_stripes,
-                             su::StripeMap dm_stripes_total,
-                             su::task_parameters task);
+        Method set_method(std::string requested_method);                                                                  
         
-        // Stripes to condensed form for the results
-        su::mat_t stripes_to_condensed_form(su::StripeMap stripes,
-                                        uint32_t n,
-                                        su::mat_t result,
-                                        unsigned int start,
-                                        unsigned int stop);
+        
+        /* Compute UniFrac - condensed form
+         *
+         * biom_filename <const char*> the filename to the biom table.
+         * tree_filename <const char*> the filename to the correspodning tree.
+         * unifrac_method <const char*> the requested unifrac method.
+         * variance_adjust <bool> whether to apply variance adjustment.
+         * alpha <double> GUniFrac alpha, only relevant if method == generalized.
+         * bypass_tips <bool> disregard tips, reduces compute by about 50%
+         * threads <uint> the number of threads to use.
+         * result <mat_t**> the resulting distance matrix in condensed form, this is initialized within the method so using **
+         *
+         * one_off returns the following error codes:
+         *
+         * okay           : no problems encountered
+         * table_missing  : the filename for the table does not exist
+         * tree_missing   : the filename for the tree does not exist
+         * unknown_method : the requested method is unknown.
+         * table_empty    : the table does not have any entries
+         */
+        
+        su::mat_t one_off(const su::Assay & table,
+                              const su::BPTree & tree,
+                              std::string unifrac_method,
+                              double alpha,
+                              bool variance_adjust,
+                              bool bypass_tips);
+        
+        // Chooses the right task for the job and constructs a unifracTT
+        void unifrac(const su::Assay &table,
+                     const su::BPTree &tree,
+                     su::Method unifrac_method,
+                     su::StripeMap &dm_stripes,
+                     su::StripeMap &dm_stripes_total,
+                     const su::task_parameters task_p,
+                     bool variance_adjust);
+        
+        // Sets proportion range
+        // Data is stored to props -> make return vector
+        // PropMap needs to be modified, thus passed by reference
+        std::vector<double> set_proportions_range(const su::BPTree & tree,
+                                                    uint32_t node,
+                                                    const su::Assay & table,
+                                                    unsigned int start,
+                                                    unsigned int end,
+                                                    PropMap & pm,
+                                                    bool normalize = true);
         
         // Works the vectors
         template<class TaskT>
@@ -77,32 +119,16 @@
             return val;
         }
         
-        template<class TaskT>
-        inline void unifracTT(const su::biom_interface &table,
-                              const su::BPTree &tree,
-                              const bool want_total,
-                              su::StripeMap dm_stripes,
-                              su::StripeMap dm_stripes_total,
-                              const su::task_parameters & task_p)
-    
-        enum Method {unweighted,
-                     weighted_normalized,
-                     weighted_unnormalized,
-                     generalized};
+        // Stripes to condensed form for the results
+        std::vector<double> stripes_to_condensed_form(su::StripeMap stripes,
+                                            uint32_t n,
+                                            unsigned int start,
+                                            unsigned int stop);
         
-        void unifrac(biom_interface &table, 
-                     BPTree &tree, 
-                     Method unifrac_method,
-                     std::vector<double*> &dm_stripes,
-                     std::vector<double*> &dm_stripes_total,
-                     const task_parameters* task_p);
         
-        void unifrac_vaw(biom_interface &table, 
-                         BPTree &tree, 
-                         Method unifrac_method,
-                         std::vector<double*> &dm_stripes,
-                         std::vector<double*> &dm_stripes_total,
-                         const task_parameters* task_p);
+        
+        
+        
         
         double** deconvolute_stripes(std::vector<double*> &stripes, uint32_t n);
 
@@ -138,5 +164,5 @@
         void condensed_form_to_matrix_fp32(const double*  __restrict__ cf, const uint32_t n, float*  __restrict__ buf2d);
 
     }
-#define __UNIFRAC 1
+    
 #endif

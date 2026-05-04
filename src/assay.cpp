@@ -59,6 +59,20 @@ std::vector<double> Assay::get_obs_data(const std::string &id) const {
     return out;
 }
 
+std::vector<double> Assay::get_obs_data_range(const std::string &id, unsigned int start, unsigned int end, bool normalize) const {
+    std::vector<double> out = std::vector<double>();
+    uint32_t idx = obs_id_index.at(id);
+    for(unsigned int i = start; i < end; i++) {
+        if (normalize) {
+            out.push_back(table(idx, i)/sample_counts[i]);
+        }
+        else {
+            out.push_back(table(idx, i));
+        }
+    }
+    return out;
+}
+
 std::vector<double> Assay::get_sample_counts(){
     std::vector<double> sample_counts = std::vector<double>();
     
