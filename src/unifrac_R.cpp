@@ -20,12 +20,15 @@
 #include "unifrac.h"
 
 
+
+
 // Calculate Unifrac
 //
 // @keywords internal
 // [[Rcpp::export(.unifrac_cpp)]]
 Rcpp::List unifrac_cpp(const Rcpp::NumericMatrix & assay,
                               const Rcpp::List & rowTree){
+    
     // 
     // std::unordered_set<std::string> to_keep(table.obs_ids.begin(),
     //                                         table.obs_ids.end());
@@ -65,16 +68,16 @@ Rcpp::List unifrac_cpp(const Rcpp::NumericMatrix & assay,
     su::Assay table = su::Assay(assay);
     std::string method = "unweighted";
     
-    Rcpp::Rcout << "Start\n";
+    std::unordered_set<std::string> to_keep(table.obs_ids.begin(),
+                                            table.obs_ids.end());
     
-    su::mat_t results = su::one_off(table, tree, method, 1.0, false, false);
+    su::BPTree tree_sheared = tree.shear(to_keep).collapse();
     
-    Rcpp::Rcout << "All done\n";
+    su::mat_t results = su::one_off(table, tree_sheared, method, 1.0, false, false);
     
     //condensed_form is the main values, returned in result
     //Sample_ids can be handled with a map?
     //n_samples, cf_size, is_upper_triangle are single values that can be passed in some other way?
-    
     
     //Rcpp::NumericVector cf = Rcpp::NumericVector(results.cf_size);
     

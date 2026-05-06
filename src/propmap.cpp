@@ -86,3 +86,40 @@ std::vector<double> su::set_proportions(const BPTree &tree,
     ps.update(node, props);
     return(props);
 }
+
+
+std::vector<double> su::set_proportions_range(const su::BPTree & tree,
+                                              uint32_t node,
+                                              const su::Assay & table,
+                                              unsigned int start,
+                                              unsigned int end,
+                                              PropMap & pm,
+                                              bool normalize) {
+    const unsigned int els = end-start;
+    std::vector<double> props = std::vector<double>();
+    if(tree.isleaf(node)) {
+        std::string leaf = tree.names[node];
+        props = table.get_obs_data_range(leaf, start, end, normalize);
+    } else {
+        unsigned int current = tree.leftchild(node);
+        unsigned int right = tree.rightchild(node);
+        
+        for( unsigned int i = 0; i < els; i++ ){
+            props.push_back(0);
+        }
+        
+        while(current <= right && current != 0) {
+            std::vector<double> vec = pm.get(current);  // pull from prop map
+            pm.clear(current);  // remove from prop map, place back on stack
+            
+            for(unsigned int i = 0; i < els; i++){
+                props[i] = props[i] + vec[i];
+            }
+            
+            current = tree.rightsibling(current);
+        }
+    }
+    
+    pm.update(node, props);
+    return props;
+}

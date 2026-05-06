@@ -30,6 +30,7 @@
             std::vector<std::string> sample_ids;
         } mat_t;
     
+    
         enum Method {unweighted,
                      weighted_normalized,
                      weighted_unnormalized,
@@ -75,17 +76,6 @@
                      const su::task_parameters task_p,
                      bool variance_adjust);
         
-        // Sets proportion range
-        // Data is stored to props -> make return vector
-        // PropMap needs to be modified, thus passed by reference
-        std::vector<double> set_proportions_range(const su::BPTree & tree,
-                                                    uint32_t node,
-                                                    const su::Assay & table,
-                                                    unsigned int start,
-                                                    unsigned int end,
-                                                    PropMap & pm,
-                                                    bool normalize = true);
-        
         // Works the vectors
         template<class TaskT>
         inline void unifracTT(const su::Assay & table,
@@ -120,7 +110,7 @@
         }
         
         // Stripes to condensed form for the results
-        std::vector<double> stripes_to_condensed_form(su::StripeMap stripes,
+        std::vector<double> stripes_to_condensed_form(su::StripeMap & stripes,
                                             uint32_t n,
                                             unsigned int start,
                                             unsigned int stop);

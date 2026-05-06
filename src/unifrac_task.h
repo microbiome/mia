@@ -37,10 +37,6 @@ namespace su {
         double g_unifrac_alpha;      // generalized unifrac alpha
     };
 
-
-
-
-
     // Note: This adds a copy, which is suboptimal
     //       But was the easiest way to get a contiguous buffer
     //       And it does allow for fp32 compute, when desired
@@ -80,7 +76,7 @@ namespace su {
            }
         }
       }
-
+      
       //Destructor copies the buffer values back into dm_stripe
       ~UnifracTaskVector()
       {
@@ -88,7 +84,7 @@ namespace su {
           for(unsigned int stripe=start_idx; stripe < task_p.stop; stripe++) {
              std::vector<double> vec = dm_stripes.get(stripe);
              std::copy( std::begin(buf) + ((stripe-start_idx)*n_samples_r),
-                        std::begin(buf) + ((stripe-start_idx+1)*n_samples_r),
+                        std::begin(buf) + ((stripe-start_idx)*n_samples_r) + n_samples,
                         std::begin(vec) );
              dm_stripes.update(stripe, vec);
           }
@@ -146,13 +142,13 @@ namespace su {
         
         //Need to return a vector?
         void embed_proportions_range(
-                std::vector<double> in,
+                const std::vector<double> & in,
                 unsigned int start,
                 unsigned int end,
                 unsigned int emb);
         
         void embed_proportions(
-                std::vector<double> in,
+                const std::vector<double> & in,
                 unsigned int emb)
         {
             embed_proportions_range(in,0,dm_stripes.n_samples,emb);
@@ -168,7 +164,7 @@ namespace su {
         
         std::vector<double> embed_proportions_range_straight(
                                               std::vector<double> out,
-                                              std::vector<double> in,
+                                              const std::vector<double> & in,
                                               unsigned int start,
                                               unsigned int end,
                                               unsigned int emb) const
@@ -205,7 +201,7 @@ namespace su {
         //Only used with uint64_t
         std::vector<uint64_t> embed_proportions_range_bool(
                 std::vector<uint64_t>  out,
-                std::vector<double>  in,
+                const std::vector<double> & in,
                 unsigned int start,
                 unsigned int end,
                 unsigned int emb) const
@@ -249,7 +245,7 @@ namespace su {
     
     
     template<> inline void UnifracTaskBase<double>::embed_proportions_range(
-            std::vector<double> in,
+            const std::vector<double> & in,
             unsigned int start,
             unsigned int end,
             unsigned int emb )
@@ -267,7 +263,7 @@ namespace su {
     
     
     template<> inline void UnifracTaskBase<uint64_t>::embed_proportions_range(
-            std::vector<double> in,
+            const std::vector<double> & in,
             unsigned int start,
             unsigned int end,
             unsigned int emb )

@@ -26,6 +26,7 @@
 
 
 
+
 su::Method su::set_method(std::string requested_method) {
     if(requested_method == "unweighted")                                                               
         return unweighted;                                                                                           
@@ -56,8 +57,6 @@ su::mat_t su::one_off(const su::Assay & table,
                       double alpha,
                       bool variance_adjust,
                       bool bypass_tips) {
-    
-    Rcpp::Rcout << "Start one_off\n";
     
     //Check that method is valid - pass it as something other than string?
     su::Method method = set_method(unifrac_method);
@@ -99,8 +98,6 @@ su::mat_t su::one_off(const su::Assay & table,
                 task,
                 variance_adjust);
     
-    Rcpp::Rcout << "unifrac done\n";
-    
     //Only use of std::thread in this version of code was for stripes to condensed form
     //Basically each thread calls stripes_to_condensed_form
     //Which is just a bunch of binomial calculations
@@ -114,8 +111,6 @@ su::mat_t su::one_off(const su::Assay & table,
                                                             table.n_samples,
                                                             task.start,
                                                             task.stop);
-    
-    Rcpp::Rcout << "one_off done\n";
     
     return result;
 }
@@ -131,8 +126,6 @@ void su::unifrac(const su::Assay &table,
                  const su::task_parameters task_p,
                  bool variance_adjust)
 {
-    
-    Rcpp::Rcout << "Start unifrac\n";
     
     if(variance_adjust)
     {
@@ -177,6 +170,7 @@ void su::unifrac(const su::Assay &table,
             unifracTT<su::UnifracUnweightedTask>(
                 table, tree, true,  dm_stripes,dm_stripes_total,
                 task_p );
+            
             break;
             /*case su::weighted_normalized:
              unifracTT<su::UnifracNormalizedWeightedTask<double>,double>(
@@ -215,8 +209,6 @@ inline void su::unifracTT(const su::Assay & table,
                       const su::task_parameters & task_p)
 {
     
-    Rcpp::Rcout << "Start unifracTT\n";
-    
     if(table.n_samples != task_p.n_samples) {
         fprintf(stderr, "Task and table n_samples not equal\n");
         exit(EXIT_FAILURE);
@@ -225,19 +217,12 @@ inline void su::unifracTT(const su::Assay & table,
     const unsigned int n_samples = task_p.n_samples;
     const uint64_t  n_samples_r = ((n_samples + UNIFRAC_BLOCK-1)/UNIFRAC_BLOCK)*UNIFRAC_BLOCK; // round up
     
-    
     //su::PropStackMulti<TFloat> propstack_multi(table.n_samples);
     su::PropMap propmap(table.n_samples);
     
     const unsigned int max_emb =  TaskT::RECOMMENDED_MAX_EMBS;
     
-    
-    
-    Rcpp::Rcout << "Start taskObj\n";
-    
     TaskT taskObj(dm_stripes, dm_stripes_total, max_emb, task_p);
-    
-    Rcpp::Rcout << "taskObj done\n";
     
     std::vector<double> lengths = std::vector<double>(max_emb);
     
@@ -286,8 +271,6 @@ inline void su::unifracTT(const su::Assay & table,
      * (see C) but that is small over large N.
      */
     
-    Rcpp::Rcout << "Start calcs\n";
-    
     unsigned int k = 0; // index in tree
     const unsigned int max_k = (tree.nparens / 2) - 1;
     
@@ -300,7 +283,7 @@ inline void su::unifracTT(const su::Assay & table,
         // ck = 0
         // chunk the progress to maximize cache reuse
         const unsigned int tstart = 0;
-        const unsigned int tend = 0; // end of propstack?
+        const unsigned int tend = n_samples; // end of propstack?
         unsigned int my_filled_emb = 0;
         unsigned int my_k=k_start;
         
@@ -312,7 +295,8 @@ inline void su::unifracTT(const su::Assay & table,
             //su::set_proportions_range(node_proportions, tree, node, table, tstart, tend, propstack);
             
             //calculate proportions range for given node
-            su::set_proportions_range(tree, node, table, tstart, tend, propmap);
+            std::vector<double> node_proportions = su::set_proportions_range(tree, node, table, tstart, tend, propmap);
+            
             
             //propstack pop ERASES any existing vector for node and gives a blank one
                 //creates memory leaks if node isn't pushed before popping? 
@@ -326,13 +310,7 @@ inline void su::unifracTT(const su::Assay & table,
             lengths[filled_emb] = tree.lengths[node];
             filled_emb++;
             
-            //store the proportions inside the taskobject's continuous buffer
-            //Shouldn't modify node_proportions
-            std::vector<double> node_proportions = propmap.get(node);
-            
-            //Rcpp::Rcout << "start embed_proportions_range\n";
             taskObj.embed_proportions_range(node_proportions, tstart, tend, my_filled_emb);
-            //Rcpp::Rcout << "embed_proportions_range done\n";
             my_filled_emb++;
         }
          
@@ -342,16 +320,10 @@ inline void su::unifracTT(const su::Assay & table,
         //Does nothing without openacc
         //taskObj.sync_embedded_proportions(filled_emb);
         
-        Rcpp::Rcout << "start taskObj._run\n";
         taskObj._run(filled_emb,lengths);
-        Rcpp::Rcout << "taskObj._run done\n";
         
         filled_emb=0;
     }
-    
-    
-    Rcpp::Rcout << "calcs done\n";
-    
     
     //I suppose want_total is used if you want the results as a percentage of the total?
     if(want_total) {
@@ -359,72 +331,26 @@ inline void su::unifracTT(const su::Assay & table,
         const uint64_t stop_idx = task_p.stop;
         
         for(uint64_t i = start_idx; i < stop_idx; i++){
-            /*
-             std::vector<double> dm_stripes_buf = std::vector<double>  ;
-             std::vector<double> dm_stripes_total_buf = taskObj.dm_stripes_total.get(idx);
-            std::copy(std::begin(taskObj.dm_stripes.buf),
-                      std::end(taskObj.dm_stripes.buf),
-                      std::begin(dm_stripes_buf) + (emb8<<8));
-            */
-            
             std::vector<double> dm_stripes_buf = taskObj.dm_stripes.buf;
             std::vector<double> dm_stripes_total_buf = taskObj.dm_stripes_total.buf;
             
             for(uint64_t j = 0; j < n_samples; j++) {
-                uint64_t idx = (i-start_idx)*n_samples_r+j;
+                uint64_t idx = ((i-start_idx)*n_samples_r)+j;
                 dm_stripes_buf[idx] = dm_stripes_buf[idx]/dm_stripes_total_buf[idx];
             }
             
             taskObj.dm_stripes.buf = dm_stripes_buf;
-            
-            /*
-             taskObj.dm_stripes.update(idx, dm_stripes_buf);
-            std::copy(std::begin(dm_stripes_buf),
-                      std::end(dm_stripes_buf),
-                      std::begin(taskObj.dm_stripes.buf) + );
-             */
         }
     }
-    
-    Rcpp::Rcout << "unifracTT done\n";
-}
-
-
-
-std::vector<double> su::set_proportions_range(const su::BPTree & tree,
-                                              uint32_t node,
-                                              const su::Assay & table,
-                                              unsigned int start,
-                                              unsigned int end,
-                                              PropMap & pm,
-                                              bool normalize) {
-    const unsigned int els = end-start;
-    std::vector<double> props = std::vector(els, 0.0);
-    if(tree.isleaf(node)) {
-        props = table.get_obs_data_range(tree.names[node], start, end, normalize);
-    } else {
-        const unsigned int right = tree.rightchild(node);
-        unsigned int current = tree.leftchild(node);
-        
-        while(current <= right && current != 0) {
-            std::vector<double> vec = pm.get(current);  // pull from prop map
-            pm.clear(current);  // remove from prop map, place back on stack
-            
-            for(unsigned int i = 0; i < els; i++)
-                props[i] += vec[i];
-            
-            current = tree.rightsibling(current);
-        }
-    }
-    pm.update(node, props);
-    return props;
 }
 
 
 
 
 
-std::vector<double> su::stripes_to_condensed_form(su::StripeMap stripes,
+
+
+std::vector<double> su::stripes_to_condensed_form(su::StripeMap & stripes,
                                    uint32_t n,
                                    unsigned int start,
                                    unsigned int stop) {

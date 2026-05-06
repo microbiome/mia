@@ -58,7 +58,7 @@ class Assay {
         
 private:
     Rcpp::NumericMatrix table; // Access to raw sample counts in R's memory
-        
+    
         std::vector<double> get_sample_counts();
         
         /* At construction, lookups mapping IDs -> index position within an

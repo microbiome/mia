@@ -7,6 +7,7 @@
  * See LICENSE file for more details
  */
 
+
 #ifndef __FAITH_STRIPEMAP
 #define __FAITH_STRIPEMAP 1
 
