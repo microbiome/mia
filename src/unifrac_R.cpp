@@ -10,6 +10,20 @@
 #include <iostream>
 #include <vector>
 
+#include <chrono>
+/*
+ auto start = std::chrono::high_resolution_clock::now();
+ auto stop = std::chrono::high_resolution_clock::now();
+ auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+ Rcpp::Rcout << "Main thread: " << duration.count() << "\n";
+ 
+ 
+ start = std::chrono::high_resolution_clock::now();
+ stop = std::chrono::high_resolution_clock::now();
+ duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+ Rcpp::Rcout << "Condensed form: " << duration.count() << "\n";
+ */
+
 #include <Rcpp.h>
 
 #include "assay.h"
@@ -29,40 +43,9 @@
 Rcpp::List unifrac_cpp(const Rcpp::NumericMatrix & assay,
                               const Rcpp::List & rowTree){
     
-    // 
-    // std::unordered_set<std::string> to_keep(table.obs_ids.begin(),
-    //                                         table.obs_ids.end());
-    // 
-    // su::BPTree tree_sheared = tree.shear(to_keep).collapse();
-    // 
-    // su::PropMap propmap(table.n_samples);
-    // 
-    // uint32_t node;
-    // std::vector<double> node_proportions;
-    // double length;
-    // 
-    // std::vector<double> results = std::vector<double>(table.n_samples, 0.0);
-    // 
-    // 
-    // // For node in postorderselect
-    // const unsigned int max_k = (tree_sheared.nparens>1) ?
-    // ((tree_sheared.nparens / 2) - 1) : 0;
-    // 
-    // for( unsigned int k = 0; k < max_k; k++ ){
-    //     node = tree_sheared.postorderselect(k);
-    //     
-    //     // Get branch length
-    //     length = tree_sheared.lengths[node];
-    //     
-    //     // Get node proportions and set intermediate scores
-    //     node_proportions = set_proportions(tree_sheared, node, table, propmap,
-    //                                        false);
-    //     
-    //     for( unsigned int sample = 0; sample < table.n_samples; sample++ ){
-    //         // Calculate contribution of node to score
-    //         results[sample] += (node_proportions[sample] > 0) * length;
-    //     }
-    // } 
+    
+    
+    auto start = std::chrono::high_resolution_clock::now();
     
     su::BPTree tree = su::BPTree(rowTree);
     su::Assay table = su::Assay(assay);
@@ -79,7 +62,10 @@ Rcpp::List unifrac_cpp(const Rcpp::NumericMatrix & assay,
     //Sample_ids can be handled with a map?
     //n_samples, cf_size, is_upper_triangle are single values that can be passed in some other way?
     
-    //Rcpp::NumericVector cf = Rcpp::NumericVector(results.cf_size);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    
+    Rcpp::Rcout << "Main thread: " << duration.count() << "\n";
     
     return Rcpp::List::create(Rcpp::Named("n_samples") = results.n_samples,
                               Rcpp::Named("is_upper_triangle") = results.is_upper_triangle,

@@ -7,6 +7,8 @@
  * See LICENSE file for more details
  */
 
+#include <chrono>
+
 #include "unifrac.h"
 #include "propmap.h"
 #include "stripemap.h"
@@ -274,6 +276,8 @@ inline void su::unifracTT(const su::Assay & table,
     unsigned int k = 0; // index in tree
     const unsigned int max_k = (tree.nparens / 2) - 1;
     
+    
+    
     // num_prop_chunks = 1
     while (k<max_k)
     {
@@ -325,21 +329,16 @@ inline void su::unifracTT(const su::Assay & table,
         filled_emb=0;
     }
     
-    //I suppose want_total is used if you want the results as a percentage of the total?
+    //want_total is used if you want the results as a percentage of the total?
     if(want_total) {
         const uint64_t start_idx = task_p.start;
         const uint64_t stop_idx = task_p.stop;
         
         for(uint64_t i = start_idx; i < stop_idx; i++){
-            std::vector<double> dm_stripes_buf = taskObj.dm_stripes.buf;
-            std::vector<double> dm_stripes_total_buf = taskObj.dm_stripes_total.buf;
-            
             for(uint64_t j = 0; j < n_samples; j++) {
                 uint64_t idx = ((i-start_idx)*n_samples_r)+j;
-                dm_stripes_buf[idx] = dm_stripes_buf[idx]/dm_stripes_total_buf[idx];
+                taskObj.dm_stripes.buf[idx] = taskObj.dm_stripes.buf[idx]/taskObj.dm_stripes_total.buf[idx];
             }
-            
-            taskObj.dm_stripes.buf = dm_stripes_buf;
         }
     }
 }

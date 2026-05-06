@@ -54,7 +54,7 @@ std::vector<double> su::set_proportions(const BPTree &tree,
                                         const Assay &table,
                                         PropMap &ps,
                                         bool normalize){
-    std::vector<double> props = std::vector<double>();
+    std::vector<double> props = std::vector<double>(table.n_samples, 0.0);
     if( tree.isleaf(node) ){
         std::string leaf = tree.names[node];
         props = table.get_obs_data(leaf); // get row for the specified node
@@ -66,10 +66,6 @@ std::vector<double> su::set_proportions(const BPTree &tree,
     } else {
         unsigned int current = tree.leftchild(node);
         unsigned int right = tree.rightchild(node);
-        
-        for( unsigned int i = 0; i < table.n_samples; i++ ){
-            props.push_back(0);
-        }
         
         while( current <= right && current != 0 ){
             std::vector<double> vec = ps.get(current);  // Pull from prop map
@@ -96,17 +92,13 @@ std::vector<double> su::set_proportions_range(const su::BPTree & tree,
                                               PropMap & pm,
                                               bool normalize) {
     const unsigned int els = end-start;
-    std::vector<double> props = std::vector<double>();
+    std::vector<double> props = std::vector<double>(els, 0.0);
     if(tree.isleaf(node)) {
         std::string leaf = tree.names[node];
         props = table.get_obs_data_range(leaf, start, end, normalize);
     } else {
         unsigned int current = tree.leftchild(node);
         unsigned int right = tree.rightchild(node);
-        
-        for( unsigned int i = 0; i < els; i++ ){
-            props.push_back(0);
-        }
         
         while(current <= right && current != 0) {
             std::vector<double> vec = pm.get(current);  // pull from prop map

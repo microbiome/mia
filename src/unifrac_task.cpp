@@ -12,6 +12,8 @@
 #include <thread>
 #include <algorithm>
 
+#include <chrono>
+
 #include "tree.h"
 #include "unifrac_task.h"
 
@@ -35,7 +37,6 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
     
     std::vector<uint64_t> embedded_proportions = this->embedded_proportions;
     
-    
     const uint64_t step_size = su::UnifracUnweightedTask::step_size;
     const uint64_t sample_steps = (n_samples+(step_size-1))/step_size; // round up
     
@@ -53,16 +54,17 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
             //TFloat * __restrict__ psum = &(sums[emb8<<8]);
             //const TFloat * __restrict__ pl   = &(lengths[emb8*8]);
             
-            std::vector<double> psum   = std::vector<double>(256);
+            //std::vector<double> psum   = std::vector<double>(256);
             std::vector<double> pl   = std::vector<double>(8);
             
-            std::copy(  std::begin(this->sums) + (emb8<<8),
-                        std::begin(this->sums) + (emb8<<8) + 256,
-                        std::begin(psum) );
+            //std::copy(  std::begin(this->sums) + (emb8<<8),
+            //            std::begin(this->sums) + (emb8<<8) + 256,
+            //            std::begin(psum) );
                 
-            std::copy(  std::begin(lengths) + (emb8*8),
-                        std::begin(lengths) + (emb8*8) + 8,
-                        std::begin(pl) );
+            uint64_t len_off = emb8*8;
+            //std::copy(  std::begin(lengths) + (emb8*8),
+            //            std::begin(lengths) + (emb8*8) + 8,
+            //            std::begin(pl) );
             
             // compute all the combinations for this block (8-bits total)
             // psum[0] = 0.0   // +0*pl[0]+0*pl[1]+0*pl[2]+...
@@ -73,14 +75,14 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
             // psum[255] = pl[1] +.. + pl[7] // + 0*pl[0]
             // psum[255] = pl[0] +pl[1] +.. + pl[7]
             for (uint64_t b8_i=0; b8_i<0x100; b8_i++) {
-                psum[b8_i] = (((b8_i >> 0) & 1) * pl[0]) + (((b8_i >> 1) & 1) * pl[1]) + 
-                    (((b8_i >> 2) & 1) * pl[2]) + (((b8_i >> 3) & 1) * pl[3]) +
-                    (((b8_i >> 4) & 1) * pl[4]) + (((b8_i >> 5) & 1) * pl[5]) +
-                    (((b8_i >> 6) & 1) * pl[6]) + (((b8_i >> 7) & 1) * pl[7]);
+                sums[(emb8<<8) + b8_i] = (((b8_i >> 0) & 1) * lengths[len_off + 0]) + (((b8_i >> 1) & 1) * lengths[len_off + 1]) + 
+                    (((b8_i >> 2) & 1) * lengths[len_off + 2]) + (((b8_i >> 3) & 1) * lengths[len_off + 3]) +
+                    (((b8_i >> 4) & 1) * lengths[len_off + 4]) + (((b8_i >> 5) & 1) * lengths[len_off + 5]) +
+                    (((b8_i >> 6) & 1) * lengths[len_off + 6]) + (((b8_i >> 7) & 1) * lengths[len_off + 7]);
             }
             
-            std::copy(std::begin(psum), std::end(psum),
-                      std::begin(this->sums) + (emb8<<8));
+            //std::copy(std::begin(psum), std::end(psum),
+            //          std::begin(this->sums) + (emb8<<8));
         }
     }
     
@@ -92,10 +94,10 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
             
             //TFloat * __restrict__ psum = &(sums[emb8<<8]);
             
-            std::vector<double> psum   = std::vector<double>(256);
-            std::copy(  std::begin(this->sums) + (emb8<<8),
-                        std::begin(this->sums) + (emb8<<8) + 256,
-                        std::begin(psum) );
+            //std::vector<double> psum   = std::vector<double>(256);
+            //std::copy(  std::begin(this->sums) + (emb8<<8),
+            //            std::begin(this->sums) + (emb8<<8) + 256,
+            //            std::begin(psum) );
                 
             
             // compute all the combinations for this block, set to 0 any past the limit
@@ -105,17 +107,22 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
                 for (uint64_t li=(emb8*8); li<filled_embs; li++) {
                     val += ((b8_i >>  (li-(emb8*8))) & 1) * lengths[li];
                 }
-                psum[b8_i] = val;
+                sums[(emb8<<8) + b8_i] = val;
             }
             
-            std::copy(std::begin(psum), std::end(psum),
-                      std::begin(this->sums) + (emb8<<8));
+            //std::copy(std::begin(psum), std::end(psum),
+            //          std::begin(this->sums) + (emb8<<8));
         }
     }
+    
     // point of thread
     for(uint64_t sk = 0; sk < sample_steps ; sk++) {
+        
         for(uint64_t stripe = start_idx; stripe < stop_idx; stripe++) {
+        
             for(uint64_t ik = 0; ik < step_size ; ik++) {
+                
+                
                 const uint64_t k = sk*step_size + ik; // within-stripe index (0:n_samples-1)
                 const uint64_t idx = (stripe-start_idx) * n_samples_r; //n_samples_r seems to relate to continuous buffer shenanigans
                 
@@ -132,17 +139,20 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
                 double my_stripe = 0.0;
                 double my_stripe_total = 0.0;
                 
-                
                 //This is the main calculation phase
                 
                 for (uint64_t emb_el=0; emb_el<filled_embs_els_round; emb_el++) {
+                    
                     const uint64_t offset = n_samples_r * emb_el;
                     //const TFloat * __restrict__ psum = &(sums[emb_el*0x800]);
                     
-                    std::vector<double> psum   = std::vector<double>(2048);
-                    std::copy(  std::begin(this->sums) + (emb_el * 2048),
-                                std::begin(this->sums) + (emb_el * 2048) + 2048,
-                                std::begin(psum) );
+                    //Suurin syöppö?
+                    //std::vector<double> psum   = std::vector<double>(2048);
+                    //std::copy(  std::begin(this->sums) + (emb_el * 2048),
+                    //            std::begin(this->sums) + (emb_el * 2048) + 2048,
+                    //            std::begin(psum) );
+                    
+                    uint64_t sums_off = emb_el * 2048;
                     
                     uint64_t u1 = embedded_proportions[offset + k];
                     uint64_t v1 = embedded_proportions[offset + l1];
@@ -157,22 +167,22 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
                         // Since embedded_proportions packed format is in 64-bit format for performance reasons
                         //    we need to add the 8 sums using the four 8-bits for addressing inside psum
                         
-                        my_stripe       += psum[              (x1 & 0xff)] + 
-                            psum[0x100+((x1 >>  8) & 0xff)] +
-                            psum[0x200+((x1 >> 16) & 0xff)] +
-                            psum[0x300+((x1 >> 24) & 0xff)] +
-                            psum[0x400+((x1 >> 32) & 0xff)] +
-                            psum[0x500+((x1 >> 40) & 0xff)] +
-                            psum[0x600+((x1 >> 48) & 0xff)] +
-                            psum[0x700+((x1 >> 56)       )];
-                        my_stripe_total += psum[              (o1 & 0xff)] +
-                            psum[0x100+((o1 >>  8) & 0xff)] +
-                            psum[0x200+((o1 >> 16) & 0xff)] +
-                            psum[0x300+((o1 >> 24) & 0xff)] +
-                            psum[0x400+((o1 >> 32) & 0xff)] +
-                            psum[0x500+((o1 >> 40) & 0xff)] +
-                            psum[0x600+((o1 >> 48) & 0xff)] +
-                            psum[0x700+((o1 >> 56)       )];
+                        my_stripe       += sums[sums_off + (x1 & 0xff)] + 
+                            sums[sums_off + 0x100+((x1 >>  8) & 0xff)] +
+                            sums[sums_off + 0x200+((x1 >> 16) & 0xff)] +
+                            sums[sums_off + 0x300+((x1 >> 24) & 0xff)] +
+                            sums[sums_off + 0x400+((x1 >> 32) & 0xff)] +
+                            sums[sums_off + 0x500+((x1 >> 40) & 0xff)] +
+                            sums[sums_off + 0x600+((x1 >> 48) & 0xff)] +
+                            sums[sums_off + 0x700+((x1 >> 56)       )];
+                        my_stripe_total += sums[sums_off + (o1 & 0xff)] +
+                            sums[sums_off + 0x100+((o1 >>  8) & 0xff)] +
+                            sums[sums_off + 0x200+((o1 >> 16) & 0xff)] +
+                            sums[sums_off + 0x300+((o1 >> 24) & 0xff)] +
+                            sums[sums_off + 0x400+((o1 >> 32) & 0xff)] +
+                            sums[sums_off + 0x500+((o1 >> 40) & 0xff)] +
+                            sums[sums_off + 0x600+((o1 >> 48) & 0xff)] +
+                            sums[sums_off + 0x700+((o1 >> 56)       )];
                     }
                 }
                 
