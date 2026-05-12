@@ -725,7 +725,10 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         X_U <- Reduce(
             "+", lapply(sample_loadings, function(u) u %*% t(u))) / n_tables
         svd_res <- svd(X_U)
-        S_shared <- svd_res[["d"]][seq_len(ropt)] |> diag()
+	
+	# R's svd() returns singular values in descending order;
+        # switch to ascending
+	S_shared <- svd_res[["d"]][seq_len(ropt)] |> rev() |> diag()
         S_shared <- S_shared / norm(S_shared, "F")
 
         # Align table-specific loadings with updated S_shared for consistent
