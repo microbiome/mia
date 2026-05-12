@@ -23,7 +23,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.9</span>
       </span>
     </div>
 
@@ -50,7 +50,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate dissimilarities</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/exporters/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/exporters/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/joint_rpca_fix/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/joint_rpca_fix/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
     <div class="hidden name"><code>getDissimilarity.Rd</code></div>
     </div>
 
@@ -244,7 +244,7 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-in"><span><span class="co">### Overlap dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"overlap"</span>, detection <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"overlap"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"overlap"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               CL3       CC1     SV1 M31Fcsw M11Fcsw M31Plmr</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CL3           0.0  985499.5  692281  951745 1217896  466124</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CC1      985499.5       0.0  848128  975408 1253552  626083</span>
@@ -256,7 +256,7 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-in"><span><span class="co">### JSD dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"jsd"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"jsd"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"jsd"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               CL3       CC1       SV1   M31Fcsw   M11Fcsw   M31Plmr</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CL3     0.0000000 0.2547080 0.5051481 0.6809263 0.6813418 0.6713074</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CC1     0.2547080 0.0000000 0.4378036 0.6863213 0.6869444 0.6620168</span>
@@ -283,7 +283,7 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 26 26</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"unifrac"</span>, weighted <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"unifrac"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"unifrac"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               CL3       CC1       SV1   M31Fcsw   M11Fcsw   M31Plmr</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CL3     0.0000000 0.2196313 0.3601371 0.8567702 0.8661073 0.5892417</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CC1     0.2196313 0.0000000 0.3145117 0.8543620 0.8633159 0.5846985</span>
@@ -316,12 +316,12 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-in"><span>    <span class="va">tse</span>, method <span class="op">=</span> <span class="st">"euclidean"</span>, transf <span class="op">=</span> <span class="va">rclr</span>, niter <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               CL3       CC1       SV1   M31Fcsw   M11Fcsw   M31Plmr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3       0.00000  10.64642  46.00367 122.25242 113.00288 141.89376</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      10.64642   0.00000  43.31049 126.21382 116.53976 140.04431</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      46.00367  43.31049   0.00000 108.83245  98.01464 106.12315</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw 122.25242 126.21382 108.83245   0.00000  11.30515  81.89812</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw 113.00288 116.53976  98.01464  11.30515   0.00000  76.11511</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr 141.89376 140.04431 106.12315  81.89812  76.11511   0.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3       0.00000  19.96583  57.39468 121.08570 110.53781 142.19288</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      19.96583   0.00000  45.06645 127.82865 115.82938 135.49034</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      57.39468  45.06645   0.00000 112.03316  98.56082 100.76637</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw 121.08570 127.82865 112.03316   0.00000  14.88208  91.48775</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw 110.53781 115.82938  98.56082  14.88208   0.00000  81.26847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr 142.19288 135.49034 100.76637  91.48775  81.26847   0.00000</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
