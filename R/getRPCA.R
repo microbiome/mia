@@ -723,13 +723,26 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         # - Perform SVD on X_U to extract the principal singular values
         # - Normalize by Frobenius norm
         X_U <- Reduce(
-            "+", lapply(sample_loadings, function(u) u %*% t(u))) / n_tables
-        svd_res <- svd(X_U)
-	
-	# R's svd() returns singular values in descending order;
-        # switch to ascending
-	S_shared <- svd_res[["d"]][seq_len(ropt)] |> rev() |> diag()
-        S_shared <- S_shared / norm(S_shared, "F")
+                "+", lapply(sample_loadings, function(u) u %*% t(u))) / n_tables
+            svd_res <- svd(X_U)
+
+            # svd() can return fewer than `ropt` singular values when X_U is
+            # rank-deficient (common here: X_U has rank <= ropt by construction,
+            # and small singular values may be dropped by some LAPACK builds,
+            # notably on Windows). Pad with zeros to keep length == ropt.
+            d <- svd_res[["d"]]
+            if (length(d) < ropt) {
+                d <- c(d, rep(0, ropt - length(d)))
+            }
+            d <- d[seq_len(ropt)]
+
+            # R's svd() returns singular values in descending order;
+            # switch to ascending to match the Gemelli reference
+            # implementation. Use nrow = ropt so that the ropt == 1 case
+            # still yields a 1x1 matrix (diag(scalar) would mis-interpret
+            # the scalar as a dimension).
+            S_shared <- diag(rev(d), nrow = ropt)
+            S_shared <- S_shared / norm(S_shared, "F")
 
         # Align table-specific loadings with updated S_shared for consistent
         # reconstruction
@@ -767,13 +780,20 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     # Run SVD. Our initial first guess are the loadings generated
     # by the traditional SVD.
     svd_res <- svd(observed_stacked)
+
+    # Pad singular values to length `ropt` if svd() returned fewer
+    # (rank-deficient case, BLAS-dependent).
+    d <- svd_res[["d"]]
+    if (length(d) < ropt) {
+        d <- c(d, rep(0, ropt - length(d)))
+    }
+    d <- d[seq_len(ropt)]
+
     U_shared <- svd_res[["u"]][, seq_len(ropt), drop = FALSE]
-    U_shared <- U_shared[
-        , U_shared |> ncol() |> seq_len() |> rev(), drop = FALSE]
-    S_shared <- svd_res[["d"]][ seq_len(ropt) ] |> rev() |> diag()
+    U_shared <- U_shared[, rev(seq_len(ncol(U_shared))), drop = FALSE]
+    S_shared <- diag(rev(d), nrow = ropt)
     V_shared <- svd_res[["v"]][, seq_len(ropt), drop = FALSE]
-    V_shared <- V_shared[
-        , V_shared |> ncol() |> seq_len() |> rev(), drop = FALSE]
+    V_shared <- V_shared[, rev(seq_len(ncol(V_shared))), drop = FALSE]
 
     # The shape and number of non-zero values
     # can set the input parameters for the gradient
