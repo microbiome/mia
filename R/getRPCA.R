@@ -723,7 +723,7 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         # - Perform SVD on X_U to extract the principal singular values
         # - Normalize by Frobenius norm
         X_U <- Reduce(
-                "+", lapply(sample_loadings, function(u) u %*% t(u))) / n_tables
+            "+", lapply(sample_loadings, function(u) u %*% t(u))) / n_tables
         svd_res <- svd(X_U)
 
         # svd() can return fewer than `ropt` singular values when X_U is
