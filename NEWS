@@ -186,5 +186,7 @@ Changes in version 1.19.x
 + Use ecodive in UniFrac (1.19.2, 2025-12-09)
 + Added binning transformation (1.19.3, 2026-02-23)
 + Added support for reducedDim in clustering (1.19.5, 2026-03-06)
+
+Changes in version 1.21.x
 + Fixed explained percentages on PCA axes for jointRPCA and hardened
   rank-deficient SVD handling in joint-RPCA (1.21.1, 2026-05-12)
