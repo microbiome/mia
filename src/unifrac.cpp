@@ -27,41 +27,15 @@
 
 
 
-
-
-su::Method su::set_method(std::string requested_method) {
-    if(requested_method == "unweighted")                                                               
-        return unweighted;                                                                                           
-    else if(requested_method == "weighted_normalized")                                                 
-        return weighted_normalized;                                                                                  
-    else if(requested_method == "weighted_unnormalized")                                               
-        return weighted_unnormalized;                                                                                
-    else if(requested_method == "generalized")                                                         
-        return generalized;                                                                                          
-    /*else if(std::strcmp(requested_method, "unweighted_fp32") == 0)                                                     
-     method = unweighted_fp32;                                                                                      
-     else if(std::strcmp(requested_method, "weighted_normalized_fp32") == 0)                                            
-     method = weighted_normalized_fp32;                                                                             
-     else if(std::strcmp(requested_method, "weighted_unnormalized_fp32") == 0)                                          
-     method = weighted_unnormalized_fp32;                                                                           
-     else if(std::strcmp(requested_method, "generalized_fp32") == 0)                                                    
-     method = generalized_fp32;   */                                                                                  
-    else {                                                                                                             
-        return unknown;                                                                                                
-    }             
-}                                    
+                              
 
 
 
 su::mat_t su::one_off(const su::Assay & table,
                       const su::BPTree & tree,
-                      std::string unifrac_method,
-                      double alpha,
-                      bool variance_adjust,
+                      bool weighted,
+                      bool normalized,
                       bool bypass_tips) {
-    
-    //Check that method is valid - pass it as something other than string?
-    su::Method method = set_method(unifrac_method);
     
     //Number of stripes to be used, basically half of samples
     const unsigned int stripe_stop = (table.n_samples + 1) / 2;
@@ -77,10 +51,9 @@ su::mat_t su::one_off(const su::Assay & table,
     //Stripes to start and stop on - single task, so the entire thing
     task.start = 0;
     task.stop = stripe_stop;
-    
     task.bypass_tips = bypass_tips;
+    
     task.n_samples = table.n_samples;
-    task.g_unifrac_alpha = alpha;
     
     //Main action
     //Calls either unifrac or _vaw depending on variance_adjust
@@ -94,11 +67,11 @@ su::mat_t su::one_off(const su::Assay & table,
     
     su::unifrac(std::ref(table),
                 std::ref(tree),
-                method,
                 std::ref(dm_stripes),
                 std::ref(dm_stripes_total),
-                task,
-                variance_adjust);
+                weighted,
+                normalized,
+                task);
     
     //Only use of std::thread in this version of code was for stripes to condensed form
     //Basically each thread calls stripes_to_condensed_form
@@ -122,79 +95,29 @@ su::mat_t su::one_off(const su::Assay & table,
 
 void su::unifrac(const su::Assay &table,
                  const su::BPTree &tree,
-                 su::Method unifrac_method,
                  su::StripeMap & dm_stripes,
                  su::StripeMap & dm_stripes_total,
-                 const su::task_parameters task_p,
-                 bool variance_adjust)
+                 bool weighted,
+                 bool normalized,
+                 const su::task_parameters task_p)
 {
-    
-    if(variance_adjust)
-    {
-        /*
-         switch(unifrac_method) {
-    case su::unweighted:
-         unifrac_vawTT<SUCMP_NM::UnifracVawUnweightedTask<double>,double>(           table, tree, true,  dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::weighted_normalized:
-         unifrac_vawTT<SUCMP_NM::UnifracVawNormalizedWeightedTask<double>,double>(   table, tree, true,  dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::weighted_unnormalized:
-         unifrac_vawTT<SUCMP_NM::UnifracVawUnnormalizedWeightedTask<double>,double>( table, tree, false, dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::generalized:
-         unifrac_vawTT<SUCMP_NM::UnifracVawGeneralizedTask<double>,double>(          table, tree, true,  dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::unweighted_fp32:
-         unifrac_vawTT<SUCMP_NM::UnifracVawUnweightedTask<float >,float >(           table, tree, true,  dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::weighted_normalized_fp32:
-         unifrac_vawTT<SUCMP_NM::UnifracVawNormalizedWeightedTask<float >,float >(   table, tree, true,  dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::weighted_unnormalized_fp32:
-         unifrac_vawTT<SUCMP_NM::UnifracVawUnnormalizedWeightedTask<float >,float >( table, tree, false, dm_stripes,dm_stripes_total,task_p);
-         break;
-    case su::generalized_fp32:
-         unifrac_vawTT<SUCMP_NM::UnifracVawGeneralizedTask<float >,float >(          table, tree, true,  dm_stripes,dm_stripes_total,task_p);
-         break;
-    default:
-         fprintf(stderr, "Unknown unifrac task\n");
-         exit(1);
-         break;
-         }
-         */
+    //unweighted
+    if (weighted == false) {
+        unifracTT<su::UnifracUnweightedTask>(
+            table, tree, true, dm_stripes, dm_stripes_total,
+            task_p );
     }
-    else
-    {
-        switch(unifrac_method)
-        {
-        case su::unweighted:
-            unifracTT<su::UnifracUnweightedTask>(
-                table, tree, true,  dm_stripes,dm_stripes_total,
-                task_p );
-            
-            break;
-            /*case su::weighted_normalized:
-             unifracTT<su::UnifracNormalizedWeightedTask<double>,double>(
-             table, tree, true,  dm_stripes,dm_stripes_total,
-             task_p );
-             break;
-        case su::weighted_unnormalized:
-             unifracTT<su::UnifracUnnormalizedWeightedTask<double>,
-             double>(table, tree, false, dm_stripes,
-             dm_stripes_total, task_p );
-             break;
-        case su::generalized:
-             unifracTT<su::UnifracGeneralizedTask<double>,double>(
-             table, tree, true,  dm_stripes,dm_stripes_total,
-             task_p );
-             break;
-             */
-        default:
-            fprintf(stderr, "Unknown unifrac task\n");
-        exit(1);
-        break;
-        }
+    //weighted normalized
+    else if (normalized) {
+        unifracTT<su::UnifracNormalizedWeightedTask>(
+            table, tree, true, dm_stripes, dm_stripes_total,
+            task_p );
+    }
+    //weighted normalized
+    else {
+        unifracTT<su::UnifracUnnormalizedWeightedTask>(
+            table, tree, true, dm_stripes, dm_stripes_total,
+            task_p );
     }
 }
 

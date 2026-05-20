@@ -315,7 +315,7 @@ namespace su {
         virtual ~UnifracTask() {}
         
         //Probably should return a vector?
-        virtual void run(unsigned int filled_embs, std::vector<double> length) = 0;
+        virtual void run(unsigned int filled_embs, std::vector<double> lengths) = 0;
         
     protected:
         static const unsigned int RECOMMENDED_MAX_EMBS_STRAIGHT = 128-16; // a little less to leave a bit of space of maxed-out L1
@@ -343,7 +343,7 @@ namespace su {
         
         virtual ~UnifracUnweightedTask() {}
         
-        virtual void run(unsigned int filled_embs, std::vector<double> length) {_run(filled_embs, length);}
+        virtual void run(unsigned int filled_embs, std::vector<double> lengths) {_run(filled_embs, lengths);}
         
         void _run(unsigned int filled_embs, std::vector<double> lengths);
     private:
@@ -351,6 +351,33 @@ namespace su {
     };
 
 
+    /***********************************************/
+
+    class UnifracNormalizedWeightedTask : public UnifracTask<double> {
+      public:
+        static const unsigned int RECOMMENDED_MAX_EMBS = UnifracTask<double>::RECOMMENDED_MAX_EMBS_STRAIGHT;
+
+        UnifracNormalizedWeightedTask(su::StripeMap & _dm_stripes, su::StripeMap & _dm_stripes_total, unsigned int _max_embs, su::task_parameters _task_p)
+        : UnifracTask<double>(_dm_stripes,_dm_stripes_total,_max_embs,_task_p)
+        {
+          const unsigned int n_samples = this->task_p.n_samples;
+
+          zcheck = std::vector<bool>(n_samples, 0);
+          sums = std::vector<double>(n_samples, 0.0);
+        }
+
+        virtual ~UnifracNormalizedWeightedTask()
+        {
+        }
+
+        virtual void run(unsigned int filled_embs, std::vector<double> lengths) {_run(filled_embs, lengths);}
+
+        void _run(unsigned int filled_embs, std::vector<double> lengths);
+      protected:
+        // temp buffers
+        std::vector<bool> zcheck;
+        std::vector<double> sums;
+    };
 
     
     
@@ -360,72 +387,31 @@ namespace su {
     /***********************************************/  
     
 
-//     template<class TFloat>
-//     class UnifracUnnormalizedWeightedTask : public UnifracTask<TFloat,TFloat> {
-//       public:
-//         static const unsigned int RECOMMENDED_MAX_EMBS = UnifracTask<TFloat,TFloat>::RECOMMENDED_MAX_EMBS_STRAIGHT;
-// 
-//         UnifracUnnormalizedWeightedTask(std::vector<double*> &_dm_stripes, std::vector<double*> &_dm_stripes_total, unsigned int _max_embs, const su::task_parameters* _task_p)
-//         : UnifracTask<TFloat,TFloat>(_dm_stripes,_dm_stripes_total,_max_embs,_task_p)
-//         {
-//           const unsigned int n_samples = this->task_p->n_samples;
-// 
-//           zcheck = NULL;
-//           sums = NULL;
-//           posix_memalign((void **)&zcheck, 4096, sizeof(bool) * n_samples);
-//           posix_memalign((void **)&sums  , 4096, sizeof(TFloat) * n_samples);
-// #pragma acc enter data create(zcheck[:n_samples],sums[:n_samples])
-//         }
-// 
-//         virtual ~UnifracUnnormalizedWeightedTask()
-//         {
-//           free(sums);
-//           free(zcheck);
-//         }
-// 
-//         virtual void run(unsigned int filled_embs, const TFloat * __restrict__ length) {_run(filled_embs, length);}
-// 
-//         void _run(unsigned int filled_embs, const TFloat * __restrict__ length);
-//       protected:
-//         // temp buffers
-//         bool     *zcheck;
-//         TFloat   *sums;
-//     };
-//     
-//     /***********************************************/  
-//     
-//     template<class TFloat>
-//     class UnifracNormalizedWeightedTask : public UnifracTask<TFloat,TFloat> {
-//       public:
-//         static const unsigned int RECOMMENDED_MAX_EMBS = UnifracTask<TFloat,TFloat>::RECOMMENDED_MAX_EMBS_STRAIGHT;
-// 
-//         UnifracNormalizedWeightedTask(std::vector<double*> &_dm_stripes, std::vector<double*> &_dm_stripes_total, unsigned int _max_embs, const su::task_parameters* _task_p)
-//         : UnifracTask<TFloat,TFloat>(_dm_stripes,_dm_stripes_total,_max_embs,_task_p)
-//         {
-//           const unsigned int n_samples = this->task_p->n_samples;
-// 
-//           zcheck = NULL;
-//           sums = NULL;
-//           posix_memalign((void **)&zcheck, 4096, sizeof(bool) * n_samples);
-//           posix_memalign((void **)&sums  , 4096, sizeof(TFloat) * n_samples);
-// #pragma acc enter data create(zcheck[:n_samples],sums[:n_samples])
-//         }
-// 
-//         virtual ~UnifracNormalizedWeightedTask()
-//         {
-//           free(sums);
-//           free(zcheck);
-//         }
-// 
-//         virtual void run(unsigned int filled_embs, const TFloat * __restrict__ length) {_run(filled_embs, length);}
-// 
-//         void _run(unsigned int filled_embs, const TFloat * __restrict__ length);
-//       protected:
-//         // temp buffers
-//         bool     *zcheck;
-//         TFloat   *sums;
-//     };
-//     
+    class UnifracUnnormalizedWeightedTask : public UnifracTask<double> {
+      public:
+        static const unsigned int RECOMMENDED_MAX_EMBS = UnifracTask<double>::RECOMMENDED_MAX_EMBS_STRAIGHT;
+
+        UnifracUnnormalizedWeightedTask(su::StripeMap & _dm_stripes, su::StripeMap & _dm_stripes_total, unsigned int _max_embs, su::task_parameters _task_p)
+        : UnifracTask<double>(_dm_stripes,_dm_stripes_total,_max_embs,_task_p)
+        {
+            const unsigned int n_samples = this->task_p.n_samples;
+            
+            zcheck = std::vector<bool>(n_samples, 0);
+            sums = std::vector<double>(n_samples, 0.0);
+        }
+
+        virtual ~UnifracUnnormalizedWeightedTask() {}
+
+        virtual void run(unsigned int filled_embs, std::vector<double> lengths) {_run(filled_embs, lengths);}
+
+        void _run(unsigned int filled_embs, std::vector<double> lengths);
+      protected:
+        // temp buffers
+        std::vector<bool> zcheck;
+        std::vector<double> sums;
+    };
+
+
 //     
 //     /***********************************************/  
 //     

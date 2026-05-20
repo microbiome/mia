@@ -29,16 +29,6 @@
             std::vector<double> condensed_form;
             std::vector<std::string> sample_ids;
         } mat_t;
-    
-    
-        enum Method {unweighted,
-                     weighted_normalized,
-                     weighted_unnormalized,
-                     generalized,
-                     unknown};
-        
-        Method set_method(std::string requested_method);                                                                  
-        
         
         /* Compute UniFrac - condensed form
          *
@@ -62,19 +52,18 @@
         
         su::mat_t one_off(const su::Assay & table,
                               const su::BPTree & tree,
-                              std::string unifrac_method,
-                              double alpha,
-                              bool variance_adjust,
+                              bool weighted,
+                              bool normalized,
                               bool bypass_tips);
         
         // Chooses the right task for the job and constructs a unifracTT
         void unifrac(const su::Assay &table,
                      const su::BPTree &tree,
-                     su::Method unifrac_method,
                      su::StripeMap & dm_stripes,
                      su::StripeMap & dm_stripes_total,
-                     const su::task_parameters task_p,
-                     bool variance_adjust);
+                     bool weighted,
+                     bool normalized,
+                     const su::task_parameters task_p);
         
         // Works the vectors
         template<class TaskT>
@@ -119,39 +108,39 @@
         
         
         
-        
-        double** deconvolute_stripes(std::vector<double*> &stripes, uint32_t n);
-
-        class ManagedStripes {
-        public:
-           virtual ~ManagedStripes() {}
-           virtual const double *get_stripe(uint32_t stripe) const = 0;
-           virtual void release_stripe(uint32_t stripe) const = 0;
-        };
-
-        class MemoryStripes : public ManagedStripes {
-        private:
-           const double  * const * stripes;  // just a pointer, not owned
-        public:
-           MemoryStripes(const double  * const * _stripes) : stripes(_stripes) {}
-           MemoryStripes(std::vector<double*> &_stripes) : stripes(_stripes.data()) {}
-           MemoryStripes(const std::vector<double*> &_stripes) : stripes(_stripes.data()) {}
-           MemoryStripes(const std::vector<const double*> &_stripes) : stripes(_stripes.data()) {}
-           MemoryStripes(std::vector<const double*> &_stripes) : stripes(_stripes.data()) {}
-
-           virtual const double *get_stripe(uint32_t stripe) const {return stripes[stripe];}
-           virtual void release_stripe(uint32_t stripe) const {};
-        };
-
-        // tile_size==0 means memory optimized
-        template<class TReal> void stripes_to_matrix_T(const ManagedStripes &stripes, const uint32_t n_samples, const uint32_t n_stripes, TReal*  __restrict__ buf2d, uint32_t tile_size=0);
-        void stripes_to_matrix(const ManagedStripes &stripes, const uint32_t n_samples, const uint32_t n_stripes, double*  __restrict__ buf2d, uint32_t tile_size=0);
-        void stripes_to_matrix_fp32(const ManagedStripes &stripes, const uint32_t n_samples, const uint32_t n_stripes, float*  __restrict__ buf2d, uint32_t tile_size=0);
-
-
-        template<class TReal> void condensed_form_to_matrix_T(const double*  __restrict__ cf, const uint32_t n, TReal*  __restrict__ buf2d);
-        void condensed_form_to_matrix(const double*  __restrict__ cf, const uint32_t n, double*  __restrict__ buf2d);
-        void condensed_form_to_matrix_fp32(const double*  __restrict__ cf, const uint32_t n, float*  __restrict__ buf2d);
+        // 
+        // double** deconvolute_stripes(std::vector<double*> &stripes, uint32_t n);
+        // 
+        // class ManagedStripes {
+        // public:
+        //    virtual ~ManagedStripes() {}
+        //    virtual const double *get_stripe(uint32_t stripe) const = 0;
+        //    virtual void release_stripe(uint32_t stripe) const = 0;
+        // };
+        // 
+        // class MemoryStripes : public ManagedStripes {
+        // private:
+        //    const double  * const * stripes;  // just a pointer, not owned
+        // public:
+        //    MemoryStripes(const double  * const * _stripes) : stripes(_stripes) {}
+        //    MemoryStripes(std::vector<double*> &_stripes) : stripes(_stripes.data()) {}
+        //    MemoryStripes(const std::vector<double*> &_stripes) : stripes(_stripes.data()) {}
+        //    MemoryStripes(const std::vector<const double*> &_stripes) : stripes(_stripes.data()) {}
+        //    MemoryStripes(std::vector<const double*> &_stripes) : stripes(_stripes.data()) {}
+        // 
+        //    virtual const double *get_stripe(uint32_t stripe) const {return stripes[stripe];}
+        //    virtual void release_stripe(uint32_t stripe) const {};
+        // };
+        // 
+        // // tile_size==0 means memory optimized
+        // template<class TReal> void stripes_to_matrix_T(const ManagedStripes &stripes, const uint32_t n_samples, const uint32_t n_stripes, TReal*  __restrict__ buf2d, uint32_t tile_size=0);
+        // void stripes_to_matrix(const ManagedStripes &stripes, const uint32_t n_samples, const uint32_t n_stripes, double*  __restrict__ buf2d, uint32_t tile_size=0);
+        // void stripes_to_matrix_fp32(const ManagedStripes &stripes, const uint32_t n_samples, const uint32_t n_stripes, float*  __restrict__ buf2d, uint32_t tile_size=0);
+        // 
+        // 
+        // template<class TReal> void condensed_form_to_matrix_T(const double*  __restrict__ cf, const uint32_t n, TReal*  __restrict__ buf2d);
+        // void condensed_form_to_matrix(const double*  __restrict__ cf, const uint32_t n, double*  __restrict__ buf2d);
+        // void condensed_form_to_matrix_fp32(const double*  __restrict__ cf, const uint32_t n, float*  __restrict__ buf2d);
 
     }
     
