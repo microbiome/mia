@@ -44,7 +44,6 @@
 Rcpp::List unifrac_cpp(const Rcpp::NumericMatrix & assay,
                               const Rcpp::List & rowTree,
                               bool weighted,
-                              bool normalized,
                               bool bypass_tips){
     
     // Normalized matches the results given by weighted
@@ -60,7 +59,7 @@ Rcpp::List unifrac_cpp(const Rcpp::NumericMatrix & assay,
     
     su::BPTree tree_sheared = tree.shear(to_keep).collapse();
     
-    su::mat_t results = su::one_off(table, tree_sheared, weighted, normalized, bypass_tips);
+    su::mat_t results = su::one_off(table, tree_sheared, weighted, bypass_tips);
     
     //condensed_form is the main values, returned in result
     //Sample_ids can be handled with a map?

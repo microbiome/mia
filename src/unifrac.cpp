@@ -34,13 +34,11 @@
 su::mat_t su::one_off(const su::Assay & table,
                       const su::BPTree & tree,
                       bool weighted,
-                      bool normalized,
                       bool bypass_tips) {
     
     //Number of stripes to be used, basically half of samples
     const unsigned int stripe_stop = (table.n_samples + 1) / 2;
     
-    //Originally std::vector of double pointers - this is where the data travels?
     su::StripeMap dm_stripes(table.n_samples);
     su::StripeMap dm_stripes_total(table.n_samples);
     
@@ -55,13 +53,6 @@ su::mat_t su::one_off(const su::Assay & table,
     
     task.n_samples = table.n_samples;
     
-    //Main action
-    //Calls either unifrac or _vaw depending on variance_adjust
-    //makes use of std::ref?
-    //Versions for accelerated and cpu - let's go with cpu for now
-    //method is "unweighted" by default, let's start with that and see what else may be needed
-    
-    
     //This could potentially be threaded
     //Wasn't in the code because doesn't work with openacc/openmp?
     
@@ -70,12 +61,7 @@ su::mat_t su::one_off(const su::Assay & table,
                 std::ref(dm_stripes),
                 std::ref(dm_stripes_total),
                 weighted,
-                normalized,
                 task);
-    
-    //Only use of std::thread in this version of code was for stripes to condensed form
-    //Basically each thread calls stripes_to_condensed_form
-    //Which is just a bunch of binomial calculations
     
     su::mat_t result;
     result.n_samples = table.n_samples;
@@ -98,7 +84,6 @@ void su::unifrac(const su::Assay &table,
                  su::StripeMap & dm_stripes,
                  su::StripeMap & dm_stripes_total,
                  bool weighted,
-                 bool normalized,
                  const su::task_parameters task_p)
 {
     //unweighted
@@ -108,21 +93,12 @@ void su::unifrac(const su::Assay &table,
             task_p );
     }
     //weighted normalized
-    else if (normalized) {
+    else {
         unifracTT<su::UnifracNormalizedWeightedTask>(
             table, tree, true, dm_stripes, dm_stripes_total,
             task_p );
     }
-    //weighted normalized
-    else {
-        unifracTT<su::UnifracUnnormalizedWeightedTask>(
-            table, tree, true, dm_stripes, dm_stripes_total,
-            task_p );
-    }
 }
-
-
-
 
 
 template<class TaskT>
@@ -142,7 +118,6 @@ inline void su::unifracTT(const su::Assay & table,
     const unsigned int n_samples = task_p.n_samples;
     const uint64_t  n_samples_r = ((n_samples + UNIFRAC_BLOCK-1)/UNIFRAC_BLOCK)*UNIFRAC_BLOCK; // round up
     
-    //su::PropStackMulti<TFloat> propstack_multi(table.n_samples);
     su::PropMap propmap(table.n_samples);
     
     const unsigned int max_emb =  TaskT::RECOMMENDED_MAX_EMBS;
@@ -210,7 +185,7 @@ inline void su::unifracTT(const su::Assay & table,
         // ck = 0
         // chunk the progress to maximize cache reuse
         const unsigned int tstart = 0;
-        const unsigned int tend = n_samples; // end of propstack?
+        const unsigned int tend = n_samples;
         unsigned int my_filled_emb = 0;
         unsigned int my_k=k_start;
         
@@ -218,18 +193,8 @@ inline void su::unifracTT(const su::Assay & table,
             const uint32_t node = tree.postorderselect(my_k);
             my_k++;
             
-            //TFloat *node_proportions = propstack.pop(node);
-            //su::set_proportions_range(node_proportions, tree, node, table, tstart, tend, propstack);
-            
             //calculate proportions range for given node
             std::vector<double> node_proportions = su::set_proportions_range(tree, node, table, tstart, tend, propmap);
-            
-            
-            //propstack pop ERASES any existing vector for node and gives a blank one
-                //creates memory leaks if node isn't pushed before popping? 
-            //get just returns the given vector
-            //push removes the vector from use
-            //Any time a propstack vector is modified, remember to do a propmap update
             
             if(task_p.bypass_tips && tree.isleaf(node))
                 continue;
@@ -242,10 +207,6 @@ inline void su::unifracTT(const su::Assay & table,
         }
          
         k=my_k;
-        
-        //This is used to keep track of filled embeds over different threads?
-        //Does nothing without openacc
-        //taskObj.sync_embedded_proportions(filled_emb);
         
         taskObj._run(filled_emb,lengths);
         
@@ -265,12 +226,6 @@ inline void su::unifracTT(const su::Assay & table,
         }
     }
 }
-
-
-
-
-
-
 
 std::vector<double> su::stripes_to_condensed_form(su::StripeMap & stripes,
                                    uint32_t n,
@@ -302,5 +257,3 @@ std::vector<double> su::stripes_to_condensed_form(su::StripeMap & stripes,
     }
     return cf;
 }
-
-
