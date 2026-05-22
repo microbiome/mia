@@ -129,7 +129,7 @@ Must be \code{'rows'} or \code{'cols'}.}
 \item{MARGIN}{Deprecated. Use \code{by} instead.}
 
 \item{method}{\code{Character scalar}. Defines the association method
-('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical'
+('kendall', 'pearson', or 'spearman' for continuous/numeric; 'categorical'
 for discrete) (Default: \code{"kendall"})}
 
 \item{mode}{\code{Character scalar}. Specifies the  output format
@@ -293,7 +293,7 @@ mae[[1]] <- addAlpha(mae[[1]])
 # col.var from colData.
 result <- getCrossAssociation(
     mae[[1]], assay.type1 = "counts",
-    col.var2 = c("shannon_diversity", "coverage_diversity"),
+    col.var2 = c("shannon_diversity", "dbp_dominance"),
     test.signif = TRUE, show.warnings = FALSE, verbose = FALSE)
 
 # If your data contains TreeSE with alternative experiment in altExp,
@@ -319,5 +319,16 @@ tse <- addMDS(tse, assay.type = "rclr", method = "euclidean")
 res <- getCrossAssociation(tse, assay.type1 = "rclr", dimred2 = "MDS",
     show.warnings = FALSE, verbose = FALSE)
 head(res)
+
+# In ecological studies the association analyses are sometimes carried out
+# only for those samples that have observations. You can ignore zeroes by
+# replacing them with NA.
+mat <- assay(tse, "counts")
+mat[ mat == 0 ] <- NA
+assay(tse, "non_zero", withDimnames = FALSE) <- mat
+res2 <- getCrossAssociation(
+    tse, tse,
+    assay.type1 = "non_zero", assay.type2 = "non_zero"
+)
 
 }

@@ -38,7 +38,7 @@ convertFromPhyloseq <- function(x) {
     }
     #
     # Get the assay
-    counts <- phyloseq::otu_table(x) |> as.matrix() |> unclass()
+    counts <- as(phyloseq::otu_table(x), "matrix")
     # Check the orientation, and transpose if necessary
     if( !phyloseq::taxa_are_rows(x) ){
         counts <- t(counts)

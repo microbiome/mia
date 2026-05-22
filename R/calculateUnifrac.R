@@ -1,5 +1,6 @@
 #' @importFrom ape drop.tip
-#' @importFrom rbiom unifrac
+#' @importFrom ecodive weighted_unifrac
+#' @importFrom ecodive unweighted_unifrac
 .get_unifrac <- function(
         x, tree, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
     # Transpose the matrix so that the orientation is the same as in other
@@ -20,14 +21,22 @@
     if(is.null(colnames(x)) || is.null(rownames(x))){
         stop("colnames and rownames must not be NULL", call. = FALSE)
     }
-    # node.label should be NULL or character vector specifying links between 
+    # node.label should be NULL or character vector specifying links between
     # rows and tree labels
-    if( !(is.null(node.label) ||
-            (is.character(node.label) && length(node.label) == nrow(x) &&
-            all(node.label[ !is.na(node.label) ] %in% tree$tip.label))) ){
+    node_for_each <- is.character(node.label) &&
+        length(node.label) == nrow(x) &&
+        all(node.label[ !is.na(node.label) ] %in% tree$tip.label)
+    named_vector <- is.character(node.label) && !is.null(names(node.label)) &&
+        all(rownames(x) %in% names(node.label))
+    if( !(is.null(node.label) || node_for_each || named_vector ) ){
         stop(
             "'node.label' must be NULL or character specifying links between ",
             "abundance table and tree labels.", call. = FALSE)
+    }
+    # If the labels were provided as named vector where names represent
+    # original rows and values represent tips.
+    if( named_vector ){
+        node.label <- node.label[ match(rownames(x), names(node.label)) ]
     }
     # check that matrix and tree are compatible
     if( is.null(node.label) && !all(rownames(x) %in% c(tree$tip.label)) ) {
@@ -63,23 +72,23 @@
     # multiple rows are linked to single tip.
     x <- .merge_assay_by_rows(x, node.label, ...)
 
-    # Calculate unifrac. Use implementation from rbiom package
-    res <- unifrac(x, tree = tree, weighted = weighted)
+    # Calculate unifrac. Use implementation from ecodive package
+    FUN <- if( weighted ) weighted_unifrac else unweighted_unifrac
+    res <- FUN(t(x), tree = tree)
     return(res)
 }
 
 # Aggregate matrix based on nodeLabs. At the same time, rename rows based on
 # node.label
 # --> each row represent specific node of tree
-#' @importFrom scuttle sumCountsAcrossFeatures
 .merge_assay_by_rows <- function(x, node.label, average = FALSE, ...){
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
     # Merge assay based on nodeLabs
-    x <- sumCountsAcrossFeatures(
-        x, ids = node.label, subset.row = NULL, subset.col = NULL,
-        average = average)
+    x <- .sum_counts_across_features(
+        x, node.label, average = average, na.rm = FALSE
+    )
     # Remove NAs from node.label
     node.label <- node.label[ !is.na(node.label) ]
     # Get the original order back

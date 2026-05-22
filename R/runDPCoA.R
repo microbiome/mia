@@ -1,6 +1,6 @@
-#' Calculation of Double Principal Correspondance analysis
+#' Calculation of Double Principal Correspondence analysis
 #'
-#' Double Principal Correspondance analysis is made available via the
+#' Double Principal Correspondence analysis is made available via the
 #' \code{ade4} package in typical fashion. Results are stored in the
 #' \code{reducedDims} and are available for all the expected functions.
 #'

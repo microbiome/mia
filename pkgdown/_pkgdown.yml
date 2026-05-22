@@ -1,3 +1,5 @@
+url: https://microbiome.github.io/mia/
+
 destination: docs
 reference:
 - title: Association
@@ -5,6 +7,10 @@ reference:
   - getCrossAssociation
   - getMediation
   - getPERMANOVA
+
+- title: Joint-RPCA
+  contents:
+    - getJointRPCA
 
 - title: Clustering
 - contents:
@@ -37,6 +43,7 @@ reference:
   - peerj13075
   - Tengeler2020
   - Tito2024QMP
+  - ibdmdb
 - title: Dataset description
 - contents:
   - getPrevalence

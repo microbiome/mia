@@ -476,6 +476,20 @@ setMethod("subsetByRare", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @rdname getPrevalence
 #' @export
+setMethod("addPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
+    function(x, name = "prevalent_abundance", ...){
+        if( !.is_a_string(name) ){
+            stop("'name' must be a single character value.", call. = FALSE)
+        }
+        res <- getPrevalentAbundance(x, ...)
+        res <- list(res) |> unname()
+        x <- .add_values_to_colData(x, res, name, MARGIN = 2L)
+        return(x)
+    }
+)
+
+#' @rdname getPrevalence
+#' @export
 setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
     function(x, ...){
         x <- .calc_rel_abund(x)
@@ -563,7 +577,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
         }
         #
         # Check assays that they can be merged safely
-        temp <- mapply(.check_assays_for_merge, assayNames(x), assays(x))
+        mapply(.check_assay_for_merge, assayNames(x), assays(x))
         #
         x <- .merge_features(x, rank, check.assays = FALSE, ...)
         pr <- getPrevalent(x, rank = NULL, ...)
@@ -613,12 +627,20 @@ setMethod("agglomerateByPrevalence",
         if( merge_refseq && !is.null(referenceSeq(x))  ){
             # If user wants to agglomerate based on rank
             x <- .merge_features(x, rank, check.assays = FALSE, ...)
-            # Find groups that will be used to agglomerate the data
-            f <- rownames(x)[ match(rownames(x), rownames(res)) ]
-            f[ is.na(f) ] <- other.name
-            # Find consensus sequences, and add them to result
+            # The agglomeration already merged sequences based on rank, but of
+            # course, it did not take into account prevalence agglomeration.
+            # We create a vector that we can use to merge the "other", i.e.,
+            # rare feature group. All features of rank-agglomerated data that
+            # cannot be found from prevalence agglomerated data belong to
+            # "other" group, i.e., they were merged together as rare features.
+            f <- rownames(x)
+            f[ !f %in% rownames(res) ] <- other.name
+            # Find consensus sequences for "other" group.
             ref_seq <- referenceSeq(x)
-            ref_seq <- .merge_refseq_list(ref_seq, f, rownames(res), ...)
+            ref_seq <- .merge_refseq_list(ref_seq, f, unique(f), ...)
+            # Sort the sequences to match the agglomerated data and add them to
+            # the final results.
+            ref_seq <- ref_seq[ match(rownames(res), names(ref_seq)) ]
             referenceSeq(res) <- ref_seq
         }
         # Update tree if user has specified to do so

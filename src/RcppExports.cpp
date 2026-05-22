@@ -22,9 +22,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+<<<<<<< HEAD
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mia_faith_cpp", (DL_FUNC) &_mia_faith_cpp, 2},
+=======
+// apply_transformation_difference_or_division
+S4 apply_transformation_difference_or_division(NumericMatrix mat, std::string method);
+RcppExport SEXP _mia_apply_transformation_difference_or_division(SEXP matSEXP, SEXP methodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
+    rcpp_result_gen = Rcpp::wrap(apply_transformation_difference_or_division(mat, method));
+    return rcpp_result_gen;
+END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_mia_faith_cpp", (DL_FUNC) &_mia_faith_cpp, 2},
+    {"_mia_apply_transformation_difference_or_division", (DL_FUNC) &_mia_apply_transformation_difference_or_division, 2},
+>>>>>>> upstream/devel
     {NULL, NULL, 0}
 };
 

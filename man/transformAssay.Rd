@@ -10,11 +10,9 @@ transformAssay(x, ...)
 
 \S4method{transformAssay}{SummarizedExperiment}(
   x,
+  method,
   assay.type = "counts",
   assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "css", "frequency", "hellinger", "log", "log10",
-    "log2", "max", "normalize", "pa", "philr", "range", "rank", "rclr", "relabundance",
-    "rrank", "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
@@ -33,6 +31,8 @@ or \code{philr::philr}.
 to fill reference sample's column in returned assay when calculating alr.
 (Default: \code{NA})
 \item \code{ref_vals} Deprecated. Use \code{reference} instead.
+\item \code{nbins}: \code{Numeric scalar}. For \code{"binning"}, specifies
+the number of bins to use. (Default: \code{4})
 \item \code{percentile}: \code{Numeric scalar} or \code{NULL} (css). Used
 to set the  percentile value that calculates the scaling factors in the css
 normalization. If \code{NULL}, percentile is estimated from the data by
@@ -41,10 +41,15 @@ calculating the portion of samples that exceed the \code{threshold}.
 \item \code{scaling}: \code{Numeric scalar}. Adjusts the normalization
 scale  by dividing the calculated scaling factors, effectively changing
 the magnitude of the normalized counts. (Default: \code{1000}).
-\item \code{threshold}: \code{Numeric scalar}. Specifies relative
-difference threshold and determines the first point where the relative
-change in  differences between consecutive quantiles exceeds this
-threshold. (Default: \code{0.1}).
+\item \code{threshold}: \code{Numeric scalar}. For  \code{"css"},
+specifies relative difference threshold and determines the first point
+where the relative change in  differences between consecutive quantiles
+exceeds this threshold. (Default: \code{0.1}) For \code{"cutoff"},
+values less than or equal to the threshold are replaced with \code{value}.
+(Default: \code{0})
+\item \code{value}: \code{Numeric scalar}. For  \code{"cutoff"}, specifies
+the replacement value for counts less than or equal to the threshold.
+(Default: \code{NA})
 \item \code{tree}: \code{phylo}. Phylogeny used in PhILR transformation.
 If \code{NULL}, the tree is retrieved from \code{x}.
 (Default: \code{NULL}).
@@ -53,13 +58,13 @@ If \code{NULL}, the tree is retrieved from \code{x}.
 (Default: \code{NULL}).
 }}
 
+\item{method}{\code{Character scalar}. Specifies the transformation
+method.}
+
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
-\item{method}{\code{Character scalar}. Specifies the transformation
-method.}
 
 \item{MARGIN}{\code{Character scalar}. Determines whether the
 transformation is applied sample (column) or feature (row) wise.
@@ -104,7 +109,7 @@ The available transformation methods include:
 \itemize{
 
 \item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
-'normalize', 'pa', 'rank', 'rclr' relabundance', 'rrank', 'standardize',
+'normalize', 'pa', 'rank', 'rclr', 'relabundance', 'rrank', 'standardize',
 'total': please refer to
 \code{\link[vegan:decostand]{decostand}} for details.
 
@@ -129,6 +134,38 @@ the data.
 \deqn{log2 = \log_{2} x}{%
 log2 = log2(x)}
 where \eqn{x} is a single value of data.
+
+\item 'difference': Pairwise differences between features.
+Calculates \eqn{x - y} for all unique feature pairs across samples,
+where \eqn{x} and \eqn{y} are entries of the specified assay.type.
+
+\item 'division': Pairwise ratios between features.
+Calculates \eqn{x / y} for all unique feature pairs across samples,
+where \eqn{x} and \eqn{y} are entries of the specified assay.type.
+
+\item 'invnorm': Inverse rank normalisation. Ranks values per
+sample/feature and maps them to standard normal quantiles.
+\deqn{
+z = \Phi^{-1}\!\left(
+  \frac{r - \mathrm{offset}}{\,n + 1 - 2\,\mathrm{offset}\,}
+\right)
+}
+Controlled by \code{offset} (default \code{0.5}; also
+\code{0.375}=Blom, \code{0}=van der Waerden) and \code{ties.method}
+(passed to \code{base::rank}, default \code{"average"}).
+
+\item 'pseudocount': Adds only pseudocount.
+
+\item 'cutoff': In some ecological studies, only strictly positive values
+are taken into account. This method keeps only values greater than
+\code{threshold} and replaces all other values with \code{value}.
+
+\item 'binning': Binning of the abundance values into a specified number of
+bins. The non-zero values are sorted and divided into \code{nbins} groups of
+equal size (quantiles). The group with the highest abundances is assigned to
+bin \code{nbins}, while the group with the lowest non-zero abundances is
+assigned to bin 1. Zero values are assigned to bin 0. This binning approach
+is based on the binning strategy described by Medearis et al. (2026).
 
 }
 }
@@ -201,6 +238,11 @@ Paulson, J., Stine, O., Bravo, H. et al. (2013)
 Differential abundance analysis for microbial marker-gene surveys
 \emph{Nature Methods} 10, 1200–1202.
 doi:10.1038/nmeth.2658
+
+Medearis, N. A., Zhu, S., & Zomorrodi, A. R. (2026).
+BiomeGPT: A foundation model for the human gut microbiome
+\emph{bioRxiv}
+doi:10.64898/2026.01.05.697599
 }
 \seealso{
 \itemize{

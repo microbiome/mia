@@ -173,3 +173,20 @@ Changes in version 1.15.x
 + Improve decontam functions
 + Support precalculated dissimilarity matrix in dbRDA
 + Calculate standard, binary Jaccard index by default
+
+Changes in version 1.17.x
++ Added add.dimred parameter to meltSE() (2025-04-29)
++ Added transformation method that replaces values <= threshold with NA (2025-05-09)
++ importMetaPhlAn: Preserve features without taxonomy
++ Added agglomerateByModule()
++ Added inverse rank normalization (2025-09-10)
+
+Changes in version 1.19.x
++ Fixed a bug related to agglomerateByPrevalence and referenceSeq agglomeration (2025-12-08)
++ Use ecodive in UniFrac (1.19.2, 2025-12-09)
++ Added binning transformation (1.19.3, 2026-02-23)
++ Added support for reducedDim in clustering (1.19.5, 2026-03-06)
+
+Changes in version 1.21.x
++ Fixed explained percentages on PCA axes for jointRPCA and hardened
+  rank-deficient SVD handling in joint-RPCA (1.21.1, 2026-05-12)

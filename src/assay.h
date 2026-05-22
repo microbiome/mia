@@ -52,13 +52,13 @@ class Assay {
          * @param normalize If set, divide by sample_counts
          */
         std::vector<double> get_obs_data_range(const std::string &id,
-                                               unsigned int start,
-                                               unsigned int end,
-                                               bool normalize) const;
+                                                unsigned int start,
+                                                unsigned int end,
+                                                bool normalize) const;
         
-private:
-    Rcpp::NumericMatrix table; // Access to raw sample counts in R's memory
-    
+    private:
+        Rcpp::NumericMatrix table; // Access to raw sample counts in R's memory
+
         std::vector<double> get_sample_counts();
         
         /* At construction, lookups mapping IDs -> index position within an
@@ -73,8 +73,8 @@ private:
          * @param map A hash table to populate
          */
         void create_id_index(std::vector<std::string> &ids, 
-                             std::unordered_map<std::string,
-                                                uint32_t> &map);
+                                std::unordered_map<std::string,
+                                uint32_t> &map);
     };
 }
 

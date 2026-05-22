@@ -36,6 +36,8 @@
 #'   to fill reference sample's column in returned assay when calculating alr.
 #'   (Default: \code{NA})
 #'   \item \code{ref_vals} Deprecated. Use \code{reference} instead.
+#'   \item \code{nbins}: \code{Numeric scalar}. For \code{"binning"}, specifies
+#'   the number of bins to use. (Default: \code{4})
 #'   \item \code{percentile}: \code{Numeric scalar} or \code{NULL} (css). Used
 #'   to set the  percentile value that calculates the scaling factors in the css
 #'   normalization. If \code{NULL}, percentile is estimated from the data by
@@ -44,10 +46,15 @@
 #'   \item \code{scaling}: \code{Numeric scalar}. Adjusts the normalization
 #'   scale  by dividing the calculated scaling factors, effectively changing
 #'   the magnitude of the normalized counts. (Default: \code{1000}).
-#'   \item \code{threshold}: \code{Numeric scalar}. Specifies relative
-#'   difference threshold and determines the first point where the relative
-#'   change in  differences between consecutive quantiles exceeds this
-#'   threshold. (Default: \code{0.1}).
+#'   \item \code{threshold}: \code{Numeric scalar}. For  \code{"css"},
+#'   specifies relative difference threshold and determines the first point
+#'   where the relative change in  differences between consecutive quantiles
+#'   exceeds this threshold. (Default: \code{0.1}) For \code{"cutoff"},
+#'   values less than or equal to the threshold are replaced with \code{value}.
+#'   (Default: \code{0})
+#'   \item \code{value}: \code{Numeric scalar}. For  \code{"cutoff"}, specifies
+#'   the replacement value for counts less than or equal to the threshold.
+#'   (Default: \code{NA})
 #'   \item \code{tree}: \code{phylo}. Phylogeny used in PhILR transformation.
 #'   If \code{NULL}, the tree is retrieved from \code{x}.
 #'   (Default: \code{NULL}).
@@ -70,7 +77,7 @@
 #' \itemize{
 #'
 #' \item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
-#' 'normalize', 'pa', 'rank', 'rclr' relabundance', 'rrank', 'standardize',
+#' 'normalize', 'pa', 'rank', 'rclr', 'relabundance', 'rrank', 'standardize',
 #' 'total': please refer to
 #' \code{\link[vegan:decostand]{decostand}} for details.
 #'
@@ -96,6 +103,38 @@
 #' log2 = log2(x)}
 #' where \eqn{x} is a single value of data.
 #'
+#' \item 'difference': Pairwise differences between features.
+#' Calculates \eqn{x - y} for all unique feature pairs across samples,
+#' where \eqn{x} and \eqn{y} are entries of the specified assay.type.
+#'
+#' \item 'division': Pairwise ratios between features.
+#' Calculates \eqn{x / y} for all unique feature pairs across samples,
+#' where \eqn{x} and \eqn{y} are entries of the specified assay.type.
+#'
+#' \item 'invnorm': Inverse rank normalisation. Ranks values per
+#' sample/feature and maps them to standard normal quantiles.
+#' \deqn{
+#' z = \Phi^{-1}\!\left(
+#'   \frac{r - \mathrm{offset}}{\,n + 1 - 2\,\mathrm{offset}\,}
+#' \right)
+#' }
+#' Controlled by \code{offset} (default \code{0.5}; also
+#' \code{0.375}=Blom, \code{0}=van der Waerden) and \code{ties.method}
+#' (passed to \code{base::rank}, default \code{"average"}).
+#'
+#' \item 'pseudocount': Adds only pseudocount.
+#'
+#' \item 'cutoff': In some ecological studies, only strictly positive values
+#' are taken into account. This method keeps only values greater than
+#' \code{threshold} and replaces all other values with \code{value}.
+#'
+#' \item 'binning': Binning of the abundance values into a specified number of
+#' bins. The non-zero values are sorted and divided into \code{nbins} groups of
+#' equal size (quantiles). The group with the highest abundances is assigned to
+#' bin \code{nbins}, while the group with the lowest non-zero abundances is
+#' assigned to bin 1. Zero values are assigned to bin 0. This binning approach
+#' is based on the binning strategy described by Medearis et al. (2026).
+#'
 #' }
 #'
 #' @return
@@ -109,6 +148,11 @@
 #' Differential abundance analysis for microbial marker-gene surveys
 #' _Nature Methods_ 10, 1200–1202.
 #' doi:10.1038/nmeth.2658
+#'
+#' Medearis, N. A., Zhu, S., & Zomorrodi, A. R. (2026).
+#' BiomeGPT: A foundation model for the human gut microbiome
+#' _bioRxiv_
+#' doi:10.64898/2026.01.05.697599
 #'
 #' @seealso
 #' \itemize{
@@ -187,12 +231,9 @@ NULL
 #' @rdname transformAssay
 #' @export
 setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
-    function(x,
+    function(
+        x, method,
         assay.type = "counts", assay_name = NULL,
-        method = c("alr", "chi.square", "clr", "css", "frequency",
-            "hellinger", "log", "log10", "log2", "max", "normalize",
-            "pa", "philr", "range", "rank", "rclr", "relabundance", "rrank",
-            "standardize", "total", "z"),
         MARGIN = "samples",
         name = method,
         pseudocount = FALSE,
@@ -242,10 +283,12 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 .transform_assay <- function(
         x, assay.type = "counts", assay_name = NULL,
         method = c(
-            "alr", "chi.square", "clr", "css", "frequency",
-            "hellinger", "log", "log10", "log2", "max", "normalize",
-            "pa", "philr", "range", "rank", "rclr", "relabundance", "rrank",
-            "standardize", "total", "z"),
+            "alr", "binning", "chi.square", "clr", "css", "cutoff",
+            "difference", "-",
+            "division", "/", "frequency", "hellinger", "invnorm", "log",
+            "log10", "log2", "max", "normalize", "pa", "philr", "pseudocount",
+            "range", "rank", "rclr", "relabundance", "rrank", "standardize",
+            "total", "z"),
         MARGIN = "samples",
         name = method,
         pseudocount = FALSE,
@@ -270,6 +313,9 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
             call. = FALSE)
     }
     method <- match.arg(method, several.ok = FALSE)
+    # Division and difference methods have aliases
+    method <- if( method %in% c("-") ) "difference" else method
+    method <- if( method %in% c("/") ) "division" else method
     # Check that MARGIN is 1 or 2
     MARGIN <- .check_MARGIN(MARGIN)
     # Check pseudocount
@@ -279,9 +325,13 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
             "greater than 0.", call. = FALSE)
     }
     # Input check end
-    # Get the method and abundance table
-    method <- match.arg(method)
+    # Get the abundance table
     assay <- assay(x, assay.type)
+    # If user specified "pseudocount" as method, enable automated pseudocount,
+    # if exact value is not specified
+    if( method == "pseudocount" && .is_a_bool(pseudocount) && !pseudocount ){
+        pseudocount <- TRUE
+    }
     # Apply pseudocount, if it is not 0 or FALSE
     assay <- .apply_pseudocount(assay, pseudocount, ...)
     # Store pseudocount value and set attr equal to NULL. The function above,
@@ -290,12 +340,18 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     attr(assay, "pseudocount") <- NULL
     # Calls help function that does the transformation
     # Help function is different for mia and vegan transformations
-    if( method %in% c("log10", "log2", "css") ){
+    if( method %in% c("binning", "log10", "log2", "css", "difference",
+            "division", "invnorm") ){
         transformed_table <- .apply_transformation(
             assay, method, MARGIN, ...)
     } else if( method %in% c("philr") ){
         transformed_table <- .apply_transformation_from_philr(
             assay, method, MARGIN, x = x, ...)
+    } else if ( method %in% c("pseudocount") ){
+        transformed_table <- assay
+        attr(transformed_table, "mia") <- method
+    } else if ( method %in% c("cutoff") ){
+        transformed_table <- .apply_cutoff(assay, ...)
     } else {
         transformed_table <- .apply_transformation_from_vegan(
             assay, method, MARGIN, ...)
@@ -319,21 +375,25 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     # Function is selected based on the "method" variable
     FUN <- switch(
         method,
+        binning = .apply_binning,
         log10 = .calc_log,
         log2 = .calc_log,
-        css = .calc_css
+        css = .calc_css,
+        difference = .apply_transformation_difference_or_division,
+        division = .apply_transformation_difference_or_division,
+        invnorm = .apply_transformation_invnorm
     )
     # Get transformed table
-    transformed_table <- do.call(
+    assay <- do.call(
         FUN, list(mat = assay, method = method, MARGIN = MARGIN, ...) )
     # Transpose back to normal if MARGIN is row
     if( MARGIN == 1L ){
-        transformed_table <- t(transformed_table)
+        assay <- t(assay)
     }
     # Add method and margin to attributes
-    attr(transformed_table, "mia") <- method
-    attr(transformed_table, "parameters")$margin <- MARGIN
-    return(transformed_table)
+    attr(assay, "mia") <- method
+    attr(assay, "parameters")$margin <- MARGIN
+    return(assay)
 }
 
 ########################.apply_transformation_from_vegan########################
@@ -623,6 +683,14 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
             stop("The assay contains negative values. ",
                 "'pseudocount' must be specified manually.", call. = FALSE)
         }
+        # If there are only positive, non-zero values, we do not add pseudocount
+        if( pseudocount && all(mat > 0, na.rm = TRUE) ){
+            pseudocount <- 0
+            message("The assay contains already only strictly positive ",
+                    "values. It is not recommended to add pseudocount",
+		    "in such case. To force adding pseudocount you can",
+		    "provide a numeric value for the pseudocount argument.")
+        }
         # If pseudocount TRUE, set it to half of non-zero minimum value
         # else set it to zero.
         # Get min value
@@ -759,11 +827,173 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     return(mat)
 }
 
+################# .apply_transformation_difference_or_division #################
+# Computes all pairwise differences (x - y) or ration (x / y) between features
+# across samples. Returns a sparse matrix with one row per feature pair.
+# Uses C++ to improve performance on large input matrices.
+#' @useDynLib mia, .registration = TRUE
+#' @importFrom Rcpp evalCpp
+NULL
+#' @keywords internal
+.apply_transformation_difference_or_division <- function(
+        mat, method, MARGIN, ...){
+    # To harmonize transformations, the matrix contains features as columns.
+    # This orientation is used in other transformations such as in vegan.
+    if( ncol(mat) > 1000L ){
+        warning("The input matrix has over 1000 features, which may cause ",
+                "performance issues.", call. = FALSE)
+    }
+    if( is.null(colnames(mat)) ){
+        warning("No names found in the matrix. Generated labels.",
+                call. = FALSE)
+        colnames(mat) <- ncol(mat) |> seq_len() |> as.character()
+    }
+    if( method %in% "division" && any(!is.na(mat) & mat == 0 ) ){
+        warning("The assay contains zero values. Consider adding pseudocount.",
+                call. = FALSE)
+    }
+    # Calculate pairwise difference or division
+    mat <- .Call(
+        `_mia_apply_transformation_difference_or_division`, mat, method)
+    return(mat)
+}
+
+############################## .apply_transformation_invnorm ##################
+# Inverse rank normalisation
+# For each column (or row if MARGIN=1L), values are ranked and then
+# transformed to the standard normal distribution quantiles.
+# v : numeric vector to be normalized
+# ties.method : method to handle ties in ranking ("average" is default)
+# offset : adjustment for ranks when computing probabilities
+.invnorm_one <- function(x, ties.method = "average", offset = 0.5, ...){
+    # Identify non-missing values
+    non_missing <- !is.na(x)
+    n_non_missing  <- non_missing |> sum()
+    # Initialize result vector with NAs
+    res <- rep(NA_real_, length(x))
+    # If there are values that are not missing
+    if( n_non_missing > 0L ){
+        # Rank the non-missing value
+        ranking <- rank(x[non_missing], ties.method = ties.method)
+        # Convert ranks to probabilities/percentiles in (0,1) interval
+        # The denominator adjusts for offset to avoid p=0 or p=1
+        prob <- (ranking - offset) / (n_non_missing + 1 - 2 * offset)
+        # Ensure probabilities are strictly between (0,1) to avoid Inf/-Inf in
+        # qnorm
+        prob[prob <= 0] <- .Machine$double.eps
+        prob[prob >= 1] <- 1 - .Machine$double.eps
+        # Map probabilities to standard normal quantiles
+        res[non_missing] <- qnorm(prob)
+    }
+    return(res)
+}
+
+#' @importFrom BiocParallel bplapply bpparam
+.apply_transformation_invnorm <- function(
+        mat, ties.method = "average", offset = 0.5,
+        BPPARAM = SerialParam(), ...) {
+    # Check offset
+    if( !(.is_a_numeric(offset) && offset >= 0 && offset <= 0.5) ){
+        stop("'offset' must be a single numeric in [0, 0.5].", call. = FALSE)
+    }
+    # Check ties.method
+    valid_ties <- c("average", "first", "last", "random", "max", "min")
+    if( !(.is_a_string(ties.method) && ties.method %in% valid_ties) ){
+        stop("'ties.method' must be one of the following options: ",
+            paste(valid_ties, collapse = ", "), call. = FALSE)
+    }
+    #
+    # Apply inverse rank normalisation for each column
+    res <- BiocParallel::bplapply(
+        X = asplit(mat, 2L),
+        FUN = .invnorm_one,
+        ties.method = ties.method,
+        offset = offset,
+        BPPARAM = BPPARAM,
+        ...
+    )
+    res <- do.call(cbind, res)
+    dimnames(res) <- dimnames(mat)
+
+    # Add attributes
+    attr(res, "mia") <- "invnorm"
+    attr(res, "parameters") <- c(
+        attr(res, "parameters"),
+        list(ties.method = ties.method, offset = offset)
+    )
+
+    return(res)
+}
+
+################################ .apply_binning ################################
+# This function divides the data into a specified number of bins.
+.apply_binning <- function(mat, nbins = 4, ...){
+    # Check that nbins is a single positive numeric value
+    if( !.is_a_numeric(nbins) || nbins <= 0 ){
+        stop("'nbins' must be a single positive numeric value.", call. = FALSE)
+    }
+    nbins <- as.integer(nbins)
+
+    # Check does not contain negative numeric values
+    if( !all(mat >= 0) ) {
+        stop("The assay contains negative numeric values. Resulting bins will ",
+            "not make sense.", call. = FALSE)
+    }
+
+    # Apply binning
+    res <- apply(mat, MARGIN = 2, function(x) {
+        # Initialize result with 0 (for zero values)
+        res <- rep(0, length(x))
+
+        # Identify non-zero values
+        is_nonzero <- x != 0
+        n_nonzero <- sum(is_nonzero)
+
+        if( n_nonzero > 0 ){
+            # Get indices of non-zero values
+            nonzero_indices <- which(is_nonzero)
+            nonzero_values <- x[nonzero_indices]
+
+            # Sort indices based on values (descending)
+            ord <- order(nonzero_values, decreasing = TRUE)
+
+            # Calculate bin assignments
+            if( n_nonzero < nbins ){
+                # For samples with fewer than B non-zero abundance species,
+                # species are distributed proportionally across nbins 1 through
+                # B
+                bin_values <- round(
+                    seq(from = nbins, to = 1, length.out = n_nonzero))
+            } else {
+                # Get cut points
+                bin_idx <- cut(
+                    seq_len(n_nonzero),
+                    breaks = seq(0, n_nonzero, length.out = nbins + 1),
+                    labels = FALSE
+                )
+                bin_values <- nbins - bin_idx + 1
+            }
+
+            # Assign back
+            res[nonzero_indices[ord]] <- bin_values
+        }
+        return(res)
+    })
+
+    # Ensure dimensions are preserved (apply simplifies to vector if dim is 1)
+    if( is.null(dim(res)) && !is.null(dim(mat)) ){
+        dim(res) <- dim(mat)
+    }
+    dimnames(res) <- dimnames(mat)
+
+    return(res)
+}
+
 # This function is used to add transformed table back to TreeSE. With most of
-# the methods it is simple: it is added to assay. However, with philr, the
-# features do not match with original ones, so we add philr-transformed data
-# to altExp. If philr was, applied to columns, we cannot use altExp so
-# we return only the transformed data.
+# the methods it is simple: it is added to assay. However, with transformations
+# that change the dimensionality (e.g. philr, difference, division), the
+# transformed table is added to altExp instead. If transformation was, applied
+# to columns, we cannot use altExp so we return only the transformed data.
 #' @importFrom stats setNames
 .add_transformed_data <- function(x, mat, name){
     rnames_ok <- nrow(x) == nrow(mat)
@@ -790,4 +1020,16 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
                 "original data.", call. = FALSE)
     }
     return(x)
+}
+
+# This function replaces values under or equal to threshold with NA
+.apply_cutoff <- function(mat, threshold = 0, value = NA, ...){
+    if( !.is_a_numeric(threshold) ){
+        stop("'threshold' must be a single numeric value.", call. = FALSE)
+    }
+    if( length(value) != 1L || (!is.numeric(value) && !is.na(value)) ){
+        stop("'value' must be a single numeric value or NA.", call. = FALSE)
+    }
+    mat[ mat <= threshold ] <- value
+    return(mat)
 }

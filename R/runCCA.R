@@ -339,7 +339,7 @@ setMethod("getRDA", "ANY", function(x, formula, data, ...){
     if( !(is.data.frame(data) || is.matrix(data) || is(data, "DFrame")) ){
         stop("'data' must be data.frame or coarcible to one.", call. = FALSE)
     }
-    if( !((inherits(x, "dist") && attr(dis, "Size") == nrow(data)) ||
+    if( !((inherits(x, "dist") && attr(x, "Size") == nrow(data)) ||
             (!inherits(x, "dist") && ncol(x) == nrow(data)) )  ){
         stop("Number of columns (or length if distance matrix) in 'x' should ",
             "match with number of rows in 'data'.", call. = FALSE)

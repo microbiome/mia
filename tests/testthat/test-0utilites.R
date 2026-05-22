@@ -35,19 +35,27 @@ test_that("meltSE", {
     expect_error(
         mia:::.norm_add_row_data(NA, x, "SampleID", .internal_MARGIN = "col"),
         "'add.col' contains NA")
+    expect_error(mia:::.check_dimred_for_melting(x, "test"))
+    expect_error(mia:::.check_dimred_for_melting(x, TRUE))
+    x <- addMDS(x, method = "euclidean")
+    expect_error(mia:::.check_dimred_for_melting(x, "test"))
+    expect_error(mia:::.check_dimred_for_melting(x, 2))
     #
     # Check that melting works correctly
     se <- GlobalPatterns
+    se <- addMDS(se, method = "euclidean")
     molten_assay <- meltSE(
         se,
         add.row = TRUE,
         add.col = c("X.SampleID", "Primer"),
+        add.dimred = TRUE,
         assay.type = "counts")
     expect_s3_class(molten_assay, c("tbl_df","tbl","data.frame"))
     expect_equal(
         colnames(molten_assay)[c(1:4,11)],
         c("FeatureID","SampleID","counts","Kingdom","X.SampleID"))
     expect_equal(is.numeric(molten_assay$counts), TRUE)
+    expect_true( all(colnames(reducedDim(se)) %in% colnames(molten_assay)) )
     #
     only_assay <- meltSE(se, assay.type = "counts")
     expect_equal(colnames(only_assay)[1:3], c("FeatureID","SampleID","counts"))

@@ -53,8 +53,11 @@
 #'
 #'   \item \code{node.label} (Unifrac) \code{character vector}. Used only if
 #'   \code{x} is a matrix. Specifies links between rows/columns and tips of
-#'   \code{tree}. The length must equal the number of rows/columns of \code{x}.
-#'   Furthermore, all the node labs must be present in \code{tree}.
+#'   \code{tree}. All the node labs must be present in \code{tree}. For the
+#'   links, you can provide a vector with whose length equals to the number of
+#'   rows/columns in \code{x}. Alternatively, you can provide a named vector
+#'   where \code{names} represent names in abundance table and values their
+#'   corresponding node in tree. 
 #'
 #'   \item \code{chunkSize}: (JSD) \code{Integer scalar}. Defines the size of
 #'   data  send to the individual worker. Only has an effect, if \code{BPPARAM}
@@ -88,7 +91,9 @@
 #' all the abundances of features are equal between two samples, and 0 means
 #' that samples have completely different relative abundances.
 #'
-#' Unifrac is calculated with \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
+#' Unifrac is calculated with \code{
+#' \link[ecodive:unweighted_unifrac]{ecodive:unweighted_unifrac()}}
+#' or \code{\link[ecodive:weighted_unifrac]{ecodive:weighted_unifrac()}}.
 #'
 #' If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
 #' utilized.
@@ -404,6 +409,7 @@ setMethod(
     # Get links and take only nodeLabs
     links <- links_FUN(x)
     links <- links[ , "nodeLab"]
+    names(links) <- rownames(links)
     node.label <- links
 
     # Get assay. By default, dissimilarity between samples is calculated. In

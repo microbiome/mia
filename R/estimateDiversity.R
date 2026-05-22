@@ -26,12 +26,20 @@
 
     # Check that node.label is NULL or it specifies links between rownames and
     # node labs
-    if( !( is.null(node.label) ||
-            is.character(node.label) && length(node.label) == nrow(x) ) ){
+    node_for_each <- is.character(node.label) &&
+        length(node.label) == nrow(x) &&
+        all(node.label[ !is.na(node.label) ] %in% tree$tip.label)
+    named_vector <- is.character(node.label) && !is.null(names(node.label)) &&
+        all(rownames(x) %in% names(node.label))
+    if( !(is.null(node.label) || node_for_each || named_vector ) ){
         stop(
-            "'node.label' must be NULL or a vector specifying links between ",
-            "rownames and node labs of 'tree'.",
-            call. = FALSE)
+            "'node.label' must be NULL or character specifying links between ",
+            "abundance table and tree labels.", call. = FALSE)
+    }
+    # If the labels were provided as named vector where names represent
+    # original rows and values represent tips.
+    if( named_vector ){
+        node.label <- node.label[ match(rownames(x), names(node.label)) ]
     }
 
     # Subset rows of the assay to correspond node_labs (if there are any NAs

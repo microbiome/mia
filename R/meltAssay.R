@@ -12,16 +12,16 @@
 #' \dQuote{SampleID_col} and \dQuote{FeatureID_row}, if row names or column
 #' names are set.
 #'
-#' @inheritParams getDominant 
+#' @inheritParams getDominant
 #' @inheritParams getDissimilarity
-#' 
+#'
 #' @param add.col \code{Logical scalar}. \code{NULL}, or
 #' \code{character vector}. Used to select information from the \code{colData}
 #' to add to the molten assay data. If \code{add.col = NULL} no data will
 #' be added, if \code{add.col = TRUE} all data will be added and if
 #' \code{add.col} is a \code{character} vector, it will be used to subset
 #' to given column names in \code{colData}. (Default: \code{NULL})
-#' 
+#'
 #' @param add_col_data Deprecated. Use \code{add.col} instead.
 #'
 #' @param add.row \code{Logical scalar} or \code{Character vector}. To
@@ -30,17 +30,24 @@
 #' \code{add.row = TRUE} all data will be added and if
 #' \code{add.row} is a \code{character} vector, it will be used to subset
 #' to given column names in \code{rowData}. (Default: \code{NULL})
-#' 
+#'
 #' @param add_row_data Deprecated. Use \code{add.row} instead.
+#'
+#' @param add.dimred \code{Logical scalar} or \code{Character vector}. To
+#' select information from the \code{reducedDim} to add to the molten assay
+#' data. If \code{add.dimred = NULL} no data will be added, if
+#' \code{add.dimred = TRUE} all data will be added and if
+#' \code{add.dimred} is a \code{character} vector, it will be used to subset
+#' to given names in \code{reducedDimNames(x)}. (Default: \code{NULL})
 #'
 #' @param row.name \code{Character scalar}. To use as the output's name
 #' for the feature identifier. (Default: \code{"FeatureID"})
-#' 
+#'
 #' @param feature_name Deprecated. Use \code{row.name} instead.
 #'
 #' @param col.name \code{Character scalar}. To use as the output's name
 #' for the sample identifier. (Default: \code{"SampleID"})
-#' 
+#'
 #' @param sample_name Deprecated. Use \code{col.name} instead.
 #'
 #' @param ... optional arguments:
@@ -76,7 +83,7 @@ NULL
 setMethod("meltSE", signature = c(x = "SummarizedExperiment"),
     function(
         x,
-        assay.type = assay_name, assay_name = "counts", 
+        assay.type = assay_name, assay_name = "counts",
         add.row = add_row_data,
         add_row_data = NULL,
         add.col = add_col_data,
@@ -120,6 +127,20 @@ setMethod("meltSE", signature = c(x = "SummarizedExperiment"),
         molten_assay <- .format_molten_assay(
             molten_assay, x, row.name, col.name, ...)
         return(molten_assay)
+    }
+)
+
+#' @rdname meltSE
+#'
+#' @export
+setMethod("meltSE", signature = c(x = "SingleCellExperiment"),
+    function(x, add.dimred = NULL, ...){
+        add.dimred <- .check_dimred_for_melting(x, add.dimred)
+        df <- callNextMethod(x, ...)
+        if( !is.null(add.dimred) ){
+            df <- .add_dimred_to_melted_data(df, x, add.dimred, ...)
+        }
+        return(df)
     }
 )
 
@@ -215,7 +236,7 @@ setMethod("meltSE", signature = c(x = "SummarizedExperiment"),
     # Get assay, ensure that it is a matrix. Ensure that it has row and colnames
     # from the TreeSE
     mat <- assay(x, assay.type) |>
-        as.matrix() 
+        as.matrix()
     rownames(mat) <- rownames(x)
     colnames(mat) <- colnames(x)
     # Convert it to long format
@@ -303,4 +324,76 @@ setMethod("meltSE", signature = c(x = "SummarizedExperiment"),
         colnames(molten_assay) <- make.names( colnames(molten_assay) )
     }
     return(molten_assay)
+}
+
+# This function validates the add.dimred parameter. The output is standardized.
+.check_dimred_for_melting <- function(x, dimred){
+    # If FALSE, convert to NULL
+    if( length(dimred) == 1L && is.logical(dimred) && !dimred ){
+        dimred <- NULL
+    }
+    # The input can be NULL, i.e., dimred is not added
+    if( !is.null(dimred) ){
+        # Check that there are dimred in the TreeSE
+        dimnames <- reducedDimNames(x)
+        if( length(dimnames) == 0L ){
+            stop("'add.dimred' is specified but reducedDim(x) is empty.",
+                call. = FALSE)
+        }
+        # If the value is TRUE, user want to add all the dimreds
+        if( length(dimred) == 1L && is.logical(dimred) && dimred ){
+            dimred <- dimnames
+        }
+        # If user has specified certain values, check that they exist...
+        dimnames <- setNames(
+            c(dimnames, seq_len(length(dimnames))), c(dimnames, dimnames))
+        if( !all(dimred %in% dimnames) ){
+            stop("All reduced dimensionalities specified by 'dimred' must be ",
+                "present in reducedDim(x).", call. = FALSE)
+        }
+        # And match with the values. This works also for indices, that is why
+        # we do it like this.
+        dimred <- names(dimnames)[ match(dimred, dimnames) ] |> unique()
+    }
+    return(dimred)
+}
+
+# This function adds dimred to data.frame. The inptu is already validated to
+# work.
+#' @importFrom dplyr rename
+#' @importFrom tibble rownames_to_column
+.add_dimred_to_melted_data <- function(
+        df, x, dimred, col.name = sample_name, sample_name = "SampleID",...){
+    # Loop through all dimreds and get the results
+    dim_data <- lapply(dimred, function(dim) reducedDim(x, dim))
+    names(dim_data) <- dimred
+    # Get all the column names and check if there are duplicated names. If there
+    # are, add suffix from dimred
+    column_names <- lapply(dim_data, colnames) |> unlist()
+    if( anyDuplicated(column_names) ){
+        warning("reducedDim() includes duplicated column ",
+                "names that are converted to unique.", call. = FALSE)
+        dim_data <- lapply(dimred, function(dim){
+            temp <- dim_data[[dim]]
+            colnames(temp) <- paste0(colnames(temp), "_", dim)
+            return(temp)
+        })
+    }
+    # Convert to data.frame
+    dim_data <- do.call(cbind, dim_data) |> as.data.frame()
+    # Check if reducedDim includes column named similarly to column including
+    # sample names. If there are, modify the column from reducedDim.
+    if( col.name %in% colnames(dim_data) ){
+        warning("'x' contains a column '", col.name, "' in its ",
+                "reducedDim which will be renamed to '",
+                col.name, "_dimred'", call. = FALSE)
+        dim_data <- dim_data |> rename(
+            !!sym(paste0(col.name, "_dimred")) := !!sym(col.name))
+    }
+    # Add reducedDm data to the table
+    dim_data <- dim_data |>
+        rownames_to_column(col.name)
+    df <- df |>
+        dplyr::left_join(dim_data, by = col.name)
+    return(df)
 }

@@ -76,6 +76,13 @@
 #'
 #' @details
 #'
+#' Different diversity metrics considers different aspects of microbial
+#' community. Cassol et al. (2025) categorized alpha diversity metrics into four
+#' categories: richness, dominance, information, and phylogenetic. These
+#' categories provide complementary information, and by default, \code{*Alpha}
+#' function return indices from each category: observed richness, Berger-Parker
+#' dominance, Shannon index for "information", and Faith phylogenetic index.
+#'
 #' ## Diversity
 #'
 #' Alpha diversity is a joint quantity that combines elements or community
@@ -96,7 +103,7 @@
 #' implementation is based on the Stacked Faith's Phylogenetic Diversity (SFPhD)
 #' algorithm (Armstrong et al. 2021), which produces values equivalent to
 #' \code{\link[picante:pd]{picante::pd}} with the parameter
-#' \code{include.root=TRUE}. Using this index requires a rowTree. 
+#' \code{include.root=TRUE}. Using this index requires a rowTree.
 #'
 #' If the data includes features that are not in tree's tips but in
 #' internal nodes, there are two options. First, you can keep those features,
@@ -237,7 +244,10 @@
 #' evenly the abundances of different species are distributed. The following
 #' evenness indices are provided:
 #'
-#' By default, this function returns all indices.
+#' By default, four indices are returned, each taking into account different 
+#' aspects: richness (the number of observed unique features), 
+#' dominance (Berger-Parker), information (Shannon), and phylogenetics (Faith) 
+#' (Cassol et al., 2025).
 #'
 #' The available evenness indices include the following (all in lowercase):
 #' \itemize{
@@ -350,6 +360,11 @@
 #' in characterizing microbiomes.
 #' _Genome Res._ 31(11):2131-2137. doi: 10.1101/gr.275777.121
 #'
+#' Armstrong G. et al. (2021)
+#' Efficient computation of Faith's phylogenetic diversity with applications
+#' in characterizing microbiomes.
+#' _Genome Res._ 31(11):2131-2137. doi: 10.1101/gr.275777.121
+#'
 #' Beisel J-N. et al. (2003)
 #' A Comparative Analysis of Diversity Index Sensitivity.
 #' _Internal Rev. Hydrobiol._ 88(1):3-15.
@@ -367,6 +382,10 @@
 #' New diversity index for assessing structural alterations in aquatic
 #' communities.
 #' _Bull. Environ. Contam. Toxicol._ 48:428--434.
+#'
+#' Cassol, I. (2025) Key features and guidelines for the application of
+#' microbial alpha diversity metrics.
+#' _Sci. Rep._ 15:622. doi: 10.1038/s41598-024-77864-y
 #'
 #' Chao A. (1984)
 #' Non-parametric estimation of the number of classes in a population.
@@ -433,6 +452,10 @@
 #' A tribute to Claude Shannon (1916 –2001) and a plea for more rigorous use of
 #' species richness, species diversity and the ‘Shannon–Wiener’ Index.
 #' _Alpha Ecology & Biogeography_ 12, 177–197.
+#' 
+#' Cassol, I., Ibañez, M. & Bustamante, J.P. (2025) 
+#' Key features and guidelines for the application of microbial alpha diversity 
+#' metrics. _Sci Rep_ 15, 622. doi:10.1038/s41598-024-77864-y
 #'
 #' @seealso
 #' \itemize{
@@ -496,17 +519,8 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
 setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     function(
         x, assay.type = "counts",
-        index = c(
-            "coverage_diversity", "fisher_diversity", "faith_diversity",
-            "gini_simpson_diversity", "inverse_simpson_diversity",
-            "log_modulo_skewness_diversity", "shannon_diversity",
-            "absolute_dominance", "dbp_dominance",
-            "core_abundance_dominance", "gini_dominance",
-            "dmn_dominance", "relative_dominance",
-            "simpson_lambda_dominance", "camargo_evenness",
-            "pielou_evenness", "simpson_evenness",
-            "evar_evenness", "bulla_evenness", "ace_richness",
-            "chao1_richness", "hill_richness", "observed_richness"),
+        index = c("dbp_dominance", "faith_diversity", "observed_richness",
+            "shannon_diversity"),
         name = index, niter = NULL, BPPARAM = SerialParam(), ...){
         ############################## Input check #############################
         # Support altExp hiddenly

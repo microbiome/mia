@@ -71,6 +71,11 @@ setGeneric("agglomerateByRank", signature = "x", function(x, ...)
 setGeneric("agglomerateByVariable", signature = "x", function(x, ...)
     standardGeneric("agglomerateByVariable"))
 
+#' @rdname agglomerate-methods
+#' @export
+setGeneric("agglomerateByModule", signature = "x", function(x, ...)
+    standardGeneric("agglomerateByModule"))
+
 #' @rdname calculateDMN
 #' @export
 setGeneric("calculateDMN", signature = c("x"), function(x, ...)
@@ -78,11 +83,14 @@ setGeneric("calculateDMN", signature = c("x"), function(x, ...)
 
 #' @rdname addCluster
 #' @export
+setGeneric("getCluster", signature = c("x"),
+    function(x,  ...)
+    standardGeneric("getCluster"))
+
+#' @rdname addCluster
+#' @export
 setGeneric("addCluster", signature = c("x"),
-    function(
-        x, BLUSPARAM, assay.type = assay_name,
-        assay_name = "counts", by = MARGIN, MARGIN = "rows", full = FALSE,
-        name = "clusters", clust.col = "clusters", ...)
+    function(x,  ...)
     standardGeneric("addCluster"))
 
 #' @rdname importBIOM
@@ -164,6 +172,12 @@ setGeneric("subsetByRare", signature = "x", function(x, ...)
 setGeneric("getPrevalentAbundance", signature = "x",
     function(x, assay.type = assay_name, assay_name = "relabundance", ...)
     standardGeneric("getPrevalentAbundance"))
+
+#' @rdname getPrevalence
+#' @export
+setGeneric("addPrevalentAbundance", signature = "x",
+    function(x, ...)
+    standardGeneric("addPrevalentAbundance"))
 
 #'@rdname agglomerateByPrevalence
 #' @export
@@ -396,3 +410,23 @@ setGeneric("addMDS", signature = "x", function(x, ...)
 #' @export
 setGeneric("getReducedDimAttribute", signature = "x", function(x, ...)
     standardGeneric("getReducedDimAttribute"))
+
+#' @rdname getRPCA
+#' @export
+setGeneric("getRPCA", signature = "x", function(x, ...)
+    standardGeneric("getRPCA"))
+
+#' @rdname getRPCA
+#' @export
+setGeneric("addRPCA", signature = "x", function(x, ...)
+    standardGeneric("addRPCA"))
+
+#' @rdname getRPCA
+#' @export
+setGeneric("getJointRPCA", signature = "x", function(x, ...)
+    standardGeneric("getJointRPCA"))
+
+#' @rdname getRPCA
+#' @export
+setGeneric("addJointRPCA", signature = "x", function(x, ...)
+    standardGeneric("addJointRPCA"))
