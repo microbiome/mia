@@ -1,23 +1,21 @@
 /*
- * BSD 3-Clause License
- *
- * Copyright (c) 2016-2021, UniFrac development team.
- * All rights reserved.
- *
- * See LICENSE file for more details
- */
+* BSD 3-Clause License
+*
+* Copyright (c) 2016-2021, UniFrac development team.
+* All rights reserved.
+*
+* See LICENSE file for more details
+*/
 
 #include "tree.h"
 #include "assay.h"
 #include "stripemap.h"
 
-#include <Rcpp.h>
-
 using namespace su;
 
-StripeMap::StripeMap(uint32_t n_samples) 
-    : stripe_map(),
-      vecsize(n_samples)
+StripeMap::StripeMap(uint32_t n_samples)
+    : stripe_map()
+    , vecsize(n_samples)
 {
     n_stripes = (n_samples + 1) / 2;
     for( unsigned int i = 0; i < n_stripes; i++ ){
@@ -25,14 +23,15 @@ StripeMap::StripeMap(uint32_t n_samples)
     }
 }
 
-StripeMap::~StripeMap() {}
+StripeMap::~StripeMap(){
+}
 
 std::vector<double> StripeMap::get(uint32_t i){
     if( stripe_map.count(i) > 0 ){
         return stripe_map.at(i);
     } else {
         return(std::vector<double>());  
-    } 
+    }
 }
 
 void StripeMap::clear(uint32_t i){

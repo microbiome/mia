@@ -18,25 +18,23 @@
 #include "tree.h"
 #include "unifrac_task.h"
 
-void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<double> lengths) {
-    
-    //Parameter finding
-    
-    //Task parameters determine stuff
+void su::UnifracUnweightedTask::_run(unsigned int filled_embs,
+                                        std::vector<double> lengths){
     const uint64_t start_idx = this->task_p.start;
     const uint64_t stop_idx = this->task_p.stop;
     const uint64_t n_samples = this->task_p.n_samples;
     const uint64_t n_samples_r = this->dm_stripes.n_samples_r;
     
     const uint64_t step_size = su::UnifracUnweightedTask::step_size;
-    const uint64_t sample_steps = (n_samples+(step_size-1))/step_size; // round up
+    const uint64_t sample_steps = (n_samples+(step_size-1))/step_size;
     
     const uint64_t filled_embs_els = filled_embs/64;
     const uint64_t filled_embs_rem = filled_embs%64; 
     
     const uint64_t filled_embs_els_round = (filled_embs+63)/64;
     
-    // pre-compute sums of length elements, since they are likely to be accessed many times
+    // pre-compute sums of length elements, since they are likely to be accessed
+    // many times
     // We will use a 8-bit map, to keep it small enough to keep in L1 cache
     for (uint64_t emb_el=0; emb_el<filled_embs_els; emb_el++) {
         for (uint64_t sub8=0; sub8<8; sub8++) {
@@ -55,16 +53,21 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
             // ...
             // psum[255] = pl[1] +.. + pl[7] // + 0*pl[0]
             // psum[255] = pl[0] +pl[1] +.. + pl[7]
-            for (uint64_t b8_i=0; b8_i<0x100; b8_i++) {
-                sums[(emb8<<8) + b8_i] = (((b8_i >> 0) & 1) * lengths[len_off + 0]) + (((b8_i >> 1) & 1) * lengths[len_off + 1]) + 
-                    (((b8_i >> 2) & 1) * lengths[len_off + 2]) + (((b8_i >> 3) & 1) * lengths[len_off + 3]) +
-                    (((b8_i >> 4) & 1) * lengths[len_off + 4]) + (((b8_i >> 5) & 1) * lengths[len_off + 5]) +
-                    (((b8_i >> 6) & 1) * lengths[len_off + 6]) + (((b8_i >> 7) & 1) * lengths[len_off + 7]);
+            for (uint64_t b8_i=0; b8_i<0x100; b8_i++){
+                sums[(emb8<<8) + b8_i] =
+                        (((b8_i >> 0) & 1) * lengths[len_off + 0]) +
+                        (((b8_i >> 1) & 1) * lengths[len_off + 1]) +
+                        (((b8_i >> 2) & 1) * lengths[len_off + 2]) +
+                        (((b8_i >> 3) & 1) * lengths[len_off + 3]) +
+                        (((b8_i >> 4) & 1) * lengths[len_off + 4]) +
+                        (((b8_i >> 5) & 1) * lengths[len_off + 5]) +
+                        (((b8_i >> 6) & 1) * lengths[len_off + 6]) +
+                        (((b8_i >> 7) & 1) * lengths[len_off + 7]);
             }
         }
     }
     
-    if (filled_embs_rem>0) { // add also the overflow elements
+    if (filled_embs_rem>0){ // add also the overflow elements
         const uint64_t emb_el=filled_embs_els;
         for (uint64_t sub8=0; sub8<8; sub8++) {
             // we are summing we have enough buffer in sums
@@ -84,11 +87,11 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
     }
     
     // point of thread
-    for(uint64_t sk = 0; sk < sample_steps ; sk++) {
+    for(uint64_t sk = 0; sk < sample_steps ; sk++){
         
-        for(uint64_t stripe = start_idx; stripe < stop_idx; stripe++) {
+        for(uint64_t stripe = start_idx; stripe < stop_idx; stripe++){
         
-            for(uint64_t ik = 0; ik < step_size ; ik++) {
+            for(uint64_t ik = 0; ik < step_size ; ik++){
                 
                 
                 const uint64_t k = sk*step_size + ik; // within-stripe index (0:n_samples-1)
@@ -143,18 +146,17 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs, std::vector<doubl
                 }
                 
                 if (did_update) {
-                    this->dm_stripes.buf[idx + k]       += my_stripe;
-                    this->dm_stripes_total.buf[idx + k] += my_stripe_total;
+                    dm_stripes.buf[idx + k]       += my_stripe;
+                    dm_stripes_total.buf[idx + k] += my_stripe_total;
                 }
-                
             }
         }
     }
 }
 
 
-void su::UnifracNormalizedWeightedTask::_run(unsigned int filled_embs, std::vector<double> lengths) {
-    
+void su::UnifracNormalizedWeightedTask::_run(unsigned int filled_embs,
+                                                std::vector<double> lengths){
     
     //Parameter finding
     
@@ -165,7 +167,7 @@ void su::UnifracNormalizedWeightedTask::_run(unsigned int filled_embs, std::vect
     const uint64_t n_samples_r = this->dm_stripes.n_samples_r;
     
     const uint64_t step_size = su::UnifracNormalizedWeightedTask::step_size;
-    const uint64_t sample_steps = (n_samples+(step_size-1))/step_size; // round up
+    const uint64_t sample_steps = (n_samples+(step_size-1))/step_size;
     
     //std::vector<bool> zcheck = this->zcheck;
     //std::vector<double> sums = this->sums;
@@ -192,7 +194,8 @@ void su::UnifracNormalizedWeightedTask::_run(unsigned int filled_embs, std::vect
      for(uint64_t stripe = start_idx; stripe < stop_idx; stripe++) {
       for(uint64_t ik = 0; ik < step_size ; ik++) {
           
-       const uint64_t k = sk*step_size + ik; // within-stripe index (0:n_samples-1)
+        // within-stripe index (0:n_samples-1)
+       const uint64_t k = sk*step_size + ik; 
 
        if (k>=n_samples) continue; // past the limit
 
@@ -214,19 +217,20 @@ void su::UnifracNormalizedWeightedTask::_run(unsigned int filled_embs, std::vect
           if (allzero_k || allzero_l1) {
             // one side has all zeros
             // we can use the distributed property, and use the pre-computed values
-
-            const uint64_t ridx = (allzero_k) ? l1 : // if (nonzero_l1) ridx=l1 // fabs(k-l1), with k==0
-                                                k;   // if (nonzero_k)  ridx=k  // fabs(k-l1), with l1==0
-
+            
+            // if (nonzero_l1), ridx = fabs(k-l1) = l1 with k==0
+            // if (nonzero_k),  ridx = fabs(k-l1) = k with l1==0
+            const uint64_t ridx = (allzero_k) ? l1 : k;  
+              
             // keep reads in the same place to maximize GPU warp performance
             my_stripe = sums[ridx];
 
           } else {
             // both sides non zero, use the explicit but slow approach
-
+            
             my_stripe = 0.0;
 
-            for (uint64_t emb=0; emb<filled_embs; emb++) {
+            for (uint64_t emb=0; emb<filled_embs; emb++){
                 const uint64_t offset = n_samples_r * emb;
 
                 double u1 = embedded_proportions[offset + k];
@@ -236,10 +240,8 @@ void su::UnifracNormalizedWeightedTask::_run(unsigned int filled_embs, std::vect
 
                 my_stripe     += std::fabs(diff1) * length;
             }
-
           }
-
-          this->dm_stripes.buf[idx + k]       += my_stripe;
+          dm_stripes.buf[idx + k]       += my_stripe;
        }
 
       } // for ik

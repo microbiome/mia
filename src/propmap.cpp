@@ -11,14 +11,6 @@
 #include "assay.h"
 #include "propmap.h"
 
-#include <cstdlib>
-#include <thread>
-#include <signal.h>
-#include <stdarg.h>
-#include <algorithm>
-#include <pthread.h>
-#include <unistd.h>
-
 #include <Rcpp.h>
 
 using namespace su;
@@ -49,10 +41,10 @@ void PropMap::update(uint32_t node, std::vector<double> vec){
     prop_map[node] = vec;
 }
 
-std::vector<double> su::set_proportions(const BPTree &tree,
+std::vector<double> su::set_proportions(const BPTree & tree,
                                         uint32_t node,
-                                        const Assay &table,
-                                        PropMap &ps,
+                                        const Assay & table,
+                                        PropMap & pm,
                                         bool normalize){
     std::vector<double> props = std::vector<double>(table.n_samples, 0.0);
     if( tree.isleaf(node) ){
@@ -68,8 +60,8 @@ std::vector<double> su::set_proportions(const BPTree &tree,
         unsigned int right = tree.rightchild(node);
         
         while( current <= right && current != 0 ){
-            std::vector<double> vec = ps.get(current);  // Pull from prop map
-            ps.clear(current);  // Remove from prop map
+            std::vector<double> vec = pm.get(current);  // Pull from prop map
+            pm.clear(current);  // Remove from prop map
             
             for( unsigned int i = 0; i < table.n_samples; i++ ){
                 props[i] = props[i] + vec[i];
@@ -79,7 +71,7 @@ std::vector<double> su::set_proportions(const BPTree &tree,
         }
     }
     
-    ps.update(node, props);
+    pm.update(node, props);
     return(props);
 }
 

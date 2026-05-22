@@ -7,10 +7,8 @@
 * See LICENSE file for more details
 */
 
-
-
-#ifndef __FAITH_PROPMAP
-#define __FAITH_PROPMAP 1
+#ifndef __FAITH_PROPMAP_H
+#define __FAITH_PROPMAP_H 1
 
 #include <vector>
 #include <stack>
@@ -34,14 +32,11 @@ class PropMap {
         uint32_t defaultsize;
 };
 
-std::vector<double> set_proportions(const BPTree &tree, uint32_t node,
-                                    const Assay &table,
-                                    PropMap &ps,
+std::vector<double> set_proportions(const BPTree & tree, uint32_t node,
+                                    const Assay & table,
+                                    PropMap & pm,
                                     bool normalize = true);
 
-// Sets proportion range
-// Data is stored to props -> make return vector
-// PropMap needs to be modified, thus passed by reference
 std::vector<double> set_proportions_range(const su::BPTree & tree,
                                           uint32_t node,
                                           const su::Assay & table,
@@ -49,7 +44,7 @@ std::vector<double> set_proportions_range(const su::BPTree & tree,
                                           unsigned int end,
                                           PropMap & pm,
                                           bool normalize = true);
+
 }
 
-
-#endif /* __FAITH_PROPMAP */
+#endif /* __FAITH_PROPMAP_H */

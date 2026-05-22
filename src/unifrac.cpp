@@ -14,23 +14,6 @@
 #include "stripemap.h"
 #include "tree.h"
 
-/*
-#include <unordered_map>
-#include <cstdlib>
-#include <thread>
-#include <signal.h>
-#include <stdarg.h>
-#include <algorithm>
-#include <pthread.h>
-#include <unistd.h>
-*/
-
-
-
-                              
-
-
-
 su::mat_t su::one_off(const su::Assay & table,
                       const su::BPTree & tree,
                       bool weighted,
@@ -116,7 +99,8 @@ inline void su::unifracTT(const su::Assay & table,
     }
     
     const unsigned int n_samples = task_p.n_samples;
-    const uint64_t  n_samples_r = ((n_samples + UNIFRAC_BLOCK-1)/UNIFRAC_BLOCK)*UNIFRAC_BLOCK; // round up
+    const uint64_t  n_samples_r = ((n_samples + UNIFRAC_BLOCK-1) /
+                                   UNIFRAC_BLOCK)*UNIFRAC_BLOCK; // round up
     
     su::PropMap propmap(table.n_samples);
     
@@ -194,7 +178,13 @@ inline void su::unifracTT(const su::Assay & table,
             my_k++;
             
             //calculate proportions range for given node
-            std::vector<double> node_proportions = su::set_proportions_range(tree, node, table, tstart, tend, propmap);
+            std::vector<double> node_proportions = su::set_proportions_range(
+                                                                    tree,
+                                                                    node,
+                                                                    table,
+                                                                    tstart,
+                                                                    tend,
+                                                                    propmap);
             
             if(task_p.bypass_tips && tree.isleaf(node))
                 continue;
@@ -202,7 +192,10 @@ inline void su::unifracTT(const su::Assay & table,
             lengths[filled_emb] = tree.lengths[node];
             filled_emb++;
             
-            taskObj.embed_proportions_range(node_proportions, tstart, tend, my_filled_emb);
+            taskObj.embed_proportions_range(node_proportions,
+                                            tstart,
+                                            tend,
+                                            my_filled_emb);
             my_filled_emb++;
         }
          
@@ -221,7 +214,8 @@ inline void su::unifracTT(const su::Assay & table,
         for(uint64_t i = start_idx; i < stop_idx; i++){
             for(uint64_t j = 0; j < n_samples; j++) {
                 uint64_t idx = ((i-start_idx)*n_samples_r)+j;
-                taskObj.dm_stripes.buf[idx] = taskObj.dm_stripes.buf[idx]/taskObj.dm_stripes_total.buf[idx];
+                taskObj.dm_stripes.buf[idx] = taskObj.dm_stripes.buf[idx] /
+                                            taskObj.dm_stripes_total.buf[idx];
             }
         }
     }
@@ -248,7 +242,8 @@ std::vector<double> su::stripes_to_condensed_form(su::StripeMap & stripes,
                 i = 0;
                 j = n - (stripe + 1);
             }
-            // determine the position in the condensed form vector for a given (i, j)
+            // determine the position in the condensed form vector for a given
+            // (i, j)
             // based off of
             // https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.squareform.html
             uint64_t comb_N_minus_i = comb_2(n - i);

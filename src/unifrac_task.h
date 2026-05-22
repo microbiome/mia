@@ -7,8 +7,8 @@
  * See LICENSE file for more details
  */
 
-#ifndef __UNIFRAC_TASKS
-#define __UNIFRAC_TASKS 1
+#ifndef __UNIFRAC_TASK_H
+#define __UNIFRAC_TASK_H 1
 
 #include "stripemap.h"
 
@@ -64,6 +64,7 @@ namespace su {
                 std::vector<double>() :
                 std::vector<double>(n_samples_r*(task_p.stop-start_idx), 0.0)) // dm_stripes could be null, in which case keep it null
       {
+          
         if (!buf.empty()) {
           //Initialize buffer to dm_stripe values
           for(unsigned int stripe=start_idx; stripe < task_p.stop; stripe++) {
@@ -79,7 +80,7 @@ namespace su {
       
       //Destructor copies the buffer values back into dm_stripe
       ~UnifracTaskVector()
-      {
+      {	
         if (!buf.empty()) {
           for(unsigned int stripe=start_idx; stripe < task_p.stop; stripe++) {
              std::vector<double> vec = dm_stripes.get(stripe);
@@ -89,6 +90,7 @@ namespace su {
              dm_stripes.update(stripe, vec);
           }
         }
+        
       }
 
     private:
@@ -381,4 +383,4 @@ namespace su {
 
 }
 
-#endif
+#endif /* __UNIFRAC_TASK_H */

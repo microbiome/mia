@@ -10,21 +10,6 @@
 #include <iostream>
 #include <vector>
 
-#include <chrono>
-/*
-#include <chrono>
- auto start = std::chrono::high_resolution_clock::now();
- auto stop = std::chrono::high_resolution_clock::now();
- auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
- Rcpp::Rcout << "Main thread: " << duration.count() << "\n";
- 
- 
- start = std::chrono::high_resolution_clock::now();
- stop = std::chrono::high_resolution_clock::now();
- duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
- Rcpp::Rcout << "Condensed form: " << duration.count() << "\n";
- */
-
 #include <Rcpp.h>
 
 #include "assay.h"
@@ -35,24 +20,43 @@
 #include "unifrac.h"
 
 
-
-
 // Calculate Unifrac
+//
+// This function calculates Unifrac distances for a given assay and rowTree,
+// using a C++ implementation of the Striped Unifrac algorithm.
+//
+// @details
+// This function makes several assumptions about the contents of
+// \code{assay} and \code{rowTree}, namely that:
+// \itemize{
+//  \item \code{assay} and \code{rowTree} are both non-empty.
+//  \item \code{assay} has row and column names.
+//  \item \code{rowTree}'s nodes are arranged in cladewise order.
+// }
+// These checks should all be handled in the surrounding R code.
+//
+// The C++ code was adapted from an implementation by the Unifrac team
+// (Armstrong et al. 2021), which is licensed under the BSD 3-Clause license.
+//
+// @param assay An R numeric matrix containing the assay of a \code{TreeSE}
+// object.
+// @param rowTree An \code{ape::phylo} object containing the rowTree of a
+// \code{TreeSE} object.
+// @param weighted Boolean: Whether to calculate unweighted or weighted Unifrac.
+// @param bypass_tips Boolean: Whether to bypass tips during calculations. This
+// speeds up calculations considerably, and does not seem to have a noticeable
+// effect on the results.
+// @return A vector containing Unifrac distances.
 //
 // @keywords internal
 // [[Rcpp::export(.unifrac_cpp)]]
-Rcpp::List unifrac_cpp(const Rcpp::NumericMatrix & assay,
+Rcpp::NumericVector unifrac_cpp(const Rcpp::NumericMatrix & assay,
                               const Rcpp::List & rowTree,
                               bool weighted,
                               bool bypass_tips){
     
-    // Normalized matches the results given by weighted
-    
-    auto start = std::chrono::high_resolution_clock::now();
-    
     su::BPTree tree = su::BPTree(rowTree);
     su::Assay table = su::Assay(assay);
-    std::string method = "unweighted";
     
     std::unordered_set<std::string> to_keep(table.obs_ids.begin(),
                                             table.obs_ids.end());
@@ -61,18 +65,13 @@ Rcpp::List unifrac_cpp(const Rcpp::NumericMatrix & assay,
     
     su::mat_t results = su::one_off(table, tree_sheared, weighted, bypass_tips);
     
-    //condensed_form is the main values, returned in result
-    //Sample_ids can be handled with a map?
-    //n_samples, cf_size, is_upper_triangle are single values that can be passed in some other way?
+    unsigned int n = results.condensed_form.size();
+    Rcpp::NumericVector unifrac = Rcpp::NumericVector(n);
     
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    for( unsigned int i = 0; i < n; i++ ){
+        unifrac[i] = results.condensed_form[i];
+    }
     
-    Rcpp::Rcout << "Main thread: " << duration.count() << "\n";
-    
-    return Rcpp::List::create(Rcpp::Named("n_samples") = results.n_samples,
-                              Rcpp::Named("is_upper_triangle") = results.is_upper_triangle,
-                              Rcpp::Named("cf_size") = results.cf_size,
-                              Rcpp::Named("c_form") = results.condensed_form);
+    return unifrac;
 }
 
