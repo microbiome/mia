@@ -22,11 +22,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-<<<<<<< HEAD
-
-static const R_CallMethodDef CallEntries[] = {
-    {"_mia_faith_cpp", (DL_FUNC) &_mia_faith_cpp, 2},
-=======
 // apply_transformation_difference_or_division
 S4 apply_transformation_difference_or_division(NumericMatrix mat, std::string method);
 RcppExport SEXP _mia_apply_transformation_difference_or_division(SEXP matSEXP, SEXP methodSEXP) {
@@ -39,11 +34,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// unifrac_cpp
+Rcpp::NumericVector unifrac_cpp(const Rcpp::NumericMatrix& assay, const Rcpp::List& rowTree, bool weighted, bool bypass_tips);
+RcppExport SEXP _mia_unifrac_cpp(SEXP assaySEXP, SEXP rowTreeSEXP, SEXP weightedSEXP, SEXP bypass_tipsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type assay(assaySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type rowTree(rowTreeSEXP);
+    Rcpp::traits::input_parameter< bool >::type weighted(weightedSEXP);
+    Rcpp::traits::input_parameter< bool >::type bypass_tips(bypass_tipsSEXP);
+    rcpp_result_gen = Rcpp::wrap(unifrac_cpp(assay, rowTree, weighted, bypass_tips));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mia_faith_cpp", (DL_FUNC) &_mia_faith_cpp, 2},
     {"_mia_apply_transformation_difference_or_division", (DL_FUNC) &_mia_apply_transformation_difference_or_division, 2},
->>>>>>> upstream/devel
+    {"_mia_unifrac_cpp", (DL_FUNC) &_mia_unifrac_cpp, 4},
     {NULL, NULL, 0}
 };
 

@@ -2,7 +2,7 @@
 #' @importFrom ecodive weighted_unifrac
 #' @importFrom ecodive unweighted_unifrac
 .get_unifrac <- function(
-        x, tree, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
+        x, tree, new = FALSE, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
     # Transpose the matrix so that the orientation is the same as in other
     # dissimilatity methods
     x <- t(x)
@@ -73,8 +73,12 @@
     x <- .merge_assay_by_rows(x, node.label, ...)
 
     # Calculate unifrac. Use implementation from ecodive package
-    FUN <- if( weighted ) weighted_unifrac else unweighted_unifrac
-    res <- FUN(t(x), tree = tree)
+    if( new ){
+        res <- .unifrac_cpp(x, tree, weighted, F)
+    } else {
+        FUN <- if( weighted ) weighted_unifrac else unweighted_unifrac
+        res <- FUN(t(x), tree = tree)
+    }
     return(res)
 }
 

@@ -368,10 +368,7 @@ importFrom(MultiAssayExperiment,MultiAssayExperiment)
 importFrom(MultiAssayExperiment,experiments)
 importFrom(MultiAssayExperiment,intersectColumns)
 importFrom(MultiAssayExperiment,sampleMap)
-<<<<<<< HEAD
-=======
 importFrom(Rcpp,evalCpp)
->>>>>>> upstream/devel
 importFrom(Rcpp,sourceCpp)
 importFrom(S4Vectors,"metadata<-")
 importFrom(S4Vectors,DataFrame)
@@ -495,7 +492,4 @@ importFrom(vegan,rrarefy)
 importFrom(vegan,scores)
 importFrom(vegan,vegdist)
 useDynLib(mia)
-<<<<<<< HEAD
-=======
 useDynLib(mia, .registration = TRUE)
->>>>>>> upstream/devel
