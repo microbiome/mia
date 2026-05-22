@@ -355,11 +355,11 @@ namespace su {
 
     /***********************************************/
 
-    class UnifracNormalizedWeightedTask : public UnifracTask<double> {
+    class UnifracUnnormalizedWeightedTask : public UnifracTask<double> {
       public:
         static const unsigned int RECOMMENDED_MAX_EMBS = UnifracTask<double>::RECOMMENDED_MAX_EMBS_STRAIGHT;
 
-        UnifracNormalizedWeightedTask(su::StripeMap & _dm_stripes, su::StripeMap & _dm_stripes_total, unsigned int _max_embs, su::task_parameters _task_p)
+          UnifracUnnormalizedWeightedTask(su::StripeMap & _dm_stripes, su::StripeMap & _dm_stripes_total, unsigned int _max_embs, su::task_parameters _task_p)
         : UnifracTask<double>(_dm_stripes,_dm_stripes_total,_max_embs,_task_p)
         {
           const unsigned int n_samples = this->task_p.n_samples;
@@ -368,7 +368,7 @@ namespace su {
           sums = std::vector<double>(n_samples, 0.0);
         }
 
-        virtual ~UnifracNormalizedWeightedTask()
+        virtual ~UnifracUnnormalizedWeightedTask()
         {
         }
 

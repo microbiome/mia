@@ -75,10 +75,10 @@ void su::unifrac(const su::Assay &table,
             table, tree, true, dm_stripes, dm_stripes_total,
             task_p );
     }
-    //weighted normalized
+    //weighted unnormalized
     else {
-        unifracTT<su::UnifracNormalizedWeightedTask>(
-            table, tree, true, dm_stripes, dm_stripes_total,
+        unifracTT<su::UnifracUnnormalizedWeightedTask>(
+            table, tree, false, dm_stripes, dm_stripes_total,
             task_p );
     }
 }
