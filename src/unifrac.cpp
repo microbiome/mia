@@ -89,12 +89,6 @@ inline void su::unifracTT(const su::Assay & table,
                       su::StripeMap & dm_stripes_total,
                       const su::task_parameters & task_p)
 {
-    
-    if(table.n_samples != task_p.n_samples) {
-        fprintf(stderr, "Task and table n_samples not equal\n");
-        exit(EXIT_FAILURE);
-    }
-    
     const unsigned int n_samples = task_p.n_samples;
     const uint64_t  n_samples_r = ((n_samples + UNIFRAC_BLOCK-1) /
                                    UNIFRAC_BLOCK)*UNIFRAC_BLOCK; // round up
