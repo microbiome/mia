@@ -16,9 +16,11 @@
 
 namespace su {
 
+// StripeMap is just used to replace a vector of double pointers
+
 class StripeMap {
     public:
-        StripeMap(uint32_t n_samples);
+        StripeMap(uint32_t vecsize);
         virtual ~StripeMap();
         void clear(uint32_t i);
         void update(uint32_t i, std::vector<double> vec);
@@ -27,7 +29,7 @@ class StripeMap {
         
     private:
         std::unordered_map<uint32_t, std::vector<double>> stripe_map;
-        uint32_t vecsize; // equal to number of samples
+        uint32_t vecsize; 
         uint32_t n_stripes;
 };
 

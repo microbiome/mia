@@ -18,8 +18,8 @@
 
 using namespace su;
 
-Assay::Assay(const Rcpp::NumericMatrix & assay){
-    table = assay;
+Assay::Assay(const Rcpp::NumericMatrix & assay):
+    table(assay) {
     
     sample_ids = std::vector<std::string>(); 
     obs_ids = std::vector<std::string>();

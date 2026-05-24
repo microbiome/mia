@@ -7,8 +7,6 @@
  * See LICENSE file for more details
  */
 
-#include <chrono>
-
 #include "unifrac.h"
 #include "propmap.h"
 #include "stripemap.h"
@@ -36,15 +34,14 @@ su::mat_t su::one_off(const su::Assay & table,
     
     task.n_samples = table.n_samples;
     
-    //This could potentially be threaded
-    //Wasn't in the code because doesn't work with openacc/openmp?
-    
+
     su::unifrac(std::ref(table),
                 std::ref(tree),
                 std::ref(dm_stripes),
                 std::ref(dm_stripes_total),
                 weighted,
                 task);
+        
     
     su::mat_t result;
     result.n_samples = table.n_samples;
@@ -102,7 +99,7 @@ inline void su::unifracTT(const su::Assay & table,
     const uint64_t  n_samples_r = ((n_samples + UNIFRAC_BLOCK-1) /
                                    UNIFRAC_BLOCK)*UNIFRAC_BLOCK; // round up
     
-    su::PropMap propmap(table.n_samples);
+    su::PropMapMulti propmap_multi(table.n_samples);
     
     const unsigned int max_emb =  TaskT::RECOMMENDED_MAX_EMBS;
     
@@ -155,55 +152,66 @@ inline void su::unifracTT(const su::Assay & table,
      * (see C) but that is small over large N.
      */
     
+    
+    
     unsigned int k = 0; // index in tree
     const unsigned int max_k = (tree.nparens / 2) - 1;
     
-    
-    
+    const unsigned int num_prop_chunks = propmap_multi.get_num_stacks();
     // num_prop_chunks = 1
+    
     while (k<max_k)
     {
         const unsigned int k_start = k;
         unsigned int filled_emb = 0;
         
-        // ck = 0
         // chunk the progress to maximize cache reuse
-        const unsigned int tstart = 0;
-        const unsigned int tend = n_samples;
-        unsigned int my_filled_emb = 0;
-        unsigned int my_k=k_start;
-        
-        while ((my_filled_emb<max_emb) && (my_k<max_k)) {
-            const uint32_t node = tree.postorderselect(my_k);
-            my_k++;
+        for (unsigned int ck=0; ck<num_prop_chunks; ck++) {
             
-            //calculate proportions range for given node
-            std::vector<double> node_proportions = su::set_proportions_range(
-                                                                    tree,
-                                                                    node,
-                                                                    table,
-                                                                    tstart,
-                                                                    tend,
-                                                                    propmap);
+            su::PropMap & propmap = propmap_multi.get_prop_map(ck);
+            const unsigned int tstart = propmap_multi.get_start(ck);
+            const unsigned int tend = propmap_multi.get_end(ck);
+
+            unsigned int my_filled_emb = 0;
+            unsigned int my_k=k_start;
             
-            if(task_p.bypass_tips && tree.isleaf(node))
-                continue;
+            while ((my_filled_emb<max_emb) && (my_k<max_k)) {
+                const uint32_t node = tree.postorderselect(my_k);
+                my_k++;
+                
+                //calculate proportions range for given node
+                std::vector<double> node_proportions = su::set_proportions_range(
+                                                                        tree,
+                                                                        node,
+                                                                        table,
+                                                                        tstart,
+                                                                        tend,
+                                                                        propmap);
+                
+                if(task_p.bypass_tips && tree.isleaf(node))
+                    continue;
+                
+                
+                if (ck==0) { // they all do the same thing, so enough for the first to update the global state
+                    lengths[filled_emb] = tree.lengths[node];
+                    filled_emb++;
+                }
+                
+                taskObj.embed_proportions_range(node_proportions,
+                                                tstart,
+                                                tend,
+                                                my_filled_emb);
+                my_filled_emb++;
+            }
             
-            lengths[filled_emb] = tree.lengths[node];
-            filled_emb++;
-            
-            taskObj.embed_proportions_range(node_proportions,
-                                            tstart,
-                                            tend,
-                                            my_filled_emb);
-            my_filled_emb++;
+            if (ck==0) { // they all do the same thing, so enough for the first to update the global state
+                k=my_k;
+            }
         }
-         
-        k=my_k;
         
         taskObj._run(filled_emb,lengths);
-        
         filled_emb=0;
+        
     }
     
     //want_total is used if you want the results as a percentage of the total?

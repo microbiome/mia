@@ -19,7 +19,6 @@
 
 #include "unifrac.h"
 
-
 // Calculate Unifrac
 //
 // This function calculates Unifrac distances for a given assay and rowTree,

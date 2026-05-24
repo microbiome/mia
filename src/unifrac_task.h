@@ -58,7 +58,7 @@ namespace su {
       , start_idx(task_p.start), n_samples(task_p.n_samples)
       , n_samples_r(((n_samples + UNIFRAC_BLOCK-1)/UNIFRAC_BLOCK)*UNIFRAC_BLOCK) // round up
         //buf is just a new array with as many stripes as called for in task_p
-        //n_samples_r tells us how many unifrac_blocks are required for n_samples.
+        //n_samples_r : n_samples rounded up to a multiple of UNIFRAC_BLOCK
         //Originally this was a null comparison, we might need to check what it does specifically 
       , buf((dm_stripes.is_empty(start_idx)) ?
                 std::vector<double>() :
@@ -115,7 +115,7 @@ namespace su {
         su::task_parameters task_p;
         
         const unsigned int max_embs;
-        std::vector<TEmb> embedded_proportions; //Continuous vector - each stripe has n_samples_r elements, for complex reasons?
+        std::vector<TEmb> embedded_proportions; //Continuous vector - each stripe has n_samples_r elements
         //Has at most max_embs stripes - when filled, results stored in task _run() and embeds cleared to continue
         
         UnifracTaskBase(su::StripeMap & _dm_stripes,
@@ -164,8 +164,8 @@ namespace su {
         
         // Just copy from one buffer to another
         
-        std::vector<double> embed_proportions_range_straight(
-                                              std::vector<double> out,
+        void embed_proportions_range_straight(
+                                              std::vector<double> & out,
                                               const std::vector<double> & in,
                                               unsigned int start,
                                               unsigned int end,
@@ -188,7 +188,6 @@ namespace su {
                     out[offset + i] = 0.0;
                 }
             }
-            return out;
         }
         
         
@@ -252,7 +251,7 @@ namespace su {
             unsigned int end,
             unsigned int emb )
     {
-        embedded_proportions = embed_proportions_range_straight(embedded_proportions,in,start,end,emb);
+        embed_proportions_range_straight(embedded_proportions,in,start,end,emb);
     }
     
     template<> inline unsigned int UnifracTaskBase<double>::get_emb_els(
@@ -305,9 +304,9 @@ namespace su {
     template<class TEmb>
     class UnifracTask : public UnifracTaskBase<TEmb> {
     protected:
-        // Use one cache line on CPU
-        // On GPU, sharing a cache line is actually a good thing
-        static const unsigned int step_size = 16*4/sizeof(double);
+        // The number of doubles that can fit in a 64-bit cache line
+        // This is used to optimize L1 cache access during loops?
+        static const unsigned int step_size = 4;
         
     public:
         
@@ -316,11 +315,10 @@ namespace su {
         
         virtual ~UnifracTask() {}
         
-        //Probably should return a vector?
-        virtual void run(unsigned int filled_embs, std::vector<double> lengths) = 0;
+        virtual void run(unsigned int filled_embs, const std::vector<double>  & lengths) = 0;
         
     protected:
-        static const unsigned int RECOMMENDED_MAX_EMBS_STRAIGHT = 128-16; // a little less to leave a bit of space of maxed-out L1
+        static const unsigned int RECOMMENDED_MAX_EMBS_STRAIGHT = 64-16; // a little less to leave a bit of space of maxed-out L1
         // packed uses 32x less memory,so this should be 32x larger than straight... but there are additional structures, so use half of that
         static const unsigned int RECOMMENDED_MAX_EMBS_BOOL = 64*32;
         
@@ -345,9 +343,9 @@ namespace su {
         
         virtual ~UnifracUnweightedTask() {}
         
-        virtual void run(unsigned int filled_embs, std::vector<double> lengths) {_run(filled_embs, lengths);}
+        virtual void run(unsigned int filled_embs, const std::vector<double> & lengths) {_run(filled_embs, lengths);}
         
-        void _run(unsigned int filled_embs, std::vector<double> lengths);
+        void _run(unsigned int filled_embs, const std::vector<double> & lengths);
     private:
         std::vector<double> sums; // temp buffer
     };
@@ -372,9 +370,9 @@ namespace su {
         {
         }
 
-        virtual void run(unsigned int filled_embs, std::vector<double> lengths) {_run(filled_embs, lengths);}
+        virtual void run(unsigned int filled_embs, const std::vector<double> & lengths) {_run(filled_embs, lengths);}
 
-        void _run(unsigned int filled_embs, std::vector<double> lengths);
+        void _run(unsigned int filled_embs, const std::vector<double> & lengths);
       protected:
         // temp buffers
         std::vector<bool> zcheck;

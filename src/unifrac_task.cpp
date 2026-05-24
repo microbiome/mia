@@ -11,15 +11,13 @@
 #include <cstdlib>
 #include <thread>
 #include <algorithm>
-#include <math.h>
-
-#include <chrono>
+#include <cstdlib>
 
 #include "tree.h"
 #include "unifrac_task.h"
 
 void su::UnifracUnweightedTask::_run(unsigned int filled_embs,
-                                        std::vector<double> lengths){
+                                        const std::vector<double> & lengths){
     const uint64_t start_idx = this->task_p.start;
     const uint64_t stop_idx = this->task_p.stop;
     const uint64_t n_samples = this->task_p.n_samples;
@@ -73,8 +71,8 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs,
             // we are summing we have enough buffer in sums
             const uint64_t emb8 = emb_el*8+sub8;
             
-            // compute all the combinations for this block, set to 0 any past the limit
-            // as above
+            // compute all the combinations for this block, set to 0 any past
+            // the limit as above
             for (uint64_t b8_i=0; b8_i<0x100; b8_i++) {
                 double val= 0;
                 for (uint64_t li=(emb8*8); li<filled_embs; li++) {
@@ -92,7 +90,6 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs,
         for(uint64_t stripe = start_idx; stripe < stop_idx; stripe++){
         
             for(uint64_t ik = 0; ik < step_size ; ik++){
-                
                 
                 const uint64_t k = sk*step_size + ik; // within-stripe index (0:n_samples-1)
                 const uint64_t idx = (stripe-start_idx) * n_samples_r; //n_samples_r seems to relate to continuous buffer shenanigans
@@ -155,18 +152,16 @@ void su::UnifracUnweightedTask::_run(unsigned int filled_embs,
 }
 
 
-void su::UnifracUnnormalizedWeightedTask::_run(unsigned int filled_embs, std::vector<double> lengths) {
+void su::UnifracUnnormalizedWeightedTask::_run(unsigned int filled_embs, const std::vector<double> & lengths) {
+    
     //Task parameters determine stuff
     const uint64_t start_idx = this->task_p.start;
     const uint64_t stop_idx = this->task_p.stop;
     const uint64_t n_samples = this->task_p.n_samples;
     const uint64_t n_samples_r = this->dm_stripes.n_samples_r;
     
-    // bool * const __restrict__ zcheck = this->zcheck;
-    // TFloat * const __restrict__ sums = this->sums;
-    
     const uint64_t step_size = su::UnifracUnnormalizedWeightedTask::step_size;
-    const uint64_t sample_steps = (n_samples+(step_size-1))/step_size; // round up
+    const uint64_t sample_steps = (n_samples+(step_size-1))/step_size; // How many steps in sample_size? round up
     
     // check for zero values and pre-compute single column sums
     
@@ -186,11 +181,10 @@ void su::UnifracUnnormalizedWeightedTask::_run(unsigned int filled_embs, std::ve
         zcheck[k] = all_zeros;
     }
     
-    
     // now do the real compute
     
-    for(uint64_t sk = 0; sk < sample_steps ; sk++) {
-        for(uint64_t stripe = start_idx; stripe < stop_idx; stripe++) {
+    for(uint64_t stripe = start_idx; stripe < stop_idx; stripe++) {
+        for(uint64_t sk = 0; sk < sample_steps ; sk++) {
             for(uint64_t ik = 0; ik < step_size ; ik++) {
                 
                 // within-stripe index (0:n_samples-1)
@@ -209,6 +203,7 @@ void su::UnifracUnnormalizedWeightedTask::_run(unsigned int filled_embs, std::ve
                     double my_stripe;
                     
                     if (allzero_k || allzero_l1) {
+                        
                         // one side has all zeros
                         // we can use the distributed property, and use the pre-computed values
                         
@@ -221,22 +216,18 @@ void su::UnifracUnnormalizedWeightedTask::_run(unsigned int filled_embs, std::ve
                     } else {
                         // both sides non zero, use the explicit but slow approach
                         my_stripe = 0.0;
-                        
                         for (uint64_t emb=0; emb<filled_embs; emb++) {
-                            const uint64_t offset = n_samples_r * emb;
                             
+                            const uint64_t offset = n_samples_r * emb;
                             double u1 = embedded_proportions[offset + k];
                             double v1 = embedded_proportions[offset + l1];
                             double diff1 = u1 - v1;
                             double length = lengths[emb];
-                            
-                            my_stripe     += std::fabs(diff1) * length;
+                            my_stripe     += fabs(diff1) * length;
                         } // for emb
                         
                     }
-                    
                     const uint64_t idx = (stripe-start_idx)*n_samples_r;
-                    
                     dm_stripes.buf[idx + k] += my_stripe;
                 }
                 

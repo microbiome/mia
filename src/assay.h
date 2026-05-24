@@ -57,7 +57,7 @@ class Assay {
                                                 bool normalize) const;
         
     private:
-        Rcpp::NumericMatrix table; // Access to raw sample counts in R's memory
+        const Rcpp::NumericMatrix & table; // Access to raw sample counts in R's memory
 
         std::vector<double> get_sample_counts();
         
