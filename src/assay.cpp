@@ -38,8 +38,7 @@ Assay::Assay(const Rcpp::NumericMatrix & assay):
     sample_counts = get_sample_counts();
 }
 
-Assay::~Assay(){
-}
+Assay::~Assay(){}
 
 void Assay::create_id_index(std::vector<std::string> &ids, 
                             std::unordered_map<std::string, uint32_t> &map){

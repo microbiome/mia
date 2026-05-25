@@ -7,24 +7,21 @@
 * See LICENSE file for more details
 */
 
-#include "tree.h"
-#include "assay.h"
 #include "stripemap.h"
 
 using namespace su;
 
-StripeMap::StripeMap(uint32_t n_samples)
+StripeMap::StripeMap(uint32_t _n_samples)
     : stripe_map()
-    , vecsize(n_samples)
+    , n_samples(_n_samples)
 {
     n_stripes = (n_samples + 1) / 2;
     for( unsigned int i = 0; i < n_stripes; i++ ){
-        this->update(i, std::vector<double>(vecsize, 0.0));
+        this->update(i, std::vector<double>(n_samples, 0.0));
     }
 }
 
-StripeMap::~StripeMap(){
-}
+StripeMap::~StripeMap(){}
 
 std::vector<double> StripeMap::get(uint32_t i){
     if( stripe_map.count(i) > 0 ){

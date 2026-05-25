@@ -32,28 +32,22 @@ class PropMap {
         uint32_t defaultsize;
 };
 
-// Helper class
-// To allow chunked processing, stores PropMap with vecsize-sized vectors
+// Helper class that splits the full proportions vector into smaller chunks of
+// pre-defined size
 class PropMapMulti {
-public:
-    PropMapMulti(uint32_t _vecsize)
-        : vecsize(_vecsize)
-    , multi(get_num_stacks(), PropMap(DEF_VEC_SIZE)) // round up
-    {}
-    ~PropMapMulti(){}
-    
-    // Number of stacks = number of def_sizes that go in vecsize
-    // Rounding up ensures that there are always enough stacks for full vecsize
-    uint32_t get_num_stacks() const {return (vecsize + (DEF_VEC_SIZE-1)) / DEF_VEC_SIZE;}
-    // These are used only for passing the value to set_prop_range and embed_prop_range
-    uint32_t get_start(uint32_t idx) const {return idx*DEF_VEC_SIZE;}
-    uint32_t get_end(uint32_t idx) const   {return std::min((idx+1)*DEF_VEC_SIZE, vecsize);}
-    PropMap & get_prop_map(uint32_t idx) {return multi[idx];}
-    
-protected:
-    const uint32_t vecsize; // equal to number of samples
-    static const uint32_t DEF_VEC_SIZE = 1024; // size of the sub-vectors, small enough to fit in L1 cache
-    std::vector<PropMap> multi; // Holds a StripeMap for each chunk
+    public:
+        PropMapMulti(uint32_t _vecsize);
+        ~PropMapMulti();
+        
+        uint32_t get_num_stacks() const;
+        uint32_t get_start(uint32_t idx) const;
+        uint32_t get_end(uint32_t idx) const;
+        PropMap & get_prop_map(uint32_t idx);
+        
+    private:
+        const uint32_t vecsize; // Size of the full vector, equal to n_samples
+        static const uint32_t DEF_VEC_SIZE = 1024; // size of the sub-vectors
+        std::vector<PropMap> multi;
 };
 
 std::vector<double> set_proportions(const BPTree & tree, uint32_t node,
@@ -68,8 +62,6 @@ std::vector<double> set_proportions_range(const su::BPTree & tree,
                                           unsigned int end,
                                           PropMap & pm,
                                           bool normalize = true);
-
-
 
 }
 

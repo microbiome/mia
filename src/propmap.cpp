@@ -22,8 +22,7 @@ PropMap::PropMap(uint32_t vecsize)
     prop_map.reserve(1000);
 }
 
-PropMap::~PropMap() {
-}
+PropMap::~PropMap(){}
 
 std::vector<double> PropMap::get(uint32_t i){
     if( prop_map.count(i) > 0 ){
@@ -41,6 +40,36 @@ void PropMap::update(uint32_t node, std::vector<double> vec){
     prop_map[node] = vec;
 }
 
+
+
+PropMapMulti::PropMapMulti(uint32_t _vecsize)
+    : vecsize(_vecsize)
+    , multi(get_num_stacks(), PropMap(DEF_VEC_SIZE)) {}
+
+PropMapMulti::~PropMapMulti(){}
+    
+// Number of stacks = number of def_sizes that go in vecsize
+// Rounding up ensures that there are always enough stacks for full vecsize
+uint32_t PropMapMulti::get_num_stacks() const {
+    return (vecsize + (DEF_VEC_SIZE-1)) / DEF_VEC_SIZE;
+}
+
+// get_start and get_end are used only for passing the values to set_prop_range
+// and embed_prop_range
+uint32_t PropMapMulti::get_start(uint32_t idx) const {
+    return idx*DEF_VEC_SIZE;
+}
+
+uint32_t PropMapMulti::get_end(uint32_t idx) const {
+    return std::min((idx+1)*DEF_VEC_SIZE, vecsize);
+}
+
+PropMap & PropMapMulti::get_prop_map(uint32_t idx){
+    return multi[idx];
+}  
+
+
+    
 std::vector<double> su::set_proportions(const BPTree & tree,
                                         uint32_t node,
                                         const Assay & table,
@@ -75,14 +104,13 @@ std::vector<double> su::set_proportions(const BPTree & tree,
     return(props);
 }
 
-
 std::vector<double> su::set_proportions_range(const su::BPTree & tree,
                                               uint32_t node,
                                               const su::Assay & table,
                                               unsigned int start,
                                               unsigned int end,
                                               PropMap & pm,
-                                              bool normalize) {
+                                              bool normalize){
     const unsigned int els = end-start;
     std::vector<double> props = std::vector<double>(els, 0.0);
     if(tree.isleaf(node)) {

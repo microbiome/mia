@@ -67,7 +67,7 @@ Rcpp::NumericVector unifrac_cpp(const Rcpp::NumericMatrix & assay,
     unsigned int n = results.condensed_form.size();
     Rcpp::NumericVector unifrac = Rcpp::NumericVector(n);
     
-    for( unsigned int i = 0; i < n; i++ ){
+    for(unsigned int i = 0; i < n; i++){
         unifrac[i] = results.condensed_form[i];
     }
     
