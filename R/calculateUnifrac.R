@@ -1,6 +1,4 @@
 #' @importFrom ape drop.tip
-#' @importFrom ecodive weighted_unifrac
-#' @importFrom ecodive unweighted_unifrac
 .get_unifrac <- function(
         x, tree, new = FALSE, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
     # Transpose the matrix so that the orientation is the same as in other
@@ -72,13 +70,8 @@
     # multiple rows are linked to single tip.
     x <- .merge_assay_by_rows(x, node.label, ...)
 
-    # Calculate unifrac. Use implementation from ecodive package
-    if( new ){
-        res <- .unifrac_cpp(x, tree, weighted)
-    } else {
-        FUN <- if( weighted ) weighted_unifrac else unweighted_unifrac
-        res <- FUN(t(x), tree = tree)
-    }
+    # Calculate unifrac with C++ algorithm
+    res <- .unifrac_cpp(x, tree, weighted)
     return(res)
 }
 
