@@ -51,8 +51,7 @@
 // [[Rcpp::export(.unifrac_cpp)]]
 Rcpp::NumericVector unifrac_cpp(const Rcpp::NumericMatrix & assay,
                               const Rcpp::List & rowTree,
-                              bool weighted,
-                              bool bypass_tips){
+                              bool weighted){
     
     su::BPTree tree = su::BPTree(rowTree);
     su::Assay table = su::Assay(assay);
@@ -62,7 +61,7 @@ Rcpp::NumericVector unifrac_cpp(const Rcpp::NumericMatrix & assay,
     
     su::BPTree tree_sheared = tree.shear(to_keep).collapse();
     
-    su::mat_t results = su::one_off(table, tree_sheared, weighted, bypass_tips);
+    su::mat_t results = su::one_off(table, tree_sheared, weighted, false);
     
     unsigned int n = results.condensed_form.size();
     Rcpp::NumericVector unifrac = Rcpp::NumericVector(n);

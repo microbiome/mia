@@ -74,7 +74,7 @@
 
     # Calculate unifrac. Use implementation from ecodive package
     if( new ){
-        res <- .unifrac_cpp(x, tree, weighted, F)
+        res <- .unifrac_cpp(x, tree, weighted)
     } else {
         FUN <- if( weighted ) weighted_unifrac else unweighted_unifrac
         res <- FUN(t(x), tree = tree)
