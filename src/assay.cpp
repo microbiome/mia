@@ -27,6 +27,9 @@ Assay::Assay(const Rcpp::NumericMatrix & assay):
     Rcpp::StringVector rownames = Rcpp::rownames(table);
     obs_ids = Rcpp::as<std::vector<std::string>>(rownames);
     
+    Rcpp::StringVector colnames = Rcpp::colnames(table);
+    sample_ids = Rcpp::as<std::vector<std::string>>(colnames);
+    
     n_samples = table.ncol();
     n_obs = obs_ids.size();
     

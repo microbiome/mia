@@ -65,10 +65,23 @@ Rcpp::NumericVector unifrac_cpp(const Rcpp::NumericMatrix & assay,
     
     unsigned int n = results.condensed_form.size();
     Rcpp::NumericVector unifrac = Rcpp::NumericVector(n);
-    
+    // 
+    // Rcpp::List::create(Rcpp::Named("n_samples") = result->n_samples,
+    //                    Rcpp::Named("is_upper_triangle") = result->is_upper_triangle,
+    //                    Rcpp::Named("cf_size") = result->cf_size,
+    //                    Rcpp::Named("c_form") = cf)
+    // 
     for(unsigned int i = 0; i < n; i++){
         unifrac[i] = results.condensed_form[i];
     }
+    
+    unifrac.attr("class") = "dist";
+    Rcpp::StringVector labels(table.n_samples);
+    labels = table.sample_ids;
+    unifrac.attr("Labels") = labels;
+    unifrac.attr("Size") = table.n_samples;
+    unifrac.attr("Diag") = false;
+    unifrac.attr("Upper") = false;
     
     return unifrac;
 }
