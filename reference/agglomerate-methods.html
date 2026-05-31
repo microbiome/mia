@@ -64,7 +64,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Agglomerate data using taxonomic information or other grouping</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/tengeler_desc/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/tengeler_desc/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/tengeler_desc/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/fix_modules/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/fix_modules/R/agglomerate.R" class="external-link"><code>R/agglomerate.R</code></a>, <a href="https://github.com/microbiome/mia/blob/fix_modules/R/splitByRanks.R" class="external-link"><code>R/splitByRanks.R</code></a></small>
     <div class="hidden name"><code>agglomerate-methods.Rd</code></div>
     </div>
 
@@ -271,7 +271,7 @@ performed. If vector, the value must be the same length as
 <code>nrow(x)/ncol(x)</code>. Rows or columns corresponding to the same level will
 be merged. If <code>length(levels(group)) == nrow(x)/ncol(x)</code>, <code>x</code> will
 be returned unchanged. For <code>agglomerateByModule</code>, <code>group</code> should
-specify one or several names of logical or numeric binary variables from the
+specify one or several names of numeric or logical variables from the
 <code>rowData(x)/colData(x)</code> by which to agglomerate rows or columns.</p></dd>
 
 
@@ -342,10 +342,10 @@ science field agnostic names were used. In addition the <code>archetype</code>
 argument lets the user select how to preserve row or column data. For merge
 data of assays the function from <code>scuttle</code> are used.</p>
 <p><code>agglomerateByModule</code> allows to agglomerate features or samples based
-on one or multiple variables of logical or numeric binary (0/1) type. It is
-particularly useful for agglomerating by taxonomic or functional modules,
-each defined by a logical or binary variable in the <code>rowData</code>, as
-features can belong to several modules.</p>
+on one or multiple variables of numeric or logical type. It is particularly
+useful for agglomerating by taxonomic or functional modules, each defined by
+a logical or binary variable in the <code>rowData</code>, as features can belong to
+several modules.</p>
 <p><code>agglomerateByRanks</code> will use by default all available taxonomic ranks,
 but
 this can be controlled by setting <code>ranks</code> manually. <code>NA</code> values
