@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.19.6
+Version: 1.21.2
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -56,7 +56,7 @@ License: Artistic-2.0 | file LICENSE
 Encoding: UTF-8
 LazyData: false
 Depends:
-    R (>= 4.0),
+    R (>= 4.1.0),
     MultiAssayExperiment,
     SingleCellExperiment,
     SummarizedExperiment,
@@ -81,7 +81,6 @@ Imports:
     rlang,
     S4Vectors,
     scater,
-    scuttle,
     stats,
     stringr,
     tibble,
@@ -106,6 +105,7 @@ Suggests:
     reldist,
     rhdf5,
     rmarkdown,
+    scuttle,
     testthat,
     topicdoc,
     topicmodels,

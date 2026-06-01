@@ -811,7 +811,7 @@
                 is_index <- is.numeric(altexps[[exp]]) &&
                     all(altexps[[exp]]%%1==0) &&
                     altexps[[exp]]>0 &&
-                    altexps[[exp]]<=length(alExps(mae[[exp]]) )
+                    altexps[[exp]]<=length(altExps(mae[[exp]]) )
                 if( !( is_name || is_index ) ){
                     stop("'", altexps[[exp]], "' does not specify altExp from ",
                         "experiment '", exp, "'.", call. = FALSE)
