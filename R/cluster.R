@@ -25,7 +25,7 @@
 #'   (Default: \code{"clusters"})
 #'
 #' @param ... Additional parameters to use altExps for example
-#' @inheritParams bluster::clusterRows
+#' @param BLUSPARAM A \link[bluster]{BlusterParam-class} object specifying the algorithm to use.
 #' @inheritParams runDMN
 #' @inheritParams transformAssay
 #'
