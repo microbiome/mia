@@ -50,7 +50,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate dissimilarities</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/mds/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/mds/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/imp/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/imp/R/addDissimilarity.R" class="external-link"><code>R/addDissimilarity.R</code></a></small>
     <div class="hidden name"><code>getDissimilarity.Rd</code></div>
     </div>
 
@@ -268,13 +268,13 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-in"><span><span class="co"># Multi Dimensional Scaling applied to JSD dissimilarity matrix</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="addMDS.html">addMDS</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"overlap"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"MDS"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  [,1]       [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3       59443.48966   30449.91</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       90318.88662  -39519.24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      -50022.89144  -38252.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw     -67.34763  209366.60</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw -167716.35955 -569793.66</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  -27167.45045  104144.91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3      -43284.813 -45143.87</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       -4790.904 -40203.23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1       26147.150 -15952.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw -133864.366 -14824.29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw  610755.430 803373.51</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  -78217.650   3434.70</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Unifrac dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
@@ -315,13 +315,13 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">getDissimilarity</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>, method <span class="op">=</span> <span class="st">"euclidean"</span>, transf <span class="op">=</span> <span class="va">rclr</span>, niter <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               CL3       CC1       SV1    M31Fcsw    M11Fcsw   M31Plmr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3       0.00000  16.76946  50.18371 124.203256 117.181175 145.05722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      16.76946   0.00000  38.73869 128.109600 120.958010 137.47961</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      50.18371  38.73869   0.00000 111.461347 104.219369 107.11125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw 124.20326 128.10960 111.46135   0.000000   7.720943  98.12045</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw 117.18118 120.95801 104.21937   7.720943   0.000000  95.63823</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr 145.05722 137.47961 107.11125  98.120447  95.638231   0.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               CL3       CC1       SV1   M31Fcsw   M11Fcsw   M31Plmr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3       0.00000  19.96583  57.39468 121.08570 110.53781 142.19288</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      19.96583   0.00000  45.06645 127.82865 115.82938 135.49034</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      57.39468  45.06645   0.00000 112.03316  98.56082 100.76637</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw 121.08570 127.82865 112.03316   0.00000  14.88208  91.48775</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw 110.53781 115.82938  98.56082  14.88208   0.00000  81.26847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr 142.19288 135.49034 100.76637  91.48775  81.26847   0.00000</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
