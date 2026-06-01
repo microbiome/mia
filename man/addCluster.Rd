@@ -91,8 +91,6 @@ Must be \code{'rows'} or \code{'cols'}.}
 \code{rowData} (or \code{colData}) where the data will be stored.
 (Default: \code{"clusters"})}
 
-\item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
-
 \item{dimred}{\code{Character scalar} or \code{integer scalar}.
 Specifies dimension reduction results used in calculation. Either
 \code{dimred} or \code{assay.type} must be specified.}
