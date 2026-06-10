@@ -430,7 +430,9 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     orig_dimnames <- dimnames(mat)
 
     # Call vegan::decostand and apply transformation
-    transformed_table <- decostand(mat, method = method, MARGIN = MARGIN, ...)
+    #transformed_table <- decostand(mat, method = method, MARGIN = MARGIN, ...)
+    transformed_table <- decostand(mat, method = method, MARGIN = MARGIN,
+                                   impute = FALSE, ...)
 
     # Add reference sample back if ALR
     if( method %in% c("alr") ){
