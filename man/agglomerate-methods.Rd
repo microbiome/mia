@@ -160,7 +160,7 @@ performed. If vector, the value must be the same length as
 \code{nrow(x)/ncol(x)}. Rows or columns corresponding to the same level will
 be merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will
 be returned unchanged. For \code{agglomerateByModule}, \code{group} should
-specify one or several names of logical or numeric binary variables from the
+specify one or several names of numeric or logical variables from the
 \code{rowData(x)/colData(x)} by which to agglomerate rows or columns.}
 
 \item{f}{Deprecated. Use \code{group} instead.}
@@ -244,10 +244,10 @@ argument lets the user select how to preserve row or column data. For merge
 data of assays the function from \code{scuttle} are used.
 
 \code{agglomerateByModule} allows to agglomerate features or samples based
-on one or multiple variables of logical or numeric binary (0/1) type. It is
-particularly useful for agglomerating by taxonomic or functional modules,
-each defined by a logical or binary variable in the \code{rowData}, as
-features can belong to several modules.
+on one or multiple variables of numeric or logical type. It is particularly
+useful for agglomerating by taxonomic or functional modules, each defined by
+a logical or binary variable in the \code{rowData}, as features can belong to
+several modules.
 
 \code{agglomerateByRanks} will use by default all available taxonomic ranks,
 but
