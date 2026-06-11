@@ -508,15 +508,21 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
     center <- attributes(pca_result)[["center"]]
     # Row centering (new samples)
-    mat <- sweep(mat, 1L, rowMeans(mat), "-")
+    #mat <- sweep(mat, 1L, rowMeans(mat), "-")
+    mat <- sweep(mat, 1L, row_means, "-")
     # Column centering (training means)
     # mat <- sweep(mat, 2L, center[["col"]], "-")
     mat <- sweep(mat, 2L, colMeans(mat), "-")
+    mat <- sweep(mat, 2L, col_means, "-")
     # Add grand mean to avoid subtracting the mean twice (training means)
     # mat <- mat + center[["grand"]]
 
     # Project into PCA space
-    projected <- mat %*% feature_scores
+    #projected <- mat %*% feature_scores
+    
+    mat_zeroed <- mat
+    mat_zeroed[is.na(mat_zeroed)] <- 0 
+    projected <- mat_zeroed %*% feature_scores
 
     # Normalize based on singular values
     projected <- projected / sqrt(sum(singular_values^2))
@@ -545,11 +551,24 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     # Calculate error separately for each table
     errors_per_set <- vapply(seq_len(length(test_set)), function(i){
         # Calculate lower rank representation
+        #test_mat <- test_set[[i]]
+        #u_test <- test_mat %*% y_individual[[i]]
+        #u_test <- sweep(u_test, 2, diag(s_shared), "/")
+        #recon_test <- u_test %*% s_shared %*% t(y_individual[[i]])
+        
         test_mat <- test_set[[i]]
-        u_test <- test_mat %*% y_individual[[i]]
+        test_mat_zeroed <- test_mat
+        test_mat_zeroed[is.na(test_mat_zeroed)] <- 0
+        u_test <- test_mat_zeroed %*% y_individual[[i]]
         u_test <- sweep(u_test, 2, diag(s_shared), "/")
         recon_test <- u_test %*% s_shared %*% t(y_individual[[i]])
+        
         # Calculate error between actual values and lower rank representation
+        # Note: we don't use "test_mat_zeroed" here since we only compute the
+        # error on observed entries (these are non-NA, non-zero entries)
+        #error <- test_mat - recon_test
+        #error[is.na(error)] <- 0
+        #error <- norm(error, "F") / sqrt(sum(!is.na(test_mat)))
         error <- test_mat - recon_test
         error[is.na(error)] <- 0
         error <- norm(error, "F") / sqrt(sum(!is.na(test_mat)))
@@ -646,7 +665,10 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     })
     # The second table shows which cells included a value (were not NA).
     mask_list <- lapply(x, function(mat){
-        mask <- !is.na(mat)
+        #mask <- !is.na(mat)
+        mat[is.na(mat)] <- 0 
+        mask <- abs(mat) > 0
+        
         storage.mode(mask) <- "integer"
         return(mask)
     })
@@ -710,7 +732,9 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
         # Combine CV error. We will create a table of errors where each row is
         # single iteration.
-        cv_iter <- data.frame(mean = mean(cv_iter), sd = sd(cv_iter))
+        #cv_iter <- data.frame(mean = mean(cv_iter), sd = sd(cv_iter))
+        sd_alt <- sqrt(mean((cv_iter - mean(cv_iter))^2))
+        cv_iter <- data.frame(mean = mean(cv_iter), sd = sd_alt)
         cv_errors <- rbind(cv_errors, cv_iter)
 
         # Update the shared sample factors (U_shared)
@@ -923,9 +947,13 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 # and rows.
 .apply_double_centering <- function(mat, ...){
     grand_mean <- mean(mat, na.rm = TRUE)
-    row_means <- rowMeans(mat)
+    #row_means <- rowMeans(mat)
+    row_means <- rowMeans(mat, na.rm = TRUE)
+    #mat <- sweep(mat, 1L, row_means, "-")
     mat <- sweep(mat, 1L, row_means, "-")
-    col_means <- colMeans(mat)
+    #col_means <- colMeans(mat)
+    col_means <- colMeans(mat, na.rm = TRUE)
+    #mat <- sweep(mat, 2L, col_means, "-")
     mat <- sweep(mat, 2L, col_means, "-")
     # Add overall mean so that we do not subtract the data effectively 2 times.
     # The result is a matrix that has row and column means in zero.
