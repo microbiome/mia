@@ -52,29 +52,29 @@
 Rcpp::NumericVector unifrac_cpp(const Rcpp::NumericMatrix & assay,
                               const Rcpp::List & rowTree,
                               bool weighted){
-    
+
     su::BPTree tree = su::BPTree(rowTree);
     su::Assay table = su::Assay(assay);
-    
+
     std::unordered_set<std::string> to_keep(table.obs_ids.begin(),
                                             table.obs_ids.end());
-    
+
     su::BPTree tree_sheared = tree.shear(to_keep).collapse();
-    
+
     su::mat_t results = su::one_off(table, tree_sheared, weighted, false);
-    
+
     unsigned int n = results.condensed_form.size();
     Rcpp::NumericVector unifrac = Rcpp::NumericVector(n);
-    // 
+    //
     // Rcpp::List::create(Rcpp::Named("n_samples") = result->n_samples,
     //                    Rcpp::Named("is_upper_triangle") = result->is_upper_triangle,
     //                    Rcpp::Named("cf_size") = result->cf_size,
     //                    Rcpp::Named("c_form") = cf)
-    // 
+    //
     for(unsigned int i = 0; i < n; i++){
         unifrac[i] = results.condensed_form[i];
     }
-    
+
     unifrac.attr("class") = "dist";
     Rcpp::StringVector labels(table.n_samples);
     labels = table.sample_ids;
@@ -82,7 +82,6 @@ Rcpp::NumericVector unifrac_cpp(const Rcpp::NumericMatrix & assay,
     unifrac.attr("Size") = table.n_samples;
     unifrac.attr("Diag") = false;
     unifrac.attr("Upper") = false;
-    
+
     return unifrac;
 }
-

@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.21.1
+Version: 1.21.2
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -77,7 +77,6 @@ Imports:
     MASS,
     MatrixGenerics,
     methods,
-    ecodive,
     rlang,
     S4Vectors,
     scater,
@@ -93,6 +92,7 @@ Suggests:
     BiocStyle,
     biomformat,
     dada2,
+    ecodive,
     knitr,
     mediation,
     miaTime,
