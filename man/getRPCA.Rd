@@ -130,7 +130,7 @@ mae <- ibdmdb
 mae[[1]] <- transformAssay(
     mae[[1]], assay.type = "mgx", method = "rclr", impute = FALSE)
 mae[[2]] <- transformAssay(
-    mae[[2]], assay.type = "mtx", method = "rclr", impute = FALS)
+    mae[[2]], assay.type = "mtx", method = "rclr", impute = FALSE)
 
 # Run joint-RPCA
 res <- getJointRPCA(
