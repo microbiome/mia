@@ -93,9 +93,12 @@
 #' data("ibdmdb")
 #' mae <- ibdmdb
 #'
-#' # Apply data transformations
-#' mae[[1]] <- transformAssay(mae[[1]], assay.type = "mgx", method = "rclr")
-#' mae[[2]] <- transformAssay(mae[[2]], assay.type = "mtx", method = "rclr")
+#' # Apply data transformations. With impute=FALSE, missing values are preserved
+#' # and not imputed.
+#' mae[[1]] <- transformAssay(
+#'     mae[[1]], assay.type = "mgx", method = "rclr", impute = FALSE)
+#' mae[[2]] <- transformAssay(
+#'     mae[[2]], assay.type = "mtx", method = "rclr", impute = FALSE)
 #'
 #' # Run joint-RPCA
 #' res <- getJointRPCA(
@@ -266,7 +269,8 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 # analysis from test/train set split to projecting the results to test set.
 .run_joint_rpca_analysis <- function(mat_list, test.set = NULL, ...){
     if( !(is.null(test.set) || is.character(test.set)) ){
-        stop(".")
+        stop("'test.set' must specify sample names for test set or be NULL.",
+            call. = FALSE)
     }
     # Determine train/test split. User can define test set samples with vector
     # or then we can select representative samples based on RPCA of first table.
@@ -480,18 +484,30 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 # done by applying RPCA for the first table and selecting samples from PC1 with
 # a highest variance.
 .determine_test_set_for_rpca <- function(
-        mat, test.ratio = 0.2, ...){
+        mat, n.test.samples = NULL, test.ratio = 0.2, ...){
+    if( !(is.null(n.test.samples) ||
+            (.is_an_integer(n.test.samples) && n.test.samples > 0)) ){
+        stop("'n.test.samples' must be a single positive integer value.",
+            call. = FALSE)
+    }
+    if( !(.is_a_numeric(test.ratio) && test.ratio > 0 && test.ratio < 1) ){
+        stop("'test.ratio' must be a numeric value in the range [0, 1].",
+            call. = FALSE)
+    }
     # Select number of samples
-    test_n <- ceiling(test.ratio * nrow(mat))
+    if( is.null(n.test.samples) ){
+        n.test.samples <- ceiling(test.ratio * nrow(mat))
+    }
     test_samples <- c()
-    if( test_n > 0L ){
+    if( n.test.samples > 0L ){
         # Calculate RPCA
         pca_result <- .calculate_rpca(mat, ...)
         # Select N samples so that they span over the PC1 axis. Idea is that
         # these samples should represent the dataset the best as there are
         # maximally different samples.
         first_component <- pca_result[, 1] |> sort()
-        test_samples <- seq(1, length(first_component), length.out = test_n) |>
+        test_samples <- seq(
+            1, length(first_component), length.out = n.test.samples) |>
             round()
         test_samples <- names(first_component)[ test_samples ]
         test_samples <- match(test_samples, rownames(pca_result))
@@ -506,14 +522,13 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     feature_scores <- attributes(pca_result)[["rotation"]]
     singular_values <- attributes(pca_result)[["varExplained"]]
 
-    center <- attributes(pca_result)[["center"]]
-    # Row centering (new samples)
-    mat <- sweep(mat, 1L, rowMeans(mat), "-")
-    # Column centering (training means)
-    # mat <- sweep(mat, 2L, center[["col"]], "-")
-    mat <- sweep(mat, 2L, colMeans(mat), "-")
-    # Add grand mean to avoid subtracting the mean twice (training means)
-    # mat <- mat + center[["grand"]]
+    # Apply double-centering
+    mat <- mat |> .apply_double_centering()
+
+    # NAs are set to zero during matrix multiplication so they do not contribute
+    # to the projection. Otherwise, the NAs propagate and the projection step
+    # fails.
+    mat[ is.na(mat) ] <- 0
 
     # Project into PCA space
     projected <- mat %*% feature_scores
@@ -544,12 +559,18 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
     # Calculate error separately for each table
     errors_per_set <- vapply(seq_len(length(test_set)), function(i){
-        # Calculate lower rank representation
-        test_mat <- test_set[[i]]
-        u_test <- test_mat %*% y_individual[[i]]
+        test_mat <- test_mat_zeroed <- test_set[[i]]
+        # NAs are set to zero during matrix multiplication so they do not
+        # contribute to the projection.
+        test_mat_zeroed[ is.na(test_mat_zeroed) ] <- 0
+        # Create projection for test set
+        u_test <- test_mat_zeroed %*% y_individual[[i]]
         u_test <- sweep(u_test, 2, diag(s_shared), "/")
         recon_test <- u_test %*% s_shared %*% t(y_individual[[i]])
+
         # Calculate error between actual values and lower rank representation
+        # Note: we don't use "test_mat_zeroed" here since we only compute the
+        # error on observed entries (these are non-NA, non-zero entries)
         error <- test_mat - recon_test
         error[is.na(error)] <- 0
         error <- norm(error, "F") / sqrt(sum(!is.na(test_mat)))
@@ -644,9 +665,11 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         mat[ is.na(mat) ] <- 0
         return(mat)
     })
-    # The second table shows which cells included a value (were not NA).
+    # The second table shows which cells included a value. Zeroes are also
+    # treated as missing.
     mask_list <- lapply(x, function(mat){
-        mask <- !is.na(mat)
+        mat[ is.na(mat) ] <- 0
+        mask <- abs(mat) > 0
         storage.mode(mask) <- "integer"
         return(mask)
     })
@@ -710,7 +733,10 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
         # Combine CV error. We will create a table of errors where each row is
         # single iteration.
-        cv_iter <- data.frame(mean = mean(cv_iter), sd = sd(cv_iter))
+        # NumPy in Python implementation uses population SD (ddof=0) by default,
+        # while R’s sd() uses sample SD (ddof=1).
+        cv_iter <- data.frame(
+            mean_CV = mean(cv_iter), std_CV = .population_sd(cv_iter))
         cv_errors <- rbind(cv_errors, cv_iter)
 
         # Update the shared sample factors (U_shared)
@@ -921,23 +947,13 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
 
 # This function applies double centering of the data, i.e., it centers columns
 # and rows.
-.apply_double_centering <- function(mat, ...){
-    grand_mean <- mean(mat, na.rm = TRUE)
-    row_means <- rowMeans(mat)
-    mat <- sweep(mat, 1L, row_means, "-")
-    col_means <- colMeans(mat)
-    mat <- sweep(mat, 2L, col_means, "-")
-    # Add overall mean so that we do not subtract the data effectively 2 times.
-    # The result is a matrix that has row and column means in zero.
-    # mat <- mat + grand_mean
-
-    # Add centering and scaling parameters to attributes
-    attributes(mat) <- c(attributes(mat), list(
-        center = list(
-            row = row_means,
-            col = col_means,
-            grand = grand_mean
-        )
-    ))
+.apply_double_centering <- function(mat, na.rm = TRUE, ...){
+    mat <- sweep(mat, 1L, rowMeans(mat, na.rm = na.rm), "-")
+    mat <- sweep(mat, 2L, colMeans(mat, na.rm = na.rm), "-")
     return(mat)
+}
+
+# Calculate population standard deviation
+.population_sd <- function(x){
+    (x - mean(x))^2 |> mean() |> sqrt()
 }
