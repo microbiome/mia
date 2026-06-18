@@ -190,5 +190,6 @@ Changes in version 1.19.x
 Changes in version 1.21.x
 + Fixed explained percentages on PCA axes for jointRPCA and hardened
   rank-deficient SVD handling in joint-RPCA (1.21.1, 2026-05-12)
-* Generalise agglomerateByModule to non-binary numerical modules (1.21.2, 2026-05-31)
-* Modify joint-RPCA to match with Gemelli implementation (1.21.3, 2026-06-16)
++ Generalise agglomerateByModule to non-binary numerical modules (1.21.2, 2026-05-31)
++ Modify joint-RPCA to match with Gemelli implementation (1.21.3, 2026-06-16)
++ Implement Striped Unifrac algorithm (1.21.3, 2026-06-12)

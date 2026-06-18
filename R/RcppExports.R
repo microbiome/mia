@@ -9,3 +9,7 @@
     .Call(`_mia_apply_transformation_difference_or_division`, mat, method)
 }
 
+.unifrac_cpp <- function(assay, rowTree, weighted) {
+    .Call(`_mia_unifrac_cpp`, assay, rowTree, weighted)
+}
+
