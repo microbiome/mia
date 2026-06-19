@@ -74,11 +74,13 @@ Imports:
     DelayedMatrixStats,
     DirichletMultinomial,
     dplyr,
+    ecodive,
     IRanges,
     MASS,
     MatrixGenerics,
     methods,
-    ecodive,
+    Rcpp,
+    Rdpack,
     rlang,
     S4Vectors,
     scater,
@@ -87,8 +89,7 @@ Imports:
     tibble,
     tidyr,
     utils,
-    vegan,
-    Rcpp
+    vegan
 Suggests:
     ade4,
     BiocStyle,
@@ -118,3 +119,4 @@ BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 VignetteBuilder: knitr
+RdMacros: Rdpack
