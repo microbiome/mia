@@ -125,9 +125,12 @@ reconstructed matrix, and reconstruction error) stored in attributes.
 data("ibdmdb")
 mae <- ibdmdb
 
-# Apply data transformations
-mae[[1]] <- transformAssay(mae[[1]], assay.type = "mgx", method = "rclr")
-mae[[2]] <- transformAssay(mae[[2]], assay.type = "mtx", method = "rclr")
+# Apply data transformations. With impute=FALSE, missing values are preserved
+# and not imputed.
+mae[[1]] <- transformAssay(
+    mae[[1]], assay.type = "mgx", method = "rclr", impute = FALSE)
+mae[[2]] <- transformAssay(
+    mae[[2]], assay.type = "mtx", method = "rclr", impute = FALSE)
 
 # Run joint-RPCA
 res <- getJointRPCA(
