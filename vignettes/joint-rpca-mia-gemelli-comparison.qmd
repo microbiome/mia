@@ -1,0 +1,839 @@
+---
+title: "Cross-implementation validation of Joint-RPCA"
+subtitle: "Comparison of mia and Gemelli using paired IBDMDB MGX–MTX data"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-summary: "Show analysis code"
+    embed-resources: true
+    fig-responsive: true
+    df-print: paged
+engine: knitr
+execute:
+  echo: true
+  warning: false
+  message: false
+  error: false
+---
+
+# Study objective
+
+This notebook evaluates whether the Joint-RPCA implementation in the
+development version of `mia` reproduces the numerical structure obtained with
+Gemelli when both implementations are applied to the same paired MGX and MTX
+data, use the same train–test split, and estimate the same number of latent
+components.
+
+Agreement is evaluated at five levels:
+
+1. sample coordinates in the Joint-RPCA space;
+2. feature loadings;
+3. proportion of variation explained;
+4. cross-validation error trajectories; and
+5. pairwise sample distances.
+
+
+# Interpretation guide
+
+For the scatter plots, the solid diagonal line represents exact numerical
+agreement. Points close to this line indicate that the two implementations
+produce equivalent values. Correlation measures agreement in ordering and
+relative structure, whereas deviations from the diagonal reveal differences
+in scaling or absolute magnitude.
+
+# Setup
+
+```{r}
+#| label: setup
+#| include: false
+
+project_root <- "D:/joint-rpca-local-validation"
+
+knitr::opts_knit$set(root.dir = project_root)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(mia)
+library(MultiAssayExperiment)
+library(SummarizedExperiment)
+library(ggplot2)
+library(jsonlite)
+library(knitr)
+library(scales)
+
+theme_set(
+  theme_classic(base_size = 12) +
+    theme(
+      plot.title.position = "plot",
+      plot.caption.position = "plot",
+      plot.title = element_text(face = "bold", size = 13),
+      plot.subtitle = element_text(size = 10.5),
+      plot.caption = element_text(size = 9, hjust = 0),
+      axis.title = element_text(face = "plain"),
+      strip.background = element_rect(fill = "grey95", colour = "grey70"),
+      strip.text = element_text(face = "bold"),
+      legend.position = "top"
+    )
+)
+
+n_components <- 3L
+max_iterations <- 10L
+analysis_seed <- 20260630L
+
+required_python_outputs <- file.path(
+  project_root,
+  "results",
+  "gemelli",
+  c(
+    "python_versions.json",
+    "sample_scores.csv",
+    "feature_loadings.csv",
+    "proportion_explained.csv",
+    "distance_matrix.csv",
+    "cv_error.csv"
+  )
+)
+```
+
+# Software provenance
+
+```{r}
+`%||%` <- function(x, fallback = NA_character_) {
+  if (is.null(x) || length(x) == 0L || is.na(x)) fallback else x
+}
+
+mia_info <- packageDescription("mia")
+
+mia_provenance <- data.frame(
+  item = c(
+    "mia version",
+    "mia repository",
+    "mia branch",
+    "mia commit",
+    "R version",
+    "Platform"
+  ),
+  value = c(
+    mia_info[["Version"]],
+    paste0(
+      mia_info[["RemoteUsername"]] %||% "microbiome",
+      "/",
+      mia_info[["RemoteRepo"]] %||% "mia"
+    ),
+    mia_info[["RemoteRef"]] %||% "devel",
+    mia_info[["RemoteSha"]] %||% "not recorded",
+    R.version.string,
+    R.version$platform
+  ),
+  stringsAsFactors = FALSE
+)
+
+knitr::kable(mia_provenance)
+```
+
+```{r}
+if (!file.exists(required_python_outputs[1])) {
+  stop(
+    "Python provenance is missing. Run: python python/export_python_versions.py",
+    call. = FALSE
+  )
+}
+
+python_versions <- jsonlite::read_json(
+  required_python_outputs[1],
+  simplifyVector = TRUE
+)
+
+python_provenance <- data.frame(
+  software = names(python_versions),
+  version = unname(unlist(python_versions)),
+  stringsAsFactors = FALSE
+)
+
+knitr::kable(python_provenance)
+```
+
+# Data preparation
+
+```{r}
+data("ibdmdb", package = "mia")
+mae <- ibdmdb
+
+stopifnot(methods::is(mae, "MultiAssayExperiment"))
+stopifnot(all(c("MGX", "MTX") %in% names(mae)))
+
+mae <- MultiAssayExperiment::intersectColumns(mae)
+
+mgx <- SummarizedExperiment::assay(mae[["MGX"]], "mgx")
+mtx <- SummarizedExperiment::assay(mae[["MTX"]], "mtx")
+
+stopifnot(
+  identical(colnames(mgx), colnames(mtx)),
+  all(is.finite(mgx)),
+  all(is.finite(mtx)),
+  all(mgx >= 0),
+  all(mtx >= 0)
+)
+```
+
+```{r}
+rownames(mgx) <- paste0("MGX::", make.unique(rownames(mgx)))
+rownames(mtx) <- paste0("MTX::", make.unique(rownames(mtx)))
+
+rownames(mae[["MGX"]]) <- rownames(mgx)
+rownames(mae[["MTX"]]) <- rownames(mtx)
+
+stopifnot(anyDuplicated(c(rownames(mgx), rownames(mtx))) == 0L)
+
+sample_ids <- colnames(mgx)
+
+dataset_summary <- data.frame(
+  modality = c("MGX", "MTX"),
+  samples = c(ncol(mgx), ncol(mtx)),
+  features = c(nrow(mgx), nrow(mtx)),
+  zero_fraction = c(mean(mgx == 0), mean(mtx == 0))
+)
+
+dataset_summary$zero_fraction <- percent(
+  dataset_summary$zero_fraction,
+  accuracy = 0.1
+)
+
+names(dataset_summary) <- c(
+  "Modality",
+  "Samples",
+  "Features",
+  "Zero entries"
+)
+
+knitr::kable(
+  dataset_summary,
+  caption = "Characteristics of the two input assays",
+  align = c("l", "r", "r", "r")
+)
+```
+
+# Export of common inputs
+
+```{r}
+dir.create("data", recursive = TRUE, showWarnings = FALSE)
+dir.create("results/mia", recursive = TRUE, showWarnings = FALSE)
+
+write.csv(mgx, "data/mgx_raw.csv", quote = TRUE)
+write.csv(mtx, "data/mtx_raw.csv", quote = TRUE)
+
+set.seed(analysis_seed)
+n_test <- max(1L, floor(0.20 * length(sample_ids)))
+test_ids <- sort(sample(sample_ids, size = n_test, replace = FALSE))
+
+split_df <- data.frame(
+  sample_id = sample_ids,
+  train_test = ifelse(sample_ids %in% test_ids, "test", "train"),
+  stringsAsFactors = FALSE
+)
+
+write.csv(
+  split_df,
+  "data/train_test_split.csv",
+  row.names = FALSE,
+  quote = FALSE
+)
+
+stopifnot(
+  file.exists("data/mgx_raw.csv"),
+  file.exists("data/mtx_raw.csv"),
+  file.exists("data/train_test_split.csv")
+)
+
+knitr::kable(as.data.frame(table(split_df$train_test)), col.names = c("Set", "Samples"))
+```
+
+# Joint-RPCA in R
+
+```{r}
+mae_rclr <- mae
+
+mae_rclr[["MGX"]] <- transformAssay(
+  mae_rclr[["MGX"]],
+  assay.type = "mgx",
+  method = "rclr",
+  impute = FALSE,
+  name = "rclr"
+)
+
+mae_rclr[["MTX"]] <- transformAssay(
+  mae_rclr[["MTX"]],
+  assay.type = "mtx",
+  method = "rclr",
+  impute = FALSE,
+  name = "rclr"
+)
+
+stopifnot(
+  "rclr" %in% SummarizedExperiment::assayNames(mae_rclr[["MGX"]]),
+  "rclr" %in% SummarizedExperiment::assayNames(mae_rclr[["MTX"]])
+)
+```
+
+```{r}
+set.seed(analysis_seed)
+
+mia_result <- mia::getJointRPCA(
+  mae_rclr,
+  experiments = c("MGX", "MTX"),
+  assay.types = c("rclr", "rclr"),
+  test.set = test_ids,
+  ncomponents = n_components,
+  max.iterations = max_iterations
+)
+
+mia_sample_scores <- as.matrix(mia_result)
+mia_feature_loadings <- attr(mia_result, "rotation")
+mia_proportion_explained <- as.numeric(attr(mia_result, "percentVar")) / 100
+mia_distance <- as.matrix(dist(mia_sample_scores))
+
+stopifnot(
+  !anyNA(mia_sample_scores),
+  nrow(mia_sample_scores) == length(sample_ids),
+  ncol(mia_sample_scores) == n_components,
+  ncol(mia_feature_loadings) == n_components
+)
+
+write.csv(mia_sample_scores, "results/mia/sample_scores.csv", quote = TRUE)
+write.csv(mia_feature_loadings, "results/mia/feature_loadings.csv", quote = TRUE)
+saveRDS(mia_result, "results/mia/mia_result.rds")
+```
+
+# Gemelli results
+
+```{r}
+missing_python_outputs <- required_python_outputs[!file.exists(required_python_outputs)]
+
+if (length(missing_python_outputs) > 0L) {
+  stop(
+    "Gemelli outputs are missing: ",
+    paste(missing_python_outputs, collapse = ", "),
+    ". Run in WSL: python python/run_gemelli.py",
+    call. = FALSE
+  )
+}
+
+gemelli_sample_scores_raw <- as.matrix(read.csv(
+  required_python_outputs[2],
+  row.names = 1,
+  check.names = FALSE
+))
+
+gemelli_feature_loadings_raw <- as.matrix(read.csv(
+  required_python_outputs[3],
+  row.names = 1,
+  check.names = FALSE
+))
+
+gemelli_proportion_raw <- read.csv(
+  required_python_outputs[4],
+  row.names = 1,
+  check.names = FALSE
+)
+
+gemelli_distance <- as.matrix(read.csv(
+  required_python_outputs[5],
+  row.names = 1,
+  check.names = FALSE
+))
+
+gemelli_cv_error <- read.csv(
+  required_python_outputs[6],
+  row.names = 1,
+  check.names = FALSE
+)
+
+mia_cv_error <- as.data.frame(attr(mia_result, "cv_error"))
+
+stopifnot(
+  setequal(rownames(mia_sample_scores), rownames(gemelli_sample_scores_raw)),
+  setequal(rownames(mia_feature_loadings), rownames(gemelli_feature_loadings_raw)),
+  nrow(mia_cv_error) > 0L,
+  nrow(gemelli_cv_error) > 0L
+)
+```
+
+# Alignment of components
+
+```{r}
+gemelli_sample_scores_raw <- gemelli_sample_scores_raw[
+  rownames(mia_sample_scores),
+  ,
+  drop = FALSE
+]
+
+gemelli_feature_loadings_raw <- gemelli_feature_loadings_raw[
+  rownames(mia_feature_loadings),
+  ,
+  drop = FALSE
+]
+
+component_correlations <- abs(cor(
+  mia_sample_scores,
+  gemelli_sample_scores_raw
+))
+
+permutations <- rbind(
+  c(1L, 2L, 3L),
+  c(1L, 3L, 2L),
+  c(2L, 1L, 3L),
+  c(2L, 3L, 1L),
+  c(3L, 1L, 2L),
+  c(3L, 2L, 1L)
+)
+
+permutation_scores <- apply(permutations, 1L, function(p) {
+  sum(component_correlations[cbind(seq_len(n_components), p)])
+})
+
+best_permutation <- permutations[which.max(permutation_scores), ]
+
+gemelli_sample_scores <- gemelli_sample_scores_raw[, best_permutation, drop = FALSE]
+gemelli_feature_loadings <- gemelli_feature_loadings_raw[, best_permutation, drop = FALSE]
+gemelli_proportion_explained <- as.numeric(gemelli_proportion_raw[, 1])[best_permutation]
+
+for (j in seq_len(n_components)) {
+  if (sum(mia_sample_scores[, j] * gemelli_sample_scores[, j]) < 0) {
+    gemelli_sample_scores[, j] <- -gemelli_sample_scores[, j]
+    gemelli_feature_loadings[, j] <- -gemelli_feature_loadings[, j]
+  }
+}
+
+colnames(gemelli_sample_scores) <- colnames(mia_sample_scores)
+colnames(gemelli_feature_loadings) <- colnames(mia_feature_loadings)
+```
+
+
+# Results
+
+## Overall agreement summary
+
+The following sections quantify agreement separately for each output of the
+Joint-RPCA workflow. Sample scores are first aligned for component order, sign,
+and component-specific scale. Feature loadings are aligned using the same
+component order and sign convention.
+
+```{r}
+extract_cv_column <- function(x, candidates) {
+  matched <- intersect(candidates, names(x))
+  if (length(matched) == 0L) {
+    stop(
+      "Could not identify a CV column. Available columns: ",
+      paste(names(x), collapse = ", "),
+      call. = FALSE
+    )
+  }
+  as.numeric(x[[matched[1]]])
+}
+
+spearman_label <- function(x, y) {
+  test <- suppressWarnings(
+    cor.test(x, y, method = "spearman", exact = FALSE)
+  )
+
+  rho <- unname(test$estimate)
+  p_value <- test$p.value
+
+  paste0(
+    "Spearman rho=", format(round(rho, 4), nsmall = 1),
+    ", p=", format(p_value, scientific = TRUE, digits = 2)
+  )
+}
+```
+
+## Sample scores
+
+```{r}
+# Component-specific scaling accounts for differing score normalization.
+gemelli_scores_scaled <- gemelli_sample_scores
+scale_factors <- numeric(n_components)
+
+for (j in seq_len(n_components)) {
+  scale_factors[j] <- sum(
+    mia_sample_scores[, j] * gemelli_sample_scores[, j]
+  ) / sum(gemelli_sample_scores[, j]^2)
+
+  gemelli_scores_scaled[, j] <- gemelli_sample_scores[, j] * scale_factors[j]
+}
+
+pc_correlations <- diag(cor(mia_sample_scores, gemelli_sample_scores))
+sample_score_table <- data.frame(
+  Component = colnames(mia_sample_scores),
+  `Pearson correlation` = pc_correlations,
+  `mia SD` = apply(mia_sample_scores, 2, sd),
+  `Gemelli SD before scaling` = apply(gemelli_sample_scores, 2, sd),
+  `Applied scale factor` = scale_factors,
+  check.names = FALSE
+)
+
+knitr::kable(
+  sample_score_table,
+  digits = 6,
+  caption = paste(
+    "Component-wise agreement of sample scores.",
+    "Gemelli scores are shown before component-specific rescaling."
+  ),
+  align = c("l", "r", "r", "r", "r")
+)
+```
+
+```{r}
+sample_plot_data <- do.call(rbind, lapply(seq_len(n_components), function(j) {
+  python_values <- gemelli_scores_scaled[, j]
+  r_values <- mia_sample_scores[, j]
+
+  data.frame(
+    panel = spearman_label(python_values, r_values),
+    component = paste0("PC", j),
+    Python = python_values,
+    R = r_values
+  )
+}))
+
+ggplot(sample_plot_data, aes(x = Python, y = R)) +
+  geom_abline(
+    intercept = 0,
+    slope = 1,
+    linewidth = 0.55,
+    linetype = "dashed"
+  ) +
+  geom_point(size = 2.1, alpha = 0.75) +
+  facet_wrap(
+    vars(component, panel),
+    scales = "free",
+    nrow = 1,
+    labeller = label_value
+  ) +
+  labs(
+    title = "Agreement of Joint-RPCA sample scores",
+    subtitle = paste(
+      "Gemelli scores were aligned to mia for component order, sign,",
+      "and component-specific scale"
+    ),
+    x = "Gemelli sample score",
+    y = "mia sample score",
+    caption = "Dashed line: exact agreement (y = x)."
+  ) +
+  theme(aspect.ratio = 1)
+```
+
+## Feature loadings
+
+```{r}
+feature_loading_correlations <- diag(cor(
+  mia_feature_loadings,
+  gemelli_feature_loadings
+))
+
+feature_loading_table <- data.frame(
+  Component = paste0("PC", seq_len(n_components)),
+  `Pearson correlation` = feature_loading_correlations,
+  check.names = FALSE
+)
+
+knitr::kable(
+  feature_loading_table,
+  digits = 6,
+  caption = "Component-wise agreement of feature loadings",
+  align = c("l", "r")
+)
+```
+
+```{r}
+feature_plot_data <- do.call(rbind, lapply(seq_len(n_components), function(j) {
+  python_values <- gemelli_feature_loadings[, j]
+  r_values <- mia_feature_loadings[, j]
+
+  data.frame(
+    panel = spearman_label(python_values, r_values),
+    component = paste0("PC", j),
+    Python = python_values,
+    R = r_values
+  )
+}))
+
+ggplot(feature_plot_data, aes(x = Python, y = R)) +
+  geom_abline(
+    intercept = 0,
+    slope = 1,
+    linewidth = 0.55,
+    linetype = "dashed"
+  ) +
+  geom_point(size = 1.15, alpha = 0.45) +
+  facet_wrap(
+    vars(component, panel),
+    scales = "free",
+    nrow = 1,
+    labeller = label_value
+  ) +
+  labs(
+    title = "Agreement of Joint-RPCA feature loadings",
+    subtitle = "Each point represents one MGX or MTX feature",
+    x = "Gemelli feature loading",
+    y = "mia feature loading",
+    caption = "Dashed line: exact agreement (y = x)."
+  ) +
+  theme(aspect.ratio = 1)
+```
+
+## Proportion explained
+
+```{r}
+explained_variance_comparison <- data.frame(
+  Component = paste0("PC", seq_len(n_components)),
+  Gemelli = gemelli_proportion_explained,
+  mia = mia_proportion_explained,
+  check.names = FALSE
+)
+
+explained_variance_comparison$`Absolute difference` <- abs(
+  explained_variance_comparison$Gemelli -
+    explained_variance_comparison$mia
+)
+
+display_explained_variance <- explained_variance_comparison
+display_explained_variance$Gemelli <- percent(
+  display_explained_variance$Gemelli,
+  accuracy = 0.01
+)
+display_explained_variance$mia <- percent(
+  display_explained_variance$mia,
+  accuracy = 0.01
+)
+display_explained_variance$`Absolute difference` <- percent(
+  display_explained_variance$`Absolute difference`,
+  accuracy = 0.0001
+)
+
+knitr::kable(
+  display_explained_variance,
+  caption = "Proportion of variation explained by each component",
+  align = c("l", "r", "r", "r")
+)
+```
+
+```{r}
+explained_plot_data <- rbind(
+  data.frame(
+    Component = explained_variance_comparison$Component,
+    Implementation = "Gemelli",
+    Proportion = explained_variance_comparison$Gemelli
+  ),
+  data.frame(
+    Component = explained_variance_comparison$Component,
+    Implementation = "mia",
+    Proportion = explained_variance_comparison$mia
+  )
+)
+
+ggplot(
+  explained_plot_data,
+  aes(x = Component, y = Proportion, fill = Implementation)
+) +
+  geom_col(
+    position = position_dodge(width = 0.72),
+    width = 0.64
+  ) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  labs(
+    title = "Explained variation by Joint-RPCA component",
+    subtitle = "Side-by-side comparison of Gemelli and mia",
+    x = NULL,
+    y = "Proportion explained"
+  )
+```
+
+## Cross-validation results
+
+```{r}
+cv_n <- min(nrow(gemelli_cv_error), nrow(mia_cv_error))
+
+gemelli_cv_mean <- extract_cv_column(
+  gemelli_cv_error,
+  c("mean_CV", "mean_cv", "mean")
+)[seq_len(cv_n)]
+
+gemelli_cv_sd <- extract_cv_column(
+  gemelli_cv_error,
+  c("std_CV", "std_cv", "sd_CV", "sd_cv", "std", "sd")
+)[seq_len(cv_n)]
+
+mia_cv_mean <- extract_cv_column(
+  mia_cv_error,
+  c("mean_CV", "mean_cv", "mean")
+)[seq_len(cv_n)]
+
+mia_cv_sd <- extract_cv_column(
+  mia_cv_error,
+  c("std_CV", "std_cv", "sd_CV", "sd_cv", "std", "sd")
+)[seq_len(cv_n)]
+
+cv_comparison <- data.frame(
+  Iteration = seq_len(cv_n),
+  `Python mean_CV` = gemelli_cv_mean,
+  `Python std_CV` = gemelli_cv_sd,
+  `R mean_CV` = mia_cv_mean,
+  `R std_CV` = mia_cv_sd,
+  check.names = FALSE
+)
+
+knitr::kable(
+  cv_comparison,
+  digits = 6,
+  caption = "Cross-validation reconstruction-error summaries by iteration",
+  align = c("r", "r", "r", "r", "r")
+)
+```
+
+```{r}
+cv_plot_data <- rbind(
+  data.frame(
+    metric = "mean_CV",
+    Python = cv_comparison[["Python mean_CV"]],
+    R = cv_comparison[["R mean_CV"]]
+  ),
+  data.frame(
+    metric = "std_CV",
+    Python = cv_comparison[["Python std_CV"]],
+    R = cv_comparison[["R std_CV"]]
+  )
+)
+
+cv_plot_data$panel <- ave(
+  seq_len(nrow(cv_plot_data)),
+  cv_plot_data$metric,
+  FUN = function(index) {
+    rep(
+      spearman_label(
+        cv_plot_data$Python[index],
+        cv_plot_data$R[index]
+      ),
+      length(index)
+    )
+  }
+)
+
+ggplot(cv_plot_data, aes(x = Python, y = R)) +
+  geom_abline(
+    intercept = 0,
+    slope = 1,
+    linewidth = 0.55,
+    linetype = "dashed"
+  ) +
+  geom_point(size = 2.3, alpha = 0.8) +
+  facet_wrap(
+    vars(metric, panel),
+    scales = "free",
+    nrow = 1,
+    labeller = label_value
+  ) +
+  labs(
+    title = "Agreement of cross-validation error summaries",
+    subtitle = "Each point represents one optimization iteration",
+    x = "Gemelli cross-validation metric",
+    y = "mia cross-validation metric",
+    caption = "Dashed line: exact agreement (y = x)."
+  ) +
+  theme(aspect.ratio = 1)
+```
+
+## Distance structure
+
+```{r}
+gemelli_distance <- gemelli_distance[
+  rownames(mia_distance),
+  colnames(mia_distance),
+  drop = FALSE
+]
+
+upper_index <- upper.tri(mia_distance, diag = FALSE)
+
+distance_correlation <- cor(
+  mia_distance[upper_index],
+  gemelli_distance[upper_index]
+)
+
+distance_comparison <- data.frame(
+  Metric = "Pearson correlation",
+  Value = distance_correlation
+)
+
+knitr::kable(
+  distance_comparison,
+  digits = 6,
+  caption = "Agreement between pairwise sample-distance matrices",
+  align = c("l", "r")
+)
+```
+
+```{r}
+distance_plot_data <- data.frame(
+  Gemelli = gemelli_distance[upper_index],
+  mia = mia_distance[upper_index]
+)
+
+ggplot(distance_plot_data, aes(x = Gemelli, y = mia)) +
+  geom_abline(
+    intercept = 0,
+    slope = 1,
+    linewidth = 0.55,
+    linetype = "dashed"
+  ) +
+  geom_point(size = 1.5, alpha = 0.55) +
+  coord_equal() +
+  labs(
+    title = "Agreement of pairwise sample distances",
+    subtitle = paste0(
+      "Pearson correlation = ",
+      format(distance_correlation, digits = 6)
+    ),
+    x = "Gemelli pairwise distance",
+    y = "mia pairwise distance",
+    caption = paste(
+      "Each point is one unique sample pair;",
+      "the dashed line denotes exact agreement."
+    )
+  )
+```
+
+# Main findings
+
+```{r}
+overall_summary <- data.frame(
+  Quantity = c(
+    "Minimum sample-score correlation",
+    "Minimum feature-loading correlation",
+    "Maximum explained-variation difference",
+    "Distance-matrix correlation"
+  ),
+  Value = c(
+    min(pc_correlations),
+    min(feature_loading_correlations),
+    max(explained_variance_comparison$`Absolute difference`),
+    distance_correlation
+  ),
+  stringsAsFactors = FALSE
+)
+
+knitr::kable(
+  overall_summary,
+  digits = 8,
+  caption = "Numerical summary of cross-implementation agreement",
+  align = c("l", "r")
+)
+```
+
+
+
+
+# Session information
+
+```{r}
+sessionInfo()
+```
