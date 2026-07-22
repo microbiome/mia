@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.21.2
+Version: 1.21.3
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -43,7 +43,8 @@ Authors@R:
       person(given = "Jesse", family = "Pasanen", role=c("ctb")),
       person(given = "Eetu", family = "Tammi", role=c("ctb")),
       person(given = "Aituar", family = "Bektanov", role=c("ctb")),
-      person(given = "Rasmus", family = "Hindström", role=c("ctb")))
+      person(given = "Rasmus", family = "Hindström", role=c("ctb")),
+      person(given = "Sabuj", family = "Bhowmick", role=c("ctb")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the
