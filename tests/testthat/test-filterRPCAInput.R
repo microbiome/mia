@@ -170,3 +170,27 @@ test_that("na.rm argument is accepted", {
 
     expect_s4_class(filtered_tse, class(tse))
 })
+
+test_that("NA values are handled correctly", {
+
+  tse_na <- tse
+  assay(tse_na, "counts")[1, 1] <- NA
+
+  ## With na.rm = FALSE, the affected sample and feature are removed.
+  filtered_tse <- filterRPCAInput(
+      tse_na,
+      na.rm = FALSE
+  )
+
+  expect_false(rownames(tse_na)[1] %in% rownames(filtered_tse))
+  expect_false(colnames(tse_na)[1] %in% colnames(filtered_tse))
+
+  ## With na.rm = TRUE, they are retained because the NA is ignored.
+  filtered_tse <- filterRPCAInput(
+      tse_na,
+      na.rm = TRUE
+  )
+
+  expect_true(rownames(tse_na)[1] %in% rownames(filtered_tse))
+  expect_true(colnames(tse_na)[1] %in% colnames(filtered_tse))
+})
