@@ -80,15 +80,17 @@ NULL
 #' @export
 setMethod("filterRPCAInput",
     signature = c(x = "SummarizedExperiment"),
-    function(x,
-             assay.type = "counts",
-             min.sample.count = 0,
-             min.feature.count = 0,
-             min.feature.frequency = 0,
-             ...) {
+    function(
+        x,
+        assay.type = "counts",
+        min.sample.count = 0,
+        min.feature.count = 0,
+        min.feature.frequency = 0,
+        ...
+    ) {
         .check_assay_present(assay.type, x)
         if (!(is.null(min.sample.count) ||
-                (.is_an_integer(min.sample.count) && min.sample.count >= 0))) {
+            (.is_an_integer(min.sample.count) && min.sample.count >= 0))) {
             stop("'min.sample.count' must be a single positive integer value.",
                 call. = FALSE
             )
@@ -101,8 +103,8 @@ setMethod("filterRPCAInput",
         }
         if (!(is.null(min.feature.frequency) ||
             (.is_a_numeric(min.feature.frequency) &&
-            min.feature.frequency >= 0 &&
-            min.feature.frequency <= 1))) {
+                min.feature.frequency >= 0 &&
+                min.feature.frequency <= 1))) {
             stop("'min.feature.frequency' must be a single numeric value ",
                 "between 0 and 1.",
                 call. = FALSE
@@ -124,13 +126,13 @@ setMethod("filterRPCAInput",
 ############################### HELPER FUNCTIONS ###############################
 
 .filter_based_on_abundance <- function(
-  tse,
-  assay.type = "counts",
-  min.sample.count = 0,
-  min.feature.count = 0,
-  min.feature.frequency = 0,
-  na.rm = FALSE,
-  ...
+    tse,
+    assay.type = "counts",
+    min.sample.count = 0,
+    min.feature.count = 0,
+    min.feature.frequency = 0,
+    na.rm = FALSE,
+    ...
 ) {
     if (!.is_a_bool(na.rm)) {
         stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
