@@ -148,13 +148,14 @@ setMethod("filterRPCAInput",
     row_index <- rep(TRUE, nrow(mat))
 
     if (!is.null(min.sample.count)) {
-        col_index <- col_index & col_sums > min.sample.count
+        col_index <- col_index & !is.na(col_sums) & col_sums > min.sample.count
     }
     if (!is.null(min.feature.count)) {
-        row_index <- row_index & row_sums > min.feature.count
+        row_index <- row_index & !is.na(row_sums) & row_sums > min.feature.count
     }
     if (!is.null(min.feature.frequency)) {
-        row_index <- row_index & row_frequency > min.feature.frequency
+        row_index <- row_index & !is.na(row_frequency) &
+            row_frequency > min.feature.frequency
     }
 
     # Do filtering
