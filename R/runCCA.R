@@ -491,20 +491,6 @@ setMethod("addRDA", "SingleCellExperiment",
     return(df)
 }
 
-# This function parses right-hand side formula so that it now includes only
-# the covariates.
-.remove_special_functions_from_terms <- function(terms){
-    names(terms) <- terms
-    m <- regexec("^Condition\\(([^\\(\\)]*)\\)$|^([^\\(\\)]*)$", terms)
-    m <- regmatches(terms, m)
-    terms <- vapply(m, function(n){
-        n <- n[seq.int(2L,length(n))]
-        n <- n[n != ""]
-        return(n)
-        }, character(1))
-    return(terms)
-}
-
 # This function performs dbRDA or CCA. It returns side scores with other
 # information scores in attributes.
 #' @importFrom stats as.formula na.fail
