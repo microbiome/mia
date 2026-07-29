@@ -480,8 +480,7 @@ setMethod("addRDA", "SingleCellExperiment",
             "'col.var' and leave 'formula' unspecified.", call. = FALSE)
     }
     # Get variables from formula
-    terms <- rownames(attr(terms(formula), "factors"))
-    terms <- terms[terms != as.character(formula)[2L]]
+    terms <- formula |> terms() |> delete.response() |> all.vars()
     terms <- .remove_special_functions_from_terms(terms)
     # Check that all variables specify a column from colData
     if( !all(terms %in% colnames(colData(x))) ){
