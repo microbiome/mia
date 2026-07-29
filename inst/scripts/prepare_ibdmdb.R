@@ -253,8 +253,7 @@ M_mtx <- M_mtx[, shared2, drop = FALSE]
 M_mgx <- cap_by_var(M_mgx, cap_mgx)
 M_mtx <- cap_by_var(M_mtx, cap_mtx)
 
-meta_df <- meta_full
-
+meta_df <- meta_full[meta_full$data_type %in% "metagenomics", ]
 se_mgx  <- make_SE(M_mgx, meta_df, assay_name = "mgx")
 # Split taxa into taxonomy
 rd <- .parse_taxonomy(data.frame(Taxon = rownames(se_mgx)), sep = "\\|", remove.prefix = TRUE)
@@ -262,6 +261,7 @@ rownames(rd) <- rownames(se_mgx)
 rowData(se_mgx) <- rd
 se_mgx <- agglomerateByRanks(se_mgx)
 
+meta_df <- meta_full[meta_full$data_type %in% "metatranscriptomics", ]
 se_mtx  <- make_SE(M_mtx, meta_df, assay_name = "mtx")
 # Create a feature metadata table
 df <- data.frame(
