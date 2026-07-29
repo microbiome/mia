@@ -153,7 +153,7 @@ make_SE <- function(mat, meta_df = NULL, assay_name = "counts") {
         ))
     }
 
-    md <- as.data.frame(meta_df, stringsAsFactors = FALSE, check.names = FALSE)
+    md <- meta_df
 
     overlaps <- vapply(
         md,
@@ -182,7 +182,7 @@ make_SE <- function(mat, meta_df = NULL, assay_name = "counts") {
 
     SummarizedExperiment::SummarizedExperiment(
         assays  = setNames(list(mat), assay_name),
-        colData = S4Vectors::DataFrame(md_sub)
+        colData = md_sub
     )
 }
 
@@ -210,6 +210,7 @@ if (length(missing_files)) {
 # ------------------------------------------------------------------------------
 
 meta_full <- read_metadata(f_meta)
+meta_full <- DataFrame(meta_full, check.names = FALSE)
 
 # ------------------------------------------------------------------------------
 # Prepare 2-omic (MGX + MTX)
@@ -253,8 +254,21 @@ M_mgx <- cap_by_var(M_mgx, cap_mgx)
 M_mtx <- cap_by_var(M_mtx, cap_mtx)
 
 meta_df <- meta_full
+
 se_mgx  <- make_SE(M_mgx, meta_df, assay_name = "mgx")
+# Split taxa into taxonomy
+rd <- .parse_taxonomy(data.frame(Taxon = rownames(se_mgx)), sep = "\\|", remove.prefix = TRUE)
+rownames(rd) <- rownames(se_mgx)
+rowData(se_mgx) <- rd
+se_mgx <- agglomerateByRanks(se_mgx)
+
 se_mtx  <- make_SE(M_mtx, meta_df, assay_name = "mtx")
+# Split taxa into taxonomy
+rd <- .parse_taxonomy(data.frame(Taxon = rownames(se_mtx)), sep = "\\|", remove.prefix = TRUE)
+rownames(rd) <- rownames(se_mtx)
+rowData(se_mtx) <- rd
+se_mtx <- agglomerateByRanks(se_mtx)
+
 
 mae <- MultiAssayExperiment::MultiAssayExperiment(
     experiments = list(MGX = se_mgx, MTX = se_mtx)
