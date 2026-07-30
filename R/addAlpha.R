@@ -244,9 +244,9 @@
 #' evenly the abundances of different species are distributed. The following
 #' evenness indices are provided:
 #'
-#' By default, four indices are returned, each taking into account different 
-#' aspects: richness (the number of observed unique features), 
-#' dominance (Berger-Parker), information (Shannon), and phylogenetics (Faith) 
+#' By default, four indices are returned, each taking into account different
+#' aspects: richness (the number of observed unique features),
+#' dominance (Berger-Parker), information (Shannon), and phylogenetics (Faith)
 #' (Cassol et al., 2025).
 #'
 #' The available evenness indices include the following (all in lowercase):
@@ -360,6 +360,11 @@
 #' in characterizing microbiomes.
 #' _Genome Res._ 31(11):2131-2137. doi: 10.1101/gr.275777.121
 #'
+#' Armstrong G. et al. (2021)
+#' Efficient computation of Faith's phylogenetic diversity with applications
+#' in characterizing microbiomes.
+#' _Genome Res._ 31(11):2131-2137. doi: 10.1101/gr.275777.121
+#'
 #' Beisel J-N. et al. (2003)
 #' A Comparative Analysis of Diversity Index Sensitivity.
 #' _Internal Rev. Hydrobiol._ 88(1):3-15.
@@ -447,9 +452,9 @@
 #' A tribute to Claude Shannon (1916 –2001) and a plea for more rigorous use of
 #' species richness, species diversity and the ‘Shannon–Wiener’ Index.
 #' _Alpha Ecology & Biogeography_ 12, 177–197.
-#' 
-#' Cassol, I., Ibañez, M. & Bustamante, J.P. (2025) 
-#' Key features and guidelines for the application of microbial alpha diversity 
+#'
+#' Cassol, I., Ibañez, M. & Bustamante, J.P. (2025)
+#' Key features and guidelines for the application of microbial alpha diversity
 #' metrics. _Sci Rep_ 15, 622. doi:10.1038/s41598-024-77864-y
 #'
 #' @seealso
