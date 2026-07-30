@@ -188,7 +188,8 @@ setMethod("getJointRPCA", signature = c(x = "MultiAssayExperiment"),
                 "and there must be multiple experiments selected.",
                 call. = FALSE)
         }
-        mat_list <- .prepare_mae_for_joint_rpca(x, experiments, assay.types)
+        mat_list <- .prepare_mae_for_joint_rpca(
+            x, experiments, assay.types, ...)
         res <- .run_joint_rpca_analysis(mat_list, ...)
         return(res)
     }
