@@ -161,5 +161,5 @@ The Joint-RPCA method was adapted from the original
 Python-based implementation in biocore/Gemelli by
 Bianca Cordazzo Vargas, Liat Shenhav, and Cameron Martino.
 The R/Bioconductor implementation was subsequently prepared by
-Aituar Bektanov, Tuomas Borman, and Leo Lahti.
+Aituar Bektanov, Sabuj Bhowmick, Tuomas Borman, and Leo Lahti.
 }
