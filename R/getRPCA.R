@@ -93,6 +93,10 @@
 #' data("ibdmdb")
 #' mae <- ibdmdb
 #'
+#' # Apply filtering
+#' mae[[1]] <- filterRPCAInput(mae[[1]], assay.type = "mgx")
+#' mae[[2]] <- filterRPCAInput(mae[[2]], assay.type = "mtx")
+#'
 #' # Apply data transformations. With impute=FALSE, missing values are preserved
 #' # and not imputed.
 #' mae[[1]] <- transformAssay(
@@ -122,7 +126,7 @@
 #' Python-based implementation in biocore/Gemelli by
 #' Bianca Cordazzo Vargas, Liat Shenhav, and Cameron Martino.
 #' The R/Bioconductor implementation was subsequently prepared by
-#' Aituar Bektanov, Tuomas Borman, and Leo Lahti.
+#' Aituar Bektanov, Sabuj Bhowmick, Tuomas Borman, and Leo Lahti.
 #'
 #' @references
 #'
@@ -184,7 +188,8 @@ setMethod("getJointRPCA", signature = c(x = "MultiAssayExperiment"),
                 "and there must be multiple experiments selected.",
                 call. = FALSE)
         }
-        mat_list <- .prepare_mae_for_joint_rpca(x, experiments, assay.types)
+        mat_list <- .prepare_mae_for_joint_rpca(
+            x, experiments, assay.types, ...)
         res <- .run_joint_rpca_analysis(mat_list, ...)
         return(res)
     }
