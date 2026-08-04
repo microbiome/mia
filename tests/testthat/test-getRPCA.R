@@ -86,7 +86,7 @@ test_that(".determine_test_set_for_rpca validates arguments", {
     expect_error(
         .determine_test_set_for_rpca(
             mat,
-            test.ratio = 0
+            test.ratio = 1
         ),
         "test.ratio"
     )
