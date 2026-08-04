@@ -280,6 +280,9 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     # Determine train/test split. User can define test set samples with vector
     # or then we can select representative samples based on RPCA of first table.
     all_samples <- mat_list[[1L]] |> rownames()
+    if( is.null(all_samples) ){
+        all_samples <- mat_list[[1L]] |> nrow() |> seq_len()
+    }
     if( !is.null(test.set) ){
         test_samples <- which( all_samples %in% test.set )
     } else{
@@ -321,6 +324,13 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
     reconstruct_error <- .calculate_reconstruct_error(
         res, test_set, num_features)
     attributes(res)[["reconstruct_error"]] <- reconstruct_error
+
+    # Add layer dimensions
+    attributes(res)[["n_features"]] <- num_features
+
+    # Convert to specific class format so that it can be easily detected by
+    # downstream functions
+    class(res) <- c("JointRPCA", class(res))
 
     return(res)
 }
@@ -495,8 +505,8 @@ setMethod("addJointRPCA", signature = c(x = "MultiAssayExperiment"),
         stop("'n.test.samples' must be a single positive integer value.",
             call. = FALSE)
     }
-    if( !(.is_a_numeric(test.ratio) && test.ratio > 0 && test.ratio < 1) ){
-        stop("'test.ratio' must be a numeric value in the range [0, 1].",
+    if( !(.is_a_numeric(test.ratio) && test.ratio >= 0 && test.ratio < 1) ){
+        stop("'test.ratio' must be a numeric value in the range [0, 1).",
             call. = FALSE)
     }
     # Select number of samples
