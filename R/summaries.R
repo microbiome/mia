@@ -11,6 +11,11 @@
 #' @param method \code{Character scalar}. Specify the method to determine top
 #' taxa. Either sum, mean, median or prevalence. (Default: \code{"mean"})
 #'
+#' @param rank \code{Character scalar}. Defines a taxonomic rank. When
+#'   provided, input is first aggregated with \code{agglomerateByRank()} at the
+#'   given rank before selecting top features. Must be one of
+#'   \code{taxonomyRanks(x)}. (Default: \code{NULL}).
+#'
 #' @param ... Additional arguments passed, e.g., to getPrevalence:
 #'    \itemize{
 #'        \item \code{sort}: \code{Logical scalar}. Specify
@@ -106,18 +111,25 @@ NULL
 setMethod("getTop", signature = c(x = "SummarizedExperiment"),
     function(
         x, top = 5L, method = c("mean", "sum", "median", "prevalence"),
-        assay.type = assay_name, assay_name = "counts", 
+        assay.type = assay_name, assay_name = "counts", rank = NULL,
         na.rm = TRUE, ...){
+        dots <- list(...)
         # input check
         method <- match.arg(method, c("mean","sum","median","prevalence"))
+        if (!is.null(rank)) {
+            .check_taxonomic_rank(rank, x)
+            x <- agglomerateByRank(x, rank = rank)
+        }
         # check max taxa
         .check_max_taxa(x, top, assay.type)
         # check assay
         .check_assay_present(assay.type, x)
         #
         if(method == "prevalence"){
-            taxs <- getPrevalence(
-                assay(x, assay.type), sort = TRUE, include.lowest = TRUE, ...)
+            taxs <- do.call(
+                getPrevalence,
+                c(list(assay(x, assay.type), sort = TRUE, include.lowest = TRUE),
+                  dots))
             # If there are taxa with prevalence of 0, remove them
             taxs <- taxs[ taxs > 0 ]
         } else {
@@ -125,13 +137,13 @@ setMethod("getTop", signature = c(x = "SummarizedExperiment"),
                 method,
                 mean = rowMeans2(assay(x, assay.type), na.rm = na.rm),
                 sum = rowSums2(assay(x, assay.type), na.rm = na.rm),
-                median = rowMedians(assay(x, assay.type)), na.rm = na.rm)
+                median = rowMedians(assay(x, assay.type), na.rm = na.rm))
             names(taxs) <- rownames(assay(x))
             taxs <- sort(taxs,decreasing = TRUE)
         }
         names <- head(names(taxs), n = top)
         # Remove NAs and sort if specified
-        names <- .remove_NAs_and_sort(names, ... )
+        names <- do.call(.remove_NAs_and_sort, c(list(names), dots))
         return(names)
     }
 )

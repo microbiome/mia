@@ -273,8 +273,9 @@ setGeneric("getUnique", signature = c("x"), function(x, ...)
 #' @export
 setGeneric("getTop", signature = "x",
     function(
-        x, top= 5L, method = c("mean", "sum", "median"),
-        assay.type = assay_name, assay_name = "counts", na.rm = TRUE, ...)
+        x, top= 5L, method = c("mean", "sum", "median", "prevalence"),
+        assay.type = assay_name, assay_name = "counts", rank = NULL,
+        na.rm = TRUE, ...)
     standardGeneric("getTop"))
 
 #' @rdname taxonomy-methods
