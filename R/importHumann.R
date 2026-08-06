@@ -8,6 +8,9 @@
 #' path of the sample metadata file. The file must be in \code{tsv} format
 #' (Default: \code{NULL}).
 #' 
+#' @param tree.file \code{Character scalar}. Optional path to a
+#' phylogenetic tree. If provided, the tree is attached as \code{rowTree}.
+#' 
 #' @param colData Deprecated. Use \code{col.data} instead.
 #' 
 #' @param ... additional arguments:
@@ -69,7 +72,8 @@
 #' 
 NULL
 
-importHUMAnN <- function(file, col.data = colData, colData = NULL, ...){
+importHUMAnN <- function(file, col.data = colData, colData = NULL,
+                        tree.file = NULL, ...){
     ################################ Input check ###############################
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
@@ -84,6 +88,10 @@ importHUMAnN <- function(file, col.data = colData, colData = NULL, ...){
         stop("'col.data' must be a single character value, DataFrame or NULL.",
             call. = FALSE)
     }
+    if (!is.null(tree.file) && !.is_non_empty_string(tree.file)) {
+        stop("'tree.file' must be a single character value or NULL.",
+             call. = FALSE)
+    }
     ############################## Input check end #############################
     # Humann files has these columns that goes to rowData
     rowdata_col <- c("Pathway", "Gene_Family")
@@ -94,6 +102,11 @@ importHUMAnN <- function(file, col.data = colData, colData = NULL, ...){
     # Add col.data if provided
     if( !is.null(col.data) ){
         tse <- .add_coldata(tse, col.data)
+    }
+    # Add tree if provided
+    if (!is.null(tree.file)) {
+        tree <- ape::read.tree(tree.file)
+        rowTree(tse) <- tree
     }
     return(tse)
 }
