@@ -71,7 +71,7 @@ object.}
 
 \item{...}{Additional parameters to use altExps for example}
 
-\item{BLUSPARAM}{A \linkS4class{BlusterParam} object specifying the algorithm to use.}
+\item{BLUSPARAM}{A \link[bluster]{BlusterParam-class} object specifying the algorithm to use.}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation.}
@@ -91,7 +91,8 @@ Must be \code{'rows'} or \code{'cols'}.}
 \code{rowData} (or \code{colData}) where the data will be stored.
 (Default: \code{"clusters"})}
 
-\item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
+\item{full}{\code{Logical scalar}. Specifies whether additional clustering
+information should be stored in the object metadata.}
 
 \item{dimred}{\code{Character scalar} or \code{integer scalar}.
 Specifies dimension reduction results used in calculation. Either
