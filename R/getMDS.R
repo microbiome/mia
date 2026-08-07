@@ -17,6 +17,14 @@
 #' difference is that these functions apply microbiome-specific options such
 #' as \code{getDissimilarity} function by default.
 #'
+#' By default mia does not filter features (sets \code{ntop = Inf}), so all
+#' taxa are retained before running MDS. Note that
+#' \code{scater::calculateMDS} itself uses \code{ntop = 500} by default.
+#' When rarefaction is enabled (\code{niter > 0}) the sampling depth is
+#' evaluated on the retained matrix, so samples whose depth falls below the
+#' requested \code{sample} are dropped. Use \code{subset.row} to explicitly
+#' subset rows if desired.
+#'
 #' See \code{\link[scater:runMDS]{scater::calculateMDS}} for details.
 #'
 #' @return
@@ -40,6 +48,14 @@
 #'     \item \code{subset.result}: \code{Logical result}. Specifies whether to
 #'     subset \code{x} to match the result if some samples were removed during
 #'     calculation. (Default: \code{TRUE})
+#'
+#'     \item \code{ntop}: \code{Numeric scalar}. Forwarded to
+#'     \code{scater::calculateMDS}. Controls how many of the most variable
+#'     features are kept before MDS is run. (Default: \code{Inf}). Set
+#'     a finite \code{ntop} (or supply \code{subset.row}) when you want to
+#'     filter features before running MDS; use \code{ntop = Inf} when the full
+#'     assay is required (for example, for rarefaction where absolute library
+#'     sizes matter).
 #' }
 #'
 #' @examples
@@ -59,6 +75,18 @@
 #'
 #' # Calculate PCoA with Unifrac and rarefaction. (Note: increase iterations)
 #' tse <- addMDS(tse, method = "unifrac", name = "unifrac_rare", niter = 2L)
+#'
+#' # Disable feature filtering when rarefying at the minimum depth
+#' min_depth <- min(colSums(assay(tse, "counts")))
+#' tse <- addMDS(
+#'     tse,
+#'     assay.type = "counts",
+#'     method = "bray",
+#'     niter = 2L,
+#'     sample = min_depth,
+#'     ntop = Inf
+#' )
+#' reducedDim(tse, "MDS")[1:3, 1:2]
 #'
 #' # Visualize results
 #' p1 <- plotReducedDim(tse, "unifrac", colour_by = "SampleType") +
@@ -122,6 +150,11 @@ setMethod("getMDS", signature = c(x = "TreeSummarizedExperiment"),
 # This function is used to set default options for SCE
 .get_mds_args <- function(x, assay.type, FUN = getDissimilarity, ...){
     args <- c(list(x = x, assay.type = assay.type, FUN = FUN), list(...))
+    # Default to no filtering (retain all features) unless user provided ntop
+    arg_names <- names(args)
+    if( is.null(arg_names) || !("ntop" %in% arg_names) ){
+        args$ntop <- Inf
+    }
     return(args)
 }
 
