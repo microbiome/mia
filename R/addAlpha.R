@@ -27,13 +27,15 @@
 #'   (Default: \code{min(colSums2(assay(x, assay.type)))})
 #'
 #'   \item \code{tree.name}: \code{Character scalar}. Specifies which rowTree
-#'    will be used. ( Faith's index). (Default: \code{"phylo"})
+#'   will be used. (Phylogenetic indices: Allen, Faith, Rao).
+#'   (Default: \code{"phylo"})
 #'
 #'   \item \code{node.label}: \code{Character vector} or \code{NULL} Specifies
 #'   the links between rows and node labels of phylogeny tree specified
 #'   by \code{tree.name}. If a certain row is not linked with the tree, missing
 #'   instance should be noted as NA. When \code{NULL}, all the rownames should
-#'   be found from the tree. (Faith's index). (Default: \code{NULL})
+#'   be found from the tree. (Phylogenetic indices: Allen, Faith, Rao).
+#'   (Default: \code{NULL})
 #'
 #'   \item \code{only.tips}: (Faith's index). \code{Logical scalar}. Specifies
 #'   whether to remove internal nodes when Faith's index is calculated.
@@ -93,6 +95,10 @@
 #'
 #' \itemize{
 #'
+#' \item 'allen': Allen's phylogenetic entropy generalizes the Shannon index
+#' to phylogenetic trees by weighting branch lengths by descendant relative
+#' abundances (Allen et al. 2009). Using this index requires a tree.
+#'
 #' \item 'coverage': Number of species needed to cover a given fraction of
 #' the ecosystem (50 percent by default). Tune this with the threshold
 #' argument.
@@ -140,6 +146,10 @@
 #' negative skews, we follow Locey & Lennon (2016) and use the log-modulo
 #' transformation that adds a value of one to each measure of skewness to
 #' allow logarithmization.
+#'
+#' \item 'rao': Rao's quadratic entropy calculates the expected phylogenetic
+#' distance between two randomly chosen individuals from the community
+#' (Rao 1982). Using this index requires a tree.
 #'
 #' \item 'shannon': Shannon diversity (entropy).
 #'
@@ -378,6 +388,11 @@
 #' An  index of diversity and its associated diversity measure.
 #' _Oikos_ 70:167--171
 #'
+#' Allen B, Kon M, Bar-Yam Y (2009)
+#' A new phylogenetic diversity measure generalizing the Shannon index and its
+#' application to phyllostomid bats.
+#' _The American Naturalist_ 174(2):236–243.
+#'
 #' Camargo, JA. (1992)
 #' New diversity index for assessing structural alterations in aquatic
 #' communities.
@@ -435,6 +450,10 @@
 #' Pielou, EC. (1966)
 #' The measurement of diversity in different types of
 #' biological collections. _J Theoretical Biology_ 13:131--144.
+#'
+#' Rao CR (1982)
+#' Diversity and dissimilarity coefficients: a unified approach.
+#' _Theoretical Population Biology_ 21(1):24–43.
 #'
 #' Schloss PD (2024) Rarefaction is currently the best approach to control for
 #' uneven sequencing effort in amplicon sequence analyses. _mSphere_
@@ -575,12 +594,13 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     supported <- list()
     # Supported diversity indices
     temp <- c(
-        "coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
-        "log_modulo_skewness", "shannon")
+        "allen", "coverage", "faith", "fisher", "gini_simpson",
+        "inverse_simpson", "log_modulo_skewness", "rao", "shannon")
     temp <- data.frame(index = temp)
     temp[["measure"]] <- "diversity"
     temp[["index_long"]] <- paste0(temp[["index"]], "_", temp[["measure"]])
-    temp[["non_neg"]] <- c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE)
+    temp[["non_neg"]] <- c(
+        FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)
     supported[["diversity"]] <- temp
     # Supported dominance indices
     temp <- c(
@@ -628,18 +648,30 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
             "indices. The following 'index' was not detected: ", not_detected,
             call. = FALSE)
     }
-    # Faith index is available only for TreeSE with rowTree
+    # Tree indices are available only for TreeSE with rowTree or with tree
+    # provided
+    tree_indices <- c("allen", "faith", "rao")
+    missing_tree <- intersect(detected[["index"]], tree_indices)
     tse_with_tree <- (is(x, "TreeSummarizedExperiment") &&
         !is.null(rowTree(x))) || !is.null(tree)
-    if( "faith" %in% detected[["index"]] && !tse_with_tree ){
-        # Drop faith index from indices being calculated
-        detected <- detected[!detected[["index"]] %in% c("faith"), ]
+    if( length(missing_tree) > 0 && !tse_with_tree ){
+        # Drop tree indices from indices being calculated
+        detected <- detected[!detected[["index"]] %in% missing_tree, ]
         # If there are still other indices being calculated, give warning.
-        # Otherwise, give error if faith was the only index that user wants to
-        # calculate.
+        # Otherwise, give error if tree index was the only index that user
+        # wants to calculate.
         FUN <- if( nrow(detected) == 0 ) stop else warning
-        FUN("'faith' index can be calculated only for TreeSE with rowTree(x) ",
-            "populated or with 'tree' provided separately.", call. = FALSE)
+        msg <- if( length(missing_tree) == 1 ){
+            paste0(
+                "'", missing_tree, "' index can be calculated only for TreeSE ",
+                "with rowTree(x) populated or with 'tree' provided separately.")
+        } else {
+            paste0(
+                "The following indices can be calculated only for TreeSE with ",
+                "rowTree(x) populated or with 'tree' provided separately: '",
+                paste0(missing_tree, collapse = "', '"), "'")
+        }
+        FUN(msg, call. = FALSE)
     }
     # Check for unsupported values (negative values)
     if( any(assay(x, assay.type) < 0 & !is.na(assay(x, assay.type))) ){
@@ -705,6 +737,7 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     mat <- assay(x, assay.type)
     # Get correct function based on index
     FUN <- switch(index,
+        allen = .estimate_allen,
         shannon = .calc_shannon,
         gini_simpson = .calc_gini_simpson,
         inverse_simpson = .calc_inverse_simpson,
@@ -712,6 +745,7 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
         fisher = .calc_fisher,
         faith = .estimate_faith,
         log_modulo_skewness = .calc_log_modulo_skewness,
+        rao = .estimate_rao,
         #
         simpson_lambda = .simpson_lambda,
         core_abundance = .calc_core_dominance,
