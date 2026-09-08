@@ -674,10 +674,15 @@ setMethod("addRDA", "SingleCellExperiment",
             paste0(names(cols)[!cols], collapse = "','"), "'", call. = FALSE)
         variables <- variables[, cols, drop = FALSE]
     }
-    #
     # Calculate dissimilarity matrix
-    mat <- t(mat)
-    diss_mat <- vegdist(mat, method = method, ...)
+    if( inherits(mat, "dist") ){
+        diss_mat <- mat
+    } else if( is.matrix(mat) && isSymmetric(unname(mat)) ){
+        diss_mat <- as.dist(mat)
+    } else {
+        mat <- t(mat)
+        diss_mat <- vegdist(mat, method = method, ...)
+    }
     # For all variables run the analysis
     homogeneity <- lapply(colnames(variables), function(x){
         # Get variable values

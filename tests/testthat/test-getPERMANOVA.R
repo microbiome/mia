@@ -189,7 +189,7 @@ test_that("getPERMANOVA matches direct calculations", {
         permutations = 99
     )
     homogeneity_direct <- vegan::betadisper(
-        vegdist(t(assay(tse, "relabundance"))),
+        vegan::vegdist(t(assay(tse, "relabundance"))),
         group = tse$SampleType
     )
     
@@ -209,3 +209,98 @@ test_that("getPERMANOVA matches direct calculations", {
     expect_equal(
         res[[2]][[2]][[1]][[1]]$distances, homogeneity_direct$distances)
 })
+
+test_that("getPERMANOVA works with UniFrac and dist object directly", {
+    # Test on-the-fly UniFrac calculation on TreeSummarizedExperiment
+    set.seed(42)
+    res_unifrac <- getPERMANOVA(
+        tse, assay.type = "counts",
+        method = "unifrac",
+        formula = x ~ SampleType,
+        test.homogeneity = TRUE,
+        permutations = 99
+    )
+    expect_type(res_unifrac, "list")
+    expect_s3_class(res_unifrac$permanova, "anova.cca")
+    expect_s3_class(res_unifrac$homogeneity, "data.frame")
+
+    # Test passing a dist object directly
+    d <- getDissimilarity(tse, method = "unifrac")
+    expect_s3_class(d, "dist")
+    setseed_wrap <- set.seed(42)
+    res_dist <- suppressWarnings(getPERMANOVA(
+        d, formula = x ~ SampleType, data = colData(tse),
+        test.homogeneity = TRUE, permutations = 99
+    ))
+    expect_type(res_dist, "list")
+    expect_s3_class(res_dist$permanova, "anova.cca")
+    expect_equal(res_unifrac$permanova$SumOfSqs, res_dist$permanova$SumOfSqs)
+    expect_equal(res_unifrac$permanova$R2, res_dist$permanova$R2)
+    expect_equal(res_unifrac$permanova$F, res_dist$permanova$F)
+})
+
+test_that("getPERMANOVA and addPERMANOVA work with pre-calculated dissimilarity (dis.name)", {
+    # Pre-calculate dissimilarity and store in metadata
+    tse_diss <- addDissimilarity(tse, method = "unifrac", name = "unifrac_dist")
+    expect_true("unifrac_dist" %in% names(metadata(tse_diss)))
+
+    # Run getPERMANOVA using dis.name
+    set.seed(42)
+    res_precalc <- getPERMANOVA(
+        tse_diss, dis.name = "unifrac_dist",
+        formula = x ~ SampleType, permutations = 99
+    )
+    expect_s3_class(res_precalc$permanova, "anova.cca")
+
+    d <- getDissimilarity(tse, method = "unifrac")
+    set.seed(42)
+    res_dist <- suppressWarnings(getPERMANOVA(
+        d, formula = x ~ SampleType, data = colData(tse), permutations = 99
+    ))
+    expect_equal(res_precalc$permanova$SumOfSqs, res_dist$permanova$SumOfSqs)
+    expect_equal(res_precalc$permanova$F, res_dist$permanova$F)
+
+    # Test addPERMANOVA with dis.name
+    tse_meta <- addPERMANOVA(
+        tse_diss, dis.name = "unifrac_dist",
+        formula = x ~ SampleType, name = "perm_precalc", permutations = 99
+    )
+    expect_true("perm_precalc" %in% names(metadata(tse_meta)))
+    expect_s3_class(metadata(tse_meta)[["perm_precalc"]]$permanova, "anova.cca")
+
+    # Test addPERMANOVA with method = unifrac on-the-fly
+    tse_meta2 <- addPERMANOVA(
+        tse, method = "unifrac",
+        formula = x ~ SampleType, name = "perm_unifrac", permutations = 99
+    )
+    expect_true("perm_unifrac" %in% names(metadata(tse_meta2)))
+    expect_s3_class(metadata(tse_meta2)[["perm_unifrac"]]$permanova, "anova.cca")
+})
+
+test_that("getPERMANOVA input validations for dis.name and dist objects", {
+    # Nonexistent dis.name in metadata
+    expect_error(
+        getPERMANOVA(tse, dis.name = "nonexistent", formula = x ~ SampleType),
+        "'dis.name' must be a valid name of metadata"
+    )
+
+    # Invalid dis.name type
+    expect_error(
+        getPERMANOVA(tse, dis.name = 123, formula = x ~ SampleType),
+        "'dis.name' must be a single character value"
+    )
+
+    # Dist object with sample size mismatch
+    d <- getDissimilarity(tse, method = "bray")
+    expect_error(
+        getPERMANOVA(d, formula = x ~ SampleType, data = colData(tse)[1:10, ]),
+        "Number of samples in 'x' should match"
+    )
+
+    # Invalid x (neither matrix nor dist)
+    expect_error(
+        getPERMANOVA(1:10, formula = x ~ SampleType, data = colData(tse)),
+        "'x' must be a matrix or a 'dist' object"
+    )
+})
+
