@@ -1,7 +1,7 @@
-
-.estimate_faith <- function(
+# Helper function to extract tree and align matrix with tree nodes
+.get_tree_and_linked_mat <- function(
         x, mat, tree = NULL, tree.name = "phylo", node.label = node_lab,
-        node_lab = NULL, ...){
+        node_lab = NULL, index_name = "phylogenetic", ...){
     # Input check
     # If tree is NULL, then we must have TreeSE object that has rowTree
     if( is.null(tree) &&
@@ -20,7 +20,7 @@
     if( is.null(tree) || is.null(tree$edge.length) ){
         stop(
             "'tree' is NULL or it does not have any branches. ",
-            "The Faith's alpha diversity index is not possible to ",
+            "The ", index_name, " alpha diversity index is not possible to ",
             "calculate.", call. = FALSE)
     }
 
@@ -48,7 +48,7 @@
         warning(
             "The tree named does not include all the ",
             "rows. 'x' is subsetted.", call. = FALSE)
-        mat <- mat[ !is.na(node.label), ]
+        mat <- mat[ !is.na(node.label), , drop = FALSE]
         node.label <- node.label[ !is.na(node.label) ]
     }
     # If there are node labels (any TreeSE should have because they are rowLinks
@@ -58,14 +58,38 @@
         rownames(mat) <- node.label
     }
 
-    # To calculate faith, the assay must have rownames. TreeSE has always
-    # rownames at this point, but if the object is SE, it might be that it is
-    # missing rownames.
+    # To calculate tree diversity, the assay must have rownames. TreeSE has
+    # always rownames at this point, but if the object is SE, it might be that
+    # it is missing rownames.
     if( is.null(rownames(mat)) ){
         stop("'x' must have rownames.", call. = FALSE)
     }
-    # Calculates Faith index
-    res <- .calc_faith(mat, tree, ...)
+    return(list(mat = mat, tree = tree))
+}
+
+.estimate_faith <- function(x, mat, ...){
+    temp <- .get_tree_and_linked_mat(x, mat, index_name = "Faith's", ...)
+    res <- .calc_faith(temp$mat, temp$tree, ...)
+    return(res)
+}
+
+.estimate_allen <- function(x, mat, ...){
+    temp <- .get_tree_and_linked_mat(x, mat, index_name = "Allen's", ...)
+    args <- list(...)
+    args <- args[ !names(args) %in% c("index") ]
+    res <- do.call(
+        .calc_tree_diversity,
+        c(list(mat = temp$mat, tree = temp$tree, index = "allen"), args))
+    return(res)
+}
+
+.estimate_rao <- function(x, mat, ...){
+    temp <- .get_tree_and_linked_mat(x, mat, index_name = "Rao's", ...)
+    args <- list(...)
+    args <- args[ !names(args) %in% c("index") ]
+    res <- do.call(
+        .calc_tree_diversity,
+        c(list(mat = temp$mat, tree = temp$tree, index = "rao"), args))
     return(res)
 }
 
@@ -150,6 +174,65 @@ NULL
     return(.faith_cpp(mat, tree))
 }
 
+.calc_tree_diversity <- function(mat, tree, index = c("allen", "rao"), ...){
+    index <- match.arg(index)
+    # Ensure NAs are 0
+    mat[ is.na(mat) ] <- 0
+    # Relative abundances per sample
+    rel <- .calc_rel_abund(mat)
+    # Ensure matrix format
+    if( is.vector(rel) ){
+        rel <- matrix(
+            rel, ncol = 1, dimnames = list(rownames(mat), colnames(mat)))
+    }
+    # In case any sample has sum 0, rel can have NaNs
+    rel[ is.nan(rel) ] <- 0
+
+    # Reorder tree in postorder for single-pass bottom-up accumulation
+    tree <- reorder.phylo(tree, "postorder")
+    n_tips <- length(tree$tip.label)
+    n_nodes <- tree$Nnode
+    n_samples <- ncol(rel)
+
+    node_abund <- matrix(0, nrow = n_tips + n_nodes, ncol = n_samples)
+    m <- match(tree$tip.label, rownames(rel))
+    valid_tips <- !is.na(m)
+    node_abund[which(valid_tips), ] <- rel[m[valid_tips], , drop = FALSE]
+
+    edge <- tree$edge
+    edge_len <- tree$edge.length
+
+    if( any(is.na(edge_len)) ){
+        stop("'tree$edge.length' contains NA values.", call. = FALSE)
+    }
+
+    res <- numeric(n_samples)
+
+    for( i in seq_len(nrow(edge)) ){
+        child <- edge[i, 2]
+        parent <- edge[i, 1]
+        a_i <- node_abund[child, ]
+        L_i <- edge_len[i]
+
+        # Accumulate descendant abundance to parent node
+        node_abund[parent, ] <- node_abund[parent, ] + a_i
+
+        # Calculate contribution
+        pos <- a_i > 0
+        if( any(pos) ){
+            if( index == "allen" ){
+                # Allen: - L_i * a_i * log(a_i)
+                res[pos] <- res[pos] - L_i * a_i[pos] * log(a_i[pos])
+            } else if( index == "rao" ){
+                # Rao: 2 * L_i * a_i * (1 - a_i)
+                res[pos] <- res[pos] + 2 * L_i * a_i[pos] * (1 - a_i[pos])
+            }
+        }
+    }
+    names(res) <- colnames(mat)
+    return(res)
+}
+
 .calc_log_modulo_skewness <- function(mat, quantile = 0.5,
     nclasses = num_of_classes, num_of_classes = 50, ...){
     # quantile must be a numeric value between 0-1
@@ -202,13 +285,15 @@ NULL
 #' @importFrom SummarizedExperiment assay assays
 .get_diversity_values <- function(index, x, mat, ...){
     FUN <- switch(index,
+        allen = .estimate_allen,
         shannon = .calc_shannon,
         gini_simpson = .calc_gini_simpson,
         inverse_simpson = .calc_inverse_simpson,
         coverage = .calc_coverage,
         fisher = .calc_fisher,
         faith = .estimate_faith,
-        log_modulo_skewness = .calc_log_modulo_skewness
+        log_modulo_skewness = .calc_log_modulo_skewness,
+        rao = .estimate_rao
         )
     res <- FUN(x = x, mat = mat, ...)
     res <- unname(res)
