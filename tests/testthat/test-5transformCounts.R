@@ -11,8 +11,12 @@ test_that("transformAssay", {
         expect_error(mia::transformAssay(tse, method="relabundance", name = c("123", "456")))
 
         # Pseudocount is a string. Should be an error.
-        expect_error(mia::transformAssay(tse, method="log10", pseudocount = "pseudocount"))
-        expect_error(mia::transformAssay(tse, method="log2", pseudocount = FALSE))
+        expect_error(
+            mia::transformAssay(tse, method="log10", pseudocount="pseudocount"))
+        expect_error(
+            mia::transformAssay(tse, method="log2", pseudocount = FALSE))
+        expect_error(
+            mia::transformAssay(tse, method="log", pseudocount = FALSE))
 
         # Counts table should not be changed
         expect_equal(assays(mia::transformAssay(tse, method = "pa"))$counts, assays(tse)$counts,
@@ -69,6 +73,57 @@ test_that("transformAssay", {
                      apply(as.matrix(assay(tse, "counts")), 2, FUN=function(x){
                          log2(x+5)
                      }), check.attributes = FALSE)
+
+        ########################### LOG (NATURAL LOG) ##########################
+        # Calculates natural log transformation with pseudocount.
+        tmp <- mia::transformAssay(tse, method = "log", pseudocount = 1)
+        ass <- assays(tmp)$log
+        expect_equal(
+            as.matrix(ass),
+            apply(as.matrix(assay(tse, "counts")), 2, function(x) log(x + 1)),
+            check.attributes = FALSE)
+
+        # Tests transformAssay(MARGIN = "features"), calculates log with
+        # pseudocount. Should be equal.
+        tmp <- mia::transformAssay(
+            tse, MARGIN = "features", method = "log", pseudocount = 1)
+        ass <- assays(tmp)$log
+        expect_equal(
+            as.matrix(ass),
+            t(apply(
+                as.matrix(t(assay(tse, "counts"))), 2,
+                function(x) log(x + 1))),
+            check.attributes = FALSE)
+
+        # Calculates log, log2, and log10 consistency on counts + 1
+        cnts <- as.matrix(assay(tse, "counts"))
+        tmp_log <- mia::transformAssay(tse, method = "log", pseudocount = 1)
+        tmp_log2 <- mia::transformAssay(tse, method = "log2", pseudocount = 1)
+        tmp_log10 <- mia::transformAssay(tse, method = "log10", pseudocount = 1)
+        expect_equal(
+            as.matrix(assays(tmp_log)$log), log(cnts + 1),
+            check.attributes = FALSE)
+        expect_equal(
+            as.matrix(assays(tmp_log2)$log2), log2(cnts + 1),
+            check.attributes = FALSE)
+        expect_equal(
+            as.matrix(assays(tmp_log10)$log10), log10(cnts + 1),
+            check.attributes = FALSE)
+
+        ########################### LOG.DECOSTAND ##############################
+        # Calculates Anderson's log transformation from vegan::decostand
+        tmp_dec <- mia::transformAssay(tse, method = "log.decostand")
+        ass_dec <- assays(tmp_dec)$log.decostand
+        expect_equal(
+            as.matrix(ass_dec),
+            as.matrix(vegan::decostand(cnts, method = "log", MARGIN = 2)),
+            check.attributes = FALSE)
+
+        # Alias log_decostand gives identical result
+        tmp_dec2 <- mia::transformAssay(tse, method = "log_decostand")
+        expect_equal(
+            assays(tmp_dec)$log.decostand, assays(tmp_dec2)$log_decostand,
+            check.attributes = FALSE)
 
         ############################ CSS ######################################
         # Define counts matrix for the css and css_fast testing

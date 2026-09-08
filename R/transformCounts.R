@@ -76,9 +76,9 @@
 #'
 #' \itemize{
 #'
-#' \item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
-#' 'normalize', 'pa', 'rank', 'rclr', 'relabundance', 'rrank', 'standardize',
-#' 'total': please refer to
+#' \item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger',
+#' 'log.decostand', 'normalize', 'pa', 'rank', 'rclr', 'relabundance',
+#' 'rrank', 'standardize', 'total': please refer to
 #' \code{\link[vegan:decostand]{decostand}} for details.
 #'
 #' \item 'philr': please refer to \code{\link[philr:philr]{philr}} for details.
@@ -90,6 +90,12 @@
 #' might be \code{0.5}. The method is inspired by the CSS methods in
 #' \code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}
 #' package.
+#'
+#' \item 'log': Logarithmic transformation (natural log, base \eqn{e}) can be
+#' used for reducing the skewness of the data.
+#' \deqn{log = \log_{e} x}{%
+#' log = log(x)}
+#' where \eqn{x} is a single value of data.
 #'
 #' \item 'log10': log10 transformation can be used for reducing the skewness
 #' of the data.
@@ -286,9 +292,9 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
             "alr", "binning", "chi.square", "clr", "css", "cutoff",
             "difference", "-",
             "division", "/", "frequency", "hellinger", "invnorm", "log",
-            "log10", "log2", "max", "normalize", "pa", "philr", "pseudocount",
-            "range", "rank", "rclr", "relabundance", "rrank", "standardize",
-            "total", "z"),
+            "log.decostand", "log_decostand", "log10", "log2", "max",
+            "normalize", "pa", "philr", "pseudocount", "range", "rank", "rclr",
+            "relabundance", "rrank", "standardize", "total", "z"),
         MARGIN = "samples",
         name = method,
         pseudocount = FALSE,
@@ -340,7 +346,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     attr(assay, "pseudocount") <- NULL
     # Calls help function that does the transformation
     # Help function is different for mia and vegan transformations
-    if( method %in% c("binning", "log10", "log2", "css", "difference",
+    if( method %in% c("binning", "log", "log10", "log2", "css", "difference",
             "division", "invnorm") ){
         transformed_table <- .apply_transformation(
             assay, method, MARGIN, ...)
@@ -376,6 +382,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     FUN <- switch(
         method,
         binning = .apply_binning,
+        log = .calc_log,
         log10 = .calc_log,
         log2 = .calc_log,
         css = .calc_css,
@@ -419,6 +426,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     }
     # Adjust method if mia-specific alias was used
     method <- ifelse(method == "relabundance", "total", method)
+    method <- ifelse(
+        method %in% c("log.decostand", "log_decostand"), "log", method)
     if (method == "z") {
         .Deprecated(old="z", new="standardize")
     }
@@ -463,11 +472,13 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
             " transformation is being applied without pseudocount.",
             "`pseudocount` must be set to TRUE.", call. = FALSE)
     }
-    # Calculate log2 or log10 abundances
-    if(method == "log2"){
+    # Calculate log, log2, or log10 abundances
+    if( method == "log2" ){
         mat <- log2(mat)
-    } else{
+    } else if( method == "log10" ){
         mat <- log10(mat)
+    } else if( method == "log" ){
+        mat <- log(mat)
     }
     # Add parameter to attributes
     attr(mat, "parameters") <- list()
