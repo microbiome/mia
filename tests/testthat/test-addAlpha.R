@@ -241,4 +241,11 @@ test_that("Estimate Phylogenetic Alpha Diversity Indices (allen, rao)", {
         all(c("allen_rare", "rao_rare") %in% colnames(colData(tse_rare))))
     expect_true(is.numeric(tse_rare$allen_rare))
     expect_true(is.numeric(tse_rare$rao_rare))
+
+    # Explicit tree argument works for phylogenetic indices
+    tse_exp_tree <- addAlpha(
+        esophagus, assay.type = "counts",
+        index = c("faith", "allen", "rao"), tree = rowTree(esophagus))
+    expect_true(all(
+        c("faith", "allen", "rao") %in% colnames(colData(tse_exp_tree))))
 })

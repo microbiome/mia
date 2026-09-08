@@ -69,14 +69,20 @@
 
 .estimate_faith <- function(x, mat, ...){
     temp <- .get_tree_and_linked_mat(x, mat, index_name = "Faith's", ...)
-    res <- .calc_faith(temp$mat, temp$tree, ...)
+    args <- list(...)
+    args <- args[ !names(args) %in% c(
+        "tree", "tree.name", "node.label", "node_lab", "index_name", "index") ]
+    res <- do.call(
+        .calc_faith,
+        c(list(mat = temp$mat, tree = temp$tree), args))
     return(res)
 }
 
 .estimate_allen <- function(x, mat, ...){
     temp <- .get_tree_and_linked_mat(x, mat, index_name = "Allen's", ...)
     args <- list(...)
-    args <- args[ !names(args) %in% c("index") ]
+    args <- args[ !names(args) %in% c(
+        "tree", "tree.name", "node.label", "node_lab", "index_name", "index") ]
     res <- do.call(
         .calc_tree_diversity,
         c(list(mat = temp$mat, tree = temp$tree, index = "allen"), args))
@@ -86,7 +92,8 @@
 .estimate_rao <- function(x, mat, ...){
     temp <- .get_tree_and_linked_mat(x, mat, index_name = "Rao's", ...)
     args <- list(...)
-    args <- args[ !names(args) %in% c("index") ]
+    args <- args[ !names(args) %in% c(
+        "tree", "tree.name", "node.label", "node_lab", "index_name", "index") ]
     res <- do.call(
         .calc_tree_diversity,
         c(list(mat = temp$mat, tree = temp$tree, index = "rao"), args))
