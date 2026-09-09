@@ -206,24 +206,20 @@
 # and rows features. Each cell specifies the membership of feature to the
 # specific module.
 .check_and_process_modules <- function(modules){
-    # Determine class type and NAs
-    is_logical <- is.logical(modules)
-    is_num <- all(modules == 0 | modules == 1)
-    is_na <- is.na(modules)
     # Check validity of module type
-    if( !is_logical && !is_num ){
-        stop("'groups' variables are not binary.", call. = FALSE)
+    if( !is.logical(modules) && !is.numeric(modules) ){
+        stop("'group' variables must be numeric or logical.", call. = FALSE)
     }
-    # Convert to numeric binary to Boolean adjacency matrix
-    if( is_num ){
-        modules <- modules != 0
-    }
+    # Find NAs
+    is_na <- which(is.na(modules))
     # Replace NAs
-    if( any(is_na) ){
-        warning("NAs were found in 'groups' variables and were removed",
-            "before agglomerating the experiment.", call. = FALSE)
+    if( length(is_na) != 0L ){
+        warning(
+            "NAs in 'group' variables were removed before agglomeration.",
+            call. = FALSE
+        )
         # Zero out NA modules
-        modules[is.na(modules)] <- FALSE
+        modules[is_na] <- 0
     }
     return(modules)
 }
