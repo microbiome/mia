@@ -21,6 +21,7 @@ exportMothur(x, ...)
   dpath,
   rowdata.file = "rowdata",
   coldata.file = "coldata",
+  refseq.file = "seqs",
   assay.dir = "assays",
   rowtree.dir = "row_trees",
   coltree.dir = "col_trees",
@@ -28,7 +29,13 @@ exportMothur(x, ...)
   altexp.dir = "alt_exps"
 )
 
-\S4method{exportQIIME2}{TreeSummarizedExperiment}(x, dpath, assay.type = "counts", tree.name = "phylo")
+\S4method{exportQIIME2}{TreeSummarizedExperiment}(
+  x,
+  dpath,
+  assay.type = "counts",
+  tree.name = "phylo",
+  group.var = NULL
+)
 
 \S4method{exportMothur}{TreeSummarizedExperiment}(
   x,
@@ -44,27 +51,44 @@ object.}
 
 \item{...}{Unused.}
 
-\item{dpath}{\code{Character scalar}.}
+\item{dpath}{\code{Character scalar}. String specifying the directory where
+\code{x} should be exported. If non-existent, it is created recursively.}
 
-\item{rowdata.file}{\code{Character scalar}. (Default: \code{"rowdata"})}
+\item{rowdata.file}{\code{Character scalar}. String specifying the file where
+rowData should be written. (Default: \code{"rowdata"})}
 
-\item{coldata.file}{\code{Character scalar}. (Default: \code{"coldata"})}
+\item{coldata.file}{\code{Character scalar}. String specifying the file where
+colData should be written. (Default: \code{"coldata"})}
 
-\item{assay.dir}{\code{Character scalar}. (Default: \code{"assays"})}
+\item{refseq.file}{\code{Character scalar}. String specifying the file where
+referenceSeq should be written. (Default: \code{"seqs"})}
 
-\item{rowtree.dir}{\code{Character scalar}. (Default: \code{"row_trees"})}
+\item{assay.dir}{\code{Character scalar}. String specifying the directory
+where assays should be written. (Default: \code{"assays"})}
 
-\item{coltree.dir}{\code{Character scalar}. (Default: \code{"col_trees"})}
+\item{rowtree.dir}{\code{Character scalar}. String specifying the directory
+where rowTrees should be written. (Default: \code{"row_trees"})}
 
-\item{dimred.dir}{\code{Character scalar}. (Default: \code{"dim_reds"})}
+\item{coltree.dir}{\code{Character scalar}. String specifying the directory
+where colTrees should be written. (Default: \code{"col_trees"})}
 
-\item{altexp.dir}{\code{Character scalar}. (Default: \code{"alt_exps"})}
+\item{dimred.dir}{\code{Character scalar}. String specifying the directory
+where reducedDims should be written. (Default: \code{"dim_reds"})}
 
-\item{assay.type}{\code{Character scalar}. (Default: \code{"counts"})}
+\item{altexp.dir}{\code{Character scalar}. String specifying the directory
+where altExps should be written. (Default: \code{"alt_exps"})}
 
-\item{tree.name}{\code{Character scalar}. (Default: \code{"phylo"})}
+\item{assay.type}{\code{Character scalar}. String specifying which assay
+should be exported. Only for \code{exportQIIME2} and \code{exportMothur}.
+(Default: \code{"counts"})}
 
-\item{group.var}{\code{Character scalar}. (Default: \code{NULL})}
+\item{tree.name}{\code{Character scalar}. String specifying which row tree
+should be exported. Only for \code{exportQIIME2} and \code{exportMothur}.
+(Default: \code{"phylo"})}
+
+\item{group.var}{\code{Character scalar}. String specifying one variable of
+rowData to export as a custom grouping file. Only for \code{exportQIIME2}
+and \code{exportMothur}. (Default: \code{NULL})}
 }
 \value{
 Directory at \code{dpath} with components of \code{x} each stored
@@ -94,8 +118,11 @@ vignettes on converting data:
 \examples{
 library(TreeSummarizedExperiment)
 
+# Generate example TreeSE object
 tse <- makeTSE()
+# Give name to counts assay
 assayNames(tse) <- "counts"
+# Give name to taxonomy variable
 names(rowData(tse))[1] <- "Genus"
 
 # Export raw TreeSE components in custom directory
@@ -106,5 +133,4 @@ exportQIIME2(tse, "qiime2_dir")
 
 # Export TreeSE components in near-ready mothur format
 exportMothur(tse, "mothur_dir")
-
 }

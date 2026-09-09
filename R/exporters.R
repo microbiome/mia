@@ -73,8 +73,11 @@
 #' @examples
 #' library(TreeSummarizedExperiment)
 #' 
+#' # Generate example TreeSE object
 #' tse <- makeTSE()
+#' # Give name to counts assay
 #' assayNames(tse) <- "counts"
+#' # Give name to taxonomy variable
 #' names(rowData(tse))[1] <- "Genus"
 #' 
 #' # Export raw TreeSE components in custom directory
