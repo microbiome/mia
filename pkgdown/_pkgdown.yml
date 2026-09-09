@@ -11,6 +11,7 @@ reference:
 - title: Joint-RPCA
   contents:
     - getJointRPCA
+    - filterRPCAInput
 
 - title: Clustering
 - contents:

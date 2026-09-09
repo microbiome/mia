@@ -57,6 +57,7 @@ Other contributors:
   \item Eetu Tammi [contributor]
   \item Aituar Bektanov [contributor]
   \item Rasmus Hindström [contributor]
+  \item Sabuj Bhowmick [contributor]
 }
 
 }
