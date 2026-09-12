@@ -4,7 +4,15 @@
 \alias{applyByModule}
 \title{Apply a function by feature or sample group}
 \usage{
-applyByModule(x, by, group, FUN, ..., meta.name = "mod.res")
+applyByModule(
+  x,
+  by,
+  group,
+  FUN,
+  ...,
+  min.group.size = NULL,
+  meta.name = "mod.res"
+)
 }
 \arguments{
 \item{x}{A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}
@@ -22,6 +30,9 @@ populate the altExp slot.}
 
 \item{...}{Additional arguments passed to \code{FUN}.}
 
+\item{min.group.size}{\code{Numeric scalar}. The minimum number of features
+or samples in a group for \code{FUN} to be applied. (Default: \code{NULL})}
+
 \item{meta.name}{\code{Character scalar}. The name of the metadata slot where
 results are stored. (Default: \code{"mod.res"})}
 }
@@ -33,85 +44,52 @@ depending on the given \code{FUN}.
 Apply a function by feature or sample group
 }
 \examples{
-library(ariadne)
 library(miaViz)
 
 # Import dataset
 data("Tengeler2020", package = "mia")
 tse <- Tengeler2020
 
-# Create taxon labels
-tax.labs <- getTaxonomyLabels(tse, make.unique = FALSE)
-tax.labs <- sub("^.+:", "", tax.labs)
-rowData(tse)$taxname <- tax.labs
-
-# Import ariadne graph
-graph <- ariadne()
-
-# Link taxa to BugSigDB modules
-tax2bugsig <- weavePath(graph, taxname ~ bugsig, k = 3, init = tax.labs)
-
-# Add modules to TreeSE
-tse <- addModules(tse, tax2bugsig, key = "taxname")
-
-# Select a subset of modules to analyse
-mod.names <- levels(tax2bugsig$bugsig)
-
-# Agglomerate experiment by module
-altExp(tse, "modules") <- agglomerateByModule(
-    tse,
-    by = "rows",
-    group = mod.names
-)
-
-# Get names of top modules
-top.mods <- getTop(altExp(tse, "modules"))
-
-# Compute alpha diversity indices for each module
+# Compute alpha diversity indices for each Order
 tse <- applyByModule(
     tse,
     by = "rows",
-    group = top.mods,
+    group = "Order",
     FUN = getAlpha,
-    index = c("shannon", "faith")
+    index = c("shannon", "faith"),
+    min.group.size = 2
 )
 
-# Compute beta diversity measures for each module
+# Compute beta diversity measures for each Order
 tse <- applyByModule(
     tse,
     by = "rows",
-    group = top.mods,
+    group = "Order",
     FUN = getMDS,
-    method = "unifrac"
+    method = "unifrac",
+    min.group.size = 2
 )
 
-# Transform assay for each module, storing results as altExps
+# Transform assay for each Order, storing results as altExps
 tse <- applyByModule(
     tse,
     by = "rows",
-    group = top.mods,
+    group = "Order",
     FUN = transformAssay,
     method = "clr",
     pseudocount = TRUE
 )
 
+rowData(tse)$Var1 <- rowData(tse)$Family == "Ruminococcaceae"
+rowData(tse)$Var2 <- rowData(tse)$Order == "Clostridiales"
+
 # Plot abundance for each module, specifying metadata name
 tse <- applyByModule(
     tse,
     by = "rows",
-    group = top.mods,
+    group = c("Var1", "Var2"),
     FUN = plotAbundance,
     meta.name = "abund_plots"
 )
 
-# Plot phylogeny for each module
-tse <- applyByModule(
-    tse,
-    by = "rows",
-    group = top.mods,
-    FUN = plotRowTree,
-    edge.colour.by = "Genus",
-    add.legend = TRUE,
-    meta.name = "tree_plots"
-)
 }

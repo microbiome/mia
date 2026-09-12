@@ -17,6 +17,9 @@
 #' 
 #' @param ... Additional arguments passed to \code{FUN}.
 #' 
+#' @param min.group.size \code{Numeric scalar}. The minimum number of features
+#'   or samples in a group for \code{FUN} to be applied. (Default: \code{NULL})
+#' 
 #' @param meta.name \code{Character scalar}. The name of the metadata slot where
 #'   results are stored. (Default: \code{"mod.res"})
 #' 
@@ -24,94 +27,62 @@
 #' depending on the given \code{FUN}.
 #' 
 #' @examples
-#' library(ariadne)
 #' library(miaViz)
 #' 
 #' # Import dataset
 #' data("Tengeler2020", package = "mia")
 #' tse <- Tengeler2020
 #' 
-#' # Create taxon labels
-#' tax.labs <- getTaxonomyLabels(tse, make.unique = FALSE)
-#' tax.labs <- sub("^.+:", "", tax.labs)
-#' rowData(tse)$taxname <- tax.labs
-#' 
-#' # Import ariadne graph
-#' graph <- ariadne()
-#' 
-#' # Link taxa to BugSigDB modules
-#' tax2bugsig <- weavePath(graph, taxname ~ bugsig, k = 3, init = tax.labs)
-#' 
-#' # Add modules to TreeSE
-#' tse <- addModules(tse, tax2bugsig, key = "taxname")
-#' 
-#' # Select a subset of modules to analyse
-#' mod.names <- levels(tax2bugsig$bugsig)
-#' 
-#' # Agglomerate experiment by module
-#' altExp(tse, "modules") <- agglomerateByModule(
-#'     tse,
-#'     by = "rows",
-#'     group = mod.names
-#' )
-#' 
-#' # Get names of top modules
-#' top.mods <- getTop(altExp(tse, "modules"))
-#' 
-#' # Compute alpha diversity indices for each module
+#' # Compute alpha diversity indices for each Order
 #' tse <- applyByModule(
 #'     tse,
 #'     by = "rows",
-#'     group = top.mods,
+#'     group = "Order",
 #'     FUN = getAlpha,
-#'     index = c("shannon", "faith")
+#'     index = c("shannon", "faith"),
+#'     min.group.size = 2
 #' )
 #' 
-#' # Compute beta diversity measures for each module
+#' # Compute beta diversity measures for each Order
 #' tse <- applyByModule(
 #'     tse,
 #'     by = "rows",
-#'     group = top.mods,
+#'     group = "Order",
 #'     FUN = getMDS,
-#'     method = "unifrac"
+#'     method = "unifrac",
+#'     min.group.size = 2
 #' )
 #' 
-#' # Transform assay for each module, storing results as altExps
+#' # Transform assay for each Order, storing results as altExps
 #' tse <- applyByModule(
 #'     tse,
 #'     by = "rows",
-#'     group = top.mods,
+#'     group = "Order",
 #'     FUN = transformAssay,
 #'     method = "clr",
 #'     pseudocount = TRUE
 #' )
+#'
+#' rowData(tse)$Var1 <- rowData(tse)$Family == "Ruminococcaceae"
+#' rowData(tse)$Var2 <- rowData(tse)$Order == "Clostridiales"
 #' 
 #' # Plot abundance for each module, specifying metadata name
 #' tse <- applyByModule(
 #'     tse,
 #'     by = "rows",
-#'     group = top.mods,
+#'     group = c("Var1", "Var2"),
 #'     FUN = plotAbundance,
 #'     meta.name = "abund_plots"
 #' )
 #' 
-#' # Plot phylogeny for each module
-#' tse <- applyByModule(
-#'     tse,
-#'     by = "rows",
-#'     group = top.mods,
-#'     FUN = plotRowTree,
-#'     edge.colour.by = "Genus",
-#'     add.legend = TRUE,
-#'     meta.name = "tree_plots"
-#' )
 NULL
 
 #' @export
 #' @rdname applyByModule
 #' @importFrom dplyr bind_cols
 #' @importFrom BiocParallel bplapply
-applyByModule <- function(x, by, group, FUN, ..., meta.name = "mod.res"){
+applyByModule <- function(x, by, group, FUN, ..., min.group.size = NULL,
+    meta.name = "mod.res"){
     # Check margin
     if( length(by) == 0L || !by %in% c("rows", "cols") ){
         stop("'by' must be either 'rows' or 'cols'.", call. = FALSE)
@@ -119,13 +90,39 @@ applyByModule <- function(x, by, group, FUN, ..., meta.name = "mod.res"){
     # Select side information based on margin
     data_fun <- if( by == "rows" ) rowData else colData
     
-    if( !all(group %in% colnames(data_fun(x))) ){
+    if( !.is_non_empty_character(group) || !all(group %in% colnames(data_fun(x))) ){
         stop("All elements of 'group' must be variables of 'x'.", call. = FALSE)
     }
     
-    df <- data_fun(x)[group]
+    if( length(group) == 1L ){
+        
+        gvar <- data_fun(x)[[group]]
+        
+        gvar <- as.factor(gvar)
+        
+        group <- levels(gvar)
+        
+        gvar <- as.numeric(gvar)
+        
+        idx <- lapply(seq_along(group), function(g) which(gvar == g))
+        
+        names(idx) <- group
+        
+    }else{
+        
+        df <- data_fun(x)[group]
+        
+        idx <- apply(df, 2L, function(col) which(col != 0))
+    }
     
-    idx <- apply(df, 2L, function(col) which(col != 0))
+    if( !is.null(min.group.size) ){
+        
+        to_keep <- which(lengths(idx, use.names = FALSE) >= min.group.size)
+        
+        idx <- idx[to_keep]
+        group <- group[to_keep]
+    }
+    
     res <- bplapply(idx, function(i) FUN(x[i, ], ...))
     
     fun_name <- FUN |>
@@ -145,12 +142,12 @@ applyByModule <- function(x, by, group, FUN, ..., meta.name = "mod.res"){
         
         res <- res |>
             lapply(as.data.frame) |>
-            dplyr::bind_cols(.name_repair = "minimal")
+            bind_cols(.name_repair = "minimal")
         
         colnames(res) <- paste0(colnames(res), ".", col_labs)
-        colData(x) <- cbind(colData(x), res)
+        colData(x) <- .update_side_info(colData(x), res)
 
-    }else if( fun_name %in%  c("getDivergence", "getDominant") ){
+    }else if( fun_name %in% c("getDivergence", "getDominant") ){
       
       if( "name" %in% names(kwargs) ){
           lab <- kwargs$name
@@ -162,10 +159,10 @@ applyByModule <- function(x, by, group, FUN, ..., meta.name = "mod.res"){
       
       res <- res |>
           lapply(as.data.frame) |>
-          dplyr::bind_cols(.name_repair = "minimal")
+          bind_cols(.name_repair = "minimal")
       
       colnames(res) <- paste0(lab, ".", group)
-      colData(x) <- cbind(colData(x), res)
+      colData(x) <- .update_side_info(colData(x), res)
         
     }else if( fun_name %in% c("getMDS", "getNMDS", "getCCA", "getRDA", "getLDA",
         "getNMF", "getDPCoA", "calculatePCA") ){
@@ -176,7 +173,7 @@ applyByModule <- function(x, by, group, FUN, ..., meta.name = "mod.res"){
         
         res <- res |>
             lapply(as.data.frame) |>
-            dplyr::bind_cols(.name_repair = "minimal")
+            bind_cols(.name_repair = "minimal")
         
         clust_by <- if( "MARGIN" %in% names(kwargs) ) kwargs$MARGIN else "rows"
         clust_col <- if( "clust.col" %in% names(kwargs) ) kwargs$clust.col else "cluster"
@@ -184,9 +181,9 @@ applyByModule <- function(x, by, group, FUN, ..., meta.name = "mod.res"){
         colnames(res) <- paste0(clust_col, ".", group)
         
         if( clust_by == "rows" ){
-            rowData(x) <- cbind(rowData(x), res)
+            rowData(x) <- .update_side_info(rowData(x), res)
         }else{
-            colData(x) <- cbind(colData(x), res)
+            colData(x) <- .update_side_info(colData(x), res)
         }
         
     }else{
@@ -195,3 +192,19 @@ applyByModule <- function(x, by, group, FUN, ..., meta.name = "mod.res"){
     
     return(x)
 }
+
+
+# Define function to add new cols to side information
+.update_side_info <- function(old, new){
+    # Find any duplicate columns
+    to_remove <- which(colnames(old) %in% colnames(new))
+    # Replace duplicate columns
+    if( length(to_remove) != 0L ){
+        warning("Some columns were replaced.", call. = FALSE)
+        old[to_remove] <- NULL
+    }
+    # Combine old and new columns
+    updated <- cbind(old, new)
+    return(updated)
+}
+
