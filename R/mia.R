@@ -38,7 +38,7 @@ NULL
 #'     and 3 samples}
 #'   \item{\code{\link{GlobalPatterns}}: A TreeSummarizedExperiment with 19216
 #'     features and 26 samples}
-#'   \item{\code{\link{ibdmdb_2omic_demo}}: A compact
+#'   \item{\code{\link{ibdmdb}}: A compact
 #'     \code{MultiAssayExperiment} demo dataset with 2 experiments (MGX + MTX)}
 #'   \item{\code{\link{HintikkaXOData}}: A MultiAssayExperiment with 3
 #'     experiments (microbiota, metabolites and biomarkers)}
@@ -394,7 +394,7 @@ NULL
 #' A compact example derived from the Integrative Human Microbiome Project (iHMP)
 #' Inflammatory Bowel Disease (IBD) cohort.
 #'
-#' The dataset \code{ibdmdb_2omic_demo} is a named list with:
+#' The dataset \code{ibdmdb} is a named list with:
 #' \itemize{
 #'   \item \code{se_mgx}: metagenomic taxonomic profiles (MGX)
 #'   \item \code{se_mtx}: metatranscriptomic taxonomic profiles (MTX)
@@ -404,12 +404,12 @@ NULL
 #'
 #' These compact objects are intended for quick examples and vignettes.
 #' Load with:
-#' \code{data("ibdmdb_2omic_demo")}.
+#' \code{data("ibdmdb")}.
 #'
-#' @name ibdmdb_2omic_demo
+#' @name ibdmdb
 #' @docType data
 #' @keywords datasets
-#' @usage data("ibdmdb_2omic_demo")
+#' @usage data("ibdmdb")
 #'
 #' @format A \code{MultiAssayExperiment} with two experiments:
 #' \describe{

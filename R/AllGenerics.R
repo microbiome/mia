@@ -411,7 +411,32 @@ setGeneric("addMDS", signature = "x", function(x, ...)
 setGeneric("getReducedDimAttribute", signature = "x", function(x, ...)
     standardGeneric("getReducedDimAttribute"))
 
-#' @rdname utilization_functions
+#' @rdname getRPCA
+#' @export
+setGeneric("getRPCA", signature = "x", function(x, ...)
+    standardGeneric("getRPCA"))
+
+#' @rdname getRPCA
+#' @export
+setGeneric("addRPCA", signature = "x", function(x, ...)
+    standardGeneric("addRPCA"))
+
+#' @rdname getRPCA
+#' @export
+setGeneric("getJointRPCA", signature = "x", function(x, ...)
+    standardGeneric("getJointRPCA"))
+
+#' @rdname getRPCA
+#' @export
+setGeneric("addJointRPCA", signature = "x", function(x, ...)
+    standardGeneric("addJointRPCA"))
+
+#' @rdname filterRPCAInput
+#' @export
+setGeneric("filterRPCAInput", signature = "x", function(x, ...)
+    standardGeneric("filterRPCAInput"))
+
+           #' @rdname utilization_functions
 #' @export
 setGeneric("convertToMAE", signature = "x", function(x, ...)
     standardGeneric("convertToMAE"))

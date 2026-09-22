@@ -11,6 +11,7 @@ reference:
 - title: Joint-RPCA
   contents:
     - getJointRPCA
+    - filterRPCAInput
 
 - title: Clustering
 - contents:
@@ -43,7 +44,7 @@ reference:
   - peerj13075
   - Tengeler2020
   - Tito2024QMP
-  - ibdmdb_2omic_demo
+  - ibdmdb
 - title: Dataset description
 - contents:
   - getPrevalence
