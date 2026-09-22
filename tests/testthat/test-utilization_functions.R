@@ -36,15 +36,12 @@ test_that("Test MAE/TreeSE convertsion functions", {
     mae2 <- convertToMAE(tse1)
     tse2 <- convertToTreeSE(mae2)
 
-    # During conversion, the experiments get colData and main one gets altExps
-    # and name
-    for( i in mae2 |> experiments() |> length() |> seq_len() ){
-        colData(mae2[[i]]) <- NULL
-    }
-    altExps(mae2[[1L]]) <- NULL
-    mainExpName(mae2[[1L]]) <- NULL
-
     # Check that the data is retained correctly
-    expect_equal(mae1, mae2)
-    expect_equal(tse1, tse2)
+    expect_equal(mae1, mae2, check.attributes = FALSE)
+    expect_equal(colData(mae1), colData(mae2), check.attributes = FALSE)
+    expect_equal(mae1[[1L]], mae2[[1L]], check.attributes = FALSE)
+    expect_equal(tse1, tse2, check.attributes = FALSE)
+    expect_equal(assay(tse1), assay(tse2), check.attributes = FALSE)
+    expect_equal(rowData(tse1), rowData(tse2), check.attributes = FALSE)
+    expect_equal(colData(tse1), colData(tse2), check.attributes = FALSE)
 })

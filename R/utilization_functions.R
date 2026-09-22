@@ -101,7 +101,8 @@ setMethod("convertToTreeSE", "MultiAssayExperiment",
 
         x <- x |> intersectColumns()
         exps <- lapply(x |> experiments() |> names(), function(exp_name){
-            getWithColData(x, exp_name, )
+            # Suppress "Ignoring redundant column names in 'colData(x)'"
+            getWithColData(x, exp_name, ) |> suppressWarnings()
         })
         names(exps) <- x |> experiments() |> names()
 
