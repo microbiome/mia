@@ -91,9 +91,8 @@
 #' all the abundances of features are equal between two samples, and 0 means
 #' that samples have completely different relative abundances.
 #'
-#' Unifrac is calculated with \code{
-#' \link[ecodive:unweighted_unifrac]{ecodive:unweighted_unifrac()}}
-#' or \code{\link[ecodive:weighted_unifrac]{ecodive:weighted_unifrac()}}.
+#' Unifrac is calculated with a C++ implementation of the Striped Unifrac
+#' algorithm (McDonald et al. 2021).
 #'
 #' If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
 #' utilized.
@@ -131,6 +130,11 @@
 #'
 #' Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
 #' microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
+#' 
+#' McDonald D, Vázquez-Baeza Y, Koslicki D, McClelland J, Reeve N, Xu Z,
+#' Gonzalez A, Knight R. ``Striped UniFrac: enabling microbiome analysis at
+#' unprecedented scale.'' Nat Methods. 2018 15 (11):847-848.
+#' doi: 10.1038/s41592-018-0187-8.
 #'
 #' For JSD dissimilarity:
 #' Jensen-Shannon Divergence and Hilbert space embedding.

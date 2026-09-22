@@ -480,9 +480,7 @@ setMethod("addRDA", "SingleCellExperiment",
             "'col.var' and leave 'formula' unspecified.", call. = FALSE)
     }
     # Get variables from formula
-    terms <- rownames(attr(terms(formula), "factors"))
-    terms <- terms[terms != as.character(formula)[2L]]
-    terms <- .remove_special_functions_from_terms(terms)
+    terms <- formula |> terms() |> delete.response() |> all.vars()
     # Check that all variables specify a column from colData
     if( !all(terms %in% colnames(colData(x))) ){
         stop("All variables on the right hand side of 'formula' must be ",
@@ -491,20 +489,6 @@ setMethod("addRDA", "SingleCellExperiment",
     # Get the variables from colData
     df <- colData(x)[, terms, drop = FALSE]
     return(df)
-}
-
-# This function parses right-hand side formula so that it now includes only
-# the covariates.
-.remove_special_functions_from_terms <- function(terms){
-    names(terms) <- terms
-    m <- regexec("^Condition\\(([^\\(\\)]*)\\)$|^([^\\(\\)]*)$", terms)
-    m <- regmatches(terms, m)
-    terms <- vapply(m, function(n){
-        n <- n[seq.int(2L,length(n))]
-        n <- n[n != ""]
-        return(n)
-        }, character(1))
-    return(terms)
 }
 
 # This function performs dbRDA or CCA. It returns side scores with other

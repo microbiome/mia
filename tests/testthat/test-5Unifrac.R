@@ -65,6 +65,8 @@ test_that("Unifrac beta diversity", {
                                     weighted = FALSE, tree.name = "tree2")
     )
     unifrac_mia <- as.matrix(unifrac_mia)
+
+    skip_if_not(requireNamespace("ecodive", quietly = TRUE))
     unifrac_ecodive <- as.matrix(ecodive::unweighted_unifrac(t(assay(tse_ref)),
                                               rowTree(tse_ref)))
     expect_equal(unifrac_mia, unifrac_ecodive)

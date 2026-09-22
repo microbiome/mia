@@ -153,7 +153,7 @@ make_SE <- function(mat, meta_df = NULL, assay_name = "counts") {
         ))
     }
 
-    md <- as.data.frame(meta_df, stringsAsFactors = FALSE, check.names = FALSE)
+    md <- meta_df
 
     overlaps <- vapply(
         md,
@@ -182,7 +182,7 @@ make_SE <- function(mat, meta_df = NULL, assay_name = "counts") {
 
     SummarizedExperiment::SummarizedExperiment(
         assays  = setNames(list(mat), assay_name),
-        colData = S4Vectors::DataFrame(md_sub)
+        colData = md_sub
     )
 }
 
@@ -210,6 +210,7 @@ if (length(missing_files)) {
 # ------------------------------------------------------------------------------
 
 meta_full <- read_metadata(f_meta)
+meta_full <- DataFrame(meta_full, check.names = FALSE)
 
 # ------------------------------------------------------------------------------
 # Prepare 2-omic (MGX + MTX)
@@ -252,9 +253,51 @@ M_mtx <- M_mtx[, shared2, drop = FALSE]
 M_mgx <- cap_by_var(M_mgx, cap_mgx)
 M_mtx <- cap_by_var(M_mtx, cap_mtx)
 
-meta_df <- meta_full
+meta_df <- meta_full[meta_full$data_type %in% "metagenomics", ]
 se_mgx  <- make_SE(M_mgx, meta_df, assay_name = "mgx")
+# Split taxa into taxonomy
+rd <- mia:::.parse_taxonomy(data.frame(Taxon = rownames(se_mgx)), sep = "\\|", remove.prefix = TRUE)
+rownames(rd) <- rownames(se_mgx)
+rowData(se_mgx) <- rd
+se_mgx <- agglomerateByRanks(se_mgx)
+se_mgx <- swapAltExp(se_mgx, "species", "original")
+
+meta_df <- meta_full[meta_full$data_type %in% "metatranscriptomics", ]
 se_mtx  <- make_SE(M_mtx, meta_df, assay_name = "mtx")
+# Create a feature metadata table
+df <- data.frame(
+    feature = rownames(se_mtx),
+    stringsAsFactors = FALSE
+)
+df$gene_function <- sub("\\|.*$", "", df$feature)
+df$taxon <- ifelse(
+    grepl("\\|", df$feature),
+    sub("^.*\\|", "", df$feature),
+    NA_character_
+)
+# Create function + bacteria identifier
+df$gene_taxon <- ifelse(
+    !is.na(df$taxon),
+    paste(df$gene_function, df$taxon, sep = "|"),
+    NA_character_
+)
+df <- DataFrame(df)
+rownames(df) <- rownames(se_mtx)
+rowData(se_mtx) <- df
+se_mtx <- as(se_mtx, "TreeSummarizedExperiment")
+
+# Function level
+altExp(se_mtx, "gene_function") <- agglomerateByVariable(
+    se_mtx,
+    by = 1,
+    group = "gene_function"
+)
+# Function + bacteria level
+altExp(se_mtx, "gene_taxon") <- agglomerateByVariable(
+    se_mtx,
+    by = 1,
+    group = "gene_taxon"
+)
 
 mae <- MultiAssayExperiment::MultiAssayExperiment(
     experiments = list(MGX = se_mgx, MTX = se_mtx)
