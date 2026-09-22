@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.8</span>
       </span>
     </div>
 
@@ -245,6 +245,9 @@ test specified by <code>homogeneity.test</code> parameter.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: ggraph</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘miaViz’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:scater’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     plotHeatmap</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:mia’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     plotNMDS</span>
@@ -261,8 +264,6 @@ test specified by <code>homogeneity.test</code> parameter.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot CCA</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/miaViz/man/plotCCA.html" class="external-link">plotCCA</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"CCA"</span>, colour_by <span class="op">=</span> <span class="st">"ClinicalStatus"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
 <span class="r-plt img"><img src="runCCA-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fetch significance results</span></span></span>
@@ -312,8 +313,6 @@ test specified by <code>homogeneity.test</code> parameter.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot RDA</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/miaViz/man/plotCCA.html" class="external-link">plotRDA</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rda_scaled"</span>, colour_by <span class="op">=</span> <span class="st">"ClinicalStatus"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
 <span class="r-plt img"><img src="runCCA-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># A common choice along with PERMANOVA is ANOVA when statistical significance</span></span></span>
