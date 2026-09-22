@@ -43,6 +43,10 @@
 #' res <- getReducedDimAttribute(tse, dimred = "NMF", name = "loadings")
 #' res |> head()
 #'
+#' # Convert MultiAssayExperiment to TreeSE
+#' data(HintikkaXOData)
+#' convertToTreeSE(HintikkaXOData)
+#'
 #' @seealso
 #' \code{\link[=runCCA]{runCCA}}, \code{\link[=addNMF]{addNMF}}, and
 #' \code{\link[=addLDA]{addLDA}}
@@ -72,8 +76,11 @@ setMethod("getReducedDimAttribute", "SingleCellExperiment",
 #' @rdname utilization_functions
 #' @importFrom SingleCellExperiment reducedDims
 setMethod("convertToMAE", "SingleCellExperiment",
-    function(x, name = "main", ...){
-        exps <- setNames(list(x), name)
+    function(x, ...){
+        exps <- setNames(
+            list(x),
+            ifelse(!is.null(mainExpName(x) ), mainExpName(x), "main")
+        )
         exps <- c(exps, altExps(x) |> as.list()) |> ExperimentList()
         mae <- MultiAssayExperiment(experiments = exps, colData = colData(x))
         return(mae)
@@ -85,13 +92,23 @@ setMethod("convertToMAE", "SingleCellExperiment",
 #' @importFrom MultiAssayExperiment intersectColumns experiments
 setMethod("convertToTreeSE", "MultiAssayExperiment",
     function(x, ...){
-        x <- intersectColumns(x)
-        exps <- experiments(x)
-        if( !all(vapply(exps, function(x) is(x, "SummarizedExperiment"), logical(1L))) ){
-            stop("All experiments must be SummarizedExperiment objects.", call. = FALSE)
+        if( !all(vapply(
+            experiments(x), function(x) is(x, "SummarizedExperiment"),
+            logical(1L))) ){
+            stop("All experiments must be SummarizedExperiment objects.",
+                call. = FALSE)
         }
+
+        x <- x |> intersectColumns()
+        exps <- lapply(x |> experiments() |> names(), function(exp_name){
+            getWithColData(x, exp_name, )
+        })
+        names(exps) <- x |> experiments() |> names()
+
         tse <- exps[[1L]] |> as("TreeSummarizedExperiment")
+        mainExpName(tse) <- names(exps)[[1L]]
         altExps(tse) <- exps[-1]
+
         return(tse)
     }
 )
