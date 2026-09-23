@@ -4,15 +4,7 @@
 \alias{applyByModule}
 \title{Apply a function by feature or sample group}
 \usage{
-applyByModule(
-  x,
-  by,
-  group,
-  FUN,
-  ...,
-  min.group.size = NULL,
-  meta.name = "mod.res"
-)
+applyByModule(x, by, group, FUN, ...)
 }
 \arguments{
 \item{x}{A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}
@@ -28,23 +20,41 @@ first argument and \code{...} as additional arguments. To update \code{x}
 in place, use \code{get} and not \code{add} functions, as the latter will
 populate the altExp slot.}
 
-\item{...}{Additional arguments passed to \code{FUN}.}
+\item{...}{Additional arguments passed to \code{FUN}.
+\itemize{
+\item \code{meta.name}: \code{Character scalar}. The name of the metadata
+slot where results are stored. (Default: \code{"mod.res"})
 
-\item{min.group.size}{\code{Numeric scalar}. The minimum number of features
-or samples in a group for \code{FUN} to be applied. (Default: \code{NULL})}
-
-\item{meta.name}{\code{Character scalar}. The name of the metadata slot where
-results are stored. (Default: \code{"mod.res"})}
+\item \code{min.group.size}: \code{Numeric scalar}. The minimum number of
+features or samples in a group for \code{FUN} to be applied.
+(Default: \code{NULL})
+}}
 }
 \value{
 \code{x} updated with results stored in the appropriate slot
 depending on the given \code{FUN}.
 }
 \description{
-Apply a function by feature or sample group
+applyByModule provides a convenient method to apply the same operation on
+multiple, possibly overlapping groups of features or samples, representing
+for example functional microbial modules or sample categories, respectively.
+}
+\details{
+It is recommended to use \code{get*} functions to store results in the
+appropriate slot of \code{x}, whereas using the \code{add*} functions applied
+to features will save the results as separate experiments in the altExp slot.
+In summary, function results are stored as follows:
+
+\itemize{
+\item colData: getAlpha, getDominance, getPrevalence, getCluster
+\item reducedDims: getMDS, getNMDS, getCCA, getRDA, getLDA, getNMF, getDPCoA, calculatePCA
+\item altExps: transformAssay and add* functions
+\item metadata: all else (miaViz ggplot2 objects, statistical summaries, etc.)
+}
 }
 \examples{
 library(miaViz)
+library(patchwork)
 
 # Import dataset
 data("Tengeler2020", package = "mia")
@@ -60,6 +70,9 @@ tse <- applyByModule(
     min.group.size = 2
 )
 
+# View colData names for alpha diversity results
+names(colData(tse))
+
 # Compute beta diversity measures for each Order
 tse <- applyByModule(
     tse,
@@ -69,6 +82,9 @@ tse <- applyByModule(
     method = "unifrac",
     min.group.size = 2
 )
+
+# View reducedDim names for beta diversity results
+reducedDimNames(tse)
 
 # Transform assay for each Order, storing results as altExps
 tse <- applyByModule(
@@ -80,16 +96,24 @@ tse <- applyByModule(
     pseudocount = TRUE
 )
 
-rowData(tse)$Var1 <- rowData(tse)$Family == "Ruminococcaceae"
-rowData(tse)$Var2 <- rowData(tse)$Order == "Clostridiales"
+# View altExp names for newly transformed assays
+altExpNames(tse)
 
-# Plot abundance for each module, specifying metadata name
+# Create two example microbial modules
+rowData(tse)$Mod1 <- rowData(tse)$Family == "Ruminococcaceae"
+rowData(tse)$Mod2 <- rowData(tse)$Order == "Clostridiales"
+
+# Plot tree for each module, specifying metadata name
 tse <- applyByModule(
     tse,
     by = "rows",
-    group = c("Var1", "Var2"),
-    FUN = plotAbundance,
+    group = c("Mod1", "Mod2"),
+    FUN = plotRowTree,
+    edge.colour.by = "Genus",
     meta.name = "abund_plots"
 )
 
+# Visualize module-wise abundance plots
+metadata(tse)$abund_plots |>
+    wrap_plots()
 }

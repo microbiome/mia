@@ -1,7 +1,12 @@
 #' Apply a function by feature or sample group
 #'
 #' @name applyByModule
-#'
+#' 
+#' @description
+#' applyByModule provides a convenient method to apply the same operation on
+#' multiple, possibly overlapping groups of features or samples, representing
+#' for example functional microbial modules or sample categories, respectively.
+#' 
 #' @param x A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
 #' @param by \code{Character scalar}. Whether \code{group} information pertains
@@ -27,9 +32,23 @@
 #'
 #' @returns \code{x} updated with results stored in the appropriate slot
 #' depending on the given \code{FUN}.
-#'
+#' 
+#' @details
+#' It is recommended to use \code{get*} functions to store results in the
+#' appropriate slot of \code{x}, whereas using the \code{add*} functions applied
+#' to features will save the results as separate experiments in the altExp slot.
+#' In summary, function results are stored as follows:
+#' 
+#' \itemize{
+#'   \item colData: getAlpha, getDominance, getPrevalence, getCluster
+#'   \item reducedDims: getMDS, getNMDS, getCCA, getRDA, getLDA, getNMF, getDPCoA, calculatePCA
+#'   \item altExps: transformAssay and add* functions
+#'   \item metadata: all else (miaViz ggplot2 objects, statistical summaries, etc.)
+#' }
+#' 
 #' @examples
 #' library(miaViz)
+#' library(patchwork)
 #'
 #' # Import dataset
 #' data("Tengeler2020", package = "mia")
@@ -44,7 +63,10 @@
 #'     index = c("shannon", "faith"),
 #'     min.group.size = 2
 #' )
-#'
+#' 
+#' # View colData names for alpha diversity results
+#' names(colData(tse))
+#' 
 #' # Compute beta diversity measures for each Order
 #' tse <- applyByModule(
 #'     tse,
@@ -54,7 +76,10 @@
 #'     method = "unifrac",
 #'     min.group.size = 2
 #' )
-#'
+#' 
+#' # View reducedDim names for beta diversity results
+#' reducedDimNames(tse)
+#' 
 #' # Transform assay for each Order, storing results as altExps
 #' tse <- applyByModule(
 #'     tse,
@@ -64,19 +89,27 @@
 #'     method = "clr",
 #'     pseudocount = TRUE
 #' )
+#' 
+#' # View altExp names for newly transformed assays
+#' altExpNames(tse)
+#' 
+#' # Create two example microbial modules
+#' rowData(tse)$Mod1 <- rowData(tse)$Family == "Ruminococcaceae"
+#' rowData(tse)$Mod2 <- rowData(tse)$Order == "Clostridiales"
 #'
-#' rowData(tse)$Var1 <- rowData(tse)$Family == "Ruminococcaceae"
-#' rowData(tse)$Var2 <- rowData(tse)$Order == "Clostridiales"
-#'
-#' # Plot abundance for each module, specifying metadata name
+#' # Plot tree for each module, specifying metadata name
 #' tse <- applyByModule(
 #'     tse,
 #'     by = "rows",
-#'     group = c("Var1", "Var2"),
-#'     FUN = plotAbundance,
+#'     group = c("Mod1", "Mod2"),
+#'     FUN = plotRowTree,
+#'     edge.colour.by = "Genus",
 #'     meta.name = "abund_plots"
 #' )
-#'
+#' 
+#' # Visualize module-wise abundance plots
+#' metadata(tse)$abund_plots |>
+#'     wrap_plots()
 NULL
 
 #' @export
@@ -89,17 +122,22 @@ applyByModule <- function(x, by, group, FUN, ...) {
     if (!.is_non_empty_character(group) || !all(group %in% colnames(data_fun(x)))) {
         stop("All elements of 'group' must be variables of 'x'.", call. = FALSE)
     }
-
+    # Deduce function name
+    fun_name <- FUN |>
+        substitute() |>
+        deparse()
+    # Calculate group-wise results for function
     calc <- .applyByModule_calculate(
-        x = x, by = by, group = group, FUN = FUN, ...
+        x = x, by = by, group = group, FUN = FUN, FUN.name = fun_name, ...
     )
-
+    # Store results in the appropriate slot
     x <- .applyByModule_store(
         x = x,
         res = calc$res,
         by = by,
         group = calc$group,
         FUN = FUN,
+        FUN.name = fun_name,
         ...
     )
 
@@ -107,7 +145,7 @@ applyByModule <- function(x, by, group, FUN, ...) {
 }
 
 #' @importFrom BiocParallel bplapply
-.applyByModule_calculate <- function(x, by, group, FUN, ..., min.group.size = NULL) {
+.applyByModule_calculate <- function(x, by, group, FUN, FUN.name, ..., min.group.size = NULL) {
     if (!(is.null(min.group.size) || (is.numeric(min.group.size) && length(min.group.size) == 1L))) {
         stop("'min.group.size' must be a single numeric value.", call. = FALSE)
     }
@@ -116,17 +154,21 @@ applyByModule <- function(x, by, group, FUN, ...) {
 
     # Build indices per group
     if (length(group) == 1L) {
+        # Retrieve grouping variable
         gvar <- data_fun(x)[[group]]
+        # Factorise grouping variable
         gvar <- as.factor(gvar)
-
+        # Find levels of grouping variable
         group_levels <- levels(gvar)
         gnum <- as.numeric(gvar)
-
+        # Find group membership for each feature
         idx <- lapply(seq_along(group_levels), function(g) which(gnum == g))
         names(idx) <- group_levels
         group <- group_levels
     } else {
+        # Retrieve grouping variables
         df <- data_fun(x)[group]
+        # Find group memberships for each feature
         idx <- apply(df, 2L, function(col) which(col != 0))
     }
 
@@ -136,6 +178,10 @@ applyByModule <- function(x, by, group, FUN, ...) {
         idx <- idx[to_keep]
         group <- group[to_keep]
     }
+    
+    if (length(idx) == 0L) {
+        stop("No 'group' has size above 'min.group.size'.", call. = FALSE)
+    }
 
     # Compute
     res <- bplapply(idx, function(i) FUN(x[i, ], ...))
@@ -143,107 +189,93 @@ applyByModule <- function(x, by, group, FUN, ...) {
     return(list(res = res, group = group))
 }
 
-.applyByModule_store <- function(x, res, by, group, FUN, meta.name = "mod_res", ...) {
+.applyByModule_store <- function(x, res, by, group, FUN, FUN.name, meta.name = "mod_res", ...) {
     if (!.is_a_string(meta.name)) {
         stop("'meta.name' must be a non-empty single character value.",
             call. = FALSE
         )
     }
-    fun_name <- FUN |>
-        substitute() |>
-        deparse()
-
+    # Retrieve named arguments for function
     kwargs <- list(...)
-
+    
     if (by == "rows" && inherits(res[[1L]], "SummarizedExperiment")) {
-        x <- .applyByModule_store_altExps(x, res)
-        return(x)
-    }
-
-    if (fun_name == "getAlpha") {
+        # Store add* results in altExp
+        altExps(x) <- c(altExps(x), res)
+    } else if (FUN.name == "getAlpha") {
+        # Store alpha results in colData
         x <- .applyByModule_store_alpha(x, res, group)
-        return(x)
-    }
-
-    if (fun_name %in% c("getDivergence", "getDominant")) {
-        x <- .applyByModule_store_div_dom(x, res, group, fun_name, kwargs)
-        return(x)
-    }
-
-    if (fun_name %in% c(
+    } else if (FUN.name %in% c("getDivergence", "getDominant")) {
+        # Store divergence and dominance results in colData
+        x <- .applyByModule_store_div_dom(x, res, group, FUN.name, kwargs)
+    } else if (FUN.name %in% c(
         "getMDS", "getNMDS", "getCCA", "getRDA", "getLDA",
         "getNMF", "getDPCoA", "calculatePCA"
     )) {
-        x <- .applyByModule_store_reducedDims(x, res)
-        return(x)
-    }
-
-    if (fun_name == "getCluster") {
+        # Store beta diversity results in reducedDims
+        reducedDims(x) <- c(reducedDims(x), res)
+    } else if (FUN.name == "getCluster") {
+        # Store clustering results in colData
         x <- .applyByModule_store_cluster(x, res, group, kwargs)
-        return(x)
+    }else{
+        # Store other results in meta data
+        metadata(x)[[meta.name]] <- res
     }
-
-    x <- .applyByModule_store_metadata(x, res, meta.name)
-    return(x)
-}
-
-.applyByModule_store_altExps <- function(x, res) {
-    altExps(x) <- c(altExps(x), res)
     return(x)
 }
 
 #' @importFrom dplyr bind_cols
 .applyByModule_store_alpha <- function(x, res, group) {
+    # Find number of indices
     num_index <- ncol(res[[1L]])
+    # Replicate index names
     col_labs <- rep(group, each = num_index)
-
+    # Bind resulting data frames
     res_df <- res |>
         lapply(as.data.frame) |>
         bind_cols(.name_repair = "minimal")
-
+    # Prepend group names with metric labels
     colnames(res_df) <- paste0(colnames(res_df), ".", col_labs)
+    # Update side information with new results
     colData(x) <- .update_side_info(colData(x), res_df)
 
     return(x)
 }
 
 #' @importFrom dplyr bind_cols
-.applyByModule_store_div_dom <- function(x, res, group, fun_name, kwargs) {
+.applyByModule_store_div_dom <- function(x, res, group, FUN.name, kwargs) {
+    # Retrieve result column label
     if ("name" %in% names(kwargs)) {
         lab <- kwargs$name
     } else {
-        lab <- switch(fun_name,
+        lab <- switch(FUN.name,
             getDivergence = "divergence",
             getDominant   = "dominant"
         )
     }
-
+    # Bind resulting data frames
     res_df <- res |>
         lapply(as.data.frame) |>
         dplyr::bind_cols(.name_repair = "minimal")
-
+    # Prepend group names with metric label
     colnames(res_df) <- paste0(lab, "_", group)
+    # Update side information with new results
     colData(x) <- .update_side_info(colData(x), res_df)
 
-    return(x)
-}
-
-.applyByModule_store_reducedDims <- function(x, res) {
-    reducedDims(x) <- c(reducedDims(x), res)
     return(x)
 }
 
 #' @importFrom dplyr bind_cols
 .applyByModule_store_cluster <- function(x, res, group, kwargs) {
+    # Bind resulting data frames
     res_df <- res |>
         lapply(as.data.frame) |>
         dplyr::bind_cols(.name_repair = "minimal")
-
+    # Retrieve margin and clust.col args
     clust_by <- if ("MARGIN" %in% names(kwargs)) kwargs$MARGIN else "rows"
     clust_col <- if ("clust.col" %in% names(kwargs)) kwargs$clust.col else "cluster"
-
+    # Prepend group names with clust.col
     colnames(res_df) <- paste0(clust_col, ".", group)
-
+    # Update side information with new results
     if (clust_by == "rows") {
         rowData(x) <- .update_side_info(rowData(x), res_df)
     } else {
@@ -253,17 +285,15 @@ applyByModule <- function(x, by, group, FUN, ...) {
     return(x)
 }
 
-.applyByModule_store_metadata <- function(x, res, meta.name) {
-    metadata(x)[[meta.name]] <- res
-    return(x)
-}
-
 .update_side_info <- function(old, new) {
+    # Find variables to replace
     to_remove <- which(colnames(old) %in% colnames(new))
+    # Replace old variables with new ones
     if (length(to_remove) != 0L) {
         warning("Some columns were replaced.", call. = FALSE)
         old[to_remove] <- NULL
     }
+    # Bind unique variables together
     updated <- cbind(old, new)
     return(updated)
 }
