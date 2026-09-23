@@ -78,6 +78,12 @@ These functions perform robust principal component analysis (RPCA) using a
 low-rank matrix approximation followed by principal component analysis.
 Missing values are handled using matrix completion based on the OptSpace
 algorithm.
+#' Before running RPCA or Joint-RPCA, untransformed assays can be filtered
+separately with \code{\link[=filterRPCAInput]{filterRPCAInput()}}.
+When filtering is used, it must be performed before the robust centered
+log-ratio transformation. Filtering thresholds should be selected
+separately for each experiment according to its sequencing depth and
+prevalence.
 
 \strong{Single-table RPCA}
 
@@ -122,38 +128,83 @@ with additional information (e.g., rotation matrix, explained variance,
 reconstructed matrix, and reconstruction error) stored in attributes.
 }
 \examples{
-data("ibdmdb")
+data("ibdmdb", package = "mia")
 mae <- ibdmdb
 
-# Apply data transformations. With impute=FALSE, missing values are preserved
-# and not imputed.
-mae[[1]] <- transformAssay(
-    mae[[1]], assay.type = "mgx", method = "rclr", impute = FALSE)
-mae[[2]] <- transformAssay(
-    mae[[2]], assay.type = "mtx", method = "rclr", impute = FALSE)
+# Filter each untransformed assay before applying rclr.
+# See filterRPCAInput() for data-specific filtering thresholds.
+mae[["MGX"]] <- filterRPCAInput(
+    mae[["MGX"]],
+    assay.type = "mgx"
+)
+mae[["MTX"]] <- filterRPCAInput(
+    mae[["MTX"]],
+    assay.type = "mtx"
+)
 
-# Run joint-RPCA
-res <- getJointRPCA(
+# Apply the robust centered log-ratio transformation.
+mae[["MGX"]] <- transformAssay(
+    mae[["MGX"]],
+    assay.type = "mgx",
+    method = "rclr",
+    impute = FALSE
+)
+mae[["MTX"]] <- transformAssay(
+    mae[["MTX"]],
+    assay.type = "mtx",
+    method = "rclr",
+    impute = FALSE
+)
+
+# Run Joint-RPCA.
+joint_rpca <- getJointRPCA(
     mae,
-    experiments = c(1, 2),
+    experiments = c("MGX", "MTX"),
     assay.types = c("rclr", "rclr")
 )
 
-# Run RPCA for single experiment
-res <- getRPCA(mae[[1]], assay.type = "rclr")
+# Inspect sample scores and variation across components.
+head(joint_rpca)
+round(attr(joint_rpca, "percentVar"), 2)
+
+# Run RPCA for one experiment.
+single_rpca <- getRPCA(
+    mae[["MGX"]],
+    assay.type = "rclr"
+)
+
 
 }
 \references{
-Martino, C. and Shenhav, L. et al. (2020)
+Martino, C. et al. (2019).
+A Novel Sparse Compositional Technique Reveals Microbial Perturbations.
+\emph{mSystems}, 4(1), e00016-19.
+\doi{10.1128/mSystems.00016-19}
+
+Martino, C. and Shenhav, L. et al. (2020).
 Context-aware dimensionality reduction deconvolutes gut microbial community
 dynamics.
-\emph{Nat. Biotechnol.} doi:10.1038/s41587-020-0660-7
+\emph{Nature Biotechnology}.
+\doi{10.1038/s41587-020-0660-7}
+
+Cordazzo Vargas, B. et al. (2026).
+Joint-RPCA: Domain-Aware Multi-Omics Integration for Systems Microbiology.
+\emph{Molecular Systems Biology}.
+\doi{10.1038/s44320-026-00236-3}
 }
 \seealso{
-\code{\link[scater:runPCA]{scater::runPCA}}
+\code{\link[=filterRPCAInput]{filterRPCAInput()}},
+\code{\link[=transformAssay]{transformAssay()}}, and
+\code{\link[scater:runPCA]{scater::runPCA()}}.
+
+Gemelli software:
+\url{https://github.com/biocore/gemelli}
+
+Gemelli Joint-RPCA tutorial:
+\url{https://github.com/biocore/gemelli/blob/master/ipynb/tutorials/Joint-RPCA-CLI-API.ipynb}
 }
 \author{
-The RPCA method is reported in Martino et al. (2020) and the
+The RPCA method is reported in Martino et al. (2019) and the
 R/Bioconductor implementation utilizes the robust Aitchison
 distance from \code{\link[vegan:decostand]{vegan::decostand}}.
 
