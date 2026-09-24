@@ -416,6 +416,11 @@ Efficient computation of Faith's phylogenetic diversity with applications
 in characterizing microbiomes.
 \emph{Genome Res.} 31(11):2131-2137. doi: 10.1101/gr.275777.121
 
+Armstrong G. et al. (2021)
+Efficient computation of Faith's phylogenetic diversity with applications
+in characterizing microbiomes.
+\emph{Genome Res.} 31(11):2131-2137. doi: 10.1101/gr.275777.121
+
 Beisel J-N. et al. (2003)
 A Comparative Analysis of Diversity Index Sensitivity.
 \emph{Internal Rev. Hydrobiol.} 88(1):3-15.

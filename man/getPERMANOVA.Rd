@@ -141,6 +141,9 @@ rda_res <- getRDA(
 attr(rda_res, "significance")
 
 }
+\references{
+\insertRef{Anderson2001}{mia}
+}
 \seealso{
 For more details on the actual implementation see
 \code{\link[vegan:adonis2]{vegan::adonis2}},
