@@ -1,11 +1,11 @@
 context("summary")
 
 test_that("summary", {
-    
+
     data(GlobalPatterns, package="mia")
     sumdf <- summary(GlobalPatterns, assay.type="counts")
     samples.sum <- sumdf$samples
-    
+
     # check samples
     colnames.samples <- c("total_counts", "min_counts",
                           "max_counts", "median_counts",
@@ -31,11 +31,11 @@ test_that("summary", {
 context("getUnique")
 
 test_that("getUnique", {
-    
+
     data(GlobalPatterns, package="mia")
     exp.phy <- c("Crenarchaeota","Euryarchaeota",
                  "Actinobacteria","Spirochaetes","MVP-15")
-    
+
     expect_equal(getUnique(GlobalPatterns, "Phylum")[1:5],
                  exp.phy)
 })
@@ -43,20 +43,20 @@ test_that("getUnique", {
 context("summaries")
 
 test_that("summaries", {
-    
+
     data(GlobalPatterns, package="mia")
-    expect_equal( getTop(GlobalPatterns, 
+    expect_equal( getTop(GlobalPatterns,
                              method = "mean",
                              top = 5,
-                             assay.type = "counts"), 
-                  getTop(GlobalPatterns, 
+                             assay.type = "counts"),
+                  getTop(GlobalPatterns,
                                  method = "mean",
                                  top = 5,
                                  assay.type = "counts") )
 
     expect_equal( summarizeDominance(GlobalPatterns),
                   summarizeDominance(GlobalPatterns))
-    
+
     # Test with multiple equal dominant taxa in one sample
     assay(GlobalPatterns)[1, 1] <- max(assay(GlobalPatterns)[, 1])
     expect_warning(summarizeDominance(GlobalPatterns, complete = FALSE))
