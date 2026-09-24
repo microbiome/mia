@@ -18,7 +18,7 @@ functions are available."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.9</span>
       </span>
     </div>
 
@@ -62,7 +62,7 @@ functions are available.</p>
 <span><span class="fu">getTop</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  top <span class="op">=</span> <span class="fl">5L</span>,</span>
-<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"median"</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"median"</span>, <span class="st">"prevalence"</span><span class="op">)</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -189,26 +189,28 @@ object.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTop</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
-<span class="r-in"><span>                       method <span class="op">=</span> <span class="st">"mean"</span>,</span></span>
-<span class="r-in"><span>                       top <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>                       assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTop</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span>    method <span class="op">=</span> <span class="st">"mean"</span>,</span></span>
+<span class="r-in"><span>    top <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"counts"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">top_taxa</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "549656" "331820" "279599" "360229" "317182"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use 'detection' to select detection threshold when using prevalence method</span></span></span>
-<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTop</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
-<span class="r-in"><span>                       method <span class="op">=</span> <span class="st">"prevalence"</span>,</span></span>
-<span class="r-in"><span>                       top <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>                       assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
-<span class="r-in"><span>                       detection <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTop</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span>    method <span class="op">=</span> <span class="st">"prevalence"</span>,</span></span>
+<span class="r-in"><span>    top <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
+<span class="r-in"><span>    detection <span class="op">=</span> <span class="fl">100</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">top_taxa</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "549656" "331820" "94166"  "317182" "279599"</span>
-<span class="r-in"><span>                       </span></span>
-<span class="r-in"><span><span class="co"># Top taxa os specific rank</span></span></span>
-<span class="r-in"><span><span class="fu">getTop</span><span class="op">(</span><span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
-<span class="r-in"><span>                             rank <span class="op">=</span> <span class="st">"Genus"</span>,</span></span>
-<span class="r-in"><span>                             na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Top taxa in specific rank</span></span></span>
+<span class="r-in"><span><span class="fu">getTop</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Genus"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Duplicated labels were made unique.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Bacteroides"      "Dolichospermum"   "Faecalibacterium" "Neisseria"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "Haemophilus"     </span>
@@ -241,10 +243,12 @@ object.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># With group, it is possible to group observations based on specified groups</span></span></span>
 <span class="r-in"><span><span class="co"># Gets the overview of dominant taxa</span></span></span>
-<span class="r-in"><span><span class="va">dominant_taxa</span> <span class="op">&lt;-</span> <span class="fu">summarizeDominance</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
-<span class="r-in"><span>                                   rank <span class="op">=</span> <span class="st">"Genus"</span>,</span></span>
-<span class="r-in"><span>                                   group <span class="op">=</span> <span class="st">"SampleType"</span>,</span></span>
-<span class="r-in"><span>                                   na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dominant_taxa</span> <span class="op">&lt;-</span> <span class="fu">summarizeDominance</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span>    rank <span class="op">=</span> <span class="st">"Genus"</span>,</span></span>
+<span class="r-in"><span>    group <span class="op">=</span> <span class="st">"SampleType"</span>,</span></span>
+<span class="r-in"><span>    na.rm <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Duplicated labels were made unique.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dominant_taxa</span></span></span>
