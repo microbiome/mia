@@ -436,7 +436,7 @@ setGeneric("addJointRPCA", signature = "x", function(x, ...)
 setGeneric("filterRPCAInput", signature = "x", function(x, ...)
     standardGeneric("filterRPCAInput"))
 
-           #' @rdname utilization_functions
+#' @rdname utilization_functions
 #' @export
 setGeneric("convertToMAE", signature = "x", function(x, ...)
     standardGeneric("convertToMAE"))
