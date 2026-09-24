@@ -21,7 +21,6 @@ getTop(
   method = c("mean", "sum", "median", "prevalence"),
   assay.type = assay_name,
   assay_name = "counts",
-  rank = NULL,
   na.rm = TRUE,
   ...
 )
@@ -32,7 +31,6 @@ getTop(
   method = c("mean", "sum", "median", "prevalence"),
   assay.type = assay_name,
   assay_name = "counts",
-  rank = NULL,
   na.rm = TRUE,
   ...
 )
@@ -67,11 +65,11 @@ assay used in calculation. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a
-value of the output of \code{taxonomyRanks()}. (Default: \code{NULl})}
-
 \item{na.rm}{\code{Logical scalar}. Should NA values be omitted?
 (Default: \code{TRUE})}
+
+\item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a
+value of the output of \code{taxonomyRanks()}. (Default: \code{NULl})}
 
 \item{object}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -114,24 +112,26 @@ object.
 }
 \examples{
 data(GlobalPatterns)
-top_taxa <- getTop(GlobalPatterns,
-                       method = "mean",
-                       top = 5,
-                       assay.type = "counts")
+top_taxa <- getTop(
+    GlobalPatterns,
+    method = "mean",
+    top = 5,
+    assay.type = "counts"
+)
 top_taxa
 
 # Use 'detection' to select detection threshold when using prevalence method
-top_taxa <- getTop(GlobalPatterns,
-                       method = "prevalence",
-                       top = 5,
-                       assay_name = "counts",
-                       detection = 100)
+top_taxa <- getTop(
+    GlobalPatterns,
+    method = "prevalence",
+    top = 5,
+    assay.type = "counts",
+    detection = 100
+)
 top_taxa
-                       
-# Top taxa os specific rank
-getTop(agglomerateByRank(GlobalPatterns,
-                             rank = "Genus",
-                             na.rm = TRUE))
+
+# Top taxa in specific rank
+getTop(GlobalPatterns, rank = "Genus", na.rm = TRUE)
 
 # Gets the overview of dominant taxa
 dominant_taxa <- summarizeDominance(GlobalPatterns,
@@ -140,10 +140,12 @@ dominant_taxa
 
 # With group, it is possible to group observations based on specified groups
 # Gets the overview of dominant taxa
-dominant_taxa <- summarizeDominance(GlobalPatterns,
-                                   rank = "Genus",
-                                   group = "SampleType",
-                                   na.rm = TRUE)
+dominant_taxa <- summarizeDominance(
+    GlobalPatterns,
+    rank = "Genus",
+    group = "SampleType",
+    na.rm = TRUE
+)
 
 dominant_taxa
 
