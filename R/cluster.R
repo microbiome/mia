@@ -24,8 +24,11 @@
 #'   \code{rowData} (or \code{colData}) where the data will be stored.
 #'   (Default: \code{"clusters"})
 #'
+#' @param full \code{Logical scalar}. Specifies whether additional clustering
+#'   information should be stored in the object metadata.
+#'
 #' @param ... Additional parameters to use altExps for example
-#' @inheritParams bluster::clusterRows
+#' @param BLUSPARAM A \link[bluster]{BlusterParam-class} object specifying the algorithm to use.
 #' @inheritParams runDMN
 #' @inheritParams transformAssay
 #'
