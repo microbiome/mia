@@ -10,7 +10,7 @@ results}
 \usage{
 convertToBIOM(x, assay.type = "counts", ...)
 
-importBIOM(file, ...)
+importBIOM(file, col.data = NULL, tree.file = NULL, ...)
 
 convertFromBIOM(
   x,
@@ -34,6 +34,13 @@ convertFromBIOM(
 \item{...}{Additional arguments. Not used currently.}
 
 \item{file}{BIOM file location}
+
+\item{col.data}{a DataFrame-like object that includes sample names in
+rownames, or a single \code{character} value defining the file
+path of the sample metadata file (tsv). (Default: \code{NULL}).}
+
+\item{tree.file}{\code{Character scalar}. Optional path to a phylogenetic
+tree. If provided, replaces any tree stored in the BIOM metadata.}
 
 \item{prefix.rm}{\code{Logical scalar}. Should
 taxonomic prefixes be removed? The prefixes is removed only from detected

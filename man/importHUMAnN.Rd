@@ -12,6 +12,9 @@ rownames, or a single \code{character} value defining the file
 path of the sample metadata file. The file must be in \code{tsv} format
 (Default: \code{NULL}).}
 
+\item{tree.file}{\code{Character scalar}. Optional path to a
+phylogenetic tree. If provided, the tree is attached as \code{rowTree}.}
+
 \item{colData}{Deprecated. Use \code{col.data} instead.}
 
 \item{...}{additional arguments:

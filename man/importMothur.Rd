@@ -10,7 +10,8 @@ importMothur(
   taxonomyFile = NULL,
   row.file = taxonomyFile,
   designFile = NULL,
-  col.file = designFile
+  col.file = designFile,
+  tree.file = NULL
 )
 }
 \arguments{
@@ -32,6 +33,10 @@ documentation. (Default: \code{NULL}).}
 \item{col.file}{\code{Character scalar}. Defines file path of
 the sample metadata to be imported. The File has to be in \code{design
   file} format as defined in Mothur documentation. (Default: \code{NULL}).}
+
+\item{tree.file}{\code{Character scalar}. Optional path to a phylogenetic
+tree in Newick format. If provided, the tree is attached as
+\code{rowTree}.}
 }
 \value{
 A
