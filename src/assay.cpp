@@ -18,14 +18,17 @@
 
 using namespace su;
 
-Assay::Assay(const Rcpp::NumericMatrix & assay){
-    table = assay;
+Assay::Assay(const Rcpp::NumericMatrix & assay):
+    table(assay) {
     
     sample_ids = std::vector<std::string>(); 
     obs_ids = std::vector<std::string>();
     
     Rcpp::StringVector rownames = Rcpp::rownames(table);
     obs_ids = Rcpp::as<std::vector<std::string>>(rownames);
+    
+    Rcpp::StringVector colnames = Rcpp::colnames(table);
+    sample_ids = Rcpp::as<std::vector<std::string>>(colnames);
     
     n_samples = table.ncol();
     n_obs = obs_ids.size();
@@ -38,8 +41,7 @@ Assay::Assay(const Rcpp::NumericMatrix & assay){
     sample_counts = get_sample_counts();
 }
 
-Assay::~Assay(){
-}
+Assay::~Assay(){}
 
 void Assay::create_id_index(std::vector<std::string> &ids, 
                             std::unordered_map<std::string, uint32_t> &map){
@@ -55,6 +57,20 @@ std::vector<double> Assay::get_obs_data(const std::string &id) const {
     uint32_t idx = obs_id_index.at(id);
     for( unsigned int i = 0; i < n_samples; i++ ){
         out.push_back(table(idx, i));
+    }
+    return out;
+}
+
+std::vector<double> Assay::get_obs_data_range(const std::string &id, unsigned int start, unsigned int end, bool normalize) const {
+    std::vector<double> out = std::vector<double>();
+    uint32_t idx = obs_id_index.at(id);
+    for(unsigned int i = start; i < end; i++) {
+        if (normalize) {
+            out.push_back(table(idx, i)/sample_counts[i]);
+        }
+        else {
+            out.push_back(table(idx, i));
+        }
     }
     return out;
 }

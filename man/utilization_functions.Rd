@@ -2,13 +2,25 @@
 % Please edit documentation in R/AllGenerics.R, R/utilization_functions.R
 \name{getReducedDimAttribute}
 \alias{getReducedDimAttribute}
+\alias{convertToMAE}
+\alias{convertToTreeSE}
 \alias{utilization_functions}
 \alias{getReducedDimAttribute,SingleCellExperiment-method}
+\alias{convertToMAE,SingleCellExperiment-method}
+\alias{convertToTreeSE,MultiAssayExperiment-method}
 \title{Utilization functions for \code{TreeSummarizedExperiment} objects}
 \usage{
 getReducedDimAttribute(x, ...)
 
+convertToMAE(x, ...)
+
+convertToTreeSE(x, ...)
+
 \S4method{getReducedDimAttribute}{SingleCellExperiment}(x, dimred = 1L, name = NULL, ...)
+
+\S4method{convertToMAE}{SingleCellExperiment}(x, ...)
+
+\S4method{convertToTreeSE}{MultiAssayExperiment}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object.}
@@ -49,6 +61,10 @@ tse <- addNMF(tse, k = 1, name = "NMF")
 # Extract feature loadings
 res <- getReducedDimAttribute(tse, dimred = "NMF", name = "loadings")
 res |> head()
+
+# Convert MultiAssayExperiment to TreeSE
+data(HintikkaXOData)
+convertToTreeSE(HintikkaXOData)
 
 }
 \seealso{
