@@ -57,8 +57,18 @@ TreeSummarizedExperiment objects"><!-- mathjax --><script src="https://cdnjs.clo
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getReducedDimAttribute</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">convertToMAE</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">convertToTreeSE</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
-<span><span class="fu">getReducedDimAttribute</span><span class="op">(</span><span class="va">x</span>, dimred <span class="op">=</span> <span class="fl">1L</span>, name <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">getReducedDimAttribute</span><span class="op">(</span><span class="va">x</span>, dimred <span class="op">=</span> <span class="fl">1L</span>, name <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
+<span><span class="fu">convertToMAE</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'MultiAssayExperiment'</span></span>
+<span><span class="fu">convertToTreeSE</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -135,6 +145,26 @@ methods used to generate the results.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Armatimonadetes 4.525469e-04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> BRC1            6.081208e-05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   2.861651e-01</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Convert MultiAssayExperiment to TreeSE</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">HintikkaXOData</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">convertToTreeSE</span><span class="op">(</span><span class="va">HintikkaXOData</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 12706 40 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(12706): GAYR01026362.62.2014 CVJT01000011.50.2173 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   JRJTB:03787:02429 JRJTB:03787:02478</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Phylum Class ... Species OTU</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(40): C1 C2 ... C39 C40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(6): Sample Rat ... Fat XOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: microbiota</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(2): metabolites biomarkers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
