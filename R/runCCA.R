@@ -675,13 +675,8 @@ setMethod("addRDA", "SingleCellExperiment",
         variables <- variables[, cols, drop = FALSE]
     }
     # Calculate dissimilarity matrix
-    if( inherits(mat, "dist") ){
-        diss_mat <- mat
-    } else if( is.matrix(mat) && isSymmetric(unname(mat)) ){
-        diss_mat <- as.dist(mat)
-    } else {
-        mat <- t(mat)
-        diss_mat <- vegdist(mat, method = method, ...)
+    if( is.matrix(mat) ){
+        mat <- vegdist(mat |> t(), method = method, ...)
     }
     # For all variables run the analysis
     homogeneity <- lapply(colnames(variables), function(x){
@@ -693,7 +688,7 @@ setMethod("addRDA", "SingleCellExperiment",
         # "missing observations due to 'group' removed"
         suppressWarnings(
             suppressMessages(
-                betadisper_res <- betadisper(diss_mat, group = var)
+                betadisper_res <- betadisper(mat, group = var)
             )
         )
         # Run significance test

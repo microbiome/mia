@@ -57,7 +57,7 @@
 #'   links, you can provide a vector with whose length equals to the number of
 #'   rows/columns in \code{x}. Alternatively, you can provide a named vector
 #'   where \code{names} represent names in abundance table and values their
-#'   corresponding node in tree. 
+#'   corresponding node in tree.
 #'
 #'   \item \code{chunkSize}: (JSD) \code{Integer scalar}. Defines the size of
 #'   data  send to the individual worker. Only has an effect, if \code{BPPARAM}
@@ -130,7 +130,7 @@
 #'
 #' Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
 #' microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
-#' 
+#'
 #' McDonald D, Vázquez-Baeza Y, Koslicki D, McClelland J, Reeve N, Xu Z,
 #' Gonzalez A, Knight R. ``Striped UniFrac: enabling microbiome analysis at
 #' unprecedented scale.'' Nat Methods. 2018 15 (11):847-848.
@@ -206,7 +206,7 @@ setMethod(
     #
     res <- getDissimilarity(x, method = method, ...)
     # Add matrix to original SE
-    x <- .add_values_to_metadata(x, names = name, values = as.matrix(res))
+    x <- .add_values_to_metadata(x, names = name, values = res)
     return(x)
     }
 )

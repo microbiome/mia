@@ -45,17 +45,14 @@
 #' \code{test.homogeneity = TRUE}. \code{addPERMANOVA} adds these results to
 #' metadata of \code{x}.
 #'
-#' @inheritParams addAlpha
 #' @inheritParams runCCA
-#'
+#' @inheritParams addAlpha
+
 #' @param name \code{Character scalar}. A name for the results that will be
 #' stored to metadata. (Default: \code{"permanova"})
 #'
 #' @param method \code{Character scalar}. A dissimilarity metric used in
 #' PERMANOVA and group dispersion calculation. (Default: \code{"bray"})
-#'
-#' @param dis.name \code{Character scalar}. Specifies the name of dissimilarity
-#' matrix from \code{metadata(x)} used in calculation. (Default: \code{NULL})
 #'
 #' @param test.homogeneity \code{Logical scalar}. Should the homogeneity of
 #' group dispersions be evaluated? (Default: \code{TRUE})
@@ -108,17 +105,9 @@
 #' # Significance results are similar to PERMANOVA
 #' attr(rda_res, "significance")
 #'
-#' # Perform PERMANOVA with UniFrac directly on TreeSE
-#' tse <- addPERMANOVA(
-#'     tse,
-#'     assay.type = "counts",
-#'     method = "unifrac",
-#'     formula = x ~ SampleType,
-#'     name = "unifrac_permanova",
-#'     permutations = 99
-#' )
-#'
-#' # Run PERMANOVA using a pre-calculated dissimilarity matrix from metadata
+#' # Run PERMANOVA using a pre-calculated dissimilarity matrix from metadata.
+#' # By doing like this, you can use all dissimilarity methods from
+#' # getDissimilarity() in PERMANOVA.
 #' tse <- addDissimilarity(tse, method = "unifrac", name = "unifrac_dist")
 #' res_precalc <- getPERMANOVA(
 #'     tse,
@@ -150,8 +139,8 @@ setMethod("getPERMANOVA", "SingleCellExperiment", function(x,  ...){
 #' @rdname getPERMANOVA
 setMethod("getPERMANOVA", "SummarizedExperiment",
     function(
-        x, assay.type = "counts", formula = NULL, col.var = NULL,
-        dis.name = NULL, method = "bray", ...){
+        x, assay.type = NULL, dis.name = NULL, formula = NULL, col.var = NULL,
+         ...){
         ############################# Input check ##############################
         # Formula must be either correctly specified or not specified
         if( !(is.null(formula) || is(formula, "formula")) ){
@@ -166,33 +155,20 @@ setMethod("getPERMANOVA", "SummarizedExperiment",
         if( !is.null(formula) && !is.null(col.var) ){
             stop("Specify either 'formula' or 'col.var'.", call. = FALSE)
         }
-        if( !.is_a_string(method) ){
-            stop("'method' must be a single character value.", call. = FALSE)
-        }
         # User can specify either abundance matrix or dissimilarity matrix from
         # metadata.
-        if( !is.null(dis.name) ){
-            if( !.is_a_string(dis.name) ){
-                stop("'dis.name' must be a single character value.",
-                    call. = FALSE)
-            }
+        if( sum(c(is.null(assay.type), is.null(dis.name))) != 1L ){
+            stop("Either 'assay.type' or 'dis.name' must be specified.",
+                 call. = FALSE)
+        }
+        if( !is.null(assay.type) ){
+            # Get assay
+            .check_assay_present(assay.type, x)
+            mat <- assay(x, assay.type)
+        } else{
+            # Get dissimilarity matrix
             .check_metadata_present(dis.name, x)
             mat <- metadata(x)[[dis.name]]
-            if( is.matrix(mat) ){
-                mat <- as.dist(mat)
-            }
-            if( !inherits(mat, "dist") ){
-                stop("'", dis.name, "' in metadata(x) must be a 'dist' object or ",
-                    "a symmetric distance matrix.", call. = FALSE)
-            }
-        } else{
-            .check_assay_present(assay.type, x)
-            if( method %in% c("unifrac", "overlap", "jsd") ){
-                mat <- getDissimilarity(
-                    x, method = method, assay.type = assay.type, ...)
-            } else{
-                mat <- assay(x, assay.type)
-            }
         }
         ########################### Input check end ############################
         # Get formula and related sample metadata as DF
@@ -201,7 +177,7 @@ setMethod("getPERMANOVA", "SummarizedExperiment",
         covariates <- temp[["variables"]]
         # Calculate PERMANOVA with matrix/dist method
         res <- getPERMANOVA(
-            mat, formula = formula, data = covariates, method = method, ...)
+            mat, formula = formula, data = covariates, ...)
         return(res)
     }
 )
@@ -222,19 +198,8 @@ setMethod("getPERMANOVA", "ANY", function(
     }
     n_samples <- if( is_dist ) attr(x, "Size") else ncol(x)
     if( n_samples != nrow(data) ){
-        if( is_dist ){
-            stop("Number of samples in 'x' should match with number of rows in ",
-                "'data'.", call. = FALSE)
-        } else {
-            stop("Number of columns in 'x' should match with number of rows in ",
-                "'data'.", call. = FALSE)
-        }
-    }
-    # Align rows of data if names match
-    sample_names <- if( is_dist ) labels(x) else colnames(x)
-    if( !is.null(sample_names) && !is.null(rownames(data)) &&
-            setequal(sample_names, rownames(data)) ){
-        data <- data[sample_names, , drop = FALSE]
+        stop("Number of samples in 'x' should match with number of rows in ",
+            "'data'.", call. = FALSE)
     }
     if( !.is_a_string(method) ){
         stop("'method' must be a single character value.", call. = FALSE)
@@ -282,8 +247,8 @@ setMethod("addPERMANOVA", "SummarizedExperiment",
     #
     # Get abundance data into correct orientation. Samples must be in rows and
     # features in columns.
-    if( !inherits(x, "dist") ){
-        x <- as.matrix(t(x))
+    if( is.matrix(x) ){
+        x <- x |> t()
     }
     # Covariate table must be data.frame
     data <- data.frame(data, check.names = FALSE)
