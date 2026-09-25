@@ -4,7 +4,7 @@
 #' functions are available.
 #'
 #' @inheritParams getPrevalence
-#' 
+#'
 #' @param top \code{Numeric scalar}. Determines how many top taxa to return.
 #' Default is to return top five taxa. (Default: \code{5})
 #'
@@ -23,7 +23,7 @@
 #'        \code{getUnique}, and \code{getTop}.
 #'        (Default: \code{FALSE})
 #'    }
-#'    
+#'
 #' @details
 #' The \code{getTop} extracts the most \code{top} abundant \dQuote{FeatureID}s
 #' in a
@@ -44,24 +44,26 @@
 #'
 #' @examples
 #' data(GlobalPatterns)
-#' top_taxa <- getTop(GlobalPatterns,
-#'                        method = "mean",
-#'                        top = 5,
-#'                        assay.type = "counts")
+#' top_taxa <- getTop(
+#'     GlobalPatterns,
+#'     method = "mean",
+#'     top = 5,
+#'     assay.type = "counts"
+#' )
 #' top_taxa
-#' 
+#'
 #' # Use 'detection' to select detection threshold when using prevalence method
-#' top_taxa <- getTop(GlobalPatterns,
-#'                        method = "prevalence",
-#'                        top = 5,
-#'                        assay_name = "counts",
-#'                        detection = 100)
+#' top_taxa <- getTop(
+#'     GlobalPatterns,
+#'     method = "prevalence",
+#'     top = 5,
+#'     assay.type = "counts",
+#'     detection = 100
+#' )
 #' top_taxa
-#'                        
-#' # Top taxa os specific rank
-#' getTop(agglomerateByRank(GlobalPatterns,
-#'                              rank = "Genus",
-#'                              na.rm = TRUE))
+#'
+#' # Top taxa in specific rank
+#' getTop(GlobalPatterns, rank = "Genus", na.rm = TRUE)
 #'
 #' # Gets the overview of dominant taxa
 #' dominant_taxa <- summarizeDominance(GlobalPatterns,
@@ -70,10 +72,12 @@
 #'
 #' # With group, it is possible to group observations based on specified groups
 #' # Gets the overview of dominant taxa
-#' dominant_taxa <- summarizeDominance(GlobalPatterns,
-#'                                    rank = "Genus",
-#'                                    group = "SampleType",
-#'                                    na.rm = TRUE)
+#' dominant_taxa <- summarizeDominance(
+#'     GlobalPatterns,
+#'     rank = "Genus",
+#'     group = "SampleType",
+#'     na.rm = TRUE
+#' )
 #'
 #' dominant_taxa
 #'
@@ -106,10 +110,12 @@ NULL
 setMethod("getTop", signature = c(x = "SummarizedExperiment"),
     function(
         x, top = 5L, method = c("mean", "sum", "median", "prevalence"),
-        assay.type = assay_name, assay_name = "counts", 
+        assay.type = assay_name, assay_name = "counts",
         na.rm = TRUE, ...){
         # input check
         method <- match.arg(method, c("mean","sum","median","prevalence"))
+        # Optionally agglomerate data
+        x <- .merge_features(x, ...)
         # check max taxa
         .check_max_taxa(x, top, assay.type)
         # check assay
@@ -125,7 +131,7 @@ setMethod("getTop", signature = c(x = "SummarizedExperiment"),
                 method,
                 mean = rowMeans2(assay(x, assay.type), na.rm = na.rm),
                 sum = rowSums2(assay(x, assay.type), na.rm = na.rm),
-                median = rowMedians(assay(x, assay.type)), na.rm = na.rm)
+                median = rowMedians(assay(x, assay.type), na.rm = na.rm))
             names(taxs) <- rownames(assay(x))
             taxs <- sort(taxs,decreasing = TRUE)
         }
@@ -144,7 +150,7 @@ setMethod("getTop", signature = c(x = "SummarizedExperiment"),
 #' @return
 #' The \code{getUnique} returns a vector of unique taxa present at a
 #' particular rank
-#' 
+#'
 #' @export
 NULL
 
@@ -164,8 +170,8 @@ setMethod("getUnique", signature = c(x = "SummarizedExperiment"),
 #'
 #' @param group With group, it is possible to group the observations in an
 #'   overview. Must be one of the column names of \code{colData}.
-#'   
-#' @param name \code{Character scalar}. A name for the column of the 
+#'
+#' @param name \code{Character scalar}. A name for the column of the
 #' \code{colData} where results will be stored.
 #' (Default: \code{"dominant_taxa"})
 #'
@@ -183,7 +189,7 @@ setMethod("getUnique", signature = c(x = "SummarizedExperiment"),
 #' The \code{summarizeDominance} returns an overview in a tibble. It contains
 #' dominant taxa in a column named \code{*name*} and its abundance in the data
 #' set.
-#' 
+#'
 #' @export
 NULL
 
@@ -243,7 +249,7 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
 .tally_col_data <- function(data, group, colname, digits = NULL, ...){
     # Convert data to data.frame
     data <- as.data.frame(data)
-    
+
     # # If there are multiple dominant taxa in one sample, the column is a list.
     # # Convert it so that there are multiple rows for sample and each row
     # contains one dominant taxa.
@@ -255,18 +261,18 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
         # Add dominant taxa
         data[[colname]] <- dominant_taxa
     }
-    
+
     # Creates a tibble that contains number of times that a column of "name"
     # is present in samples and relative portion of samples where they
     # present.
-    
+
     # digits check
     if(!is.null(digits)){
         if(!is.numeric(digits)) {
             stop("'digits' must be numeric", call. = FALSE)
-        } 
+        }
     }
-    
+
     if (is.null(group)) {
         colname <- sym(colname)
         data <- data %>%
@@ -284,7 +290,7 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
         ) %>%
         arrange(desc(n))
     if(!is.null(digits)) {
-        tallied_data["rel_freq"] <- round(tallied_data["rel_freq"], digits) 
+        tallied_data["rel_freq"] <- round(tallied_data["rel_freq"], digits)
     }
     return(tallied_data)
 }
