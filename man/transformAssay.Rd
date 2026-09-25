@@ -108,9 +108,9 @@ The available transformation methods include:
 
 \itemize{
 
-\item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log',
-'normalize', 'pa', 'rank', 'rclr', 'relabundance', 'rrank', 'standardize',
-'total': please refer to
+\item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger',
+'log.decostand', 'normalize', 'pa', 'rank', 'rclr', 'relabundance',
+'rrank', 'standardize', 'total': please refer to
 \code{\link[vegan:decostand]{decostand}} for details.
 
 \item 'philr': please refer to \code{\link[philr:philr]{philr}} for details.
@@ -122,6 +122,12 @@ counts. If you want to specify the percentile value, good default value
 might be \code{0.5}. The method is inspired by the CSS methods in
 \code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}
 package.
+
+\item 'log': Logarithmic transformation (natural log, base \eqn{e}) can be
+used for reducing the skewness of the data.
+\deqn{log = \log_{e} x}{%
+log = log(x)}
+where \eqn{x} is a single value of data.
 
 \item 'log10': log10 transformation can be used for reducing the skewness
 of the data.
