@@ -17,11 +17,10 @@ addPERMANOVA(x, ...)
 
 \S4method{getPERMANOVA}{SummarizedExperiment}(
   x,
-  assay.type = "counts",
+  assay.type = NULL,
+  dis.name = NULL,
   formula = NULL,
   col.var = NULL,
-  dis.name = NULL,
-  method = "bray",
   ...
 )
 
@@ -30,7 +29,7 @@ addPERMANOVA(x, ...)
 \S4method{addPERMANOVA}{SummarizedExperiment}(x, name = "permanova", ...)
 }
 \arguments{
-\item{x}{a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
 \item{...}{additional arguments passed to \code{vegan::adonis2}.
 \itemize{
@@ -56,7 +55,10 @@ Options include 'permanova'
 }}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
-used in calculation. (Default: \code{"counts"})}
+used in calculation. (Default: \code{NULL})}
+
+\item{dis.name}{\code{Character scalar}. Specifies the name of dissimilarity
+matrix from \code{metadata} slot used in calculation. (Default: \code{NULL})}
 
 \item{formula}{\code{formula}. If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -75,9 +77,6 @@ including covariates defined by \code{formula}.}
 
 \item{method}{\code{Character scalar}. A dissimilarity metric used in
 PERMANOVA and group dispersion calculation. (Default: \code{"bray"})}
-
-\item{dis.name}{\code{Character scalar}. Specifies the name of dissimilarity
-matrix from \code{metadata(x)} used in calculation. (Default: \code{NULL})}
 
 \item{test.homogeneity}{\code{Logical scalar}. Should the homogeneity of
 group dispersions be evaluated? (Default: \code{TRUE})}
@@ -151,17 +150,9 @@ rda_res <- getRDA(
 # Significance results are similar to PERMANOVA
 attr(rda_res, "significance")
 
-# Perform PERMANOVA with UniFrac directly on TreeSE
-tse <- addPERMANOVA(
-    tse,
-    assay.type = "counts",
-    method = "unifrac",
-    formula = x ~ SampleType,
-    name = "unifrac_permanova",
-    permutations = 99
-)
-
-# Run PERMANOVA using a pre-calculated dissimilarity matrix from metadata
+# Run PERMANOVA using a pre-calculated dissimilarity matrix from metadata.
+# By doing like this, you can use all dissimilarity methods from
+# getDissimilarity() in PERMANOVA.
 tse <- addDissimilarity(tse, method = "unifrac", name = "unifrac_dist")
 res_precalc <- getPERMANOVA(
     tse,

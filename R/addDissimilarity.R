@@ -160,12 +160,12 @@
 #' ### Overlap dissimilarity
 #'
 #' tse <- addDissimilarity(tse, method = "overlap", detection = 0.25)
-#' metadata(tse)[["overlap"]][1:6, 1:6]
+#' metadata(tse)[["overlap"]]
 #'
 #' ### JSD dissimilarity
 #'
 #' tse <- addDissimilarity(tse, method = "jsd")
-#' metadata(tse)[["jsd"]][1:6, 1:6]
+#' metadata(tse)[["jsd"]]
 #'
 #' # Multi Dimensional Scaling applied to JSD dissimilarity matrix
 #' tse <- addMDS(tse, method = "overlap", assay.type = "counts")
@@ -177,7 +177,7 @@
 #' dim(as.matrix(res))
 #'
 #' tse <- addDissimilarity(tse, method = "unifrac", weighted = TRUE)
-#' metadata(tse)[["unifrac"]][1:6, 1:6]
+#' metadata(tse)[["unifrac"]]
 #'
 #' ### Bray dissimilarity
 #'
@@ -185,7 +185,7 @@
 #' # transformation first
 #' tse <- transformAssay(tse, method = "relabundance")
 #' res <- getDissimilarity(tse, method = "bray", assay.type = "relabundance")
-#' as.matrix(res)[1:6, 1:6]
+#' res
 #'
 #' # If applying rarefaction, the input must be count matrix and transformation
 #' # method specified in function call (Note: increase niter)
@@ -194,7 +194,7 @@
 #' }
 #' res <- getDissimilarity(
 #'     tse, method = "euclidean", transf = rclr, niter = 2L)
-#' as.matrix(res)[1:6, 1:6]
+#' res
 #'
 NULL
 
