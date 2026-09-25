@@ -45,9 +45,9 @@
 #' \code{test.homogeneity = TRUE}. \code{addPERMANOVA} adds these results to
 #' metadata of \code{x}.
 #'
-#' @inheritParams addAlpha
 #' @inheritParams runCCA
-#'
+#' @inheritParams addAlpha
+
 #' @param name \code{Character scalar}. A name for the results that will be
 #' stored to metadata. (Default: \code{"permanova"})
 #'
@@ -105,6 +105,17 @@
 #' # Significance results are similar to PERMANOVA
 #' attr(rda_res, "significance")
 #'
+#' # Run PERMANOVA using a pre-calculated dissimilarity matrix from metadata.
+#' # By doing like this, you can use all dissimilarity methods from
+#' # getDissimilarity() in PERMANOVA.
+#' tse <- addDissimilarity(tse, method = "unifrac", name = "unifrac_dist")
+#' res_precalc <- getPERMANOVA(
+#'     tse,
+#'     dis.name = "unifrac_dist",
+#'     formula = x ~ SampleType,
+#'     permutations = 99
+#' )
+#'
 #' @seealso
 #' For more details on the actual implementation see
 #' \code{\link[vegan:adonis2]{vegan::adonis2}},
@@ -131,10 +142,9 @@ setMethod("getPERMANOVA", "SingleCellExperiment", function(x,  ...){
 #' @rdname getPERMANOVA
 setMethod("getPERMANOVA", "SummarizedExperiment",
     function(
-        x, assay.type = "counts", formula = NULL, col.var = NULL, ...){
+        x, assay.type = NULL, dis.name = NULL, formula = NULL, col.var = NULL,
+         ...){
         ############################# Input check ##############################
-        # Assay must be present
-        .check_assay_present(assay.type, x)
         # Formula must be either correctly specified or not specified
         if( !(is.null(formula) || is(formula, "formula")) ){
             stop("'formula' must be formula or NULL.", call. = FALSE)
@@ -145,14 +155,32 @@ setMethod("getPERMANOVA", "SummarizedExperiment",
             stop("'col.var' must specify column from colData(x) or be NULL.",
                 call. = FALSE)
         }
+        if( !is.null(formula) && !is.null(col.var) ){
+            stop("Specify either 'formula' or 'col.var'.", call. = FALSE)
+        }
+        # User can specify either abundance matrix or dissimilarity matrix from
+        # metadata.
+        if( sum(c(is.null(assay.type), is.null(dis.name))) != 1L ){
+            stop("Either 'assay.type' or 'dis.name' must be specified.",
+                 call. = FALSE)
+        }
+        if( !is.null(assay.type) ){
+            # Get assay
+            .check_assay_present(assay.type, x)
+            mat <- assay(x, assay.type)
+        } else{
+            # Get dissimilarity matrix
+            .check_metadata_present(dis.name, x)
+            mat <- metadata(x)[[dis.name]]
+        }
         ########################### Input check end ############################
-        # Get abundance table, formula and related sample metadata as DF
-        mat <- assay(x, assay.type)
+        # Get formula and related sample metadata as DF
         temp <- .get_formula_and_covariates(x, formula, col.var)
         formula <- temp[["formula"]]
         covariates <- temp[["variables"]]
-        # Calculate PERMANOVA with matrix method
-        res <- getPERMANOVA(mat, formula = formula, data = covariates, ...)
+        # Calculate PERMANOVA with matrix/dist method
+        res <- getPERMANOVA(
+            mat, formula = formula, data = covariates, ...)
         return(res)
     }
 )
@@ -161,17 +189,19 @@ setMethod("getPERMANOVA", "SummarizedExperiment",
 #' @rdname getPERMANOVA
 setMethod("getPERMANOVA", "ANY", function(
         x, formula, data, method = "bray", test.homogeneity = TRUE, ...){
-    if( !is.matrix(x) ){
-        stop("'x' must be matrix.", call. = FALSE)
+    is_dist <- inherits(x, "dist")
+    if( !(is.matrix(x) || is_dist) ){
+        stop("'x' must be a matrix or a 'dist' object.", call. = FALSE)
     }
     if( !is(formula, "formula") ){
         stop("'formula' must be formula or NULL.", call. = FALSE)
     }
     if( !(is.data.frame(data) || is.matrix(data) || is(data, "DFrame")) ){
-        stop("'data' must be data.frame or coarcible to one.", call. = FALSE)
+        stop("'data' must be data.frame or coercible to one.", call. = FALSE)
     }
-    if( ncol(x) != nrow(data) ){
-        stop("Number of columns in 'x' should match with number of rows in ",
+    n_samples <- if( is_dist ) attr(x, "Size") else ncol(x)
+    if( n_samples != nrow(data) ){
+        stop("Number of samples in 'x' should match with number of rows in ",
             "'data'.", call. = FALSE)
     }
     if( !.is_a_string(method) ){
@@ -200,7 +230,7 @@ setMethod("addPERMANOVA", "SummarizedExperiment",
     }
     # Calculate permanova
     res <- getPERMANOVA(x, ...)
-    # Addresults to metadata
+    # Add results to metadata
     x <- .add_values_to_metadata(x, name, res)
     return(x)
     }
@@ -209,7 +239,7 @@ setMethod("addPERMANOVA", "SummarizedExperiment",
 ################################ HELP FUNCTIONS ################################
 
 # This function is internal function to perform PERMANOVA from abundance
-# matrix, formula and sample metadata table.
+# matrix or distance matrix, formula and sample metadata table.
 #' @importFrom vegan adonis2
 .calculate_permanova <- function(
         x, formula, data, by = "margin", na.action = na.fail, ...){
@@ -219,8 +249,10 @@ setMethod("addPERMANOVA", "SummarizedExperiment",
     }
     #
     # Get abundance data into correct orientation. Samples must be in rows and
-    # features in columns. Also ensure that the abundance table is matrix.
-    x <- as.matrix(t(x))
+    # features in columns.
+    if( is.matrix(x) ){
+        x <- x |> t()
+    }
     # Covariate table must be data.frame
     data <- data.frame(data, check.names = FALSE)
     # Instead of letting na.action pass through, give informative error
@@ -230,7 +262,7 @@ setMethod("addPERMANOVA", "SummarizedExperiment",
             "to remove samples with missing values.", call. = FALSE)
     }
     # This next step ensures that the formula points correctly to abundance
-    # table
+    # table or distance matrix
     formula <- as.character(formula)
     formula[[2]] <- "x"
     formula <- as.formula(

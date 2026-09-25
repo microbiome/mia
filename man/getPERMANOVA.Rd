@@ -15,14 +15,21 @@ addPERMANOVA(x, ...)
 
 \S4method{getPERMANOVA}{SingleCellExperiment}(x, ...)
 
-\S4method{getPERMANOVA}{SummarizedExperiment}(x, assay.type = "counts", formula = NULL, col.var = NULL, ...)
+\S4method{getPERMANOVA}{SummarizedExperiment}(
+  x,
+  assay.type = NULL,
+  dis.name = NULL,
+  formula = NULL,
+  col.var = NULL,
+  ...
+)
 
 \S4method{getPERMANOVA}{ANY}(x, formula, data, method = "bray", test.homogeneity = TRUE, ...)
 
 \S4method{addPERMANOVA}{SummarizedExperiment}(x, name = "permanova", ...)
 }
 \arguments{
-\item{x}{a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object.}
+\item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
 \item{...}{additional arguments passed to \code{vegan::adonis2}.
 \itemize{
@@ -48,7 +55,10 @@ Options include 'permanova'
 }}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
-used in calculation. (Default: \code{"counts"})}
+used in calculation. (Default: \code{NULL})}
+
+\item{dis.name}{\code{Character scalar}. Specifies the name of dissimilarity
+matrix from \code{metadata} slot used in calculation. (Default: \code{NULL})}
 
 \item{formula}{\code{formula}. If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -139,6 +149,17 @@ rda_res <- getRDA(
     formula = x ~ SampleType, permutations = 99)
 # Significance results are similar to PERMANOVA
 attr(rda_res, "significance")
+
+# Run PERMANOVA using a pre-calculated dissimilarity matrix from metadata.
+# By doing like this, you can use all dissimilarity methods from
+# getDissimilarity() in PERMANOVA.
+tse <- addDissimilarity(tse, method = "unifrac", name = "unifrac_dist")
+res_precalc <- getPERMANOVA(
+    tse,
+    dis.name = "unifrac_dist",
+    formula = x ~ SampleType,
+    permutations = 99
+)
 
 }
 \references{
