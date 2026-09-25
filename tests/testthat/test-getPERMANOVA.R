@@ -158,7 +158,7 @@ test_that("getPERMANOVA 'by' and 'homogeneity.test' options", {
 
 test_that("getPERMANOVA handles edge cases", {
     # Test handling of a missing formula (default behavior)
-    expect_error(getPERMANOVA(tse, assay.type = "relabundance"))
+    expect_no_error(getPERMANOVA(tse, assay.type = "relabundance"))
 
     # Test for error when permutations count is zero
     expect_error(
