@@ -18,13 +18,13 @@ test_that("Dissimilarity calculation", {
   }
   set.seed(123)
   res1 <- vegan::avgdist(t(mat), distfun = vegdist, dmethod = "euclidean",
-                         sample = min(colSums2(mat)), 
+                         sample = min(colSums2(mat)),
                          iterations = 10, transf = clr) |> expect_warning()
   set.seed(123)
-  res2 <- getDissimilarity(tse_sub, method = "euclidean", niter = 10, 
+  res2 <- getDissimilarity(tse_sub, method = "euclidean", niter = 10,
                            transf = clr) |> expect_warning()
   expect_equal(as.matrix(res1), as.matrix(res2))
-  
+
   # Test unifrac with named vector as node labels
   rownames(tse) <- paste0("taxa", seq_len(nrow(tse)))
   nodes <- rowLinks(tse)[["nodeLab"]]
