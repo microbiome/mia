@@ -435,3 +435,8 @@ setGeneric("addJointRPCA", signature = "x", function(x, ...)
 #' @export
 setGeneric("filterRPCAInput", signature = "x", function(x, ...)
     standardGeneric("filterRPCAInput"))
+
+#' @rdname applyByModule
+#' @export
+setGeneric("applyByModule", signature = "x", function(x, ...)
+    standardGeneric("applyByModule"))
