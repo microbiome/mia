@@ -14,15 +14,15 @@ test_that("Compare addMDS with runMDS", {
     tse <- GlobalPatterns
     #
     res <- getMDS(tse, assay.type = "counts", method = "bray")
-    ref <- calculateMDS(tse, assay.type = "counts", method = "bray", FUN = getDissimilarity)
+    ref <- calculateMDS(tse, assay.type = "counts", method = "bray", FUN = getDissimilarity, ntop = Inf)
     expect_equal(res, ref)
     #
     res <- addMDS(tse, assay.type = "counts", method = "bray", name = "test")
-    ref <- runMDS(tse, assay.type = "counts", method = "bray", FUN = getDissimilarity, name = "test")
+    ref <- runMDS(tse, assay.type = "counts", method = "bray", FUN = getDissimilarity, ntop = Inf, name = "test")
     expect_equal(reducedDim(res, "test"), reducedDim(ref, "test"))
     #
-    res <- getMDS(tse, assay.type = "counts", method = "unifrac", name = "test") |> expect_warning()
-    ref <- calculateMDS(tse, assay.type = "counts", method = "unifrac", tree = rowTree(tse), FUN = getDissimilarity, name = "test") |> expect_warning()
+    res <- getMDS(tse, assay.type = "counts", method = "unifrac", ntop = 500, name = "test") |> expect_warning()
+    ref <- calculateMDS(tse, assay.type = "counts", method = "unifrac", tree = rowTree(tse), FUN = getDissimilarity, ntop = 500, name = "test") |> expect_warning()
     expect_equal(res, ref)
 })
 
