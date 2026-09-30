@@ -125,6 +125,10 @@ reconstructed matrix, and reconstruction error) stored in attributes.
 data("ibdmdb")
 mae <- ibdmdb
 
+# Apply filtering
+mae[[1]] <- filterRPCAInput(mae[[1]], assay.type = "mgx")
+mae[[2]] <- filterRPCAInput(mae[[2]], assay.type = "mtx")
+
 # Apply data transformations. With impute=FALSE, missing values are preserved
 # and not imputed.
 mae[[1]] <- transformAssay(

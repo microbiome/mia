@@ -13,7 +13,7 @@ test_that("getPERMANOVA works on SummarizedExperiment", {
         permutations = 99
     )
     expect_s3_class(res, "anova.cca")
-    
+
     # Test PERMANOVA with homogeneity check enabled
     res <- getPERMANOVA(
         tse, assay.type = "relabundance",
@@ -26,7 +26,7 @@ test_that("getPERMANOVA works on SummarizedExperiment", {
     expect_true("homogeneity" %in% names(res))
     expect_s3_class(res$permanova, "anova.cca")
     expect_s3_class(res$homogeneity, "data.frame")
-    
+
     # Test full results with nested structure validation for detailed outputs
     res <- getPERMANOVA(
         tse, assay.type = "relabundance",
@@ -70,7 +70,7 @@ test_that("getPERMANOVA input validations", {
         getPERMANOVA(
             assay(tse[, 1:10]), formula = x ~ SampleType, data = colData(tse)
         ),
-        "Number of columns in 'x' should match with number of rows in 'data'"
+        "Number of samples in 'x' should match with number of rows in 'data'"
     )
     # Check that invalid homogeneity test settings raise an error
     expect_error(
@@ -81,37 +81,37 @@ test_that("getPERMANOVA input validations", {
         ),
         "'test.homogeneity' must be TRUE or FALSE"
     )
-    
+
     # Invalid assay type (non-existent type)
     expect_error(
         getPERMANOVA(tse, assay.type = "nonexistent", formula = x ~ SampleType)
     )
-    
+
     # Invalid variable
     expect_error(
         getPERMANOVA(tse, assay.type = "relabundance", col.var = "invalid")
     )
-    
+
     # Incorrect permutations
     expect_error(
         getPERMANOVA(
-            tse, assay.type = "relabundance", formula = x ~ SampleType, 
+            tse, assay.type = "relabundance", formula = x ~ SampleType,
             permutations = -10
         )
     )
-    
+
     # Incorrect 'by' parameter
     expect_error(
         getPERMANOVA(
-            tse, assay.type = "relabundance", formula = x ~ SampleType, 
+            tse, assay.type = "relabundance", formula = x ~ SampleType,
             by = "invalid_option"
         )
     )
-    
+
     # Missing or incorrect 'homogeneity.test' option
     expect_error(
         getPERMANOVA(
-            tse, assay.type = "relabundance", formula = x ~ SampleType, 
+            tse, assay.type = "relabundance", formula = x ~ SampleType,
             homogeneity.test = "unsupported_test"
         )
     )
@@ -136,7 +136,7 @@ test_that("getPERMANOVA 'by' and 'homogeneity.test' options", {
         formula = x ~ SampleType, by = "terms"
     )
     expect_s3_class(res_by_terms$permanova, "anova.cca")
-    
+
     # Test homogeneity test with ANOVA option
     res_anova <- getPERMANOVA(
         tse, assay.type = "relabundance",
@@ -144,7 +144,7 @@ test_that("getPERMANOVA 'by' and 'homogeneity.test' options", {
         homogeneity.test = "anova"
     )
     expect_s3_class(res_anova$homogeneity, "data.frame")
-    
+
     # Test homogeneity test with Tukey HSD and full results
     res_tukey <- getPERMANOVA(
         tse, assay.type = "relabundance",
@@ -159,7 +159,7 @@ test_that("getPERMANOVA 'by' and 'homogeneity.test' options", {
 test_that("getPERMANOVA handles edge cases", {
     # Test handling of a missing formula (default behavior)
     expect_no_error(getPERMANOVA(tse, assay.type = "relabundance"))
-    
+
     # Test for error when permutations count is zero
     expect_error(
         getPERMANOVA(
@@ -167,10 +167,10 @@ test_that("getPERMANOVA handles edge cases", {
             formula = x ~ SampleType, permutations = 0
         )
     )
-    
+
     # Test for error when input matrix is NULL
     expect_error(getPERMANOVA(NULL, formula = x ~ SampleType))
-    
+
     # Test for warning when only one level exists in the factor variable
     tse_subset <- tse[, tse$SampleType == "Soil"]
     expect_warning(
@@ -189,10 +189,10 @@ test_that("getPERMANOVA matches direct calculations", {
         permutations = 99
     )
     homogeneity_direct <- vegan::betadisper(
-        vegdist(t(assay(tse, "relabundance"))),
+        vegan::vegdist(t(assay(tse, "relabundance"))),
         group = tse$SampleType
     )
-    
+
     # Run the getPERMANOVA function and compare results
     res <- getPERMANOVA(
         tse, assay.type = "relabundance",
@@ -201,11 +201,62 @@ test_that("getPERMANOVA matches direct calculations", {
         full = TRUE,
         permutations = 99
     )
-    
+
     # Verify permanova results match
     expect_equal(res$permanova$aov.tab, permanova_direct$aov.tab)
-    
+
     # Verify homogeneity results match
     expect_equal(
         res[[2]][[2]][[1]][[1]]$distances, homogeneity_direct$distances)
 })
+
+test_that("getPERMANOVA and addPERMANOVA work with pre-calculated dissimilarity (dis.name)", {
+    # Pre-calculate dissimilarity and store in metadata
+    tse <- addDissimilarity(tse, method = "unifrac", name = "unifrac_dist")
+
+    # Run getPERMANOVA using dis.name
+    set.seed(42)
+    res_precalc <- getPERMANOVA(
+        tse, dis.name = "unifrac_dist",
+        formula = x ~ SampleType, permutations = 99
+    )
+    expect_s3_class(res_precalc$permanova, "anova.cca")
+
+    set.seed(42)
+    res_dist <- getPERMANOVA(
+        x = metadata(tse)[["unifrac_dist"]],
+        formula = x ~ SampleType,
+        data = colData(tse)[, "SampleType", drop = FALSE],
+        permutations = 99
+    )
+    expect_equal(res_precalc$permanova$SumOfSqs, res_dist$permanova$SumOfSqs)
+    expect_equal(res_precalc$permanova$F, res_dist$permanova$F)
+})
+
+test_that("getPERMANOVA input validations for dis.name and dist objects", {
+    # Nonexistent dis.name in metadata
+    expect_error(
+        getPERMANOVA(tse, dis.name = "nonexistent", formula = x ~ SampleType),
+        "'dis.name' must be a valid name of metadata"
+    )
+
+    # Invalid dis.name type
+    expect_error(
+        getPERMANOVA(tse, dis.name = 123, formula = x ~ SampleType),
+        "'dis.name' must be a single non-empty character value."
+    )
+
+    # Dist object with sample size mismatch
+    d <- getDissimilarity(tse, method = "bray")
+    expect_error(
+        getPERMANOVA(d, formula = x ~ SampleType, data = colData(tse)[1:10, ]),
+        "Number of samples in 'x' should match"
+    )
+
+    # Invalid x (neither matrix nor dist)
+    expect_error(
+        getPERMANOVA(1:10, formula = x ~ SampleType, data = colData(tse)),
+        "'x' must be a matrix or a 'dist' object"
+    )
+})
+
