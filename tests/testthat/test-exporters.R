@@ -1,8 +1,14 @@
 
 test_that("exporters", {
     
+    set.seed(123)
     tse <- TreeSummarizedExperiment::makeTSE()
     assayNames(tse) <- "counts"
+    
+    taxranks <- c("Family", "Genus", "Species")
+    rowData(tse)[taxranks] <- lapply(
+        taxranks, function(x) sample(letters, nrow(tse), replace = TRUE)
+    )
     
     # Test exportRaw
     dpath <- tempfile()
@@ -41,7 +47,7 @@ test_that("exporters", {
         check.names = FALSE
     )
     
-    expect_equal(colnames(assay_tab)[[1L]], "#OTU ID")
+    expect_equal(colnames(assay_tab), c("#OTU ID", colnames(tse)))
     
     row_data <- read.table(
         file.path(dpath, "taxonomy.tsv"),
@@ -52,6 +58,7 @@ test_that("exporters", {
     )
     
     expect_named(row_data, c("Feature ID", "Taxon", "Confidence"))
+    expect_match(row_data$Taxon, "[a-z];_[a-z];_[a-z]")
     
     col_data <- read.table(
         file.path(dpath, "metadata.tsv"),
@@ -61,14 +68,33 @@ test_that("exporters", {
         check.names = FALSE
     )
     
-    expect_named(col_data, c("sample-id", "ID", "group"))
-    expect_equal(col_data$`sample-id`[1L], "#q2:types")
+    expect_named(col_data, c("sample-id", colnames(colData(tse))))
+    expect_identical(col_data[["sample-id"]], c("#q2:types", colnames(tse)))
+    expect_in(col_data[1, -1], c("categorical", "numeric"))
     
     # Test exportMothur
     dpath <- tempfile()
-    exportMothur(tse, dpath)
+    
+    expect_warning(
+        exportMothur(tse, dpath),
+        "'group' is a reserved name in Mothur. colData variables with that name were made unique.",
+        fixed = TRUE
+    )
     
     expect_true(dir.exists(dpath))
+    
+    assay_tab <- read.table(
+        file.path(dpath, "counts.tsv"),
+        sep = "\t",
+        header = TRUE,
+        comment.char = "",
+        check.names = FALSE
+    )
+    
+    expect_equal(
+        colnames(assay_tab),
+        c("Representative_Sequence", "total", colnames(tse))
+    )
     
     row_data <- read.table(
         file.path(dpath, "taxonomy.tsv"),
@@ -79,10 +105,10 @@ test_that("exporters", {
     )
     
     expect_named(row_data, c("OTU", "Size", "Taxonomy"))
+    expect_match(row_data$Taxonomy, "[a-z];[a-z];[a-z]")
     
-    expect_type(row_data$OTU, "character")
+    expect_identical(row_data$OTU, rownames(tse))
     expect_type(row_data$Size, "integer")
-    # expect_type(row_data$Taxonomy, "character")
     
     col_data <- read.table(
         file.path(dpath, "metadata.tsv"),
@@ -92,6 +118,6 @@ test_that("exporters", {
         check.names = FALSE
     )
     
-    # exportMothur should give warning that group varname is taken
     expect_named(col_data, c("group", "ID", "group.1"))
+    expect_equal(colData(tse)$ID, col_data$ID)
 })

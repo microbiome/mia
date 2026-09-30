@@ -193,6 +193,13 @@ setMethod("exportRaw", signature = c(x = "TreeSummarizedExperiment"),
 setMethod("exportQIIME2", signature = c(x = "TreeSummarizedExperiment"),
     function(x, dpath, assay.type = "counts", tree.name = "phylo",
     group.var = NULL){
+    # Check for forbidden colnames
+    if( "sample-id" %in% colnames(colData(x)) ){
+        warning(
+            "'sample-id' is a reserved name in QIIME2. colData variables with ",
+            "that name were made unique.", call. = FALSE
+        )
+    }
     # Create export directory
     dpath <- .create_export_dir(dpath)
     # Write file with custom grouping variable
@@ -252,20 +259,28 @@ setMethod("exportQIIME2", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @rdname export-methods
 #' @importFrom ape write.tree write.FASTA
+#' @importFrom stringr str_replace_all fixed
 setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
     function(x, dpath, assay.type = "counts", tree.name = "phylo",
     group.var = NULL){
+    # Check for forbidden colnames
+    if( "group" %in% colnames(colData(x)) ){
+        warning(
+            "'group' is a reserved name in Mothur. colData variables with ",
+            "that name were made unique.", call. = FALSE
+        )
+    }
     # Create export directory
     dpath <- .create_export_dir(dpath)
     # Make format compatible with Mothur
-    rownames(x) <- gsub("-", "_", rownames(x), fixed = TRUE)
-    colnames(x) <- gsub("-", "_", colnames(x), fixed = TRUE)
+    rownames(x) <- str_replace_all(fixed(rownames(x)), "-", "_")
+    colnames(x) <- str_replace_all(fixed(colnames(x)), "-", "_")
     # Write file with custom grouping variable
     .write_group_file(x, dpath, group.var, file.format = "group")
     # Concatenate taxonomic ranks feature-wise
     row_data <- .collapse_taxranks(x, ";")
     # Make format compatible with Mothur
-    row_data <- gsub("-", "_", row_data, fixed = TRUE)
+    row_data <- str_replace_all(fixed(row_data), "-", "_")
     # Retrieve selected assay
     sel_assay <- assay(x, assay.type)
     # Calculate assay row sums
@@ -304,7 +319,7 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
     # If row tree is present
     if( !is.null(row_tree) ){
         # Make format compatible with Mothur
-        row_tree$tip.label <- gsub("-", "_", row_tree$tip.label, fixed = TRUE)
+        row_tree$tip.label <- str_replace_all(fixed(row_tree$tip.label), "-", "_")
         # Write row tree
         write.tree(row_tree, paste0(dpath, "tree.nwk"))
     }
@@ -323,12 +338,13 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 # Define function to write file for custom grouping variable
+#' @importFrom stringr str_replace_all fixed
 .write_group_file <- function(x, dpath, group.var, file.format){
     if( !is.null(group.var) ){
         # Extract grouping variable from row data
         group <- rowData(x)[[group.var]]
         # Make format compatible with QIIME2 and Mothur
-        group <- gsub("-", "_", group, fixed = TRUE)
+        group <- str_replace_all(fixed(group), "-", "_")
         # Add rownames as first variable
         group <- cbind(rownames(x), group)
         # Name variables according to QIIME2 format
@@ -342,10 +358,11 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 # Define function to concatenate taxonomic ranks feature-wise
+#' @importFrom stringr str_remove
 .collapse_taxranks <- function(x, sep){
     # Concatenate taxonomic ranks feature-wise
     row_data <- apply(rowData(x)[taxonomyRanks(x)], 1L, paste, collapse = sep)
     # Remove empty ranks
     pattern <- paste0("(", sep, "|", sep, "NA)+$")
-    row_data <- gsub(pattern, "", row_data)
+    row_data <- str_remove(row_data, pattern)
 }
