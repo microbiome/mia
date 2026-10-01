@@ -21,7 +21,7 @@ test_that("applyByModule", {
         tse, "rows", "var1", getAlpha, index = alpha.index, min.group.size = 2
     )
     
-    out.cols <- interaction(c("observed", "shannon"), letters[1:2])
+    out.cols <- interaction(c("observed", "shannon"), letters[1:2], sep = "_")
     expect_contains(names(colData(tse)), out.cols)
     
     tse <- applyByModule(
@@ -42,14 +42,14 @@ test_that("applyByModule", {
         assay.type = "counts", by = "cols", clust.col = "kmeans"
     )
     
-    expect_contains(names(colData(tse)), paste("kmeans", mod.vars, sep = "."))
+    expect_contains(names(colData(tse)), paste("kmeans", mod.vars, sep = "_"))
     
     tse <- applyByModule(
         tse, "rows", mod.vars, getDominant,
         group = "var1"
     )
     
-    expect_contains(names(colData(tse)), paste("dominant", mod.vars, sep = "."))
+    expect_contains(names(colData(tse)), paste("dominant", mod.vars, sep = "_"))
     
     tse <- applyByModule(
         tse, "rows", mod.vars,  miaViz::plotRowTree, meta.name = "tree_plots"

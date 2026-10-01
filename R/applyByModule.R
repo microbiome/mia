@@ -146,8 +146,11 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
         stop("'.by' must be either 'rows' or 'cols'.", call. = FALSE)
     }
     data_fun <- if (.by == "rows") rowData else colData
-    if (!.is_non_empty_character(.group) || !all(.group %in% colnames(data_fun(x)))) {
-        stop("All elements of '.group' must be variables of 'x'.", call. = FALSE)
+    if (!.is_non_empty_character(.group) ||
+        !all(.group %in% colnames(data_fun(x)))) {
+        stop(
+            "All elements of '.group' must be variables of 'x'.", call. = FALSE
+        )
     }
     # Deduce function name
     fun_name <- FUN |>
@@ -179,8 +182,10 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
 })
 
 #' @importFrom BiocParallel bplapply
-.applyByModule_calculate <- function(x, .by, .group, FUN, FUN.name, min.group.size, ...) {
-    if (!(is.null(min.group.size) || (is.numeric(min.group.size) && length(min.group.size) == 1L))) {
+.applyByModule_calculate <- function(
+    x, .by, .group, FUN, FUN.name, min.group.size, ...) {
+    if (!(is.null(min.group.size) ||
+        (is.numeric(min.group.size) && length(min.group.size) == 1L))) {
         stop("'min.group.size' must be a single numeric value.", call. = FALSE)
     }
     # Select side information based on margin
@@ -223,7 +228,8 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
     return(list(res = res, group = .group))
 }
 
-.applyByModule_store <- function(x, res, .by, .group, FUN, FUN.name, meta.name, ...) {
+.applyByModule_store <- function(
+    x, res, .by, .group, FUN, FUN.name, meta.name, ...) {
     if (!.is_a_string(meta.name)) {
         stop("'meta.name' must be a non-empty single character value.",
             call. = FALSE
@@ -268,7 +274,7 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
         lapply(as.data.frame) |>
         bind_cols(.name_repair = "minimal")
     # Prepend group names with metric labels
-    colnames(res_df) <- paste0(colnames(res_df), ".", col_labs)
+    colnames(res_df) <- paste0(colnames(res_df), "_", col_labs)
     # Update side information with new results
     colData(x) <- .applyByModule_update_slot(colData(x), res_df)
 
@@ -291,7 +297,7 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
         lapply(as.data.frame) |>
         bind_cols(.name_repair = "minimal")
     # Prepend group names with metric label
-    colnames(res_df) <- paste0(lab, ".", .group)
+    colnames(res_df) <- paste0(lab, "_", .group)
     # Update side information with new results
     colData(x) <- .applyByModule_update_slot(colData(x), res_df)
 
@@ -308,7 +314,7 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
     clust_by <- if ("by" %in% names(kwargs)) kwargs$by else "rows"
     clust_col <- if ("clust.col" %in% names(kwargs)) kwargs$clust.col else "cluster"
     # Prepend group names with clust.col
-    colnames(res_df) <- paste0(clust_col, ".", .group)
+    colnames(res_df) <- paste0(clust_col, "_", .group)
     # Update side information with new results
     if (clust_by == "rows") {
         rowData(x) <- .applyByModule_update_slot(rowData(x), res_df)
