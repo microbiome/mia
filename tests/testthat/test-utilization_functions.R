@@ -27,3 +27,21 @@ test_that("Test getReducedDimAttribute", {
         expect_equal(res, ref[[nam]])
     }
 })
+
+test_that("Test MAE/TreeSE convertsion functions", {
+    data("HintikkaXOData")
+    mae1 <- HintikkaXOData
+
+    tse1 <- convertToTreeSE(mae1)
+    mae2 <- convertToMAE(tse1)
+    tse2 <- convertToTreeSE(mae2)
+
+    # Check that the data is retained correctly
+    expect_equal(mae1, mae2, check.attributes = FALSE)
+    expect_equal(colData(mae1), colData(mae2), check.attributes = FALSE)
+    expect_equal(mae1[[1L]], mae2[[1L]], check.attributes = FALSE)
+    expect_equal(tse1, tse2, check.attributes = FALSE)
+    expect_equal(assay(tse1), assay(tse2), check.attributes = FALSE)
+    expect_equal(rowData(tse1), rowData(tse2), check.attributes = FALSE)
+    expect_equal(colData(tse1), colData(tse2), check.attributes = FALSE)
+})
