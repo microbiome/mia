@@ -52,7 +52,7 @@ reference:
   - summary
   - getDominant
   - getAbundant
-- title: Data loading
+- title: Import/export/convert data
 - contents:
   - importBIOM
   - importQIIME2
@@ -62,6 +62,9 @@ reference:
   - importTaxpasta
   - convertFromDADA2
   - convertFromPhyloseq
+  - exportRaw
+  - exportMothur
+  - exportQIIME2
 
 - title: Diversity
 - subtitle: Alpha Diversity
