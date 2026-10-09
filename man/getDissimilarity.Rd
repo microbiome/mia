@@ -132,9 +132,8 @@ similarity is. When using relative abundances, overlap value 1 means that
 all the abundances of features are equal between two samples, and 0 means
 that samples have completely different relative abundances.
 
-Unifrac is calculated with \code{
-\link[ecodive:unweighted_unifrac]{ecodive:unweighted_unifrac()}}
-or \code{\link[ecodive:weighted_unifrac]{ecodive:weighted_unifrac()}}.
+Unifrac is calculated with a C++ implementation of the Striped Unifrac
+algorithm (McDonald et al. 2021).
 
 If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
 utilized.
@@ -163,12 +162,12 @@ tse <- GlobalPatterns
 ### Overlap dissimilarity
 
 tse <- addDissimilarity(tse, method = "overlap", detection = 0.25)
-metadata(tse)[["overlap"]][1:6, 1:6]
+metadata(tse)[["overlap"]]
 
 ### JSD dissimilarity
 
 tse <- addDissimilarity(tse, method = "jsd")
-metadata(tse)[["jsd"]][1:6, 1:6]
+metadata(tse)[["jsd"]]
 
 # Multi Dimensional Scaling applied to JSD dissimilarity matrix
 tse <- addMDS(tse, method = "overlap", assay.type = "counts")
@@ -180,7 +179,7 @@ res <- getDissimilarity(tse, method = "unifrac", weighted = FALSE)
 dim(as.matrix(res))
 
 tse <- addDissimilarity(tse, method = "unifrac", weighted = TRUE)
-metadata(tse)[["unifrac"]][1:6, 1:6]
+metadata(tse)[["unifrac"]]
 
 ### Bray dissimilarity
 
@@ -188,7 +187,7 @@ metadata(tse)[["unifrac"]][1:6, 1:6]
 # transformation first
 tse <- transformAssay(tse, method = "relabundance")
 res <- getDissimilarity(tse, method = "bray", assay.type = "relabundance")
-as.matrix(res)[1:6, 1:6]
+res
 
 # If applying rarefaction, the input must be count matrix and transformation
 # method specified in function call (Note: increase niter)
@@ -197,7 +196,7 @@ rclr <- function(x){
 }
 res <- getDissimilarity(
     tse, method = "euclidean", transf = rclr, niter = 2L)
-as.matrix(res)[1:6, 1:6]
+res
 
 }
 \references{
@@ -215,6 +214,11 @@ microbial communities.'' Appl Environ Microbiol. 2007
 
 Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
 microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
+
+McDonald D, Vázquez-Baeza Y, Koslicki D, McClelland J, Reeve N, Xu Z,
+Gonzalez A, Knight R. ``Striped UniFrac: enabling microbiome analysis at
+unprecedented scale.'' Nat Methods. 2018 15 (11):847-848.
+doi: 10.1038/s41592-018-0187-8.
 
 For JSD dissimilarity:
 Jensen-Shannon Divergence and Hilbert space embedding.

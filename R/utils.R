@@ -8,7 +8,7 @@
         pkgname, "/",
         "\n",
         "- Online book 'Orchestrating Microbiome Analysis (OMA)': ",
-        "https://microbiome.github.io/OMA/docs/devel/"
+        "https://bioconductor.org/books/release/OMA/"
     )
     packageStartupMessage(msg)
 }

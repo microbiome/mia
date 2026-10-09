@@ -125,6 +125,10 @@ reconstructed matrix, and reconstruction error) stored in attributes.
 data("ibdmdb")
 mae <- ibdmdb
 
+# Apply filtering
+mae[[1]] <- filterRPCAInput(mae[[1]], assay.type = "mgx")
+mae[[2]] <- filterRPCAInput(mae[[2]], assay.type = "mtx")
+
 # Apply data transformations. With impute=FALSE, missing values are preserved
 # and not imputed.
 mae[[1]] <- transformAssay(
@@ -161,5 +165,5 @@ The Joint-RPCA method was adapted from the original
 Python-based implementation in biocore/Gemelli by
 Bianca Cordazzo Vargas, Liat Shenhav, and Cameron Martino.
 The R/Bioconductor implementation was subsequently prepared by
-Aituar Bektanov, Tuomas Borman, and Leo Lahti.
+Aituar Bektanov, Sabuj Bhowmick, Tuomas Borman, and Leo Lahti.
 }
