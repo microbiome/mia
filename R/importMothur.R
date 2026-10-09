@@ -22,6 +22,10 @@
 #' 
 #' @param designFile Deprecated. Use \code{col.file} instead.
 #'
+#' @param tree.file \code{Character scalar}. Optional path to a phylogenetic
+#'   tree in Newick format. If provided, the tree is attached as
+#'   \code{rowTree}.
+#'
 #' @details
 #' Results exported from Mothur can be imported as a
 #' \code{SummarizedExperiment} using \code{importMothur}. Except for the
@@ -72,7 +76,8 @@ importMothur <- function(assay.file = sharedFile,
                         taxonomyFile = NULL,
                         row.file = taxonomyFile,
                         designFile = NULL,
-                        col.file = designFile) {
+                        col.file = designFile,
+                        tree.file = NULL) {
 
     # input check
     if(!.is_non_empty_string(assay.file)){
@@ -86,6 +91,10 @@ importMothur <- function(assay.file = sharedFile,
     if(!is.null(col.file) && !.is_non_empty_string(col.file)){
         stop("'col.file' must be a single character value or NULL.",
             call. = FALSE)
+    }
+    if (!is.null(tree.file) && !.is_non_empty_string(tree.file)) {
+        stop("'tree.file' must be a single character value or NULL.",
+             call. = FALSE)
     }
     
     # Reads the assay.file 
@@ -113,10 +122,17 @@ importMothur <- function(assay.file = sharedFile,
         rownames(sample_meta) <- colnames(feature_tab)
     }
 
-    TreeSummarizedExperiment(
+    tse <- TreeSummarizedExperiment(
         assays = S4Vectors::SimpleList(counts = feature_tab),
         rowData = taxa_tab,
         colData = sample_meta)
+
+    if (!is.null(tree.file)) {
+        tree <- ape::read.tree(tree.file)
+        rowTree(tse) <- tree
+    }
+
+    tse
 }
 
 # These extra information must be added to colData. Return list of assay and 
