@@ -194,3 +194,4 @@ Changes in version 1.21.x
 + Modify joint-RPCA to match with Gemelli implementation (1.21.3, 2026-06-16)
 + Implement Striped Unifrac algorithm (1.21.4, 2026-07-29)
 + Added conversion functions between MAE and TreeSE (1.21.8, 2026-09-22)
++ Added applyByModule (1.21.11, 2026-10-02)
