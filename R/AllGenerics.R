@@ -273,7 +273,7 @@ setGeneric("getUnique", signature = c("x"), function(x, ...)
 #' @export
 setGeneric("getTop", signature = "x",
     function(
-        x, top= 5L, method = c("mean", "sum", "median"),
+        x, top= 5L, method = c("mean", "sum", "median", "prevalence"),
         assay.type = assay_name, assay_name = "counts", na.rm = TRUE, ...)
     standardGeneric("getTop"))
 
@@ -435,3 +435,18 @@ setGeneric("addJointRPCA", signature = "x", function(x, ...)
 #' @export
 setGeneric("filterRPCAInput", signature = "x", function(x, ...)
     standardGeneric("filterRPCAInput"))
+
+#' @rdname applyByModule
+#' @export
+setGeneric("applyByModule", signature = "x", function(x, ...)
+    standardGeneric("applyByModule"))
+
+#' @rdname utilization_functions
+#' @export
+setGeneric("convertToMAE", signature = "x", function(x, ...)
+    standardGeneric("convertToMAE"))
+
+#' @rdname utilization_functions
+#' @export
+setGeneric("convertToTreeSE", signature = "x", function(x, ...)
+    standardGeneric("convertToTreeSE"))

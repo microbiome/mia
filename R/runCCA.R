@@ -674,10 +674,10 @@ setMethod("addRDA", "SingleCellExperiment",
             paste0(names(cols)[!cols], collapse = "','"), "'", call. = FALSE)
         variables <- variables[, cols, drop = FALSE]
     }
-    #
     # Calculate dissimilarity matrix
-    mat <- t(mat)
-    diss_mat <- vegdist(mat, method = method, ...)
+    if( is.matrix(mat) ){
+        mat <- vegdist(mat |> t(), method = method, ...)
+    }
     # For all variables run the analysis
     homogeneity <- lapply(colnames(variables), function(x){
         # Get variable values
@@ -688,7 +688,7 @@ setMethod("addRDA", "SingleCellExperiment",
         # "missing observations due to 'group' removed"
         suppressWarnings(
             suppressMessages(
-                betadisper_res <- betadisper(diss_mat, group = var)
+                betadisper_res <- betadisper(mat, group = var)
             )
         )
         # Run significance test
