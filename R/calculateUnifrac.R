@@ -1,6 +1,4 @@
 #' @importFrom ape drop.tip
-#' @importFrom ecodive weighted_unifrac
-#' @importFrom ecodive unweighted_unifrac
 .get_unifrac <- function(
         x, tree, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
     # Transpose the matrix so that the orientation is the same as in other
@@ -72,24 +70,22 @@
     # multiple rows are linked to single tip.
     x <- .merge_assay_by_rows(x, node.label, ...)
 
-    # Calculate unifrac. Use implementation from ecodive package
-    FUN <- if( weighted ) weighted_unifrac else unweighted_unifrac
-    res <- FUN(t(x), tree = tree)
+    # Calculate unifrac with C++ algorithm
+    res <- .unifrac_cpp(x, tree, weighted)
     return(res)
 }
 
 # Aggregate matrix based on nodeLabs. At the same time, rename rows based on
 # node.label
 # --> each row represent specific node of tree
-#' @importFrom scuttle sumCountsAcrossFeatures
 .merge_assay_by_rows <- function(x, node.label, average = FALSE, ...){
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
     # Merge assay based on nodeLabs
-    x <- sumCountsAcrossFeatures(
-        x, ids = node.label, subset.row = NULL, subset.col = NULL,
-        average = average)
+    x <- .sum_counts_across_features(
+        x, node.label, average = average, na.rm = FALSE
+    )
     # Remove NAs from node.label
     node.label <- node.label[ !is.na(node.label) ]
     # Get the original order back

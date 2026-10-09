@@ -10,8 +10,3 @@
 docs/
 .DS_Store
 mia.BiocCheck/
-src/*.dll
-inst/extdata/taxonomic_profiles_mgx.tsv
-inst/extdata/ecs_relab.tsv
-inst/extdata/hmp2_metadata_2018-08-20.csv
-tools/cache/

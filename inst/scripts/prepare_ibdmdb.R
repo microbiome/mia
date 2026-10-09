@@ -1,7 +1,7 @@
 # Build compact demo objects (.rda) for IBDMDB examples/vignettes.
 #
 # Produces:
-#   data/ibdmdb_2omic_demo.rda  (ibdmdb_2omic_demo)
+#   data/ibdmdb.rda  (ibdmdb)
 #
 # Source raw inputs from inst/extdata and pre-process for speed/size.
 #
@@ -15,7 +15,7 @@ message("== IBDMDB demo data preparation ==")
 
 # This script is for DEVELOPERS only.
 # It downloads large raw files into a local cache (NOT committed to git),
-# then creates a compact demo dataset in data/ibdmdb_2omic_demo.rda.
+# then creates a compact demo dataset in data/ibdmdb.rda.
 # It is NOT run during R CMD check.
 
 cache_dir <- file.path("tools", "cache", "mia_ibdmdb_cache")
@@ -79,13 +79,13 @@ read_ibdmdb_tsv <- function(path) {
     if (length(comment_idx) == 0L) {
         stop("No commented header line found in: ", path)
     }
-    
+
     header_line <- first[max(comment_idx)]
     header_line <- sub("^#\\s*", "", header_line)
     header_line <- sub("^\ufeff", "", header_line)
     header_vec  <- strsplit(header_line, "\t", fixed = TRUE)[[1]]
     header_vec  <- gsub('^"|"$', "", header_vec)
-    
+
     dt <- data.table::fread(
         path,
         skip   = length(comment_idx),
@@ -152,37 +152,37 @@ make_SE <- function(mat, meta_df = NULL, assay_name = "counts") {
             colData = S4Vectors::DataFrame(row.names = colnames(mat))
         ))
     }
-    
-    md <- as.data.frame(meta_df, stringsAsFactors = FALSE, check.names = FALSE)
-    
+
+    md <- meta_df
+
     overlaps <- vapply(
         md,
         function(col) sum(as.character(col) %in% colnames(mat)),
         numeric(1)
     )
     best <- names(overlaps)[which.max(overlaps)]
-    
+
     if (length(best) == 0 || overlaps[[best]] == 0) {
         return(SummarizedExperiment::SummarizedExperiment(
             assays  = setNames(list(mat), assay_name),
             colData = S4Vectors::DataFrame(row.names = colnames(mat))
         ))
     }
-    
+
     md_sub <- md[md[[best]] %in% colnames(mat), , drop = FALSE]
     md_sub <- md_sub[!duplicated(md_sub[[best]]), , drop = FALSE]
-    
+
     rownames(md_sub) <- as.character(md_sub[[best]])
     md_sub <- md_sub[colnames(mat), , drop = FALSE]
-    
+
     if (anyDuplicated(rownames(md_sub))) {
         rownames(md_sub) <- make.unique(rownames(md_sub), sep = "_dup")
     }
     stopifnot(identical(rownames(md_sub), colnames(mat)))
-    
+
     SummarizedExperiment::SummarizedExperiment(
         assays  = setNames(list(mat), assay_name),
-        colData = S4Vectors::DataFrame(md_sub)
+        colData = md_sub
     )
 }
 
@@ -210,6 +210,7 @@ if (length(missing_files)) {
 # ------------------------------------------------------------------------------
 
 meta_full <- read_metadata(f_meta)
+meta_full <- DataFrame(meta_full, check.names = FALSE)
 
 # ------------------------------------------------------------------------------
 # Prepare 2-omic (MGX + MTX)
@@ -252,26 +253,67 @@ M_mtx <- M_mtx[, shared2, drop = FALSE]
 M_mgx <- cap_by_var(M_mgx, cap_mgx)
 M_mtx <- cap_by_var(M_mtx, cap_mtx)
 
-meta_df <- meta_full
+meta_df <- meta_full[meta_full$data_type %in% "metagenomics", ]
 se_mgx  <- make_SE(M_mgx, meta_df, assay_name = "mgx")
-se_mtx  <- make_SE(M_mtx, meta_df, assay_name = "mtx")
+# Split taxa into taxonomy
+rd <- mia:::.parse_taxonomy(data.frame(Taxon = rownames(se_mgx)), sep = "\\|", remove.prefix = TRUE)
+rownames(rd) <- rownames(se_mgx)
+rowData(se_mgx) <- rd
+se_mgx <- agglomerateByRanks(se_mgx)
+se_mgx <- swapAltExp(se_mgx, "species", "original")
 
-mae2 <- MultiAssayExperiment::MultiAssayExperiment(
+meta_df <- meta_full[meta_full$data_type %in% "metatranscriptomics", ]
+se_mtx  <- make_SE(M_mtx, meta_df, assay_name = "mtx")
+# Create a feature metadata table
+df <- data.frame(
+    feature = rownames(se_mtx),
+    stringsAsFactors = FALSE
+)
+df$gene_function <- sub("\\|.*$", "", df$feature)
+df$taxon <- ifelse(
+    grepl("\\|", df$feature),
+    sub("^.*\\|", "", df$feature),
+    NA_character_
+)
+# Create function + bacteria identifier
+df$gene_taxon <- ifelse(
+    !is.na(df$taxon),
+    paste(df$gene_function, df$taxon, sep = "|"),
+    NA_character_
+)
+df <- DataFrame(df)
+rownames(df) <- rownames(se_mtx)
+rowData(se_mtx) <- df
+se_mtx <- as(se_mtx, "TreeSummarizedExperiment")
+
+# Function level
+altExp(se_mtx, "gene_function") <- agglomerateByVariable(
+    se_mtx,
+    by = 1,
+    group = "gene_function"
+)
+# Function + bacteria level
+altExp(se_mtx, "gene_taxon") <- agglomerateByVariable(
+    se_mtx,
+    by = 1,
+    group = "gene_taxon"
+)
+
+mae <- MultiAssayExperiment::MultiAssayExperiment(
     experiments = list(MGX = se_mgx, MTX = se_mtx)
 )
 
 if (!is.null(SummarizedExperiment::colData(se_mgx))) {
-    MultiAssayExperiment::colData(mae2) <- SummarizedExperiment::colData(se_mgx)
+    MultiAssayExperiment::colData(mae) <- SummarizedExperiment::colData(se_mgx)
 }
 
 # Save only one dataset object
-ibdmdb_2omic_demo <- mae2
-
+ibdmdb <- mae
 save(
-    ibdmdb_2omic_demo,
-    file     = file.path("data", "ibdmdb_2omic_demo.rda"),
+    ibdmdb,
+    file     = file.path("data", "ibdmdb.rda"),
     compress = "xz"
 )
 
-message("Saved: data/ibdmdb_2omic_demo.rda")
+message("Saved: data/ibdmdb.rda")
 message("== Done. Re-run devtools::document(); devtools::check(); BiocCheck::BiocCheck(). ==")

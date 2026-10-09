@@ -51,7 +51,7 @@
 #' @seealso
 #' \code{\link[=agglomerate-methods]{agglomerateByRanks}}
 #' \code{\link[=agglomerate-methods]{agglomerateByVariable}},
-#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
+#' \code{\link[scrapper:aggregateAcrossFeatures]{aggregateAcrossFeatures}},
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
 #' \code{\link[SingleCellExperiment:altExps]{altExps}},
 #' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}

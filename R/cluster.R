@@ -104,7 +104,7 @@ setMethod("addCluster", signature = c(x = "SummarizedExperiment"),
         #
         result <- getCluster(
             x = x, BLUSPARAM = BLUSPARAM, assay.type = assay.type,
-            dimred = dimred, by = by, full = full, ...)
+            by = by, full = full, ...)
         # If user has specified full=TRUE, result includes additional info
         # that will be stored to metadata.
         if( full ){

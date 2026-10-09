@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.19.5
+Version: 1.21.11
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -43,7 +43,8 @@ Authors@R:
       person(given = "Jesse", family = "Pasanen", role=c("ctb")),
       person(given = "Eetu", family = "Tammi", role=c("ctb")),
       person(given = "Aituar", family = "Bektanov", role=c("ctb")),
-      person(given = "Rasmus", family = "Hindström", role=c("ctb")))
+      person(given = "Rasmus", family = "Hindström", role=c("ctb")),
+      person(given = "Sabuj", family = "Bhowmick", role=c("ctb")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the
@@ -56,7 +57,7 @@ License: Artistic-2.0 | file LICENSE
 Encoding: UTF-8
 LazyData: false
 Depends:
-    R (>= 4.0),
+    R (>= 4.1.0),
     MultiAssayExperiment,
     SingleCellExperiment,
     SummarizedExperiment,
@@ -73,27 +74,28 @@ Imports:
     DelayedMatrixStats,
     DirichletMultinomial,
     dplyr,
+    ecodive,
     IRanges,
     MASS,
     MatrixGenerics,
     methods,
-    ecodive,
+    Rcpp,
+    Rdpack,
     rlang,
     S4Vectors,
     scater,
-    scuttle,
     stats,
     stringr,
     tibble,
     tidyr,
     utils,
-    vegan,
-    Rcpp
+    vegan
 Suggests:
     ade4,
     BiocStyle,
     biomformat,
     dada2,
+    ecodive,
     knitr,
     mediation,
     miaTime,
@@ -106,6 +108,7 @@ Suggests:
     reldist,
     rhdf5,
     rmarkdown,
+    scuttle,
     testthat,
     topicdoc,
     topicmodels,
@@ -117,3 +120,4 @@ BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 VignetteBuilder: knitr
+RdMacros: Rdpack
