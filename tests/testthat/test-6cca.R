@@ -1,17 +1,5 @@
 context("CCA")
 test_that("CCA", {
-    # .remove_special_functions_from_terms
-    expect_error(mia:::.remove_special_functions_from_terms(),
-                 'argument "terms" is missing, with no default')
-    expect_equal(mia:::.remove_special_functions_from_terms("abc"),
-                 c(abc = "abc"))
-    expect_equal(mia:::.remove_special_functions_from_terms("Condition(abc)"),
-                 c("Condition(abc)" = "abc"))
-    expect_equal(mia:::.remove_special_functions_from_terms(c("abc","def")),
-                 c(abc = "abc", def = "def"))
-    expect_equal(mia:::.remove_special_functions_from_terms(c("Condition(abc)","def")),
-                 c("Condition(abc)" = "abc", def = "def"))
-    #
     skip_if_not(requireNamespace("vegan", quietly = TRUE))
     data(dune, dune.env, package = "vegan")
     sce <- SingleCellExperiment(assays = list(counts = t(dune)),

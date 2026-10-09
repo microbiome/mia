@@ -187,6 +187,9 @@ head(metadata(tse)$DMM$prob)
 # Get the weight of each component for the best model
 bestModel@mixture$Weight
 }
+\references{
+\insertRef{Holmes2012}{mia}
+}
 \seealso{
 \code{\link[DirichletMultinomial:DMN-class]{DMN-class}},
 \code{\link[DirichletMultinomial:DMNGroup-class]{DMNGroup-class}},
