@@ -159,3 +159,20 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     res2 <- colData(tse)
     expect_equal(res, res2)
 })
+
+test_that("Rarefied alpha diversity is the mean over all iterations", {
+    data(GlobalPatterns, package="mia")
+    tse <- GlobalPatterns[, seq_len(10)]
+    res <- getAlpha(
+        tse, index = "chao1", sample = 10000, niter = 5,
+        BPPARAM = BiocParallel::SerialParam(RNGseed = 1))
+    # Rarefy the same rounds with the same seed and take the mean
+    ref <- BiocParallel::bplapply(seq_len(5), function(i){
+        x <- rarefyAssay(tse, sample = 10000, verbose = FALSE)
+        as.matrix(getAlpha(x, assay.type = "subsampled", index = "chao1"))
+    }, BPPARAM = BiocParallel::SerialParam(RNGseed = 1))
+    # The rounds must differ, otherwise any single round equals the mean
+    expect_false(identical(ref[[1]], ref[[2]]))
+    ref <- Reduce("+", ref) / length(ref)
+    expect_equal(as.matrix(res), ref)
+})

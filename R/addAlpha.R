@@ -680,7 +680,8 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     # There might be multiple indices; for instance chao1 has 2 values. For
     # every index calculate mean for each sample.
     res <- lapply(cnames, function(cname){
-        rowMeans2(res[, cname, drop = FALSE])
+        # Subsetting by name would select only the first iteration
+        rowMeans2(res[, colnames(res) == cname, drop = FALSE])
     })
     names(res) <- cnames
     res <- do.call(cbind, res)
