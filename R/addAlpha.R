@@ -349,7 +349,8 @@
 #' is done \code{niter} times. In each sampling iteration, \code{sample} number
 #' of random samples are drawn, and alpha diversity is calculated for this
 #' subset. After the iterative process, there are \code{niter} number of
-#' result that are then averaged to get the final result.
+#' result that are then averaged to get the final result. All requested
+#' indices are calculated from the same rarefied data in each iteration.
 #'
 #' Refer to Schloss (2024) for more details on rarefaction.
 #'
@@ -532,11 +533,13 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
             stop("'index' should be a character vector.", call. = FALSE)
         }
         # if multiple indices to be estimated, name should a vector of
-        # same length
-        if( !.is_non_empty_character(name) || length(name) != length(index) ){
+        # same length. Names must be unique, as rarefaction rounds are
+        # averaged by column name.
+        if( !.is_non_empty_character(name) || length(name) != length(index) ||
+                anyDuplicated(name) ){
             stop(
-                "'name' must be a non-empty character value and have the ",
-                "same length than 'index'.",
+                "'name' must be a non-empty character value, be unique and ",
+                "have the same length than 'index'.",
                 call. = FALSE)
         }
         # Check niter
@@ -547,21 +550,14 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
         # information (e.g. internal function) to calculate the index.
         index <- .get_indices(index, name, x, assay.type, ...)
         ############################ Input check end ###########################
-        # Looping over the data.frame of indices to be estimated
-        res <- bplapply(index, function(ind){
-            # Performing rarefaction if sample is specified
-            if( !is.null(niter) && niter > 0 ){
-                temp <- .alpha_rarefaction(
-                    x, assay.type, ind[[1]], ind[[6]], niter, BPPARAM, ...)
-            } else {
-                # Estimate index without rarefaction
-                temp <- .calculate_alpha(x, assay.type, ind[[1]], ind[[6]], ...)
-            }
-            return(temp)
-
-        }, BPPARAM = BPPARAM)
-        # Combine results into single DF
-        res <- do.call(cbind, res)
+        if( !is.null(niter) && niter > 0 ){
+            # Rarefy once per iteration and calculate all indices from the
+            # same rarefied data
+            res <- .alpha_rarefaction(x, assay.type, index, niter, BPPARAM, ...)
+        } else {
+            # Estimate indices without rarefaction
+            res <- .calculate_alpha_indices(x, assay.type, index, BPPARAM, ...)
+        }
         res <- DataFrame(res)
         return(res)
     }
@@ -659,19 +655,21 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     return(detected)
 }
 
-# This function rarifies the data niter of times and calculates index for the
-# rarified data. The result is a mean of the iterations.
+# This function rarifies the data niter of times and calculates all indices
+# for the rarified data. The result is a mean of the iterations.
 #' @importFrom DelayedMatrixStats rowMeans2
 #' @importFrom BiocParallel bplapply
-.alpha_rarefaction <- function(x, assay.type, index, name, niter, BPPARAM, ...){
-    # Subsample the data and then calculate index based on the rarified data
+.alpha_rarefaction <- function(x, assay.type, index, niter, BPPARAM, ...){
+    # Subsample the data once per iteration and then calculate every index
+    # based on the same rarified data. BPPARAM parallelises the iterations, so
+    # indices within an iteration are calculated serially.
     temp_assay <- "temporary_assay_name"
     res <- bplapply(seq(niter), function(i){
         args <- c(list(x = x, assay.type = assay.type), list(...))
         args[["name"]] <- temp_assay
         args[["verbose"]] <- FALSE
         x_sub <- do.call(rarefyAssay, args)
-        temp <- .calculate_alpha(x_sub, temp_assay, index, name, ...)
+        temp <- .calculate_alpha_indices(x_sub, temp_assay, index, ...)
         return(temp)
     }, BPPARAM = BPPARAM)
     # Combine list of matrices from multiple iterations
@@ -696,6 +694,18 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     # abundance than rarefaction  depth --> order so that data includes all the
     # samples
     res <- res[match(colnames(x), rownames(res)), , drop = FALSE]
+    return(res)
+}
+
+# This function calculates all the requested indices from the same data. Each
+# column of 'index' (from .get_indices) holds information on one index.
+#' @importFrom BiocParallel bplapply
+.calculate_alpha_indices <- function(
+        x, assay.type, index, BPPARAM = SerialParam(), ...){
+    res <- bplapply(index, function(ind){
+        .calculate_alpha(x, assay.type, ind[[1]], ind[[6]], ...)
+    }, BPPARAM = BPPARAM)
+    res <- do.call(cbind, res)
     return(res)
 }
 
