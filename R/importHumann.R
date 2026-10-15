@@ -105,8 +105,7 @@ importHUMAnN <- function(file, col.data = colData, colData = NULL,
     }
     # Add tree if provided
     if (!is.null(tree.file)) {
-        tree <- ape::read.tree(tree.file)
-        rowTree(tse) <- tree
+        tse <- .add_tree_from_file(tse, tree.file)
     }
     return(tse)
 }

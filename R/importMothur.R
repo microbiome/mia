@@ -128,11 +128,9 @@ importMothur <- function(assay.file = sharedFile,
         colData = sample_meta)
 
     if (!is.null(tree.file)) {
-        tree <- ape::read.tree(tree.file)
-        rowTree(tse) <- tree
+        tse <- .add_tree_from_file(tse, tree.file)
     }
-
-    tse
+    return(tse)
 }
 
 # These extra information must be added to colData. Return list of assay and 

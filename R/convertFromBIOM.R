@@ -117,9 +117,12 @@ NULL
 #' # Clean artifacts from taxonomic data
 #' tse <- importBIOM(biom_file, artifact.rm = TRUE)
 #'
-#' @importFrom ape read.tree
 #' @export
 importBIOM <- function(file, col.data = NULL, tree.file = NULL, ...) {
+    if( !(is.null(tree.file) || .is_non_empty_string(tree.file)) ){
+        stop("'tree.file' must be a single character value or NULL.",
+            call. = FALSE)
+    }
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
     tse <- convertFromBIOM(biom, ...)
@@ -131,28 +134,7 @@ importBIOM <- function(file, col.data = NULL, tree.file = NULL, ...) {
 
     # Load/replace tree if provided
     if (!is.null(tree.file)) {
-        if (!.is_non_empty_string(tree.file)) {
-            stop("'tree.file' must be a single character value or NULL.",
-                 call. = FALSE)
-        }
-        tree <- read.tree(tree.file)
-        # Validate that rownames(tse) can be matched to tree tip labels. If
-        # not, give a clear error so users know to construct the TreeSE
-        # without the tree and then add it manually using `changeTree`.
-        if (!all(rownames(tse) %in% tree$tip.label)) {
-            stop(
-                paste(
-                    "Rownames do not match with tree labels. Construct",
-                    "TreeSE without tree (tree.file=NULL) and then add",
-                    "the tree manually with",
-                    "changeTree(tse, tree = tree_object,",
-                    "rowNodeLab = link_vector)",
-                    sep = "\n"
-                ),
-                call. = FALSE
-            )
-        }
-        rowTree(tse) <- tree
+        tse <- .add_tree_from_file(tse, tree.file)
     }
 
     return(tse)
