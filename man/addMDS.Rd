@@ -26,19 +26,12 @@ addMDS(x, ...)
 \item \code{FUN}: \code{Function}. A function that is applied to
 calculate dissimilarity. (Default: \code{getDissimilarity})
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{\\item \code{subset.result}: \code{Logical result}. Specifies whether to
+\item \code{subset.result}: \code{Logical result}. Specifies whether to
 subset \code{x} to match the result if some samples were removed during
 calculation. (Default: \code{TRUE})
 
-\\item \code{ntop}: \code{Numeric scalar}. Forwarded to
-\code{scater::calculateMDS}. Controls how many of the most variable
-features are kept before MDS is run. (Default: \code{Inf}). Set
-a finite \code{ntop} (or supply \code{subset.row}) when you want to
-filter features before running MDS; use \code{ntop = Inf} when the full
-assay is required (for example, for rarefaction where absolute library
-sizes matter).
-}\if{html}{\out{</div>}}
-
+\item \code{ntop}: \code{Numeric scalar}. Number of the most variable
+features used. (Default: \code{Inf})
 }}
 
 \item{name}{\code{Character scalar}. A name for the \code{reducedDim()}
@@ -65,13 +58,10 @@ returns the results, \code{addMDS} adds them to \code{reducedDim(x)}. The
 difference is that these functions apply microbiome-specific options such
 as \code{getDissimilarity} function by default.
 
-By default mia does not filter features (sets \code{ntop = Inf}), so all
-taxa are retained before running MDS. Note that
-\code{scater::calculateMDS} itself uses \code{ntop = 500} by default.
-When rarefaction is enabled (\code{niter > 0}) the sampling depth is
-evaluated on the retained matrix, so samples whose depth falls below the
-requested \code{sample} are dropped. Use \code{subset.row} to explicitly
-subset rows if desired.
+Unlike \code{scater::calculateMDS}, which uses the 500 most variable
+features by default, these functions use all features (\code{ntop = Inf}).
+With rarefaction, read counts are summed over the features used, so
+filtering features can drop samples whose depth falls below \code{sample}.
 
 See \code{\link[scater:runMDS]{scater::calculateMDS}} for details.
 }
@@ -93,17 +83,10 @@ tse <- addMDS(tse, method = "unifrac", name = "unifrac")
 # Calculate PCoA with Unifrac and rarefaction. (Note: increase iterations)
 tse <- addMDS(tse, method = "unifrac", name = "unifrac_rare", niter = 2L)
 
-# Disable feature filtering when rarefying at the minimum depth
-min_depth <- min(colSums(assay(tse, "counts")))
+# Use only the 500 most variable features
 tse <- addMDS(
-    tse,
-    assay.type = "counts",
-    method = "bray",
-    niter = 2L,
-    sample = min_depth,
-    ntop = Inf
-)
-reducedDim(tse, "MDS")[1:3, 1:2]
+    tse, assay.type = "relabundance", method = "bray", ntop = 500,
+    name = "MDS_top500")
 
 # Visualize results
 p1 <- plotReducedDim(tse, "unifrac", colour_by = "SampleType") +
