@@ -678,7 +678,9 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     # There might be multiple indices; for instance chao1 has 2 values. For
     # every index calculate mean for each sample.
     res <- lapply(cnames, function(cname){
-        # Subsetting by name would select only the first iteration
+        # After cbind, each index appears in niter columns (one per
+        # rarefaction round). Select all of them so that the mean is taken
+        # over every round, not just the first.
         rowMeans2(res[, colnames(res) == cname, drop = FALSE])
     })
     names(res) <- cnames
