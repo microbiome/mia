@@ -167,8 +167,7 @@ BPTree BPTree::collapse() {
     return this->mask(collapsemask, new_lengths);
 }
 
-BPTree::~BPTree(){
-}
+BPTree::~BPTree(){}
 
 void BPTree::index_and_cache(){
     // Should probably do the open/close in here too

@@ -19,6 +19,7 @@
 #include <Rcpp.h>
 
 namespace su {
+
 class BPTree {
     public:
         /* Tracked attributes */
@@ -134,7 +135,8 @@ class BPTree {
 
         int32_t bwd(uint32_t i, int32_t d) const;
         int32_t enclose(uint32_t i) const;
-    };
+};
+
 }
 
 #endif /* __FAITH_TREE_H */
