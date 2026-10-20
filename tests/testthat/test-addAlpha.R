@@ -176,3 +176,18 @@ test_that("Rarefied alpha diversity is the mean over all iterations", {
     ref <- Reduce("+", ref) / length(ref)
     expect_equal(as.matrix(res), ref)
 })
+
+test_that("Rarefied indices are calculated from the same rarefied data", {
+    data(GlobalPatterns, package="mia")
+    tse <- GlobalPatterns[, seq_len(10)]
+    # The same index twice gives identical values only if both are
+    # calculated from the same rarefaction rounds
+    res <- getAlpha(
+        tse, index = c("observed", "observed"), name = c("a", "b"),
+        sample = 10000, niter = 2)
+    expect_identical(res$a, res$b)
+    # Names must be unique, as rounds are averaged by column name
+    expect_error(getAlpha(
+        tse, index = c("shannon", "observed"), name = c("a", "a"),
+        sample = 10000, niter = 2))
+})
