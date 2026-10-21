@@ -57,7 +57,7 @@
 #'   links, you can provide a vector with whose length equals to the number of
 #'   rows/columns in \code{x}. Alternatively, you can provide a named vector
 #'   where \code{names} represent names in abundance table and values their
-#'   corresponding node in tree. 
+#'   corresponding node in tree.
 #'
 #'   \item \code{chunkSize}: (JSD) \code{Integer scalar}. Defines the size of
 #'   data  send to the individual worker. Only has an effect, if \code{BPPARAM}
@@ -130,7 +130,7 @@
 #'
 #' Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
 #' microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
-#' 
+#'
 #' McDonald D, Vázquez-Baeza Y, Koslicki D, McClelland J, Reeve N, Xu Z,
 #' Gonzalez A, Knight R. ``Striped UniFrac: enabling microbiome analysis at
 #' unprecedented scale.'' Nat Methods. 2018 15 (11):847-848.
@@ -160,12 +160,12 @@
 #' ### Overlap dissimilarity
 #'
 #' tse <- addDissimilarity(tse, method = "overlap", detection = 0.25)
-#' metadata(tse)[["overlap"]][1:6, 1:6]
+#' metadata(tse)[["overlap"]]
 #'
 #' ### JSD dissimilarity
 #'
 #' tse <- addDissimilarity(tse, method = "jsd")
-#' metadata(tse)[["jsd"]][1:6, 1:6]
+#' metadata(tse)[["jsd"]]
 #'
 #' # Multi Dimensional Scaling applied to JSD dissimilarity matrix
 #' tse <- addMDS(tse, method = "overlap", assay.type = "counts")
@@ -177,7 +177,7 @@
 #' dim(as.matrix(res))
 #'
 #' tse <- addDissimilarity(tse, method = "unifrac", weighted = TRUE)
-#' metadata(tse)[["unifrac"]][1:6, 1:6]
+#' metadata(tse)[["unifrac"]]
 #'
 #' ### Bray dissimilarity
 #'
@@ -185,7 +185,7 @@
 #' # transformation first
 #' tse <- transformAssay(tse, method = "relabundance")
 #' res <- getDissimilarity(tse, method = "bray", assay.type = "relabundance")
-#' as.matrix(res)[1:6, 1:6]
+#' res
 #'
 #' # If applying rarefaction, the input must be count matrix and transformation
 #' # method specified in function call (Note: increase niter)
@@ -194,7 +194,7 @@
 #' }
 #' res <- getDissimilarity(
 #'     tse, method = "euclidean", transf = rclr, niter = 2L)
-#' as.matrix(res)[1:6, 1:6]
+#' res
 #'
 NULL
 
@@ -206,7 +206,7 @@ setMethod(
     #
     res <- getDissimilarity(x, method = method, ...)
     # Add matrix to original SE
-    x <- .add_values_to_metadata(x, names = name, values = as.matrix(res))
+    x <- .add_values_to_metadata(x, names = name, values = res)
     return(x)
     }
 )

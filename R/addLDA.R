@@ -40,6 +40,9 @@
 #' \code{\link[topicmodels:LDA]{LDA}} to compute the ordination matrix and
 #' feature loadings.
 #'
+#' @references
+#' \insertRef{Blei2003}{mia}
+#'
 #' @name addLDA
 #'
 #' @examples

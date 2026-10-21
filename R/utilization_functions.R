@@ -43,13 +43,16 @@
 #' res <- getReducedDimAttribute(tse, dimred = "NMF", name = "loadings")
 #' res |> head()
 #'
+#' # Convert MultiAssayExperiment to TreeSE
+#' data(HintikkaXOData)
+#' convertToTreeSE(HintikkaXOData)
+#'
 #' @seealso
 #' \code{\link[=runCCA]{runCCA}}, \code{\link[=addNMF]{addNMF}}, and
 #' \code{\link[=addLDA]{addLDA}}
 #'
 NULL
 
-#'
 #' @export
 #' @rdname utilization_functions
 #' @importFrom SingleCellExperiment reducedDim
@@ -68,6 +71,49 @@ setMethod("getReducedDimAttribute", "SingleCellExperiment",
         return(values)
     }
 )
+
+#' @export
+#' @rdname utilization_functions
+#' @importFrom SingleCellExperiment reducedDims
+setMethod("convertToMAE", "SingleCellExperiment",
+    function(x, ...){
+        exps <- setNames(
+            list(x),
+            ifelse(!is.null(mainExpName(x) ), mainExpName(x), "main")
+        )
+        exps <- c(exps, altExps(x) |> as.list()) |> ExperimentList()
+        mae <- MultiAssayExperiment(experiments = exps, colData = colData(x))
+        return(mae)
+    }
+)
+
+#' @export
+#' @rdname utilization_functions
+#' @importFrom MultiAssayExperiment intersectColumns experiments
+setMethod("convertToTreeSE", "MultiAssayExperiment",
+    function(x, ...){
+        if( !all(vapply(
+            experiments(x), function(x) is(x, "SummarizedExperiment"),
+            logical(1L))) ){
+            stop("All experiments must be SummarizedExperiment objects.",
+                call. = FALSE)
+        }
+
+        x <- x |> intersectColumns()
+        exps <- lapply(x |> experiments() |> names(), function(exp_name){
+            # Suppress "Ignoring redundant column names in 'colData(x)'"
+            getWithColData(x, exp_name, ) |> suppressWarnings()
+        })
+        names(exps) <- x |> experiments() |> names()
+
+        tse <- exps[[1L]] |> as("TreeSummarizedExperiment")
+        mainExpName(tse) <- names(exps)[[1L]]
+        altExps(tse) <- exps[-1]
+
+        return(tse)
+    }
+)
+
 
 ################################ HELP FUNCTIONS ################################
 

@@ -21,7 +21,8 @@ Cohort_3)}
 data(Tengeler2020)
 }
 \description{
-Tengeler2020 includes gut microbiota profiles of 27 persons with ADHD. A
+Tengeler2020 includes gut microbiota profiles of 27 mice humanised with
+stool samples from either ADHD individuals or healthy controls. A
 standard bioinformatic and statistical analysis done to demonstrate that
 altered microbial composition could be a driver of altered brain structure
 and function and concomitant changes in the animals’ behavior. This was

@@ -378,7 +378,8 @@ Rarefaction works by sampling the counts randomly. This random sampling
 is done \code{niter} times. In each sampling iteration, \code{sample} number
 of random samples are drawn, and alpha diversity is calculated for this
 subset. After the iterative process, there are \code{niter} number of
-result that are then averaged to get the final result.
+result that are then averaged to get the final result. All requested
+indices are calculated from the same rarefied data in each iteration.
 
 Refer to Schloss (2024) for more details on rarefaction.
 }
@@ -411,6 +412,11 @@ res |> head()
 
 }
 \references{
+Armstrong G. et al. (2021)
+Efficient computation of Faith's phylogenetic diversity with applications
+in characterizing microbiomes.
+\emph{Genome Res.} 31(11):2131-2137. doi: 10.1101/gr.275777.121
+
 Armstrong G. et al. (2021)
 Efficient computation of Faith's phylogenetic diversity with applications
 in characterizing microbiomes.
