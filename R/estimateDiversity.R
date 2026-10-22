@@ -81,22 +81,20 @@
 .estimate_allen <- function(x, mat, ...){
     temp <- .get_tree_and_linked_mat(x, mat, index_name = "Allen's", ...)
     args <- list(...)
-    args <- args[ !names(args) %in% c(
-        "tree", "tree.name", "node.label", "node_lab", "index_name", "index") ]
-    res <- do.call(
-        .calc_tree_diversity,
-        c(list(mat = temp$mat, tree = temp$tree, index = "allen"), args))
+    args[["mat"]] <- temp[["mat"]]
+    args[["tree"]] <- temp[["tree"]]
+    args[["index"]] <- "allen"
+    res <- do.call(.calc_tree_diversity, args)
     return(res)
 }
 
 .estimate_rao <- function(x, mat, ...){
     temp <- .get_tree_and_linked_mat(x, mat, index_name = "Rao's", ...)
     args <- list(...)
-    args <- args[ !names(args) %in% c(
-        "tree", "tree.name", "node.label", "node_lab", "index_name", "index") ]
-    res <- do.call(
-        .calc_tree_diversity,
-        c(list(mat = temp$mat, tree = temp$tree, index = "rao"), args))
+    args[["mat"]] <- temp[["mat"]]
+    args[["tree"]] <- temp[["tree"]]
+    args[["index"]] <- "rao"
+    res <- do.call(.calc_tree_diversity, args)
     return(res)
 }
 
@@ -169,75 +167,91 @@ NULL
     if( only.tips ){
         mat <- mat[ rownames(mat) %in% tree$tip.label, ]
     }
-    
+
     # To ensure that the function works with NA also, convert NAs to 0.
     # Zero means that the taxon is not present --> same as NA (no information)
     mat[ is.na(mat) ] <- 0
-    
+
     # The tree must be in cladewise order for the algorithm to work correctly
     tree <- reorder.phylo(tree, "cladewise")
-    
+
     # Call the C++ code
     return(.faith_cpp(mat, tree))
 }
 
 .calc_tree_diversity <- function(mat, tree, index = c("allen", "rao"), ...){
     index <- match.arg(index)
+    n_tips <- tree[["tip.label"]] |> length()
+    n_nodes <- tree[["Nnode"]]
+    n_samples <- mat |> ncol()
+
     # Ensure NAs are 0
     mat[ is.na(mat) ] <- 0
     # Relative abundances per sample
-    rel <- .calc_rel_abund(mat)
-    # Ensure matrix format
-    if( is.vector(rel) ){
-        rel <- matrix(
-            rel, ncol = 1, dimnames = list(rownames(mat), colnames(mat)))
-    }
+    rel <- mat |> .calc_rel_abund()
     # In case any sample has sum 0, rel can have NaNs
     rel[ is.nan(rel) ] <- 0
 
     # Reorder tree in postorder for single-pass bottom-up accumulation
-    tree <- reorder.phylo(tree, "postorder")
-    n_tips <- length(tree$tip.label)
-    n_nodes <- tree$Nnode
-    n_samples <- ncol(rel)
+    tree <- .tree_to_table(tree, postorder = TRUE)
+    if( any(is.na(tree[["depth"]])) ){
+        stop("'tree$edge.length' contains NA values.", call. = FALSE)
+    }
+    # Remove root node whose depth is 0
+    tree <- tree[tree[["depth"]] > 0, ]
 
+    # Initialize abundance table. Add values to tips.
     node_abund <- matrix(0, nrow = n_tips + n_nodes, ncol = n_samples)
-    m <- match(tree$tip.label, rownames(rel))
+    m <- match(tree[["label"]], rownames(rel))
     valid_tips <- !is.na(m)
     node_abund[which(valid_tips), ] <- rel[m[valid_tips], , drop = FALSE]
 
-    edge <- tree$edge
-    edge_len <- tree$edge.length
+    res <- n_samples |> numeric()
+    names(res) <- colnames(mat)
 
-    if( any(is.na(edge_len)) ){
-        stop("'tree$edge.length' contains NA values.", call. = FALSE)
-    }
-
-    res <- numeric(n_samples)
-
-    for( i in seq_len(nrow(edge)) ){
-        child <- edge[i, 2]
-        parent <- edge[i, 1]
-        a_i <- node_abund[child, ]
-        L_i <- edge_len[i]
+    for( i in tree |> nrow() |> seq_len() ){
+        child <- tree[i, "node"]
+        parent <- tree[i, "parent"]
+        L_i <- tree[i, "branch.length"]
 
         # Accumulate descendant abundance to parent node
+        a_i <- node_abund[child, ]
         node_abund[parent, ] <- node_abund[parent, ] + a_i
 
         # Calculate contribution
         pos <- a_i > 0
-        if( any(pos) ){
-            if( index == "allen" ){
-                # Allen: - L_i * a_i * log(a_i)
-                res[pos] <- res[pos] - L_i * a_i[pos] * log(a_i[pos])
-            } else if( index == "rao" ){
-                # Rao: 2 * L_i * a_i * (1 - a_i)
-                res[pos] <- res[pos] + 2 * L_i * a_i[pos] * (1 - a_i[pos])
-            }
+        if( index == "allen" ){
+            # Allen: - L_i * a_i * log(a_i)
+            res[pos] <- res[pos] - L_i * a_i[pos] * log(a_i[pos])
+        } else if( index == "rao" ){
+            # Rao: 2 * L_i * a_i * (1 - a_i)
+            res[pos] <- res[pos] + 2 * L_i * a_i[pos] * (1 - a_i[pos])
         }
     }
-    names(res) <- colnames(mat)
+
     return(res)
+}
+
+#' @importFrom tidyr as_tibble
+#' @importFrom ape node.depth.edgelength
+.tree_to_table <- function(tree, postorder = FALSE){
+    if( !.is_a_bool(postorder) ){
+        stop("'postorder' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    tbl <- tree |> as_tibble() |> as.data.frame()
+    # Add node depths (root depth = 0)
+    depth <- node.depth.edgelength(tree)
+    tbl[["depth"]] <- depth[tbl[["node"]]]
+
+    # This orders the tree so that tips come first (tips have largest depth)
+    if( postorder ){
+        ord <- order(
+            tbl[["depth"]], tbl[["parent"]], tbl[["node"]], decreasing = TRUE)
+        tbl <- tbl[ord, ]
+    }
+
+    return(tbl)
 }
 
 .calc_log_modulo_skewness <- function(mat, quantile = 0.5,
