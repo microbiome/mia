@@ -366,6 +366,7 @@ importFrom(DelayedMatrixStats,
   rowMeans2,
   rowMedians,
   rowMins,
+  rowSds,
   rowSums2
 )
 importFrom(DirichletMultinomial,

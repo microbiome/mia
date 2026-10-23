@@ -200,3 +200,4 @@ Changes in version 1.21.x
 + getAlpha/addAlpha rarefy once per iteration and calculate all indices from
   the same rarefied data (1.21.13, 2026-10-13)
 + Add Allen and Rao alpha diversity indices (1.21.14, 2026-10-22)
++ Added method = "sd" to getTop (1.21.18, 2026-10-23)
