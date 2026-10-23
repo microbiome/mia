@@ -200,3 +200,5 @@ Changes in version 1.21.x
 + getAlpha/addAlpha rarefy once per iteration and calculate all indices from
   the same rarefied data (1.21.13, 2026-10-13)
 + Add Allen and Rao alpha diversity indices (1.21.14, 2026-10-22)
++ Fixed UniFrac truncating sample totals to integers, which gave NaN or wrong
+  distances on relative abundances and percentages (1.21.15, 2026-10-23)
