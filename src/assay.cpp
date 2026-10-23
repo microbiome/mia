@@ -79,7 +79,7 @@ std::vector<double> Assay::get_sample_counts(){
     std::vector<double> sample_counts = std::vector<double>();
     
     for( unsigned int i = 0; i < n_samples; i++ ){
-        unsigned int sum = 0;
+        double sum = 0;
         for( unsigned int j = 0; j < n_obs; j++ ){
             sum += table(j, i);
         }
