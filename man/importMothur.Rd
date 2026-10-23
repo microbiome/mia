@@ -25,14 +25,14 @@ path of the feature table to be imported. The File has to be in
 
 \item{row.file}{\code{Character scalar}. Defines the file path of
 the taxonomy table to be imported. The File has to be in \code{taxonomy
-  file} or \code{constaxonomy file} format  as defined in Mothur
+file} or \code{constaxonomy file} format  as defined in Mothur
 documentation. (Default: \code{NULL}).}
 
 \item{designFile}{Deprecated. Use \code{col.file} instead.}
 
 \item{col.file}{\code{Character scalar}. Defines file path of
 the sample metadata to be imported. The File has to be in \code{design
-  file} format as defined in Mothur documentation. (Default: \code{NULL}).}
+file} format as defined in Mothur documentation. (Default: \code{NULL}).}
 
 \item{tree.file}{\code{Character scalar}. Optional path to a phylogenetic
 tree in Newick format. If provided, the tree is attached as
