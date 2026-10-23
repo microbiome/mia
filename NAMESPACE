@@ -328,175 +328,223 @@ import(DelayedArray)
 import(TreeSummarizedExperiment)
 import(methods)
 import(scater)
-importFrom(BiocGenerics,"%in%")
-importFrom(BiocGenerics,cbind)
-importFrom(BiocGenerics,grepl)
-importFrom(BiocGenerics,rbind)
-importFrom(BiocParallel,SerialParam)
-importFrom(BiocParallel,bpisup)
-importFrom(BiocParallel,bplapply)
-importFrom(BiocParallel,bpmapply)
-importFrom(BiocParallel,bpparam)
-importFrom(BiocParallel,bpstart)
-importFrom(BiocParallel,bpstop)
-importFrom(BiocParallel,register)
-importFrom(Biostrings,DNAStringSet)
-importFrom(Biostrings,DNAStringSetList)
-importFrom(Biostrings,readDNAStringSet)
+importFrom(BiocGenerics,
+  "%in%",
+  cbind,
+  grepl,
+  rbind
+)
+importFrom(BiocParallel,
+  SerialParam,
+  bpisup,
+  bplapply,
+  bpmapply,
+  bpparam,
+  bpstart,
+  bpstop,
+  register
+)
+importFrom(Biostrings,
+  DNAStringSet,
+  DNAStringSetList,
+  readDNAStringSet
+)
 importFrom(DECIPHER,ConsensusSequence)
-importFrom(DelayedArray,DelayedArray)
-importFrom(DelayedArray,colSums)
-importFrom(DelayedArray,getAutoBPPARAM)
-importFrom(DelayedArray,rowSums)
-importFrom(DelayedArray,rowsum)
-importFrom(DelayedArray,setAutoBPPARAM)
-importFrom(DelayedArray,type)
-importFrom(DelayedMatrixStats,colQuantiles)
-importFrom(DelayedMatrixStats,colSums2)
-importFrom(DelayedMatrixStats,rowMaxs)
-importFrom(DelayedMatrixStats,rowMeans2)
-importFrom(DelayedMatrixStats,rowMedians)
-importFrom(DelayedMatrixStats,rowMins)
-importFrom(DelayedMatrixStats,rowSums2)
-importFrom(DirichletMultinomial,AIC)
-importFrom(DirichletMultinomial,BIC)
-importFrom(DirichletMultinomial,cvdmngroup)
-importFrom(DirichletMultinomial,dmn)
-importFrom(DirichletMultinomial,dmngroup)
-importFrom(DirichletMultinomial,laplace)
-importFrom(IRanges,CharacterList)
-importFrom(IRanges,IntegerList)
-importFrom(IRanges,LogicalList)
-importFrom(IRanges,NumericList)
-importFrom(IRanges,relist)
+importFrom(DelayedArray,
+  DelayedArray,
+  colSums,
+  getAutoBPPARAM,
+  rowSums,
+  rowsum,
+  setAutoBPPARAM,
+  type
+)
+importFrom(DelayedMatrixStats,
+  colQuantiles,
+  colSums2,
+  rowMaxs,
+  rowMeans2,
+  rowMedians,
+  rowMins,
+  rowSums2
+)
+importFrom(DirichletMultinomial,
+  AIC,
+  BIC,
+  cvdmngroup,
+  dmn,
+  dmngroup,
+  laplace
+)
+importFrom(IRanges,
+  CharacterList,
+  IntegerList,
+  LogicalList,
+  NumericList,
+  relist
+)
 importFrom(MASS,isoMDS)
 importFrom(MatrixGenerics,rowSums2)
-importFrom(MultiAssayExperiment,ExperimentList)
-importFrom(MultiAssayExperiment,MultiAssayExperiment)
-importFrom(MultiAssayExperiment,experiments)
-importFrom(MultiAssayExperiment,intersectColumns)
-importFrom(MultiAssayExperiment,sampleMap)
-importFrom(Rcpp,evalCpp)
-importFrom(Rcpp,sourceCpp)
-importFrom(S4Vectors,"metadata<-")
-importFrom(S4Vectors,DataFrame)
-importFrom(S4Vectors,SimpleList)
-importFrom(S4Vectors,as.data.frame)
-importFrom(S4Vectors,make_zero_col_DFrame)
-importFrom(S4Vectors,metadata)
-importFrom(S4Vectors,pc)
-importFrom(S4Vectors,splitAsList)
-importFrom(S4Vectors,unfactor)
-importFrom(SingleCellExperiment,"altExp<-")
-importFrom(SingleCellExperiment,"altExps<-")
-importFrom(SingleCellExperiment,"reducedDim<-")
-importFrom(SingleCellExperiment,"reducedDims<-")
-importFrom(SingleCellExperiment,SingleCellExperiment)
-importFrom(SingleCellExperiment,altExp)
-importFrom(SingleCellExperiment,altExpNames)
-importFrom(SingleCellExperiment,altExps)
-importFrom(SingleCellExperiment,reducedDim)
-importFrom(SingleCellExperiment,reducedDimNames)
-importFrom(SingleCellExperiment,reducedDims)
-importFrom(SummarizedExperiment,"assay<-")
-importFrom(SummarizedExperiment,"assays<-")
-importFrom(SummarizedExperiment,"colData<-")
-importFrom(SummarizedExperiment,"rowData<-")
-importFrom(SummarizedExperiment,SummarizedExperiment)
-importFrom(SummarizedExperiment,assay)
-importFrom(SummarizedExperiment,assayNames)
-importFrom(SummarizedExperiment,assays)
-importFrom(SummarizedExperiment,colData)
-importFrom(SummarizedExperiment,rowData)
-importFrom(SummarizedExperiment,rowRanges)
-importFrom(TreeSummarizedExperiment,changeTree)
-importFrom(TreeSummarizedExperiment,subsetByLeaf)
-importFrom(ape,as.phylo)
-importFrom(ape,bind.tree)
-importFrom(ape,collapse.singles)
-importFrom(ape,cophenetic.phylo)
-importFrom(ape,drop.tip)
-importFrom(ape,has.singles)
-importFrom(ape,is.binary)
-importFrom(ape,is.rooted)
-importFrom(ape,read.tree)
-importFrom(ape,reorder.phylo)
+importFrom(MultiAssayExperiment,
+  ExperimentList,
+  MultiAssayExperiment,
+  experiments,
+  intersectColumns,
+  sampleMap
+)
+importFrom(Rcpp,
+  evalCpp,
+  sourceCpp
+)
+importFrom(S4Vectors,
+  "metadata<-",
+  DataFrame,
+  SimpleList,
+  as.data.frame,
+  make_zero_col_DFrame,
+  metadata,
+  pc,
+  splitAsList,
+  unfactor
+)
+importFrom(SingleCellExperiment,
+  "altExp<-",
+  "altExps<-",
+  "reducedDim<-",
+  "reducedDims<-",
+  SingleCellExperiment,
+  altExp,
+  altExpNames,
+  altExps,
+  reducedDim,
+  reducedDimNames,
+  reducedDims
+)
+importFrom(SummarizedExperiment,
+  "assay<-",
+  "assays<-",
+  "colData<-",
+  "rowData<-",
+  SummarizedExperiment,
+  assay,
+  assayNames,
+  assays,
+  colData,
+  rowData,
+  rowRanges
+)
+importFrom(TreeSummarizedExperiment,
+  changeTree,
+  subsetByLeaf
+)
+importFrom(ape,
+  as.phylo,
+  bind.tree,
+  collapse.singles,
+  cophenetic.phylo,
+  drop.tip,
+  has.singles,
+  is.binary,
+  is.rooted,
+  node.depth.edgelength,
+  read.tree,
+  reorder.phylo
+)
 importFrom(bluster,clusterRows)
-importFrom(decontam,isContaminant)
-importFrom(decontam,isNotContaminant)
-importFrom(dplyr,"%>%")
-importFrom(dplyr,arrange)
-importFrom(dplyr,as_tibble)
-importFrom(dplyr,bind_cols)
-importFrom(dplyr,bind_rows)
-importFrom(dplyr,coalesce)
-importFrom(dplyr,desc)
-importFrom(dplyr,group_by)
-importFrom(dplyr,mutate)
-importFrom(dplyr,n)
-importFrom(dplyr,rename)
-importFrom(dplyr,select)
-importFrom(dplyr,summarise)
-importFrom(dplyr,sym)
-importFrom(dplyr,tally)
-importFrom(rlang,":=")
-importFrom(rlang,sym)
+importFrom(decontam,
+  isContaminant,
+  isNotContaminant
+)
+importFrom(dplyr,
+  "%>%",
+  arrange,
+  as_tibble,
+  bind_cols,
+  bind_rows,
+  coalesce,
+  desc,
+  group_by,
+  mutate,
+  n,
+  rename,
+  select,
+  summarise,
+  sym,
+  tally
+)
+importFrom(rlang,
+  ":=",
+  sym
+)
 importFrom(scater,calculateMDS)
-importFrom(stats,TukeyHSD)
-importFrom(stats,anova)
-importFrom(stats,as.dist)
-importFrom(stats,as.formula)
-importFrom(stats,chisq.test)
-importFrom(stats,cmdscale)
-importFrom(stats,cor)
-importFrom(stats,cor.test)
-importFrom(stats,dist)
-importFrom(stats,formula)
-importFrom(stats,gaussian)
-importFrom(stats,glm)
-importFrom(stats,hclust)
-importFrom(stats,lm)
-importFrom(stats,median)
-importFrom(stats,na.fail)
-importFrom(stats,na.omit)
-importFrom(stats,p.adjust)
-importFrom(stats,runif)
-importFrom(stats,sd)
-importFrom(stats,setNames)
-importFrom(stats,terms)
-importFrom(stringr,str_extract)
-importFrom(stringr,str_extract_all)
-importFrom(stringr,str_pad)
-importFrom(stringr,str_replace_all)
-importFrom(tibble,rownames_to_column)
-importFrom(tibble,tibble)
-importFrom(tidyr,ends_with)
-importFrom(tidyr,pivot_longer)
-importFrom(tidyr,pivot_wider)
-importFrom(tidyr,starts_with)
-importFrom(tidyr,unnest)
-importFrom(tidyr,unnest_wider)
-importFrom(utils,assignInMyNamespace)
-importFrom(utils,combn)
-importFrom(utils,getFromNamespace)
-importFrom(utils,head)
-importFrom(utils,read.delim)
-importFrom(utils,read.table)
-importFrom(utils,unzip)
-importFrom(vegan,"sppscores<-")
-importFrom(vegan,adonis2)
-importFrom(vegan,anova.cca)
-importFrom(vegan,avgdist)
-importFrom(vegan,betadisper)
-importFrom(vegan,cca)
-importFrom(vegan,dbrda)
-importFrom(vegan,decostand)
-importFrom(vegan,eigenvals)
-importFrom(vegan,monoMDS)
-importFrom(vegan,optspace)
-importFrom(vegan,permutest)
-importFrom(vegan,rrarefy)
-importFrom(vegan,scores)
-importFrom(vegan,vegdist)
+importFrom(stats,
+  TukeyHSD,
+  anova,
+  as.dist,
+  as.formula,
+  chisq.test,
+  cmdscale,
+  cor,
+  cor.test,
+  dist,
+  formula,
+  gaussian,
+  glm,
+  hclust,
+  lm,
+  median,
+  na.fail,
+  na.omit,
+  p.adjust,
+  runif,
+  sd,
+  setNames,
+  terms
+)
+importFrom(stringr,
+  str_extract,
+  str_extract_all,
+  str_pad,
+  str_replace_all
+)
+importFrom(tibble,
+  rownames_to_column,
+  tibble
+)
+importFrom(tidyr,
+  as_tibble,
+  ends_with,
+  pivot_longer,
+  pivot_wider,
+  starts_with,
+  unnest,
+  unnest_wider
+)
+importFrom(utils,
+  assignInMyNamespace,
+  combn,
+  getFromNamespace,
+  head,
+  read.delim,
+  read.table,
+  unzip
+)
+importFrom(vegan,
+  "sppscores<-",
+  adonis2,
+  anova.cca,
+  avgdist,
+  betadisper,
+  cca,
+  dbrda,
+  decostand,
+  eigenvals,
+  monoMDS,
+  optspace,
+  permutest,
+  rrarefy,
+  scores,
+  vegdist
+)
 useDynLib(mia)
 useDynLib(mia, .registration = TRUE)
