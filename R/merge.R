@@ -279,16 +279,23 @@
     if(!.is_a_bool(update.refseq)){
         stop("'update.refseq' must be TRUE or FALSE.", call. = FALSE)
     }
-    # for optionally merging referenceSeq
+    # for optionally merging referenceSeq and rowTree
     refSeq <- NULL
     if(update.refseq){
         refSeq <- referenceSeq(x)
     }
+    row_links <- NULL
+    if( update.tree ){
+        row_links <- rowLinks(x)
+        rownames(row_links) <- rownames(x)
+    }
     #
     x <- .merge_rows_or_cols(x, f, by = 1L, archetype = 1L, ...)
     # optionally merge rowTree
-    if( update.tree ){
-        x <- .agglomerate_trees(x, 1, ...)
+    if( !is.null(row_links) ){
+        x <- .agglomerate_trees(x, links = row_links, f = f, by = 1, ...)
+    } else{
+        rowTree(x) <- NULL
     }
     # optionally merge referenceSeq
     if(!is.null(refSeq)){
@@ -303,10 +310,17 @@
         stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
     }
     #
+    col_links <- NULL
+    if( update.tree ){
+        col_links <- colLinks(x)
+        rownames(col_links) <- colnames(x)
+    }
     x <- .merge_rows_or_cols(x, f, by = 2L, archetype = 1L, ...)
     # optionally merge colTree
-    if( update.tree ){
-        x <- .agglomerate_trees(x, 2, ...)
+    if( !is.null(col_links) ){
+        x <- .agglomerate_trees(x, links = col_links, f = f, by = 2, ...)
+    } else{
+        colTree(x) <- NULL
     }
     return(x)
 }

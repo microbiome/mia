@@ -427,18 +427,9 @@ setMethod("subsetByPrevalent", signature = c(x = "SummarizedExperiment"),
 #' @rdname getPrevalence
 #' @export
 setMethod("subsetByPrevalent", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, update.tree = TRUE, ...){
-        # Check that update.tree is logical value
-        if( !.is_a_bool(update.tree) ){
-            stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
-        }
-        #
+    function(x, ...){
         x <- callNextMethod(x, ...)
-        # Agglomerate tree if specified
-        if( update.tree ){
-            x <- .agglomerate_trees(x, ...)
-        }
-    return(x)
+        return(x)
     }
 )
 
@@ -457,17 +448,8 @@ setMethod("subsetByRare", signature = c(x = "SummarizedExperiment"),
 #' @rdname getPrevalence
 #' @export
 setMethod("subsetByRare", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, update.tree = TRUE, ...){
-        # Check that update.tree is logical value
-        if( !.is_a_bool(update.tree) ){
-            stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
-        }
-        #
+    function(x, ...){
         x <- callNextMethod(x, ...)
-        # Agglomerate tree if specified
-        if( update.tree ){
-            x <- .agglomerate_trees(x, ...)
-        }
         return(x)
     }
 )
@@ -620,6 +602,11 @@ setMethod("agglomerateByPrevalence",
         if( !.is_a_bool(merge_refseq) ){
             stop("'update.refseq' must be TRUE or FALSE.", call. = FALSE)
         }
+        row_links <- NULL
+        if( update.tree ){
+            row_links <- rowLinks(x)
+            rownames(row_links) <- rownames(x)
+        }
         # Agglomerate based on prevalence with SE method
         res <- callNextMethod()
         # If user wants to agglomerate reference sequences. At this point,
@@ -644,8 +631,10 @@ setMethod("agglomerateByPrevalence",
             referenceSeq(res) <- ref_seq
         }
         # Update tree if user has specified to do so
-        if( update.tree ){
-            res <- .agglomerate_trees(res, 1)
+        if( !is.null(row_links) ){
+            x <- .agglomerate_trees(x, links = row_links, f = f, by = 1, ...)
+        } else{
+            rowTree(x) <- NULL
         }
         return(res)
     }
