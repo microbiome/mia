@@ -21,6 +21,7 @@ summarization.
 
 Authors:
 \itemize{
+  \item Tuomas Borman \email{tuomas.v.borman@utu.fi} (\href{https://orcid.org/0000-0002-8563-8884}{ORCID})
   \item Felix G.M. Ernst (\href{https://orcid.org/0000-0001-5064-0928}{ORCID})
   \item Sudarshan A. Shetty (\href{https://orcid.org/0000-0001-7280-9915}{ORCID})
   \item Leo Lahti \email{leo.lahti@iki.fi} (\href{https://orcid.org/0000-0001-5537-637X}{ORCID})

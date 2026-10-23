@@ -27,13 +27,15 @@
 #'   (Default: \code{min(colSums2(assay(x, assay.type)))})
 #'
 #'   \item \code{tree.name}: \code{Character scalar}. Specifies which rowTree
-#'    will be used. ( Faith's index). (Default: \code{"phylo"})
+#'   will be used. (Phylogenetic indices: Allen, Faith, Rao).
+#'   (Default: \code{"phylo"})
 #'
 #'   \item \code{node.label}: \code{Character vector} or \code{NULL} Specifies
 #'   the links between rows and node labels of phylogeny tree specified
 #'   by \code{tree.name}. If a certain row is not linked with the tree, missing
 #'   instance should be noted as NA. When \code{NULL}, all the rownames should
-#'   be found from the tree. (Faith's index). (Default: \code{NULL})
+#'   be found from the tree. (Phylogenetic indices: Allen, Faith, Rao).
+#'   (Default: \code{NULL})
 #'
 #'   \item \code{only.tips}: (Faith's index). \code{Logical scalar}. Specifies
 #'   whether to remove internal nodes when Faith's index is calculated.
@@ -93,6 +95,10 @@
 #'
 #' \itemize{
 #'
+#' \item 'allen': Allen's phylogenetic entropy generalizes the Shannon index
+#' to phylogenetic trees by weighting branch lengths by descendant relative
+#' abundances (Allen et al. 2009). Using this index requires a tree.
+#'
 #' \item 'coverage': Number of species needed to cover a given fraction of
 #' the ecosystem (50 percent by default). Tune this with the threshold
 #' argument.
@@ -140,6 +146,10 @@
 #' negative skews, we follow Locey & Lennon (2016) and use the log-modulo
 #' transformation that adds a value of one to each measure of skewness to
 #' allow logarithmization.
+#'
+#' \item 'rao': Rao's quadratic entropy calculates the expected phylogenetic
+#' distance between two randomly chosen individuals from the community
+#' (Rao 1982). Using this index requires a tree.
 #'
 #' \item 'shannon': Shannon diversity (entropy).
 #'
@@ -349,7 +359,8 @@
 #' is done \code{niter} times. In each sampling iteration, \code{sample} number
 #' of random samples are drawn, and alpha diversity is calculated for this
 #' subset. After the iterative process, there are \code{niter} number of
-#' result that are then averaged to get the final result.
+#' result that are then averaged to get the final result. All requested
+#' indices are calculated from the same rarefied data in each iteration.
 #'
 #' Refer to Schloss (2024) for more details on rarefaction.
 #'
@@ -377,6 +388,11 @@
 #' Bulla L. (1994)
 #' An  index of diversity and its associated diversity measure.
 #' _Oikos_ 70:167--171
+#'
+#' Allen B, Kon M, Bar-Yam Y (2009)
+#' A new phylogenetic diversity measure generalizing the Shannon index and its
+#' application to phyllostomid bats.
+#' _The American Naturalist_ 174(2):236–243.
 #'
 #' Camargo, JA. (1992)
 #' New diversity index for assessing structural alterations in aquatic
@@ -435,6 +451,10 @@
 #' Pielou, EC. (1966)
 #' The measurement of diversity in different types of
 #' biological collections. _J Theoretical Biology_ 13:131--144.
+#'
+#' Rao CR (1982)
+#' Diversity and dissimilarity coefficients: a unified approach.
+#' _Theoretical Population Biology_ 21(1):24–43.
 #'
 #' Schloss PD (2024) Rarefaction is currently the best approach to control for
 #' uneven sequencing effort in amplicon sequence analyses. _mSphere_
@@ -532,11 +552,13 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
             stop("'index' should be a character vector.", call. = FALSE)
         }
         # if multiple indices to be estimated, name should a vector of
-        # same length
-        if( !.is_non_empty_character(name) || length(name) != length(index) ){
+        # same length. Names must be unique, as rarefaction rounds are
+        # averaged by column name.
+        if( !.is_non_empty_character(name) || length(name) != length(index) ||
+                anyDuplicated(name) ){
             stop(
-                "'name' must be a non-empty character value and have the ",
-                "same length than 'index'.",
+                "'name' must be a non-empty character value, be unique and ",
+                "have the same length than 'index'.",
                 call. = FALSE)
         }
         # Check niter
@@ -547,21 +569,14 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
         # information (e.g. internal function) to calculate the index.
         index <- .get_indices(index, name, x, assay.type, ...)
         ############################ Input check end ###########################
-        # Looping over the data.frame of indices to be estimated
-        res <- bplapply(index, function(ind){
-            # Performing rarefaction if sample is specified
-            if( !is.null(niter) && niter > 0 ){
-                temp <- .alpha_rarefaction(
-                    x, assay.type, ind[[1]], ind[[6]], niter, BPPARAM, ...)
-            } else {
-                # Estimate index without rarefaction
-                temp <- .calculate_alpha(x, assay.type, ind[[1]], ind[[6]], ...)
-            }
-            return(temp)
-
-        }, BPPARAM = BPPARAM)
-        # Combine results into single DF
-        res <- do.call(cbind, res)
+        if( !is.null(niter) && niter > 0 ){
+            # Rarefy once per iteration and calculate all indices from the
+            # same rarefied data
+            res <- .alpha_rarefaction(x, assay.type, index, niter, BPPARAM, ...)
+        } else {
+            # Estimate indices without rarefaction
+            res <- .calculate_alpha_indices(x, assay.type, index, BPPARAM, ...)
+        }
         res <- DataFrame(res)
         return(res)
     }
@@ -575,12 +590,13 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     supported <- list()
     # Supported diversity indices
     temp <- c(
-        "coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
-        "log_modulo_skewness", "shannon")
+        "allen", "coverage", "faith", "fisher", "gini_simpson",
+        "inverse_simpson", "log_modulo_skewness", "rao", "shannon")
     temp <- data.frame(index = temp)
     temp[["measure"]] <- "diversity"
     temp[["index_long"]] <- paste0(temp[["index"]], "_", temp[["measure"]])
-    temp[["non_neg"]] <- c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE)
+    temp[["non_neg"]] <- c(
+        FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)
     supported[["diversity"]] <- temp
     # Supported dominance indices
     temp <- c(
@@ -628,18 +644,30 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
             "indices. The following 'index' was not detected: ", not_detected,
             call. = FALSE)
     }
-    # Faith index is available only for TreeSE with rowTree
+    # Tree indices are available only for TreeSE with rowTree or with tree
+    # provided
+    tree_indices <- c("allen", "faith", "rao")
+    missing_tree <- intersect(detected[["index"]], tree_indices)
     tse_with_tree <- (is(x, "TreeSummarizedExperiment") &&
         !is.null(rowTree(x))) || !is.null(tree)
-    if( "faith" %in% detected[["index"]] && !tse_with_tree ){
-        # Drop faith index from indices being calculated
-        detected <- detected[!detected[["index"]] %in% c("faith"), ]
+    if( length(missing_tree) > 0 && !tse_with_tree ){
+        # Drop tree indices from indices being calculated
+        detected <- detected[!detected[["index"]] %in% missing_tree, ]
         # If there are still other indices being calculated, give warning.
-        # Otherwise, give error if faith was the only index that user wants to
-        # calculate.
+        # Otherwise, give error if tree index was the only index that user
+        # wants to calculate.
         FUN <- if( nrow(detected) == 0 ) stop else warning
-        FUN("'faith' index can be calculated only for TreeSE with rowTree(x) ",
-            "populated or with 'tree' provided separately.", call. = FALSE)
+        msg <- if( length(missing_tree) == 1 ){
+            paste0(
+                "'", missing_tree, "' index can be calculated only for TreeSE ",
+                "with rowTree(x) populated or with 'tree' provided separately.")
+        } else {
+            paste0(
+                "The following indices can be calculated only for TreeSE with ",
+                "rowTree(x) populated or with 'tree' provided separately: '",
+                paste0(missing_tree, collapse = "', '"), "'")
+        }
+        FUN(msg, call. = FALSE)
     }
     # Check for unsupported values (negative values)
     if( any(assay(x, assay.type) < 0 & !is.na(assay(x, assay.type))) ){
@@ -659,19 +687,21 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     return(detected)
 }
 
-# This function rarifies the data niter of times and calculates index for the
-# rarified data. The result is a mean of the iterations.
+# This function rarifies the data niter of times and calculates all indices
+# for the rarified data. The result is a mean of the iterations.
 #' @importFrom DelayedMatrixStats rowMeans2
 #' @importFrom BiocParallel bplapply
-.alpha_rarefaction <- function(x, assay.type, index, name, niter, BPPARAM, ...){
-    # Subsample the data and then calculate index based on the rarified data
+.alpha_rarefaction <- function(x, assay.type, index, niter, BPPARAM, ...){
+    # Subsample the data once per iteration and then calculate every index
+    # based on the same rarified data. BPPARAM parallelises the iterations, so
+    # indices within an iteration are calculated serially.
     temp_assay <- "temporary_assay_name"
     res <- bplapply(seq(niter), function(i){
         args <- c(list(x = x, assay.type = assay.type), list(...))
         args[["name"]] <- temp_assay
         args[["verbose"]] <- FALSE
         x_sub <- do.call(rarefyAssay, args)
-        temp <- .calculate_alpha(x_sub, temp_assay, index, name, ...)
+        temp <- .calculate_alpha_indices(x_sub, temp_assay, index, ...)
         return(temp)
     }, BPPARAM = BPPARAM)
     # Combine list of matrices from multiple iterations
@@ -680,7 +710,10 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     # There might be multiple indices; for instance chao1 has 2 values. For
     # every index calculate mean for each sample.
     res <- lapply(cnames, function(cname){
-        rowMeans2(res[, cname, drop = FALSE])
+        # After cbind, each index appears in niter columns (one per
+        # rarefaction round). Select all of them so that the mean is taken
+        # over every round, not just the first.
+        rowMeans2(res[, colnames(res) == cname, drop = FALSE])
     })
     names(res) <- cnames
     res <- do.call(cbind, res)
@@ -698,6 +731,18 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     return(res)
 }
 
+# This function calculates all the requested indices from the same data. Each
+# column of 'index' (from .get_indices) holds information on one index.
+#' @importFrom BiocParallel bplapply
+.calculate_alpha_indices <- function(
+        x, assay.type, index, BPPARAM = SerialParam(), ...){
+    res <- bplapply(index, function(ind){
+        .calculate_alpha(x, assay.type, ind[[1]], ind[[6]], ...)
+    }, BPPARAM = BPPARAM)
+    res <- do.call(cbind, res)
+    return(res)
+}
+
 # This function is helper function that calls the specific functions that
 # calculate indices.
 .calculate_alpha <- function(x, assay.type, index, name, ...){
@@ -705,6 +750,7 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     mat <- assay(x, assay.type)
     # Get correct function based on index
     FUN <- switch(index,
+        allen = .estimate_allen,
         shannon = .calc_shannon,
         gini_simpson = .calc_gini_simpson,
         inverse_simpson = .calc_inverse_simpson,
@@ -712,6 +758,7 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
         fisher = .calc_fisher,
         faith = .estimate_faith,
         log_modulo_skewness = .calc_log_modulo_skewness,
+        rao = .estimate_rao,
         #
         simpson_lambda = .simpson_lambda,
         core_abundance = .calc_core_dominance,

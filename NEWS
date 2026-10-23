@@ -195,3 +195,8 @@ Changes in version 1.21.x
 + Implement Striped Unifrac algorithm (1.21.4, 2026-07-29)
 + Added conversion functions between MAE and TreeSE (1.21.8, 2026-09-22)
 + Added applyByModule (1.21.11, 2026-10-02)
++ Fixed getAlpha/addAlpha returning the first rarefaction round instead of
+  the mean over niter rounds (1.21.12, 2026-10-19)
++ getAlpha/addAlpha rarefy once per iteration and calculate all indices from
+  the same rarefied data (1.21.13, 2026-10-13)
++ Add Allen and Rao alpha diversity indices (1.21.14, 2026-10-22)
