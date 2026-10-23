@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.21.13
+Version: 1.21.14
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -118,6 +118,6 @@ LinkingTo:
 URL: https://microbiome.github.io/mia/, https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 VignetteBuilder: knitr
 RdMacros: Rdpack
+Config/roxygen2/version: 8.1.0
