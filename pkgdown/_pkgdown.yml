@@ -71,6 +71,7 @@ reference:
 - contents:
   - getDissimilarity
   - addDivergence
+  - addDysbiosis
 - subtitle: Ordination
 - contents:
   - runNMDS
