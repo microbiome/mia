@@ -50,6 +50,7 @@ reference:
   - getPrevalence
   - getPrevalentAbundance
   - summary
+  - addQCMetrics
   - getDominant
   - getAbundant
 - title: Data loading
