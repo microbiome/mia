@@ -68,4 +68,11 @@ test_that("summaries", {
                assay.type = "counts"),
         getTop(agg, method = "mean", top = 5, assay.type = "counts")
     )
+
+    # getTop with sd returns the most variable features
+    sds <- apply(assay(GlobalPatterns, "counts"), 1, sd)
+    expect_identical(
+        getTop(GlobalPatterns, method = "sd", top = 5),
+        names(sort(sds, decreasing = TRUE))[seq_len(5)]
+    )
 })

@@ -18,7 +18,7 @@ getUnique(x, ...)
 getTop(
   x,
   top = 5L,
-  method = c("mean", "sum", "median", "prevalence"),
+  method = c("mean", "sum", "median", "sd", "prevalence"),
   assay.type = assay_name,
   assay_name = "counts",
   na.rm = TRUE,
@@ -28,7 +28,7 @@ getTop(
 \S4method{getTop}{SummarizedExperiment}(
   x,
   top = 5L,
-  method = c("mean", "sum", "median", "prevalence"),
+  method = c("mean", "sum", "median", "sd", "prevalence"),
   assay.type = assay_name,
   assay_name = "counts",
   na.rm = TRUE,
@@ -58,7 +58,9 @@ overview. Must be one of the column names of \code{colData}.}
 Default is to return top five taxa. (Default: \code{5})}
 
 \item{method}{\code{Character scalar}. Specify the method to determine top
-taxa. Either sum, mean, median or prevalence. (Default: \code{"mean"})}
+taxa. Either sum, mean, median, sd or prevalence. With \code{"sd"}, the
+features with the highest standard deviation are returned.
+(Default: \code{"mean"})}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of the
 assay used in calculation. (Default: \code{"counts"})}
@@ -119,6 +121,9 @@ top_taxa <- getTop(
     assay.type = "counts"
 )
 top_taxa
+
+# Most variable taxa
+getTop(GlobalPatterns, method = "sd", top = 5)
 
 # Use 'detection' to select detection threshold when using prevalence method
 top_taxa <- getTop(

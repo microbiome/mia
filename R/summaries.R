@@ -9,7 +9,9 @@
 #' Default is to return top five taxa. (Default: \code{5})
 #'
 #' @param method \code{Character scalar}. Specify the method to determine top
-#' taxa. Either sum, mean, median or prevalence. (Default: \code{"mean"})
+#' taxa. Either sum, mean, median, sd or prevalence. With \code{"sd"}, the
+#' features with the highest standard deviation are returned.
+#' (Default: \code{"mean"})
 #'
 #' @param ... Additional arguments passed, e.g., to getPrevalence:
 #'    \itemize{
@@ -51,6 +53,9 @@
 #'     assay.type = "counts"
 #' )
 #' top_taxa
+#'
+#' # Most variable taxa
+#' getTop(GlobalPatterns, method = "sd", top = 5)
 #'
 #' # Use 'detection' to select detection threshold when using prevalence method
 #' top_taxa <- getTop(
@@ -103,17 +108,17 @@ NULL
 
 #' @rdname summary
 #'
-#' @importFrom DelayedMatrixStats rowSums2 rowMeans2 rowMedians
+#' @importFrom DelayedMatrixStats rowSums2 rowMeans2 rowMedians rowSds
 #' @importFrom utils head
 #'
 #' @export
 setMethod("getTop", signature = c(x = "SummarizedExperiment"),
     function(
-        x, top = 5L, method = c("mean", "sum", "median", "prevalence"),
+        x, top = 5L, method = c("mean", "sum", "median", "sd", "prevalence"),
         assay.type = assay_name, assay_name = "counts",
         na.rm = TRUE, ...){
         # input check
-        method <- match.arg(method, c("mean","sum","median","prevalence"))
+        method <- match.arg(method, c("mean","sum","median","sd","prevalence"))
         # Optionally agglomerate data
         x <- .merge_features(x, ...)
         # check max taxa
@@ -131,7 +136,8 @@ setMethod("getTop", signature = c(x = "SummarizedExperiment"),
                 method,
                 mean = rowMeans2(assay(x, assay.type), na.rm = na.rm),
                 sum = rowSums2(assay(x, assay.type), na.rm = na.rm),
-                median = rowMedians(assay(x, assay.type), na.rm = na.rm))
+                median = rowMedians(assay(x, assay.type), na.rm = na.rm),
+                sd = rowSds(assay(x, assay.type), na.rm = na.rm))
             names(taxs) <- rownames(assay(x))
             taxs <- sort(taxs,decreasing = TRUE)
         }
