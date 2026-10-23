@@ -159,3 +159,125 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     res2 <- colData(tse)
     expect_equal(res, res2)
 })
+
+test_that("Rarefied alpha diversity is the mean over all iterations", {
+    data(GlobalPatterns, package="mia")
+    tse <- GlobalPatterns[, seq_len(10)]
+    res <- getAlpha(
+        tse, index = "chao1", sample = 10000, niter = 5,
+        BPPARAM = BiocParallel::SerialParam(RNGseed = 1))
+    # Rarefy the same rounds with the same seed and take the mean
+    ref <- BiocParallel::bplapply(seq_len(5), function(i){
+        x <- rarefyAssay(tse, sample = 10000, verbose = FALSE)
+        as.matrix(getAlpha(x, assay.type = "subsampled", index = "chao1"))
+    }, BPPARAM = BiocParallel::SerialParam(RNGseed = 1))
+    # The rounds must differ, otherwise any single round equals the mean
+    expect_false(identical(ref[[1]], ref[[2]]))
+    ref <- Reduce("+", ref) / length(ref)
+    expect_equal(as.matrix(res), ref)
+})
+
+test_that("Rarefied indices are calculated from the same rarefied data", {
+    data(GlobalPatterns, package="mia")
+    tse <- GlobalPatterns[, seq_len(10)]
+    # The same index twice gives identical values only if both are
+    # calculated from the same rarefaction rounds
+    res <- getAlpha(
+        tse, index = c("observed", "observed"), name = c("a", "b"),
+        sample = 10000, niter = 2)
+    expect_identical(res$a, res$b)
+    # Names must be unique, as rounds are averaged by column name
+    expect_error(getAlpha(
+        tse, index = c("shannon", "observed"), name = c("a", "a"),
+        sample = 10000, niter = 2))
+})
+
+test_that("Estimate Phylogenetic Alpha Diversity Indices (allen, rao)", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns
+
+    # Test getAlpha and addAlpha with allen and rao
+    tse <- addAlpha(tse, assay.type = "counts", index = c("allen", "rao"))
+    expect_true("allen" %in% colnames(colData(tse)))
+    expect_true("rao" %in% colnames(colData(tse)))
+    expect_true(is.numeric(tse$allen))
+    expect_true(is.numeric(tse$rao))
+    expect_true(all(tse$allen >= 0, na.rm = TRUE))
+    expect_true(all(tse$rao >= 0, na.rm = TRUE))
+
+    # Test full index names / aliases
+    tse_alias <- addAlpha(
+        GlobalPatterns, assay.type = "counts",
+        index = c("allen_diversity", "rao_diversity"))
+    expect_equal(tse$allen, tse_alias$allen_diversity)
+    expect_equal(tse$rao, tse_alias$rao_diversity)
+
+    # Test getAlpha returns same values as addAlpha
+    res_get <- getAlpha(
+        GlobalPatterns, assay.type = "counts", index = c("allen", "rao"))
+    expect_equal(res_get$allen, tse$allen)
+    expect_equal(res_get$rao, tse$rao)
+
+    # Test custom names
+    tse_custom <- addAlpha(
+        tse, assay.type = "counts",
+        index = c("allen", "rao"), name = c("my_allen", "my_rao"))
+    expect_true(all(c("my_allen", "my_rao") %in% colnames(colData(tse_custom))))
+    expect_equal(tse$allen, tse_custom$my_allen)
+    expect_equal(tse$rao, tse_custom$my_rao)
+
+    # Mathematical equivalence tests on star trees:
+    # 1. Star tree with branch lengths = 1: Allen diversity equals Shannon
+    # diversity
+    set.seed(42)
+    mat <- matrix(rpois(20, lambda = 50), nrow = 4, ncol = 5)
+    rownames(mat) <- paste0("t", 1:4)
+    colnames(mat) <- paste0("s", 1:5)
+    tree1 <- ape::stree(4, type = "star")
+    tree1$tip.label <- rownames(mat)
+    tree1$edge.length <- rep(1, 4)
+    se1 <- TreeSummarizedExperiment(
+        assays = list(counts = mat), rowTree = tree1)
+
+    allen_vals <- getAlpha(se1, index = "allen")[[1]]
+    shannon_vals <- getAlpha(se1, index = "shannon")[[1]]
+    expect_equal(allen_vals, shannon_vals)
+
+    # 2. Star tree with branch lengths = 0.5 (cophenetic distance between any
+    # two distinct tips = 1): Rao's quadratic entropy equals Gini-Simpson index
+    tree_half <- tree1
+    tree_half$edge.length <- rep(0.5, 4)
+    se_half <- TreeSummarizedExperiment(
+        assays = list(counts = mat), rowTree = tree_half)
+
+    rao_vals <- getAlpha(se_half, index = "rao")[[1]]
+    simpson_vals <- getAlpha(se_half, index = "gini_simpson")[[1]]
+    expect_equal(rao_vals, simpson_vals)
+
+    # Error handling: Missing rowTree
+    se_no_tree <- SummarizedExperiment(assays = list(counts = mat))
+    expect_error(getAlpha(se_no_tree, index = "allen"), "rowTree")
+    expect_error(getAlpha(se_no_tree, index = "rao"), "rowTree")
+    expect_error(addAlpha(se_no_tree, index = "allen"), "rowTree")
+    expect_error(addAlpha(se_no_tree, index = "rao"), "rowTree")
+
+    # Rarefaction works with phylogenetic indices
+    data(esophagus, package = "mia")
+    tse_rare <- addAlpha(
+        esophagus, assay.type = "counts",
+        index = c("allen", "rao"),
+        sample = min(colSums(assay(esophagus, "counts"))),
+        niter = 5,
+        name = c("allen_rare", "rao_rare"))
+    expect_true(
+        all(c("allen_rare", "rao_rare") %in% colnames(colData(tse_rare))))
+    expect_true(is.numeric(tse_rare$allen_rare))
+    expect_true(is.numeric(tse_rare$rao_rare))
+
+    # Explicit tree argument works for phylogenetic indices
+    tse_exp_tree <- addAlpha(
+        esophagus, assay.type = "counts",
+        index = c("faith", "allen", "rao"), tree = rowTree(esophagus))
+    expect_true(all(
+        c("faith", "allen", "rao") %in% colnames(colData(tse_exp_tree))))
+})

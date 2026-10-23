@@ -33,13 +33,15 @@ depth i.e. the number of counts drawn from each sample.
 (Default: \code{min(colSums2(assay(x, assay.type)))})
 
 \item \code{tree.name}: \code{Character scalar}. Specifies which rowTree
-will be used. ( Faith's index). (Default: \code{"phylo"})
+will be used. (Phylogenetic indices: Allen, Faith, Rao).
+(Default: \code{"phylo"})
 
 \item \code{node.label}: \code{Character vector} or \code{NULL} Specifies
 the links between rows and node labels of phylogeny tree specified
 by \code{tree.name}. If a certain row is not linked with the tree, missing
 instance should be noted as NA. When \code{NULL}, all the rownames should
-be found from the tree. (Faith's index). (Default: \code{NULL})
+be found from the tree. (Phylogenetic indices: Allen, Faith, Rao).
+(Default: \code{NULL})
 
 \item \code{only.tips}: (Faith's index). \code{Logical scalar}. Specifies
 whether to remove internal nodes when Faith's index is calculated.
@@ -118,6 +120,10 @@ The following diversity indices are available:
 
 \itemize{
 
+\item 'allen': Allen's phylogenetic entropy generalizes the Shannon index
+to phylogenetic trees by weighting branch lengths by descendant relative
+abundances (Allen et al. 2009). Using this index requires a tree.
+
 \item 'coverage': Number of species needed to cover a given fraction of
 the ecosystem (50 percent by default). Tune this with the threshold
 argument.
@@ -165,6 +171,10 @@ These are typically right-skewed; to avoid taking log of occasional
 negative skews, we follow Locey & Lennon (2016) and use the log-modulo
 transformation that adds a value of one to each measure of skewness to
 allow logarithmization.
+
+\item 'rao': Rao's quadratic entropy calculates the expected phylogenetic
+distance between two randomly chosen individuals from the community
+(Rao 1982). Using this index requires a tree.
 
 \item 'shannon': Shannon diversity (entropy).
 
@@ -378,7 +388,8 @@ Rarefaction works by sampling the counts randomly. This random sampling
 is done \code{niter} times. In each sampling iteration, \code{sample} number
 of random samples are drawn, and alpha diversity is calculated for this
 subset. After the iterative process, there are \code{niter} number of
-result that are then averaged to get the final result.
+result that are then averaged to get the final result. All requested
+indices are calculated from the same rarefied data in each iteration.
 
 Refer to Schloss (2024) for more details on rarefaction.
 }
@@ -433,6 +444,11 @@ Diversity of Planktonic Foraminifera in Deep-Sea Sediments.
 Bulla L. (1994)
 An  index of diversity and its associated diversity measure.
 \emph{Oikos} 70:167--171
+
+Allen B, Kon M, Bar-Yam Y (2009)
+A new phylogenetic diversity measure generalizing the Shannon index and its
+application to phyllostomid bats.
+\emph{The American Naturalist} 174(2):236–243.
 
 Camargo, JA. (1992)
 New diversity index for assessing structural alterations in aquatic
@@ -491,6 +507,10 @@ Species richness estimators: how many species can dance on the head of a pin?
 Pielou, EC. (1966)
 The measurement of diversity in different types of
 biological collections. \emph{J Theoretical Biology} 13:131--144.
+
+Rao CR (1982)
+Diversity and dissimilarity coefficients: a unified approach.
+\emph{Theoretical Population Biology} 21(1):24–43.
 
 Schloss PD (2024) Rarefaction is currently the best approach to control for
 uneven sequencing effort in amplicon sequence analyses. \emph{mSphere}
