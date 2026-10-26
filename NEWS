@@ -202,3 +202,4 @@ Changes in version 1.21.x
 + Add Allen and Rao alpha diversity indices (1.21.14, 2026-10-22)
 + Added getQCMetrics and addQCMetrics (1.21.15, 2026-10-26)
 + Added getDysbiosis and addDysbiosis (1.21.16, 2026-10-26)
++ Formula handling in RDA, CCA and PERMANOVA no longer uses as.character() (1.21.22, 2026-10-26)
