@@ -13,18 +13,21 @@ getQCMetrics(x, ...)
 
 \S4method{addQCMetrics}{SummarizedExperiment}(x, by = "cols", ...)
 
-\S4method{getQCMetrics}{SummarizedExperiment}(
-  x,
-  assay.type = "counts",
-  by = "cols",
-  name = c("total", "detected", "mean", "median", "sd"),
-  ...
-)
+\S4method{getQCMetrics}{SummarizedExperiment}(x, assay.type = "counts", by = "cols", ...)
 }
 \arguments{
 \item{x}{a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object.}
 
-\item{...}{additional arguments passed to \code{getQCMetrics}.}
+\item{...}{additional arguments passed to \code{getQCMetrics}:
+
+\itemize{
+\item \code{name}: Specifies the names of the metrics in
+the result. Must have the same length as the number of metrics.
+(Default: \code{c("total", "detected", "mean", "median", "sd")})
+
+\item \code{na.rm}: \code{Logical scalar}. Should NA values be omitted?
+(Default: \code{TRUE})
+}}
 
 \item{by}{\code{Character scalar}. Determines if metrics are calculated
 for samples (\code{'cols'}) or features (\code{'rows'}).
@@ -32,10 +35,6 @@ for samples (\code{'cols'}) or features (\code{'rows'}).
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
-
-\item{name}{\code{Character vector}. Specifies the names of the metrics in
-the result. Must have the same length as the number of metrics.
-(Default: \code{c("total", "detected", "mean", "median", "sd")})}
 }
 \value{
 \code{getQCMetrics} returns a \code{DataFrame} with one row per sample (or

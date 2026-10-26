@@ -365,7 +365,6 @@ importFrom(DelayedArray,
 )
 importFrom(DelayedMatrixStats,
   colMeans2,
-  colMedians,
   colQuantiles,
   colSds,
   colSums2,

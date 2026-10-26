@@ -9,8 +9,10 @@ test_that("getQCMetrics and addQCMetrics", {
     expect_equal(res[["total"]], unname(colSums(mat)))
     expect_equal(res[["detected"]], unname(colSums(mat > 0)))
     expect_equal(res[["mean"]], unname(colMeans(mat)))
-    expect_equal(res[["median"]], unname(apply(mat, 2, median)))
     expect_equal(res[["sd"]], unname(apply(mat, 2, sd)))
+    expect_equal(res[["q0"]], unname(apply(mat, 2, min)))
+    expect_equal(res[["q50"]], unname(apply(mat, 2, median)))
+    expect_equal(res[["q100"]], unname(apply(mat, 2, max)))
     # Features
     res <- getQCMetrics(tse, by = "rows")
     expect_identical(rownames(res), rownames(tse))
@@ -21,7 +23,7 @@ test_that("getQCMetrics and addQCMetrics", {
     tse <- addQCMetrics(tse, by = "rows")
     expect_equal(rowData(tse)[["detected"]], unname(rowSums(mat > 0)))
     # Names of the metrics can be changed
-    tse <- addQCMetrics(tse, name = paste0("qc_", 1:5))
+    tse <- addQCMetrics(tse, name = paste0("qc_", 1:9))
     expect_equal(tse[["qc_1"]], unname(colSums(mat)))
     expect_error(getQCMetrics(tse, name = "total"))
     # Metrics are calculated and added for altExp
