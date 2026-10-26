@@ -137,6 +137,7 @@ setMethod("getDysbiosis", signature = c(x = "SummarizedExperiment"),
         })
         names(res) <- name
         res <- DataFrame(res, row.names = colnames(x), check.names = FALSE)
+
         return(res)
     }
 )
