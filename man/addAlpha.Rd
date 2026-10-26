@@ -75,6 +75,10 @@ taxa with the indicated rank (default: \code{aggregate = TRUE}).
 
 \item \code{detection}: (observed index). \code{Numeric scalar} Selects
 detection threshold for the abundances (Default: \code{0})
+
+\item \code{col.var}, \code{reference}, \code{group}: (dysbiosis
+index). Define the control samples, see
+\code{\link[=getDysbiosis]{getDysbiosis}}.
 }}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
@@ -374,6 +378,18 @@ is detected above a given \code{detection} threshold in the observed sample
 (default 0). This is conceptually the simplest richness index. The
 corresponding index in the \pkg{vegan} package is "richness".
 
+}
+}
+
+\subsection{Dysbiosis}{
+
+Dysbiosis scores measure how much the community of a sample differs from
+control samples. They require \code{col.var} to define the controls; see
+\code{\link[=getDysbiosis]{getDysbiosis}} for details.
+
+\itemize{
+\item 'median_distance': Median dissimilarity between the sample and the
+control samples.
 }
 }
 

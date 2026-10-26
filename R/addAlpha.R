@@ -69,6 +69,10 @@
 #'
 #'   \item \code{detection}: (observed index). \code{Numeric scalar} Selects
 #'   detection threshold for the abundances (Default: \code{0})
+#'
+#'   \item \code{col.var}, \code{reference}, \code{group}: (dysbiosis
+#'   index). Define the control samples, see
+#'   \code{\link[=getDysbiosis]{getDysbiosis}}.
 #' }
 #'
 #' @return
@@ -348,6 +352,17 @@
 #'
 #' }
 #'
+#' ## Dysbiosis
+#'
+#' Dysbiosis scores measure how much the community of a sample differs from
+#' control samples. They require \code{col.var} to define the controls; see
+#' \code{\link[=getDysbiosis]{getDysbiosis}} for details.
+#'
+#' \itemize{
+#'   \item 'median_distance': Median dissimilarity between the sample and the
+#'   control samples.
+#' }
+#'
 #' ## Rarefaction
 #'
 #' Rarefaction can be used to control uneven sequencing depths. Although,
@@ -623,6 +638,12 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     temp[["index_long"]] <- paste0(temp[["index"]], "_", temp[["measure"]])
     temp[["non_neg"]] <- c(FALSE, FALSE, FALSE, FALSE)
     supported[["richness"]] <- temp
+    # Supported dysbiosis indices
+    temp <- data.frame(index = "median_distance")
+    temp[["measure"]] <- "dysbiosis"
+    temp[["index_long"]] <- paste0(temp[["index"]], "_", temp[["measure"]])
+    temp[["non_neg"]] <- FALSE
+    supported[["dysbiosis"]] <- temp
     # Combine
     supported <- do.call(rbind, supported)
     # Find the index that user wants to calculate
@@ -777,7 +798,9 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
         observed = .calc_observed,
         chao1 = .calc_chao1,
         ace = .calc_ace,
-        hill = .calc_hill
+        hill = .calc_hill,
+        #
+        median_distance = .calc_dysbiosis
     )
     # Calculate values, create matrix where column represent index and rows
     # samples, and add name for the index
@@ -785,5 +808,16 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     res <- as.matrix(res)
     colnames(res) <- paste0(name, colnames(res))
     rownames(res) <- colnames(x)
+    return(res)
+}
+
+# Dysbiosis scores need the control samples, which are defined in colData
+.calc_dysbiosis <- function(
+        x, mat, col.var = NULL, method = "bray", index = NULL, ...){
+    groups <- .get_reference_for_dysbiosis(x, col.var, ...)
+    sample_groups <- .get_grouping_for_dysbiosis(x, col.var, ...)
+    res <- .calc_median_distance_to_controls(
+        mat = mat, groups = groups, sample_groups = sample_groups,
+        method = method, ...)
     return(res)
 }
