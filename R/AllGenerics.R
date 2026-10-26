@@ -40,6 +40,16 @@ setGeneric("getDivergence", signature = c("x"),
         method = "bray", ...)
     standardGeneric("getDivergence"))
 
+#' @rdname addDysbiosis
+#' @export
+setGeneric("addDysbiosis", signature = c("x"), function(x, ...)
+    standardGeneric("addDysbiosis"))
+
+#' @rdname addDysbiosis
+#' @export
+setGeneric("getDysbiosis", signature = c("x"), function(x, ...)
+    standardGeneric("getDysbiosis"))
+
 #' @rdname addLDA
 #' @export
 setGeneric(
