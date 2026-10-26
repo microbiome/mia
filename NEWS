@@ -202,3 +202,4 @@ Changes in version 1.21.x
 + Add Allen and Rao alpha diversity indices (1.21.14, 2026-10-22)
 + Added getQCMetrics and addQCMetrics (1.21.15, 2026-10-26)
 + Added getDysbiosis and addDysbiosis (1.21.16, 2026-10-26)
++ Renamed getQCMetrics and addQCMetrics to getQC and addQC (1.21.19, 2026-10-26)
