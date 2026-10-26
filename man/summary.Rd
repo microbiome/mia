@@ -18,7 +18,7 @@ getUnique(x, ...)
 getTop(
   x,
   top = 5L,
-  method = c("mean", "sum", "median", "sd", "prevalence"),
+  method = c("mean", "sum", "median", "sd", "cv", "prevalence"),
   assay.type = assay_name,
   assay_name = "counts",
   na.rm = TRUE,
@@ -28,7 +28,7 @@ getTop(
 \S4method{getTop}{SummarizedExperiment}(
   x,
   top = 5L,
-  method = c("mean", "sum", "median", "sd", "prevalence"),
+  method = c("mean", "sum", "median", "sd", "cv", "prevalence"),
   assay.type = assay_name,
   assay_name = "counts",
   na.rm = TRUE,
@@ -58,8 +58,12 @@ overview. Must be one of the column names of \code{colData}.}
 Default is to return top five taxa. (Default: \code{5})}
 
 \item{method}{\code{Character scalar}. Specify the method to determine top
-taxa. Either sum, mean, median, sd or prevalence. With \code{"sd"}, the
-features with the highest standard deviation are returned.
+taxa. Either sum, mean, median, sd, cv or prevalence. With \code{"sd"} or
+\code{"cv"}, the features with the highest standard deviation or
+coefficient of variation (standard deviation divided by mean) are returned.
+Features present in only one sample have the highest possible coefficient
+of variation, so rare features should be filtered out first, e.g., with
+\code{subsetByPrevalent()}.
 (Default: \code{"mean"})}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of the
@@ -124,6 +128,10 @@ top_taxa
 
 # Most variable taxa
 getTop(GlobalPatterns, method = "sd", top = 5)
+
+# Taxa with the highest coefficient of variation among prevalent taxa
+tse <- subsetByPrevalent(GlobalPatterns, prevalence = 0.5)
+getTop(tse, method = "cv", top = 5)
 
 # Use 'detection' to select detection threshold when using prevalence method
 top_taxa <- getTop(
