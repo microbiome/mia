@@ -16,11 +16,9 @@ getDysbiosis(x, ...)
 \S4method{getDysbiosis}{SummarizedExperiment}(
   x,
   col.var,
-  reference = NULL,
   assay.type = "counts",
   index = "median_distance",
   name = index,
-  group = NULL,
   method = "bray",
   ...
 )
@@ -28,15 +26,31 @@ getDysbiosis(x, ...)
 \arguments{
 \item{x}{a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object.}
 
-\item{...}{additional arguments passed to
-\code{\link[=getDissimilarity]{getDissimilarity}}.}
+\item{...}{Additional arguments. The following optional arguments are
+supported:
+\itemize{
+\item \code{reference}: \code{NULL} or \code{Character scalar}. Specifies
+the group in \code{col.var} that is used as controls. If \code{NULL}, the
+first level of \code{factor(x[[col.var]])} is used. (Default:
+\code{NULL})
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{\\item \code{group}: \code{NULL} or \code{Character scalar}. Specifies a
+variable from \code{colData(x)} (e.g., subject ID). Control samples that
+share the same value with the current sample are excluded from its
+comparison. (Default: \code{NULL})
+
+\\item \code{altexp}: \code{NULL} or \code{Character scalar}. If provided,
+use this \code{altExp} assay container of \code{x} for the computation.
+(Default: \code{NULL})
+
+\\item Further arguments are passed to
+\code{\link[=getDissimilarity]{getDissimilarity}}.
+}\if{html}{\out{</div>}}
+
+}}
 
 \item{col.var}{\code{Character scalar}. Specifies a variable from
 \code{colData(x)} that defines the groups.}
-
-\item{reference}{\code{NULL} or \code{Character scalar}. Specifies the group
-in \code{col.var} that is used as controls. If \code{NULL}, the first level
-of \code{factor(x[[col.var]])} is used. (Default: \code{NULL})}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
@@ -46,10 +60,6 @@ calculate. (Default: \code{"median_distance"})}
 
 \item{name}{\code{Character vector}. Specifies the column names for the
 scores in \code{colData(x)}. (Default: \code{index})}
-
-\item{group}{\code{NULL} or \code{Character scalar}. Specifies a variable
-from \code{colData(x)}, e.g., subject. Control samples that share the value
-with the sample are excluded from its comparison. (Default: \code{NULL})}
 
 \item{method}{\code{Character scalar}. Specifies the dissimilarity measure
 passed to \code{\link[=getDissimilarity]{getDissimilarity}}.
