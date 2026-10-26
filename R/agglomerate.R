@@ -494,55 +494,38 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
     return(x)
 }
 
-# Agglomerate all rowTrees found in TreeSE object. For each group, get most
-# recent common ancestor.
-#' @importFrom TreeSummarizedExperiment changeTree
-.agglomerate_trees <- function(x, links, f, by = MARGIN, MARGIN = 1L, ...){
-    # Get right functions based on direction
-    tree_names_FUN <- switch(
-        by, "1" = rowTreeNames, "2" = colTreeNames, stop("."))
-    tree_FUN <- switch(by, "1" = rowTree, "2" = colTree, stop("."))
-    # Get right argument names for changeTree call
-    args_names <- switch(
-        by,
-        "1" = c("x", "rowTree", "whichRowTree", "rowNodeLab"),
-        "2" = c("x", "colTree", "whichColTree", "colNodeLab"),
-        stop("."))
-    # Get names of trees and links between trees and rows
-    tree_names <- tree_names_FUN(x)
+# Agglomerate all provided trees: for each group, get most
+# recent common ancestor. This function outputs a list of agglomerated trees
+# along with links.
+.agglomerate_trees <- function(trees, links, f, ...){
+    # Loop over trees
+    res <- lapply(names(trees), function(tree_name){
+        # Instead of bacteria names, we are interested in node numbers.
+        names(f) <- links[["nodeNum"]]
+        # Prepare vector that tells which nodes of this tree are merged
+        temp_links <- links[links[["whichTree"]] %in% tree_name, ]
+        # Take only nodes related to this current tree being merged
+        nodes <- f[ names(f) %in% temp_links[["nodeNum"]] ]
+        # Agglomerate tree
+        tree <- trees[[tree_name]]
+        res_temp <- .agglomerate_tree(tree, nodes)
+        return(res_temp)
+    })
+    names(res) <- names(trees)
 
-    # Agglomerate trees one by one
-    if( !is.null(links) ){
-        for( tree_name in tree_names ){
-            # Instead of bacteria names, we are interested in node numbers.
-            names(f) <- links[["nodeNum"]]
-            # Prepare vector that tells which nodes of this tree are merged
-            temp_links <- links[links[["whichTree"]] %in% tree_name, ]
-            # Take only nodes related to this current tree being merged
-            nodes <- f[ names(f) %in% temp_links[["nodeNum"]] ]
-            # Agglomerate tree
-            tree <- tree_FUN(x, tree_name)
-            res <- .agglomerate_tree(tree, nodes)
-            new_tree <- res[["tree"]]
-            new_links <- res[["links"]]
-            # Sort the links so that they match order of rownames
-            new_links <- new_links[ match(rownames(x), names(new_links)) ]
-            # Assign the tree back
-            args <- list(x, new_tree, tree_name, new_links)
-            names(args) <- args_names
-            x <- do.call(changeTree, args)
-        }
-    }
-    return(x)
+    return(res)
 }
 
 # This function agglomerates a tree by finding most recent common ancestor
 # (MRCA) for each group.
-#' @importFrom ape as.phylo
+#' @importFrom ape is.rooted root as.phylo
 .agglomerate_tree <- function(tree, f){
     # Tree must be rooted
     if( !is.rooted(tree) ){
-        stop("'tree' must be rooted.", call. = FALSE)
+        # Root node is the node with smallest depth
+        df <- .tree_to_table(tree)
+        root_node <- df[which.min(df[["depth"]]), "node"]
+        tree <- root(tree, node = root_node)
     }
     # Convert tree into table
     df <- .tree_to_table(tree)

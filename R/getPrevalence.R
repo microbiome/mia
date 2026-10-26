@@ -583,6 +583,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname agglomerateByPrevalence
+#' @importFrom TreeSummarizedExperiment changeTree
 #' @export
 setMethod("agglomerateByPrevalence",
     signature = c(x = "TreeSummarizedExperiment"),
@@ -632,7 +633,23 @@ setMethod("agglomerateByPrevalence",
         }
         # Update tree if user has specified to do so
         if( !is.null(row_links) ){
-            x <- .agglomerate_trees(x, links = row_links, f = f, by = 1, ...)
+            trees <- lapply(rowTreeNames(x), function(name) rowTree(x, name))
+            names(trees) <- rowTreeNames(x)
+            trees <- .agglomerate_trees(trees, links = row_links, f = f)
+            # Add agglomerated trees back to TreeSE
+            for( tree_name in names(trees) ){
+                tree <- trees[[tree_name]][["tree"]]
+                links <- trees[[tree_name]][["links"]]
+                # Sort the links so that they match order of rownames
+                links <- links[ match(rownames(x), names(links)) ]
+                # Assign it back
+                x <- changeTree(
+                    x,
+                    rowTree = tree,
+                    rowNodeLab = links,
+                    whichRowTree = tree_name
+                )
+            }
         } else{
             rowTree(x) <- NULL
         }
