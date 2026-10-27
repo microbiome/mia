@@ -263,10 +263,9 @@ setMethod("addPERMANOVA", "SummarizedExperiment",
     }
     # This next step ensures that the formula points correctly to abundance
     # table or distance matrix
-    formula <- as.character(formula)
-    formula[[2]] <- "x"
-    formula <- as.formula(
-        paste(as.character(formula)[c(2,1,3)], collapse = " "))
+    formula[[2]] <- as.name("x")
+    environment(formula) <- list2env(
+        list(x = x), parent = environment(formula))
     # Calculate PERMANOVA
     res <- adonis2(
         formula = formula, data = data, by = by, na.action = na.action, ...)
