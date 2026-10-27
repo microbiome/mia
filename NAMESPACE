@@ -21,6 +21,7 @@ export(addMediation)
 export(addNMDS)
 export(addNMF)
 export(addNotContaminantQC)
+export(addPCA)
 export(addPerSampleDominantFeatures)
 export(addPerSampleDominantTaxa)
 export(addPrevalence)
@@ -88,6 +89,7 @@ export(getMDS)
 export(getMediation)
 export(getNMDS)
 export(getNMF)
+export(getPCA)
 export(getPermanentlyLowAbundant)
 export(getPrevalence)
 export(getPrevalentAbundance)
@@ -201,6 +203,7 @@ exportMethods(addMDS)
 exportMethods(addMediation)
 exportMethods(addNMF)
 exportMethods(addNotContaminantQC)
+exportMethods(addPCA)
 exportMethods(addPERMANOVA)
 exportMethods(addPerSampleDominantFeatures)
 exportMethods(addPerSampleDominantTaxa)
@@ -262,6 +265,7 @@ exportMethods(getMDS)
 exportMethods(getMediation)
 exportMethods(getNMDS)
 exportMethods(getNMF)
+exportMethods(getPCA)
 exportMethods(getPERMANOVA)
 exportMethods(getPermanentlyLowAbundant)
 exportMethods(getPrevalence)
@@ -487,7 +491,10 @@ importFrom(rlang,
   ":=",
   sym
 )
-importFrom(scater,calculateMDS)
+importFrom(scater,
+  calculateMDS,
+  calculatePCA
+)
 importFrom(stats,
   TukeyHSD,
   anova,

@@ -81,6 +81,7 @@ reference:
   - addLDA
   - addNMF
   - addMDS
+  - addPCA
   - utilization_functions
 
 - title: Package
