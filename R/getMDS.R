@@ -17,6 +17,11 @@
 #' difference is that these functions apply microbiome-specific options such
 #' as \code{getDissimilarity} function by default.
 #'
+#' Unlike \code{scater::calculateMDS}, which uses the 500 most variable
+#' features by default, these functions use all features (\code{ntop = Inf}).
+#' With rarefaction, read counts are summed over the features used, so
+#' filtering features can drop samples whose depth falls below \code{sample}.
+#'
 #' See \code{\link[scater:runMDS]{scater::calculateMDS}} for details.
 #'
 #' @return
@@ -34,12 +39,15 @@
 #'
 #' @param ... additional arguments.
 #' \itemize{
-#'     \item \code{FUN}: \code{Function}. A function that is applied to
-#'     calculate dissimilarity. (Default: \code{getDissimilarity})
+#'   \item \code{FUN}: \code{Function}. A function that is applied to
+#'   calculate dissimilarity. (Default: \code{getDissimilarity})
 #'
-#'     \item \code{subset.result}: \code{Logical result}. Specifies whether to
-#'     subset \code{x} to match the result if some samples were removed during
-#'     calculation. (Default: \code{TRUE})
+#'   \item \code{subset.result}: \code{Logical result}. Specifies whether to
+#'   subset \code{x} to match the result if some samples were removed during
+#'   calculation. (Default: \code{TRUE})
+#'
+#'   \item \code{ntop}: \code{Numeric scalar}. Number of the most variable
+#'   features used. (Default: \code{Inf})
 #' }
 #'
 #' @examples
@@ -59,6 +67,11 @@
 #'
 #' # Calculate PCoA with Unifrac and rarefaction. (Note: increase iterations)
 #' tse <- addMDS(tse, method = "unifrac", name = "unifrac_rare", niter = 2L)
+#'
+#' # Use only the 500 most variable features
+#' tse <- addMDS(
+#'     tse, assay.type = "relabundance", method = "bray", ntop = 500,
+#'     name = "MDS_top500")
 #'
 #' # Visualize results
 #' p1 <- plotReducedDim(tse, "unifrac", colour_by = "SampleType") +
@@ -120,8 +133,12 @@ setMethod("getMDS", signature = c(x = "TreeSummarizedExperiment"),
 ################################ HELP FUNCTIONS ################################
 
 # This function is used to set default options for SCE
-.get_mds_args <- function(x, assay.type, FUN = getDissimilarity, ...){
-    args <- c(list(x = x, assay.type = assay.type, FUN = FUN), list(...))
+.get_mds_args <- function(
+        x, assay.type, FUN = getDissimilarity, ntop = Inf, ...){
+    args <- c(
+        list(x = x, assay.type = assay.type, FUN = FUN, ntop = ntop),
+        list(...)
+    )
     return(args)
 }
 

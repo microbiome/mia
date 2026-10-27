@@ -26,11 +26,12 @@ addMDS(x, ...)
 \item \code{FUN}: \code{Function}. A function that is applied to
 calculate dissimilarity. (Default: \code{getDissimilarity})
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{\\item \code{subset.result}: \code{Logical result}. Specifies whether to
+\item \code{subset.result}: \code{Logical result}. Specifies whether to
 subset \code{x} to match the result if some samples were removed during
 calculation. (Default: \code{TRUE})
-}\if{html}{\out{</div>}}
 
+\item \code{ntop}: \code{Numeric scalar}. Number of the most variable
+features used. (Default: \code{Inf})
 }}
 
 \item{name}{\code{Character scalar}. A name for the \code{reducedDim()}
@@ -57,6 +58,11 @@ returns the results, \code{addMDS} adds them to \code{reducedDim(x)}. The
 difference is that these functions apply microbiome-specific options such
 as \code{getDissimilarity} function by default.
 
+Unlike \code{scater::calculateMDS}, which uses the 500 most variable
+features by default, these functions use all features (\code{ntop = Inf}).
+With rarefaction, read counts are summed over the features used, so
+filtering features can drop samples whose depth falls below \code{sample}.
+
 See \code{\link[scater:runMDS]{scater::calculateMDS}} for details.
 }
 \examples{
@@ -76,6 +82,11 @@ tse <- addMDS(tse, method = "unifrac", name = "unifrac")
 
 # Calculate PCoA with Unifrac and rarefaction. (Note: increase iterations)
 tse <- addMDS(tse, method = "unifrac", name = "unifrac_rare", niter = 2L)
+
+# Use only the 500 most variable features
+tse <- addMDS(
+    tse, assay.type = "relabundance", method = "bray", ntop = 500,
+    name = "MDS_top500")
 
 # Visualize results
 p1 <- plotReducedDim(tse, "unifrac", colour_by = "SampleType") +

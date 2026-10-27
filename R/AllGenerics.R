@@ -427,6 +427,16 @@ setGeneric("getMDS", signature = "x", function(x, ...)
 setGeneric("addMDS", signature = "x", function(x, ...)
     standardGeneric("addMDS"))
 
+#' @rdname addPCA
+#' @export
+setGeneric("getPCA", signature = "x", function(x, ...)
+    standardGeneric("getPCA"))
+
+#' @rdname addPCA
+#' @export
+setGeneric("addPCA", signature = "x", function(x, ...)
+    standardGeneric("addPCA"))
+
 #' @rdname utilization_functions
 #' @export
 setGeneric("getReducedDimAttribute", signature = "x", function(x, ...)

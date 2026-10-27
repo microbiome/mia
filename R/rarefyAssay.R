@@ -104,9 +104,9 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
             stop("`replace` must be TRUE or FALSE.", call. = FALSE)
         } 
         # Check name of new assay
-        if( !.is_non_empty_string(name) || name == assay.type ){
-            stop("'name' must be a non-empty single character value and be ",
-                "different from 'assay.type'.", call. = FALSE)
+        if( !.is_non_empty_string(name) ){
+            stop("'name' must be a non-empty single character value.",
+                call. = FALSE)
         }
         # Check sample. It must be single positive integer value.
         if( is.na(sample) || !is.numeric(sample) || length(sample) != 1 ||
@@ -122,7 +122,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
         # Subset the TreeSE based on new feature-set
         x <- x[rownames(mat), ]
         # Add new assay to TreeSE
-        assay(x, name, withDimnames = FALSE) <- mat
+        x <- .add_values_to_assays(x, mat, name)
         return(x)
     }
 )
