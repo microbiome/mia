@@ -16,31 +16,29 @@
     (O - 1/S)/(1 - 1/S)
 }
 
-# Camargo's eveness x: species counts zeroes: include zeros Inspired
-# by code from Pepijn de Vries and Zhou Xiang at
-# researchgate.net/post/How_can_we_calculate_the_Camargo_evenness_index_in_R
-# but rewritten here
+# Camargo's evenness. Inspired by code from Pepijn de Vries and Zhou Xiang
+# at researchgate.net/post/How_can_we_calculate_the_Camargo_evenness_index_in_R
+# but rewritten here. The index is defined over the S observed species, so
+# zeroes are removed before computing it (microbiome/microbiome#231).
 .calc_camargo_evenness <- function(mat, ...) {
     # Apply threshold, i.e., set values under and equal this threshold to 0
     mat <- .apply_threshold(mat, ...)
-    #
-    N <- colSums2(mat > 0, na.rm = TRUE)
-
-    seq <- IntegerList(lapply(N - 1,seq_len))
-
-    x <- mapply(
-        function(i, n, s){
-            xx <- 0
-            for (j in s) {
-                xx <- xx + sum(abs(mat[(j + 1):n,i] - mat[j,i]))
-            }
-            xx
-        },
-        seq_along(N),
-        N,
-        seq)
-    # Return
-    1 - x/(colSums2(mat, na.rm = TRUE) * N)
+    res <- vapply(seq_len(ncol(mat)), function(i){
+        # Observed species only
+        x <- as.numeric(mat[, i])
+        x <- x[!is.na(x) & x > 0]
+        N <- length(x)
+        if( N == 0 ){
+            return(NA_real_)
+        }
+        # Sum of pairwise absolute differences, sum_{i<j} |x_i - x_j|,
+        # computed from the sorted abundances
+        xs <- sort(x)
+        xx <- sum(xs * (2 * seq_len(N) - N - 1))
+        1 - xx/(sum(x) * N)
+    }, numeric(1))
+    names(res) <- colnames(mat)
+    res
 }
 
 # x: Species count vector

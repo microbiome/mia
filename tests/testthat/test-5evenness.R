@@ -22,7 +22,7 @@ test_that(".estimate_evenness", {
 
         expect_equal(round(as.vector(mia:::.get_evenness_values(
             mat, index = "camargo")), 7),
-                     round(c(0.6942294, 0.6230541, 0.8010094)), 7)
+                     round(c(0.2869458, 0.3742127, 0.2529440), 7))
 
         expect_equal(round(as.vector(mia:::.get_evenness_values(
             mat, index="pielou")),7),
@@ -40,6 +40,17 @@ test_that(".estimate_evenness", {
             mat, index="bulla")), 7),
                      round(c(0.3627075, 0.4897059, 0.3519684), 7))
     }
+
+    # Camargo is computed over observed features only, so zeroes and
+    # feature order do not matter (microbiome/microbiome#231)
+    x <- c(rep(0, 10), 0.99, rep(5e-05, 5), rep(0, 110))
+    mat <- cbind(a = x, b = c(5, 1, 1, rep(0, 123)),
+        c = rev(c(5, 1, 1, rep(0, 123))), d = c(2, 2, 2, 0, 2, rep(0, 121)),
+        e = 0)
+    res <- mia:::.calc_camargo_evenness(mat)
+    expect_equal(unname(res[1:4]), c(0.1669191, 0.6190476, 0.6190476, 1),
+        tolerance = 1e-6)
+    expect_true(is.na(res[["e"]]))
 
     # TSE object
     data(esophagus, package="mia")
