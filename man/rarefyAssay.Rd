@@ -43,7 +43,8 @@ replacement. Ths works similarly to \code{sample(..., replace = TRUE)}.
 (Default: \code{FALSE})}
 
 \item{name}{\code{Character scalar}. The name for the transformed assay to
-be stored. (Default: \code{method})}
+be stored. An existing assay with the same name is overwritten with a
+warning. (Default: \code{method})}
 }
 \value{
 \code{rarefyAssay} return \code{x} with subsampled data.
