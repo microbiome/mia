@@ -82,12 +82,16 @@ setMethod("addPCA", signature = c(x = "SingleCellExperiment"),
 setMethod("getPCA", signature = c(x = "SingleCellExperiment"),
     function(x, assay.type = "counts", ...){
         .check_assay_present(assay.type, x)
-        args <- c(list(x = x, assay.type = assay.type), list(...))
-        # Use all features by default
-        if( !"ntop" %in% names(args) ){
-            args$ntop <- Inf
-        }
+        args <- .get_pca_args(x, assay.type = assay.type, ...)
         res <- do.call(calculatePCA, args)
         return(res)
     }
 )
+
+.get_pca_args <- function(x, assay.type, ntop = Inf, ...){
+    args <- c(
+        list(x = x, assay.type = assay.type, ntop = ntop),
+        list(...)
+    )
+    return(args)
+}
