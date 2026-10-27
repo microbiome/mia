@@ -133,12 +133,12 @@ setMethod("getMDS", signature = c(x = "TreeSummarizedExperiment"),
 ################################ HELP FUNCTIONS ################################
 
 # This function is used to set default options for SCE
-.get_mds_args <- function(x, assay.type, FUN = getDissimilarity, ...){
-    args <- c(list(x = x, assay.type = assay.type, FUN = FUN), list(...))
-    # Use all features by default
-    if( !"ntop" %in% names(args) ){
-        args$ntop <- Inf
-    }
+.get_mds_args <- function(
+        x, assay.type, FUN = getDissimilarity, ntop = Inf, ...){
+    args <- c(
+        list(x = x, assay.type = assay.type, FUN = FUN, ntop = ntop),
+        list(...)
+    )
     return(args)
 }
 

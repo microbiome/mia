@@ -209,4 +209,4 @@ Changes in version 1.21.x
 + Added method = "sd" and "cv" to getTop (1.21.19, 2026-10-27)
 + Formula handling in RDA, CCA and PERMANOVA no longer uses as.character() (1.21.20, 2026-10-27)
 + transformAssay and rarefyAssay warn instead of failing when overwriting an assay (1.21.21, 2026-10-27)
-+ getMDS and addMDS use all features by default (ntop = Inf) (1.21.22, 2026-10-27)
++ getMDS and addMDS use all features by default (1.21.22, 2026-10-27)
