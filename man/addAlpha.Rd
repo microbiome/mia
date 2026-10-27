@@ -292,7 +292,8 @@ dominance (Berger-Parker), information (Shannon), and phylogenetics (Faith)
 
 The available evenness indices include the following (all in lowercase):
 \itemize{
-\item 'camargo': Camargo's evenness (Camargo 1992)
+\item 'camargo': Camargo's evenness (Camargo 1992), computed over the
+observed (nonzero) features; NA for samples with no observed features.
 \item 'simpson_evenness': Simpson’s evenness is calculated as inverse
 Simpson diversity (1/lambda) divided by
 observed species richness S: (1/lambda)/S.
