@@ -40,6 +40,16 @@ setGeneric("getDivergence", signature = c("x"),
         method = "bray", ...)
     standardGeneric("getDivergence"))
 
+#' @rdname addDysbiosis
+#' @export
+setGeneric("addDysbiosis", signature = c("x"), function(x, ...)
+    standardGeneric("addDysbiosis"))
+
+#' @rdname addDysbiosis
+#' @export
+setGeneric("getDysbiosis", signature = c("x"), function(x, ...)
+    standardGeneric("getDysbiosis"))
+
 #' @rdname addLDA
 #' @export
 setGeneric(
@@ -116,6 +126,16 @@ setGeneric("addContaminantQC", signature = c("x"),
 setGeneric("addNotContaminantQC", signature = c("x"),
     function(x, name = "isNotContaminant", ...)
     standardGeneric("addNotContaminantQC"))
+
+#' @rdname addQCMetrics
+#' @export
+setGeneric("addQCMetrics", signature = c("x"), function(x, ...)
+    standardGeneric("addQCMetrics"))
+
+#' @rdname addQCMetrics
+#' @export
+setGeneric("getQCMetrics", signature = c("x"), function(x, ...)
+    standardGeneric("getQCMetrics"))
 
 #' @rdname getCrossAssociation
 #' @export
