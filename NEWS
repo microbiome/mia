@@ -206,3 +206,4 @@ Changes in version 1.21.x
   samples contained zeroes and depended on feature order (1.21.17, 2026-10-27)
 + Fixed UniFrac truncating sample totals to integers, which gave NaN or wrong
   distances on relative abundances and percentages (1.21.18, 2026-10-27)
++ Added method = "sd" and "cv" to getTop (1.21.19, 2026-10-27)
