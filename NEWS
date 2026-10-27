@@ -207,4 +207,5 @@ Changes in version 1.21.x
 + Fixed UniFrac truncating sample totals to integers, which gave NaN or wrong
   distances on relative abundances and percentages (1.21.18, 2026-10-27)
 + Added method = "sd" and "cv" to getTop (1.21.19, 2026-10-27)
-+ transformAssay and rarefyAssay warn instead of failing when overwriting an assay (1.21.25, 2026-10-27)
++ Formula handling in RDA, CCA and PERMANOVA no longer uses as.character() (1.21.20, 2026-10-27)
++ transformAssay and rarefyAssay warn instead of failing when overwriting an assay (1.21.21, 2026-10-27)
