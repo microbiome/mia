@@ -101,3 +101,26 @@ test_that("Unifrac beta diversity", {
                                               rowTree(tse_ref)))
     expect_equal(unifrac_mia, unifrac_ecodive)
 })
+
+test_that("Unifrac does not depend on the scale of abundances", {
+    # S1 holds A and C in proportions 1/3 and 2/3, S2 holds B and C in
+    # proportions 2/3 and 1/3, and every branch has length 1. Weighted Unifrac
+    # sums |p1 - p2| over branches: A 1/3 + B 2/3 + (A,B) 1/3 + C 1/3 = 5/3.
+    # Unweighted Unifrac is 2/4: A and B are unique, (A,B) and C are shared.
+    tree <- ape::read.tree(text = "((A:1,B:1):1,C:1);")
+    mat <- cbind(S1 = c(A = 1, B = 0, C = 2), S2 = c(A = 0, B = 2, C = 1))
+    tse <- TreeSummarizedExperiment(assays = list(counts = mat),
+                                    rowTree = tree)
+    tse <- transformAssay(tse, method = "relabundance")
+    # Percentages whose integer parts do not sum to 100
+    assay(tse, "percent") <- assay(tse, "relabundance") * 100
+    for( assay.type in assayNames(tse) ){
+        weighted <- getDissimilarity(tse, method = "unifrac", weighted = TRUE,
+                                     assay.type = assay.type)
+        unweighted <- getDissimilarity(tse, method = "unifrac",
+                                       weighted = FALSE,
+                                       assay.type = assay.type)
+        expect_equal(as.numeric(weighted), 5/3, info = assay.type)
+        expect_equal(as.numeric(unweighted), 1/2, info = assay.type)
+    }
+})
