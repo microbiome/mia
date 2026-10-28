@@ -65,10 +65,11 @@ void su::unifrac(const su::Assay &table,
                  bool weighted,
                  bool normalized,
                  const su::task_parameters task_p){
-    // unweighted
+    // unweighted. The task accumulates both the unique and the total branch
+    // length, so normalization only divides the former by the latter.
     if (weighted == false){
         unifracTT<su::UnifracUnweightedTask>(
-            table, tree, true, dm_stripes, dm_stripes_total,
+            table, tree, normalized, dm_stripes, dm_stripes_total,
             task_p );
     }
     // weighted normalized

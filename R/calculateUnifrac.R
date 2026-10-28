@@ -1,6 +1,6 @@
 #' @importFrom ape drop.tip
 .get_unifrac <- function(
-        x, tree, weighted = FALSE, normalized = FALSE, node.label = nodeLab,
+        x, tree, weighted = FALSE, normalized = !weighted, node.label = nodeLab,
         nodeLab = NULL, ...){
     # Transpose the matrix so that the orientation is the same as in other
     # dissimilatity methods

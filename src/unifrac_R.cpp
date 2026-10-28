@@ -42,8 +42,9 @@
 // @param rowTree An \code{ape::phylo} object containing the rowTree of a
 // \code{TreeSE} object.
 // @param weighted Boolean: Whether to calculate unweighted or weighted Unifrac.
-// @param normalized Boolean: Whether to normalize weighted Unifrac to the
-// range [0, 1]. Ignored when weighted is false.
+// @param normalized Boolean: Whether to normalize Unifrac to the range [0, 1].
+// Unnormalized unweighted Unifrac is the unique branch length, and
+// unnormalized weighted Unifrac is in branch-length units.
 // @param bypass_tips Boolean: Whether to bypass tips during calculations. This
 // speeds up calculations considerably, and does not seem to have a noticeable
 // effect on the results.

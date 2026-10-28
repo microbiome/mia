@@ -125,7 +125,76 @@ test_that("Unifrac does not depend on the scale of abundances", {
     }
 })
 
-test_that("Normalized weighted Unifrac", {
+test_that("Normalized and unnormalized Unifrac", {
+    # Reference implementation: abundances are summed from tips to the root
+    # so that each edge gets the proportion of the sample below it.
+    #   unweighted: sum_b len_b * xor(A_b > 0, B_b > 0), normalized by
+    #       sum_b len_b * or(A_b > 0, B_b > 0)
+    #   weighted: sum_b len_b * |pA_b - pB_b|, normalized by
+    #       sum_b len_b * (pA_b + pB_b) = sum_tips d_tip * (pA_tip + pB_tip)
+    .ref_unifrac <- function(mat, tree, weighted, normalized){
+        tree <- ape::reorder.phylo(tree, "postorder")
+        mat <- mat[tree$tip.label, , drop = FALSE]
+        mat <- t(t(mat) / colSums(mat))
+        node_ab <- matrix(0, ape::Ntip(tree) + tree$Nnode, ncol(mat))
+        node_ab[seq_len(ape::Ntip(tree)), ] <- mat
+        for( i in seq_len(nrow(tree$edge)) ){
+            parent <- tree$edge[i, 1]
+            child <- tree$edge[i, 2]
+            node_ab[parent, ] <- node_ab[parent, ] + node_ab[child, ]
+        }
+        edge_ab <- node_ab[tree$edge[, 2], , drop = FALSE]
+        len <- tree$edge.length
+        n <- ncol(mat)
+        res <- matrix(0, n, n, dimnames = list(colnames(mat), colnames(mat)))
+        for( i in seq_len(n) ){
+            for( j in seq_len(n) ){
+                a <- edge_ab[, i]
+                b <- edge_ab[, j]
+                if( weighted ){
+                    num <- sum(len * abs(a - b))
+                    den <- sum(len * (a + b))
+                } else{
+                    num <- sum(len * xor(a > 0, b > 0))
+                    den <- sum(len * (a > 0 | b > 0))
+                }
+                res[i, j] <- if( normalized ) num / den else num
+            }
+        }
+        as.dist(res)
+    }
+    combinations <- expand.grid(weighted = c(FALSE, TRUE),
+                                normalized = c(FALSE, TRUE))
+
+    # Small tree that is not ultrametric
+    tree <- ape::read.tree(text = "((a:1,b:2):0.5,(c:1.5,d:0.5):1);")
+    mat <- matrix(
+        c(10, 0, 5, 1,
+          0, 3, 2, 8,
+          4, 4, 0, 0,
+          0, 0, 2, 6),
+        nrow = 4, dimnames = list(c("a", "b", "c", "d"),
+                                  c("s1", "s2", "s3", "s4")))
+    for( i in seq_len(nrow(combinations)) ){
+        weighted <- combinations$weighted[[i]]
+        normalized <- combinations$normalized[[i]]
+        res <- mia:::.get_unifrac(
+            t(mat), tree, weighted = weighted, normalized = normalized)
+        ref <- .ref_unifrac(mat, tree, weighted, normalized)
+        info <- paste0("weighted = ", weighted, ", normalized = ", normalized)
+        expect_equal(as.vector(res), as.vector(ref), info = info)
+        if( normalized ){
+            expect_true(all(res >= 0 & res <= 1), info = info)
+        }
+    }
+    # s3 and s4 share no branches below the root, so normalized distances are 1
+    res <- as.matrix(mia:::.get_unifrac(t(mat), tree, weighted = TRUE,
+                                        normalized = TRUE))
+    expect_equal(res["s3", "s4"], 1)
+    res <- as.matrix(mia:::.get_unifrac(t(mat), tree, weighted = FALSE,
+                                        normalized = TRUE))
+    expect_equal(res["s3", "s4"], 1)
+
     data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns
     expect_error(
@@ -133,48 +202,34 @@ test_that("Normalized weighted Unifrac", {
                          normalized = 1)
     )
     expect_error(
-        getDissimilarity(tse, method = "unifrac", weighted = TRUE,
+        getDissimilarity(tse, method = "unifrac", weighted = FALSE,
                          normalized = c(TRUE, FALSE))
     )
-    # normalized is ignored for unweighted Unifrac
+    # The default is normalized unweighted and unnormalized weighted Unifrac
     expect_equal(
+        getDissimilarity(tse, method = "unifrac", weighted = FALSE),
         getDissimilarity(tse, method = "unifrac", weighted = FALSE,
-                         normalized = TRUE),
-        getDissimilarity(tse, method = "unifrac", weighted = FALSE)
+                         normalized = TRUE)
     )
-    # Compare against the definition on a small tree:
-    # sum_b len_b * |pA_b - pB_b| / sum_tips d_tip * (pA_tip + pB_tip)
-    tree <- ape::read.tree(text = "((a:1,b:2):0.5,(c:1.5,d:0.5):1);")
-    mat <- matrix(
-        c(10, 0, 5, 1,
-          0, 3, 2, 8,
-          4, 4, 0, 0),
-        nrow = 4, dimnames = list(c("a", "b", "c", "d"), c("s1", "s2", "s3")))
-    n_tip <- ape::Ntip(tree)
-    .get_tips <- function(node){
-        if( node <= n_tip ) tree$tip.label[node] else
-            ape::extract.clade(tree, node)$tip.label
+    expect_equal(
+        getDissimilarity(tse, method = "unifrac", weighted = TRUE),
+        getDissimilarity(tse, method = "unifrac", weighted = TRUE,
+                         normalized = FALSE)
+    )
+    # Compare all combinations against the reference implementation
+    mat <- assay(tse)
+    tree <- rowTree(tse)
+    for( i in seq_len(nrow(combinations)) ){
+        weighted <- combinations$weighted[[i]]
+        normalized <- combinations$normalized[[i]]
+        res <- getDissimilarity(tse, method = "unifrac", weighted = weighted,
+                                normalized = normalized)
+        ref <- .ref_unifrac(mat, tree, weighted, normalized)
+        info <- paste0("weighted = ", weighted, ", normalized = ", normalized)
+        expect_equal(as.vector(res), as.vector(ref), info = info)
     }
-    depth <- ape::node.depth.edgelength(tree)[seq_len(n_tip)]
-    names(depth) <- tree$tip.label
-    ref <- function(x, y){
-        p <- x / sum(x)
-        q <- y / sum(y)
-        num <- sum(vapply(seq_len(nrow(tree$edge)), function(i){
-            tips <- .get_tips(tree$edge[i, 2])
-            tree$edge.length[i] * abs(sum(p[tips]) - sum(q[tips]))
-        }, numeric(1)))
-        den <- sum(depth[names(p)] * (p + q))
-        num / den
-    }
-    res <- as.matrix(mia:::.get_unifrac(
-        t(mat), tree, weighted = TRUE, normalized = TRUE))
-    expect_equal(res["s1", "s2"], ref(mat[, "s1"], mat[, "s2"]))
-    expect_equal(res["s1", "s3"], ref(mat[, "s1"], mat[, "s3"]))
-    expect_equal(res["s2", "s3"], ref(mat[, "s2"], mat[, "s3"]))
-    expect_true(all(res >= 0 & res <= 1))
 
-    # Compare against ecodive
+    # Compare normalized weighted Unifrac against ecodive
     skip_if_not(requireNamespace("ecodive", quietly = TRUE))
     unifrac_mia <- as.matrix(getDissimilarity(tse, method = "unifrac",
                                               weighted = TRUE,
@@ -182,5 +237,4 @@ test_that("Normalized weighted Unifrac", {
     unifrac_ecodive <- as.matrix(ecodive::normalized_unifrac(t(assay(tse)),
                                               rowTree(tse)))
     expect_equal(unifrac_mia, unifrac_ecodive)
-    expect_true(all(unifrac_mia >= 0 & unifrac_mia <= 1))
 })
