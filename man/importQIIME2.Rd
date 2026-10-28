@@ -85,8 +85,8 @@ A
 object
 
 \code{matrix} object for feature table, \code{DataFrame} for taxonomic table,
-\code{\link[ape:read.tree]{ape::phylo}} object for phylogenetic tree,
-\code{\link[Biostrings:XStringSet-class]{Biostrings::DNAStringSet}} for representative sequences of taxa.
+\code{\link[ape:phylo]{ape::phylo}} object for phylogenetic tree,
+\code{\link[Biostrings:DNAStringSet-class]{Biostrings::DNAStringSet}} for representative sequences of taxa.
 }
 \description{
 Results exported from QIMME2 can be imported as a

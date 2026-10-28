@@ -68,4 +68,20 @@ test_that("summaries", {
                assay.type = "counts"),
         getTop(agg, method = "mean", top = 5, assay.type = "counts")
     )
+
+    # getTop with sd returns the most variable features
+    sds <- apply(assay(GlobalPatterns, "counts"), 1, sd)
+    expect_identical(
+        getTop(GlobalPatterns, method = "sd", top = 5),
+        names(sort(sds, decreasing = TRUE))[seq_len(5)]
+    )
+    # getTop with cv divides the standard deviation by the mean. Prevalent
+    # taxa are used, as taxa present in one sample share the maximum value.
+    tse <- subsetByPrevalent(GlobalPatterns, prevalence = 0.5)
+    mat <- assay(tse, "counts")
+    cvs <- apply(mat, 1, sd) / rowMeans(mat)
+    expect_identical(
+        getTop(tse, method = "cv", top = 5),
+        names(sort(cvs, decreasing = TRUE))[seq_len(5)]
+    )
 })
