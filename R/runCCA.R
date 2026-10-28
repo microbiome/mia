@@ -475,7 +475,7 @@ setMethod("addRDA", "SingleCellExperiment",
 .get_variables_based_on_formula <- function(x, formula){
     # If user specified "all" covariates, give error. User should use col.var
     # to do that.
-    if( as.character(formula)[[3]] == "." ){
+    if( identical(formula[[3]], as.name(".")) ){
         stop("To incorporate all variables from colData(x) with 'x~.', use ",
             "'col.var' and leave 'formula' unspecified.", call. = FALSE)
     }
@@ -522,11 +522,9 @@ setMethod("addRDA", "SingleCellExperiment",
             " to remove samples with missing values.", call. = FALSE)
     }
     # Ensure that the left hand side of the formula points to abundance matrix
-    formula <- as.character(formula)
-    formula[[2]] <- "x"
-    # Create a formula from string
-    formula <- as.formula(
-        paste(as.character(formula)[c(2,1,3)], collapse = " "))
+    formula[[2]] <- as.name("x")
+    environment(formula) <- list2env(
+        list(x = x), parent = environment(formula))
 
     # Initialize an argument list with common arguments
     args <- c(

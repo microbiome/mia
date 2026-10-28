@@ -688,3 +688,22 @@ test_that("transformAssay", {
     assay(tse,"counts") <- DelayedArray(assay(tse,"counts"))
     testTransformations(tse)
 })
+
+test_that("transformAssay and rarefyAssay warn when overwriting an assay", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns
+    tse <- transformAssay(tse, method = "relabundance")
+    # Writing an existing assay gives a warning
+    expect_warning(
+        tse <- transformAssay(tse, method = "relabundance"),
+        "already present in `assays`")
+    # The assay used as input can be overwritten
+    ref <- transformAssay(tse, method = "relabundance", name = "test")
+    expect_warning(
+        res <- transformAssay(tse, method = "relabundance", name = "counts"),
+        "already present in `assays`")
+    expect_equal(assay(res, "counts"), assay(ref, "test"))
+    expect_warning(
+        rarefyAssay(tse, name = "counts", sample = 1000, verbose = FALSE),
+        "already present in `assays`")
+})

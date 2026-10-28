@@ -22,7 +22,8 @@
 #'   (Default: \code{FALSE}).
 #'
 #' @param name \code{Character scalar}. The name for the transformed assay to
-#' be stored. (Default: \code{method})
+#' be stored. An existing assay with the same name is overwritten with a
+#' warning. (Default: \code{method})
 #'
 #' @param altexp \code{Character vector} or \code{NULL}. Specifies the names
 #' of alternative experiments to which the transformation should also be
@@ -308,9 +309,9 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     # Check assay.type
     .check_assay_present(assay.type, x)
     # Check name
-    if(!.is_non_empty_string(name) || name == assay.type){
-        stop("'name' must be a non-empty single character value and be ",
-            "different from `assay.type`.", call. = FALSE)
+    if(!.is_non_empty_string(name)){
+        stop("'name' must be a non-empty single character value.",
+            call. = FALSE)
     }
     # If method is not single string, user has not specified transform method,
     # or has given e.g. a vector
@@ -1010,7 +1011,7 @@ NULL
     rnames_ok <- nrow(x) == nrow(mat)
     cnames_ok <- ncol(x) == ncol(mat)
     if( rnames_ok && cnames_ok ){
-        assay(x, name, withDimnames = FALSE) <- mat
+        x <- .add_values_to_assays(x, mat, name)
     } else if( cnames_ok ){
         if( !is(x, "SingleCellExperiment") ){
             x <- as(x, "SingleCellExperiment")

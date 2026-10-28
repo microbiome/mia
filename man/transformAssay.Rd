@@ -71,7 +71,8 @@ transformation is applied sample (column) or feature (row) wise.
 (Default: \code{"samples"})}
 
 \item{name}{\code{Character scalar}. The name for the transformed assay to
-be stored. (Default: \code{method})}
+be stored. An existing assay with the same name is overwritten with a
+warning. (Default: \code{method})}
 
 \item{pseudocount}{\code{Logical scalar} or \code{numeric scalar}.
 When \code{TRUE}, automatically adds half of the minimum positive
