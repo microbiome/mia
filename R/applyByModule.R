@@ -27,6 +27,10 @@
 #' @param meta.name \code{Character scalar}. The name of the metadata
 #'   slot where results are stored. (Default: \code{"mod.res"})
 #'
+#' @param BPPARAM \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}.
+#'   Specifies how groups are processed in parallel.
+#'   (Default: \code{SerialParam()})
+#'
 #' @param ... Additional arguments passed to \code{FUN}.
 #'
 #' @returns \code{x} updated with results stored in the appropriate slot
@@ -141,7 +145,8 @@ NULL
 #' @export
 #' @rdname applyByModule
 setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
-    min.group.size = NULL, meta.name = "mod_res", ...){
+    min.group.size = NULL, meta.name = "mod_res", BPPARAM = SerialParam(),
+    ...){
     if (length(.by) == 0L || !.by %in% c("rows", "cols")) {
         stop("'.by' must be either 'rows' or 'cols'.", call. = FALSE)
     }
@@ -164,6 +169,7 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
         FUN = FUN,
         FUN.name = fun_name,
         min.group.size = min.group.size,
+        BPPARAM = BPPARAM,
         ...
     )
     # Store results in the appropriate slot
@@ -181,9 +187,9 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
     return(x)
 })
 
-#' @importFrom BiocParallel bplapply
+#' @importFrom BiocParallel bplapply SerialParam
 .applyByModule_calculate <- function(
-    x, .by, .group, FUN, FUN.name, min.group.size, ...) {
+    x, .by, .group, FUN, FUN.name, min.group.size, BPPARAM, ...) {
     if (!(is.null(min.group.size) ||
         (is.numeric(min.group.size) && length(min.group.size) == 1L))) {
         stop("'min.group.size' must be a single numeric value.", call. = FALSE)
@@ -222,8 +228,12 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
         stop("No '.group' has size above 'min.group.size'.", call. = FALSE)
     }
 
+    # Evaluate FUN before it is shipped to workers, which may not have mia
+    # attached and therefore cannot resolve an unevaluated promise
+    force(FUN)
     # Compute
-    res <- bplapply(idx, function(i) FUN(x[i, ], ...))
+    res <- bplapply(
+        idx, function(i, ...) FUN(x[i, ], ...), ..., BPPARAM = BPPARAM)
 
     return(list(res = res, group = .group))
 }

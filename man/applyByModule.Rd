@@ -14,6 +14,7 @@ applyByModule(x, ...)
   FUN,
   min.group.size = NULL,
   meta.name = "mod_res",
+  BPPARAM = SerialParam(),
   ...
 )
 }
@@ -39,6 +40,10 @@ features or samples in a group for \code{FUN} to be applied.
 
 \item{meta.name}{\code{Character scalar}. The name of the metadata
 slot where results are stored. (Default: \code{"mod.res"})}
+
+\item{BPPARAM}{\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}.
+Specifies how groups are processed in parallel.
+(Default: \code{SerialParam()})}
 }
 \value{
 \code{x} updated with results stored in the appropriate slot
