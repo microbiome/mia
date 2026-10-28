@@ -94,6 +94,10 @@ NULL
 #' @importFrom ape write.tree write.FASTA
 setMethod("exportRaw", signature = c(x = "TreeSummarizedExperiment"),
     function(x, dpath, ...){
+    if( !.is_non_empty_string(dpath) ){
+        stop("'dpath' must be a non-empty single character value",
+            call. = FALSE)
+    }
     # Create export directory
     dpath <- .create_export_dir(dpath)
     # Write row data
@@ -120,6 +124,15 @@ setMethod("exportRaw", signature = c(x = "TreeSummarizedExperiment"),
 setMethod("exportQIIME2", signature = c(x = "TreeSummarizedExperiment"),
     function(x, dpath, assay.type = "counts", tree.name = "phylo",
     group.var = NULL){
+    if( !.is_non_empty_string(dpath) ){
+        stop("'dpath' must be a non-empty single character value",
+            call. = FALSE)
+    }
+    .check_assay_present(assay.type, x)
+    if( !.is_non_empty_string(tree.name) ){
+        stop("'tree.name' must be a non-empty single character value",
+            call. = FALSE)
+    }
     # Check for forbidden colnames
     if( "sample-id" %in% colnames(colData(x)) ){
         warning(
@@ -189,6 +202,15 @@ setMethod("exportQIIME2", signature = c(x = "TreeSummarizedExperiment"),
 setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
     function(x, dpath, assay.type = "counts", tree.name = "phylo",
     group.var = NULL){
+    if( !.is_non_empty_string(dpath) ){
+        stop("'dpath' must be a non-empty single character value",
+            call. = FALSE)
+    }
+    .check_assay_present(assay.type, x)
+    if( !.is_non_empty_string(tree.name) ){
+        stop("'tree.name' must be a non-empty single character value",
+            call. = FALSE)
+    }
     # Check for forbidden colnames
     if( "group" %in% colnames(colData(x)) ){
         warning(
@@ -281,16 +303,28 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 .write_rowdata_table <- function(x, dpath, rowdata.file = "rowData", ...){
+    if( !.is_non_empty_string(rowdata.file) ){
+        stop("'rowdata.file' must be a non-empty single character value",
+            call. = FALSE)
+    }
     write.table(rowData(x), paste0(dpath, rowdata.file, ".tsv"), sep = "\t")
     invisible(NULL)
 }
 
 .write_coldata_table <- function(x, dpath, coldata.file = "colData", ...){
+    if( !.is_non_empty_string(coldata.file) ){
+        stop("'coldata.file' must be a non-empty single character value",
+            call. = FALSE)
+    }
     write.table(colData(x), paste0(dpath, coldata.file, ".tsv"), sep = "\t")
     invisible(NULL)
 }
 
 .write_assay_tables <- function(x, dpath, assay.dir = "assays", ...){
+    if( !.is_non_empty_string(assay.dir) ){
+        stop("'assays' must be a non-empty single character value",
+            call. = FALSE)
+    }
     assay_dir <- .create_slot_dir(x, assays, assay.dir, dpath)
     # For each assay
     for( assay_name in assayNames(x) ){
@@ -305,6 +339,10 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 .write_rowtree_data <- function(x, dpath, rowtree.dir = "rowTrees", ...){
+    if( !.is_non_empty_string(rowtree.dir) ){
+        stop("'rowtree.dir' must be a non-empty single character value",
+            call. = FALSE)
+    }
     rowtree_dir <- .create_slot_dir(x, rowTreeNames, rowtree.dir, dpath)
     # For each row tree
     for( tree_name in rowTreeNames(x) ){
@@ -317,6 +355,10 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 .write_coltree_data <- function(x, dpath, coltree.dir = "colTrees", ...){
+    if( !.is_non_empty_string(coltree.dir) ){
+        stop("'coltree.dir' must be a non-empty single character value",
+            call. = FALSE)
+    }
     coltree_dir <- .create_slot_dir(x, colTreeNames, coltree.dir, dpath)
     # For each col tree
     for( tree_name in colTreeNames(x) ){
@@ -329,6 +371,10 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 .write_dimred_table <- function(x, dpath, dimred.dir = "reducedDims", ...){
+    if( !.is_non_empty_string(dimred.dir) ){
+        stop("'dimred.dir' must be a non-empty single character value",
+            call. = FALSE)
+    }
     dimred_dir <- .create_slot_dir(x, reducedDims, dimred.dir, dpath)
     # For each reduced dimension
     for( dimred_name in reducedDimNames(x) ){
@@ -343,6 +389,10 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 .write_altexp_data <- function(x, dpath, altexp.dir = "altExps", ...){
+    if( !.is_non_empty_string(altexp.dir) ){
+        stop("'altexp.dir' must be a non-empty single character value",
+            call. = FALSE)
+    }
     altexp_dir <- .create_slot_dir(x, altExps, altexp.dir, dpath)
     # For each alternative experiment
     for( altexp_name in altExpNames(x) ){
@@ -360,6 +410,10 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 .write_referenceSeq <- function(x, dpath, refseq.file = "referenceSeq", ...){
+    if( !.is_non_empty_string(refseq.file) ){
+        stop("'refseq.file' must be a non-empty single character value",
+            call. = FALSE)
+    }
     # If reference sequence is present
     if( !is.null(referenceSeq(x)) ){
         # Write reference sequence

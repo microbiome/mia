@@ -38,7 +38,33 @@ exportMothur(x, ...)
 \item{x}{a \code{\link[TreeSummarizedExperiment]{TreeSummarizedExperiment}}
 object.}
 
-\item{...}{Unused.}
+\item{...}{additional arguments:
+
+\itemize{
+\item \code{rowdata.file}: \code{Character scalar}. Specifies the
+file where rowData should be written. (Default: \code{"rowData"})
+
+\item \code{coldata.file}: \code{Character scalar}. Specifies the
+file where colData should be written. (Default: \code{"colData"})
+
+\item \code{assay.dir}: \code{Character scalar}. Specifies the
+file where assays should be written. (Default: \code{"assays"})
+
+\item \code{refseq.file}: \code{Character scalar}. Specifies the
+file where referenceSeq should be written. (Default: \code{"referenceSeq"})
+
+\item \code{rowtree.dir}: \code{Character scalar}. Specifies the
+file where rowTrees should be written. (Default: \code{"rowTrees"})
+
+\item \code{coltree.dir}: \code{Character scalar}. Specifies the
+file where colTrees should be written. (Default: \code{"colTrees"})
+
+\item \code{dimred.dir}: \code{Character scalar}. Specifies the
+file where reducedDims should be written. (Default: \code{"reducedDims"})
+
+\item \code{altexp.dir}: \code{Character scalar}. Specifies the
+file where altExps should be written. (Default: \code{"altExps"})
+}}
 
 \item{dpath}{\code{Character scalar}. String specifying the directory where
 \code{x} should be exported. If non-existent, it is created recursively.}
@@ -54,30 +80,6 @@ should be exported. Only for \code{exportQIIME2} and \code{exportMothur}.
 \item{group.var}{\code{Character scalar}. String specifying one variable of
 rowData to export as a custom grouping file. Only for \code{exportQIIME2}
 and \code{exportMothur}. (Default: \code{NULL})}
-
-\item{rowdata.file}{\code{Character scalar}. String specifying the file where
-rowData should be written. (Default: \code{"rowdata"})}
-
-\item{coldata.file}{\code{Character scalar}. String specifying the file where
-colData should be written. (Default: \code{"coldata"})}
-
-\item{refseq.file}{\code{Character scalar}. String specifying the file where
-referenceSeq should be written. (Default: \code{"seqs"})}
-
-\item{assay.dir}{\code{Character scalar}. String specifying the directory
-where assays should be written. (Default: \code{"assays"})}
-
-\item{rowtree.dir}{\code{Character scalar}. String specifying the directory
-where rowTrees should be written. (Default: \code{"row_trees"})}
-
-\item{coltree.dir}{\code{Character scalar}. String specifying the directory
-where colTrees should be written. (Default: \code{"col_trees"})}
-
-\item{dimred.dir}{\code{Character scalar}. String specifying the directory
-where reducedDims should be written. (Default: \code{"dim_reds"})}
-
-\item{altexp.dir}{\code{Character scalar}. String specifying the directory
-where altExps should be written. (Default: \code{"alt_exps"})}
 }
 \value{
 Directory at \code{dpath} with components of \code{x} each stored
