@@ -353,8 +353,7 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
             # Apply exporter recursively
             exportToRaw(altExp(x, altexp_name), altexp_path)
         }else{
-            # Write simple assay
-            write.table(altExp(x, altexp_name), altexp_path, sep = "\t")
+            warning("altExps skipped.", call. = FALSE)
         }
     }
     invisible(NULL)
