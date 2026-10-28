@@ -119,5 +119,5 @@ URL: https://microbiome.github.io/mia/, https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
-Config/roxygen2/version: 8.1.0
 RdMacros: Rdpack
+Config/roxygen2/version: 8.1.0
