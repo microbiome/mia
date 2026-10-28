@@ -16,7 +16,8 @@
 #' low-rank matrix approximation followed by principal component analysis.
 #' Missing values are handled using matrix completion based on the OptSpace
 #' algorithm.
-#'#' Before running RPCA or Joint-RPCA, untransformed assays can be filtered
+#'
+#' Before running RPCA or Joint-RPCA, untransformed assays can be filtered
 #' separately with \code{\link[=filterRPCAInput]{filterRPCAInput()}}.
 #' When filtering is used, it must be performed before the robust centered
 #' log-ratio transformation. Filtering thresholds should be selected
@@ -96,7 +97,7 @@
 #' }
 #'
 #' @examples
-#' data("ibdmdb", package = "mia")
+#' data("ibdmdb")
 #' mae <- ibdmdb
 #'
 #' # Filter each untransformed assay before applying rclr.
@@ -111,6 +112,8 @@
 #' )
 #'
 #' # Apply the robust centered log-ratio transformation.
+#' # Specify that the 0-values are not imputed as Joint-RPCA
+#' # itself does the matrix completion.
 #' mae[["MGX"]] <- transformAssay(
 #'     mae[["MGX"]],
 #'     assay.type = "mgx",
