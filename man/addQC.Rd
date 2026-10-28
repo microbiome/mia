@@ -23,7 +23,7 @@ getQC(x, ...)
 \itemize{
 \item \code{name}: Specifies the names of the metrics in
 the result. Must have the same length as the number of metrics.
-(Default: \code{c("total", "detected", "mean", "median", "sd")})
+(Default: \code{c("total", "detected", "mean", "sd", "cv", "q0", "q25", "q50", "q100")})
 
 \item \code{na.rm}: \code{Logical scalar}. Should NA values be omitted?
 (Default: \code{TRUE})
@@ -46,14 +46,7 @@ These functions calculate simple quality control metrics, such as library
 sizes, for samples or features.
 }
 \details{
-The following metrics are calculated for each sample (or feature):
-\itemize{
-\item \code{total}: Sum of values, e.g., library size.
-\item \code{detected}: Number of values greater than zero.
-\item \code{mean}: Mean of values.
-\item \code{median}: Median of values.
-\item \code{sd}: Standard deviation of values.
-}
+
 }
 \examples{
 data(GlobalPatterns)

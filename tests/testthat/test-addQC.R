@@ -10,6 +10,7 @@ test_that("getQC and addQC", {
     expect_equal(res[["detected"]], unname(colSums(mat > 0)))
     expect_equal(res[["mean"]], unname(colMeans(mat)))
     expect_equal(res[["sd"]], unname(apply(mat, 2, sd)))
+    expect_equal(res[["cv"]], unname(apply(mat, 2, sd)) / unname(colMeans(mat)))
     expect_equal(res[["q0"]], unname(apply(mat, 2, min)))
     expect_equal(res[["q50"]], unname(apply(mat, 2, median)))
     expect_equal(res[["q100"]], unname(apply(mat, 2, max)))
@@ -23,7 +24,7 @@ test_that("getQC and addQC", {
     tse <- addQC(tse, by = "rows")
     expect_equal(rowData(tse)[["detected"]], unname(rowSums(mat > 0)))
     # Names of the metrics can be changed
-    tse <- addQC(tse, name = paste0("qc_", 1:9))
+    tse <- addQC(tse, name = paste0("qc_", 1:10))
     expect_equal(tse[["qc_1"]], unname(colSums(mat)))
     expect_error(getQC(tse, name = "total"))
     # Metrics are calculated and added for altExp

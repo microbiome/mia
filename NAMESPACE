@@ -63,6 +63,9 @@ export(estimateDominance)
 export(estimateEvenness)
 export(estimateFaith)
 export(estimateRichness)
+export(exportMothur)
+export(exportQIIME2)
+export(exportRaw)
 export(filterRPCAInput)
 export(full_join)
 export(getAbundanceClass)
@@ -463,7 +466,9 @@ importFrom(ape,
   is.rooted,
   node.depth.edgelength,
   read.tree,
-  reorder.phylo
+  reorder.phylo,
+  write.FASTA,
+  write.tree
 )
 importFrom(bluster,clusterRows)
 importFrom(decontam,
@@ -520,9 +525,11 @@ importFrom(stats,
   terms
 )
 importFrom(stringr,
+  fixed,
   str_extract,
   str_extract_all,
   str_pad,
+  str_remove,
   str_replace_all
 )
 importFrom(tibble,
@@ -545,7 +552,8 @@ importFrom(utils,
   head,
   read.delim,
   read.table,
-  unzip
+  unzip,
+  write.table
 )
 importFrom(vegan,
   "sppscores<-",

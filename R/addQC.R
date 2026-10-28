@@ -17,7 +17,7 @@
 #' \itemize{
 #'   \item \code{name}: Specifies the names of the metrics in
 #'   the result. Must have the same length as the number of metrics.
-#'   (Default: \code{c("total", "detected", "mean", "median", "sd")})
+#'   (Default: \code{c("total", "detected", "mean", "sd", "cv", "q0", "q25", "q50", "q100")})
 #'
 #'   \item \code{na.rm}: \code{Logical scalar}. Should NA values be omitted?
 #'   (Default: \code{TRUE})
@@ -31,6 +31,8 @@
 #'   \item \code{mean}: Mean of values.
 #'   \item \code{median}: Median of values.
 #'   \item \code{sd}: Standard deviation of values.
+#'   \item \code{cv}: Coefficient of variation of values.
+#'   \item \code{q*]: Quantiles. By default, 0%, 25%, 50%, and 100%
 #' }
 #'
 #' @return
@@ -90,15 +92,16 @@ setMethod("getQC", signature = c(x = "SummarizedExperiment"),
 #' @importFrom DelayedMatrixStats colSums2 colMeans2 colSds colQuantiles
 .calculate_qc_metrics <- function(
         mat,
-        name = c("total", "detected", "mean", "sd", paste0("q", probs*100)),
+        name = c(
+            "total", "detected", "mean", "sd", "cv", paste0("q", probs*100)),
         probs = seq(from = 0, to = 1, by = 0.25),
         na.rm = FALSE,
         ...
 ){
-    if( !(.is_non_empty_character(name) && length(name) == 4+length(probs) &&
+    if( !(.is_non_empty_character(name) && length(name) == 5+length(probs) &&
           !anyDuplicated(name)) ){
         stop("'name' must be a unique character vector of length ",
-             4+length(probs), ".",
+             5+length(probs), ".",
              call. = FALSE)
     }
     if( !is.numeric(probs) ){
@@ -113,7 +116,8 @@ setMethod("getQC", signature = c(x = "SummarizedExperiment"),
         total = colSums2(mat, na.rm = na.rm),
         detected = colSums2(mat > 0, na.rm = na.rm),
         mean = colMeans2(mat, na.rm = na.rm),
-        sd = colSds(mat, na.rm = na.rm)
+        sd = colSds(mat, na.rm = na.rm),
+        cv = colSds(mat, na.rm = na.rm) / colMeans2(mat, na.rm = na.rm)
     )
     res <- DataFrame(lapply(res, unname), row.names = colnames(mat))
     # Calculate quantiles
