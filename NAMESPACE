@@ -21,11 +21,12 @@ export(addMediation)
 export(addNMDS)
 export(addNMF)
 export(addNotContaminantQC)
+export(addPCA)
 export(addPerSampleDominantFeatures)
 export(addPerSampleDominantTaxa)
 export(addPrevalence)
 export(addPrevalentAbundance)
-export(addQCMetrics)
+export(addQC)
 export(addRDA)
 export(addRPCA)
 export(addTaxonomyTree)
@@ -62,6 +63,9 @@ export(estimateDominance)
 export(estimateEvenness)
 export(estimateFaith)
 export(estimateRichness)
+export(exportMothur)
+export(exportQIIME2)
+export(exportRaw)
 export(filterRPCAInput)
 export(full_join)
 export(getAbundanceClass)
@@ -88,12 +92,13 @@ export(getMDS)
 export(getMediation)
 export(getNMDS)
 export(getNMF)
+export(getPCA)
 export(getPermanentlyLowAbundant)
 export(getPrevalence)
 export(getPrevalentAbundance)
 export(getPrevalentFeatures)
 export(getPrevalentTaxa)
-export(getQCMetrics)
+export(getQC)
 export(getRDA)
 export(getRPCA)
 export(getRare)
@@ -201,12 +206,13 @@ exportMethods(addMDS)
 exportMethods(addMediation)
 exportMethods(addNMF)
 exportMethods(addNotContaminantQC)
+exportMethods(addPCA)
 exportMethods(addPERMANOVA)
 exportMethods(addPerSampleDominantFeatures)
 exportMethods(addPerSampleDominantTaxa)
 exportMethods(addPrevalence)
 exportMethods(addPrevalentAbundance)
-exportMethods(addQCMetrics)
+exportMethods(addQC)
 exportMethods(addRDA)
 exportMethods(addRPCA)
 exportMethods(addTaxonomyTree)
@@ -262,6 +268,7 @@ exportMethods(getMDS)
 exportMethods(getMediation)
 exportMethods(getNMDS)
 exportMethods(getNMF)
+exportMethods(getPCA)
 exportMethods(getPERMANOVA)
 exportMethods(getPermanentlyLowAbundant)
 exportMethods(getPrevalence)
@@ -269,7 +276,7 @@ exportMethods(getPrevalent)
 exportMethods(getPrevalentAbundance)
 exportMethods(getPrevalentFeatures)
 exportMethods(getPrevalentTaxa)
-exportMethods(getQCMetrics)
+exportMethods(getQC)
 exportMethods(getRDA)
 exportMethods(getRPCA)
 exportMethods(getRare)
@@ -459,7 +466,9 @@ importFrom(ape,
   is.rooted,
   node.depth.edgelength,
   read.tree,
-  reorder.phylo
+  reorder.phylo,
+  write.FASTA,
+  write.tree
 )
 importFrom(bluster,clusterRows)
 importFrom(decontam,
@@ -487,7 +496,10 @@ importFrom(rlang,
   ":=",
   sym
 )
-importFrom(scater,calculateMDS)
+importFrom(scater,
+  calculateMDS,
+  calculatePCA
+)
 importFrom(stats,
   TukeyHSD,
   anova,
@@ -513,9 +525,11 @@ importFrom(stats,
   terms
 )
 importFrom(stringr,
+  fixed,
   str_extract,
   str_extract_all,
   str_pad,
+  str_remove,
   str_replace_all
 )
 importFrom(tibble,
@@ -538,7 +552,8 @@ importFrom(utils,
   head,
   read.delim,
   read.table,
-  unzip
+  unzip,
+  write.table
 )
 importFrom(vegan,
   "sppscores<-",

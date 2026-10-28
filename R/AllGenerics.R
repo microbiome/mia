@@ -115,6 +115,21 @@ setGeneric("convertToBIOM", signature = c("x"),
 setGeneric("convertToPhyloseq", signature = c("x"), function(x, ...)
     standardGeneric("convertToPhyloseq"))
 
+#' @rdname export-methods
+#' @export
+setGeneric("exportRaw", signature = c("x"), function(x, ...)
+    standardGeneric("exportRaw"))
+
+#' @rdname export-methods
+#' @export
+setGeneric("exportQIIME2", signature = c("x"), function(x, ...)
+    standardGeneric("exportQIIME2"))
+
+#' @rdname export-methods
+#' @export
+setGeneric("exportMothur", signature = c("x"), function(x, ...)
+    standardGeneric("exportMothur"))
+
 #' @rdname isContaminant
 #' @export
 setGeneric("addContaminantQC", signature = c("x"),
@@ -127,15 +142,15 @@ setGeneric("addNotContaminantQC", signature = c("x"),
     function(x, name = "isNotContaminant", ...)
     standardGeneric("addNotContaminantQC"))
 
-#' @rdname addQCMetrics
+#' @rdname addQC
 #' @export
-setGeneric("addQCMetrics", signature = c("x"), function(x, ...)
-    standardGeneric("addQCMetrics"))
+setGeneric("addQC", signature = c("x"), function(x, ...)
+    standardGeneric("addQC"))
 
-#' @rdname addQCMetrics
+#' @rdname addQC
 #' @export
-setGeneric("getQCMetrics", signature = c("x"), function(x, ...)
-    standardGeneric("getQCMetrics"))
+setGeneric("getQC", signature = c("x"), function(x, ...)
+    standardGeneric("getQC"))
 
 #' @rdname getCrossAssociation
 #' @export
@@ -426,6 +441,16 @@ setGeneric("getMDS", signature = "x", function(x, ...)
 #' @export
 setGeneric("addMDS", signature = "x", function(x, ...)
     standardGeneric("addMDS"))
+
+#' @rdname addPCA
+#' @export
+setGeneric("getPCA", signature = "x", function(x, ...)
+    standardGeneric("getPCA"))
+
+#' @rdname addPCA
+#' @export
+setGeneric("addPCA", signature = "x", function(x, ...)
+    standardGeneric("addPCA"))
 
 #' @rdname utilization_functions
 #' @export
