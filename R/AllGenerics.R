@@ -127,15 +127,15 @@ setGeneric("addNotContaminantQC", signature = c("x"),
     function(x, name = "isNotContaminant", ...)
     standardGeneric("addNotContaminantQC"))
 
-#' @rdname addQCMetrics
+#' @rdname addQC
 #' @export
-setGeneric("addQCMetrics", signature = c("x"), function(x, ...)
-    standardGeneric("addQCMetrics"))
+setGeneric("addQC", signature = c("x"), function(x, ...)
+    standardGeneric("addQC"))
 
-#' @rdname addQCMetrics
+#' @rdname addQC
 #' @export
-setGeneric("getQCMetrics", signature = c("x"), function(x, ...)
-    standardGeneric("getQCMetrics"))
+setGeneric("getQC", signature = c("x"), function(x, ...)
+    standardGeneric("getQC"))
 
 #' @rdname getCrossAssociation
 #' @export

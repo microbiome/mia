@@ -211,3 +211,4 @@ Changes in version 1.21.x
 + transformAssay and rarefyAssay warn instead of failing when overwriting an assay (1.21.21, 2026-10-27)
 + getMDS and addMDS use all features by default (1.21.22, 2026-10-27)
 + Added getPCA and addPCA (1.21.23, 2026-10-27)
++ Renamed getQCMetrics and addQCMetrics to getQC and addQC (1.21.24, 2026-10-28)

@@ -12,7 +12,7 @@
 #' for samples (\code{'cols'}) or features (\code{'rows'}).
 #' (Default: \code{"cols"})
 #'
-#' @param ... additional arguments passed to \code{getQCMetrics}:
+#' @param ... additional arguments passed to \code{getQC}:
 #'
 #' \itemize{
 #'   \item \code{name}: Specifies the names of the metrics in
@@ -34,31 +34,31 @@
 #' }
 #'
 #' @return
-#' \code{getQCMetrics} returns a \code{DataFrame} with one row per sample (or
-#' feature). \code{addQCMetrics} returns \code{x} with the metrics added to
+#' \code{getQC} returns a \code{DataFrame} with one row per sample (or
+#' feature). \code{addQC} returns \code{x} with the metrics added to
 #' \code{colData(x)} (or \code{rowData(x)}).
 #'
-#' @name addQCMetrics
+#' @name addQC
 #'
 #' @examples
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #'
 #' # Calculate metrics for samples
-#' getQCMetrics(tse)
+#' getQC(tse)
 #'
 #' # Add metrics for features to rowData
-#' tse <- addQCMetrics(tse, by = "rows")
+#' tse <- addQC(tse, by = "rows")
 #' rowData(tse)
 #'
 NULL
 
-#' @rdname addQCMetrics
+#' @rdname addQC
 #' @export
-setMethod("addQCMetrics", signature = c(x = "SummarizedExperiment"),
+setMethod("addQC", signature = c(x = "SummarizedExperiment"),
     function(x, by = "cols", ...){
         by <- .check_MARGIN(by)
-        res <- getQCMetrics(x, by = by, ...)
+        res <- getQC(x, by = by, ...)
         x <- .add_values_to_colData(
             x, unname(as.list(res)), colnames(res),
             altexp = list(...)[["altexp"]], MARGIN = by)
@@ -66,9 +66,9 @@ setMethod("addQCMetrics", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname addQCMetrics
+#' @rdname addQC
 #' @export
-setMethod("getQCMetrics", signature = c(x = "SummarizedExperiment"),
+setMethod("getQC", signature = c(x = "SummarizedExperiment"),
     function(
         x, assay.type = "counts", by = "cols", ...){
         ############################## Input check #############################
