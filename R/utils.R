@@ -430,6 +430,20 @@
 }
 
 # This function can be used to add values to reducedDims
+# This function adds a matrix to assays. If the assay already exists, it is
+# overwritten with a warning.
+#' @importFrom SummarizedExperiment assayNames assay<-
+.add_values_to_assays <- function(x, values, name){
+    if( name %in% assayNames(x) ){
+        warning(
+            "The following values are already present in `assays` and will ",
+            "be overwritten: '", name, "'. Consider using the 'name' argument ",
+            "to specify alternative names.", call. = FALSE)
+    }
+    assay(x, name, withDimnames = FALSE) <- values
+    return(x)
+}
+
 .add_values_to_reducedDims <- function(x, values, name, ...){
     # Check values
     if( !((is(values, "matrix") || is(values, "dist")) && length(values) > 0) ){

@@ -50,6 +50,7 @@ reference:
   - getPrevalence
   - getPrevalentAbundance
   - summary
+  - addQC
   - getDominant
   - getAbundant
 - title: Data loading
@@ -71,6 +72,7 @@ reference:
 - contents:
   - getDissimilarity
   - addDivergence
+  - addDysbiosis
 - subtitle: Ordination
 - contents:
   - runNMDS
@@ -79,6 +81,7 @@ reference:
   - addLDA
   - addNMF
   - addMDS
+  - addPCA
   - utilization_functions
 
 - title: Package
