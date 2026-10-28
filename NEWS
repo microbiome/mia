@@ -212,3 +212,4 @@ Changes in version 1.21.x
 + getMDS and addMDS use all features by default (1.21.22, 2026-10-27)
 + Added getPCA and addPCA (1.21.23, 2026-10-27)
 + Renamed getQCMetrics and addQCMetrics to getQC and addQC (1.21.24, 2026-10-28)
++ Added exporters (1.21.25, 2026-10-28)

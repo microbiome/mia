@@ -16,18 +16,7 @@ exportQIIME2(x, ...)
 
 exportMothur(x, ...)
 
-\S4method{exportRaw}{TreeSummarizedExperiment}(
-  x,
-  dpath,
-  rowdata.file = "rowdata",
-  coldata.file = "coldata",
-  refseq.file = "seqs",
-  assay.dir = "assays",
-  rowtree.dir = "row_trees",
-  coltree.dir = "col_trees",
-  dimred.dir = "dim_reds",
-  altexp.dir = "alt_exps"
-)
+\S4method{exportRaw}{TreeSummarizedExperiment}(x, dpath, ...)
 
 \S4method{exportQIIME2}{TreeSummarizedExperiment}(
   x,
@@ -54,6 +43,18 @@ object.}
 \item{dpath}{\code{Character scalar}. String specifying the directory where
 \code{x} should be exported. If non-existent, it is created recursively.}
 
+\item{assay.type}{\code{Character scalar}. String specifying which assay
+should be exported. Only for \code{exportQIIME2} and \code{exportMothur}.
+(Default: \code{"counts"})}
+
+\item{tree.name}{\code{Character scalar}. String specifying which row tree
+should be exported. Only for \code{exportQIIME2} and \code{exportMothur}.
+(Default: \code{"phylo"})}
+
+\item{group.var}{\code{Character scalar}. String specifying one variable of
+rowData to export as a custom grouping file. Only for \code{exportQIIME2}
+and \code{exportMothur}. (Default: \code{NULL})}
+
 \item{rowdata.file}{\code{Character scalar}. String specifying the file where
 rowData should be written. (Default: \code{"rowdata"})}
 
@@ -77,18 +78,6 @@ where reducedDims should be written. (Default: \code{"dim_reds"})}
 
 \item{altexp.dir}{\code{Character scalar}. String specifying the directory
 where altExps should be written. (Default: \code{"alt_exps"})}
-
-\item{assay.type}{\code{Character scalar}. String specifying which assay
-should be exported. Only for \code{exportQIIME2} and \code{exportMothur}.
-(Default: \code{"counts"})}
-
-\item{tree.name}{\code{Character scalar}. String specifying which row tree
-should be exported. Only for \code{exportQIIME2} and \code{exportMothur}.
-(Default: \code{"phylo"})}
-
-\item{group.var}{\code{Character scalar}. String specifying one variable of
-rowData to export as a custom grouping file. Only for \code{exportQIIME2}
-and \code{exportMothur}. (Default: \code{NULL})}
 }
 \value{
 Directory at \code{dpath} with components of \code{x} each stored
@@ -116,8 +105,6 @@ vignettes on converting data:
 \url{https://cmmr.github.io/rbiom/articles/convert.html}
 }
 \examples{
-library(TreeSummarizedExperiment)
-
 # Generate example TreeSE object
 tse <- makeTSE()
 # Give name to counts assay

@@ -466,7 +466,9 @@ importFrom(ape,
   is.rooted,
   node.depth.edgelength,
   read.tree,
-  reorder.phylo
+  reorder.phylo,
+  write.FASTA,
+  write.tree
 )
 importFrom(bluster,clusterRows)
 importFrom(decontam,
@@ -523,9 +525,11 @@ importFrom(stats,
   terms
 )
 importFrom(stringr,
+  fixed,
   str_extract,
   str_extract_all,
   str_pad,
+  str_remove,
   str_replace_all
 )
 importFrom(tibble,
