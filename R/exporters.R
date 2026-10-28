@@ -91,6 +91,7 @@
 NULL
 
 #' @rdname export-methods
+#' @importFrom utils write.table
 #' @importFrom ape write.tree write.FASTA
 setMethod("exportRaw", signature = c(x = "TreeSummarizedExperiment"),
     function(x, dpath, ...){

@@ -552,7 +552,8 @@ importFrom(utils,
   head,
   read.delim,
   read.table,
-  unzip
+  unzip,
+  write.table
 )
 importFrom(vegan,
   "sppscores<-",
