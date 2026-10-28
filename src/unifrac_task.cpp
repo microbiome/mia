@@ -352,3 +352,104 @@ void UnifracUnnormalizedWeightedTask::_run(unsigned int filled_embs,
         } // for stripe
     } // for sk
 }
+
+UnifracNormalizedWeightedTask::UnifracNormalizedWeightedTask(
+                                            su::StripeMap & _dm_stripes,
+                                            su::StripeMap & _dm_stripes_total,
+                                            unsigned int _max_embs,
+                                            su::task_parameters _task_p)
+    : UnifracUnnormalizedWeightedTask(_dm_stripes,
+                                        _dm_stripes_total,
+                                        _max_embs,
+                                        _task_p){}
+
+UnifracNormalizedWeightedTask::~UnifracNormalizedWeightedTask(){}
+
+void UnifracNormalizedWeightedTask::run(unsigned int filled_embs,
+                                        const std::vector<double> & lengths){
+    _run(filled_embs, lengths);
+}
+
+void UnifracNormalizedWeightedTask::_run(unsigned int filled_embs,
+                                        const std::vector<double> & lengths){
+    const uint64_t start_idx = this->task_p.start;
+    const uint64_t stop_idx = this->task_p.stop;
+    const uint64_t n_samples = this->task_p.n_samples;
+    const uint64_t n_samples_r = this->dm_stripes.n_samples_r;
+
+    const uint64_t step_size = UnifracNormalizedWeightedTask::step_size;
+    const uint64_t sample_steps = (n_samples+(step_size-1))/step_size;
+
+    // check for zero values and pre-compute single column sums
+    for(uint64_t k=0; k<n_samples; k++){
+        bool all_zeros=true;
+        double my_sum = 0.0;
+
+        for(uint64_t emb=0; emb<filled_embs; emb++){
+            const uint64_t offset = n_samples_r * emb;
+
+            double u1 = embedded_proportions[offset + k];
+            my_sum += u1*lengths[emb];
+            all_zeros = all_zeros && (u1==0.0);
+        }
+
+        sums[k]     = my_sum;
+        zcheck[k] = all_zeros;
+    }
+
+    // Main calculation phase
+    for(uint64_t stripe = start_idx; stripe < stop_idx; stripe++){
+        for(uint64_t sk = 0; sk < sample_steps ; sk++){
+            for(uint64_t ik = 0; ik < step_size ; ik++){
+
+                // within-stripe index (0:n_samples-1)
+                const uint64_t k = sk*step_size + ik;
+
+                if (k>=n_samples) continue; // past the limit
+
+                const uint64_t l1 = (k + stripe + 1)%n_samples; // wraparound
+
+                const bool allzero_k = zcheck[k];
+                const bool allzero_l1 = zcheck[l1];
+
+                if (allzero_k && allzero_l1) {
+                    // nothing to do, would have to add 0
+                }
+                else {
+                    double my_stripe;
+                    double my_stripe_total;
+
+                    if (allzero_k || allzero_l1){
+                        // one side has all zeros, so both the distance and
+                        // the normalization term equal the pre-computed sum
+                        // of the other side
+                        const uint64_t ridx = (allzero_k) ? l1 : k;
+
+                        my_stripe = sums[ridx];
+                        my_stripe_total = sums[ridx];
+                    }
+                    else {
+                        // both sides non zero, use the explicit but slow
+                        // approach
+                        my_stripe = 0.0;
+                        my_stripe_total = 0.0;
+                        for(uint64_t emb=0; emb<filled_embs; emb++){
+                            const uint64_t offset = n_samples_r * emb;
+                            double u1 = embedded_proportions[offset + k];
+                            double v1 = embedded_proportions[offset + l1];
+                            double diff1 = u1 - v1;
+                            double sum1 = u1 + v1;
+                            double length = lengths[emb];
+                            my_stripe       += fabs(diff1) * length;
+                            my_stripe_total += sum1 * length;
+                        } // for emb
+
+                    }
+                    const uint64_t idx = (stripe-start_idx)*n_samples_r;
+                    dm_stripes.buf[idx + k] += my_stripe;
+                    dm_stripes_total.buf[idx + k] += my_stripe_total;
+                }
+            } // for ik
+        } // for stripe
+    } // for sk
+}

@@ -15,6 +15,7 @@
 su::mat_t su::one_off(const su::Assay & table,
                       const su::BPTree & tree,
                       bool weighted,
+                      bool normalized,
                       bool bypass_tips){
     
     //Number of stripes to be used, basically half of samples
@@ -40,6 +41,7 @@ su::mat_t su::one_off(const su::Assay & table,
                 std::ref(dm_stripes),
                 std::ref(dm_stripes_total),
                 weighted,
+                normalized,
                 task);
         
     
@@ -61,10 +63,17 @@ void su::unifrac(const su::Assay &table,
                  su::StripeMap & dm_stripes,
                  su::StripeMap & dm_stripes_total,
                  bool weighted,
+                 bool normalized,
                  const su::task_parameters task_p){
     // unweighted
     if (weighted == false){
         unifracTT<su::UnifracUnweightedTask>(
+            table, tree, true, dm_stripes, dm_stripes_total,
+            task_p );
+    }
+    // weighted normalized
+    else if (normalized){
+        unifracTT<su::UnifracNormalizedWeightedTask>(
             table, tree, true, dm_stripes, dm_stripes_total,
             task_p );
     }

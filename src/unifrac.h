@@ -33,6 +33,7 @@ typedef struct mat {
 su::mat_t one_off(const su::Assay & table,
                     const su::BPTree & tree,
                     bool weighted,
+                    bool normalized,
                     bool bypass_tips);
 
 // Chooses the right task for the job and constructs a unifracTT
@@ -41,6 +42,7 @@ void unifrac(const su::Assay &table,
                 su::StripeMap & dm_stripes,
                 su::StripeMap & dm_stripes_total,
                 bool weighted,
+                bool normalized,
                 const su::task_parameters task_p);
 
 // Works the vectors

@@ -42,6 +42,8 @@
 // @param rowTree An \code{ape::phylo} object containing the rowTree of a
 // \code{TreeSE} object.
 // @param weighted Boolean: Whether to calculate unweighted or weighted Unifrac.
+// @param normalized Boolean: Whether to normalize weighted Unifrac to the
+// range [0, 1]. Ignored when weighted is false.
 // @param bypass_tips Boolean: Whether to bypass tips during calculations. This
 // speeds up calculations considerably, and does not seem to have a noticeable
 // effect on the results.
@@ -51,7 +53,8 @@
 // [[Rcpp::export(.unifrac_cpp)]]
 Rcpp::NumericVector unifrac_cpp(const Rcpp::NumericMatrix & assay,
                               const Rcpp::List & rowTree,
-                              bool weighted){
+                              bool weighted,
+                              bool normalized){
 
     su::BPTree tree = su::BPTree(rowTree);
     su::Assay table = su::Assay(assay);
@@ -61,7 +64,8 @@ Rcpp::NumericVector unifrac_cpp(const Rcpp::NumericMatrix & assay,
 
     su::BPTree tree_sheared = tree.shear(to_keep).collapse();
 
-    su::mat_t results = su::one_off(table, tree_sheared, weighted, false);
+    su::mat_t results = su::one_off(table, tree_sheared, weighted,
+                                          normalized, false);
 
     unsigned int n = results.condensed_form.size();
     Rcpp::NumericVector unifrac = Rcpp::NumericVector(n);

@@ -70,6 +70,13 @@ considers presence/absence. Default is \code{FALSE}, meaning the
 unweighted-Unifrac dissimilarity is calculated for all pairs of samples.
 (Default: \code{FALSE})
 
+\item \code{normalized}: (Unifrac) \code{Logical scalar}. Should
+weighted-Unifrac be normalized? Normalized weighted-Unifrac divides the
+distance by the sum of root-to-tip distances weighted by the relative
+abundances of both samples, which bounds it between 0 and 1 and makes
+values comparable across trees. Ignored when \code{weighted = FALSE}.
+(Default: \code{FALSE})
+
 \item \code{node.label} (Unifrac) \code{character vector}. Used only if
 \code{x} is a matrix. Specifies links between rows/columns and tips of
 \code{tree}. All the node labs must be present in \code{tree}. For the
