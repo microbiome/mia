@@ -40,6 +40,16 @@ setGeneric("getDivergence", signature = c("x"),
         method = "bray", ...)
     standardGeneric("getDivergence"))
 
+#' @rdname addDysbiosis
+#' @export
+setGeneric("addDysbiosis", signature = c("x"), function(x, ...)
+    standardGeneric("addDysbiosis"))
+
+#' @rdname addDysbiosis
+#' @export
+setGeneric("getDysbiosis", signature = c("x"), function(x, ...)
+    standardGeneric("getDysbiosis"))
+
 #' @rdname addLDA
 #' @export
 setGeneric(
@@ -105,6 +115,21 @@ setGeneric("convertToBIOM", signature = c("x"),
 setGeneric("convertToPhyloseq", signature = c("x"), function(x, ...)
     standardGeneric("convertToPhyloseq"))
 
+#' @rdname export-methods
+#' @export
+setGeneric("exportRaw", signature = c("x"), function(x, ...)
+    standardGeneric("exportRaw"))
+
+#' @rdname export-methods
+#' @export
+setGeneric("exportQIIME2", signature = c("x"), function(x, ...)
+    standardGeneric("exportQIIME2"))
+
+#' @rdname export-methods
+#' @export
+setGeneric("exportMothur", signature = c("x"), function(x, ...)
+    standardGeneric("exportMothur"))
+
 #' @rdname isContaminant
 #' @export
 setGeneric("addContaminantQC", signature = c("x"),
@@ -116,6 +141,16 @@ setGeneric("addContaminantQC", signature = c("x"),
 setGeneric("addNotContaminantQC", signature = c("x"),
     function(x, name = "isNotContaminant", ...)
     standardGeneric("addNotContaminantQC"))
+
+#' @rdname addQC
+#' @export
+setGeneric("addQC", signature = c("x"), function(x, ...)
+    standardGeneric("addQC"))
+
+#' @rdname addQC
+#' @export
+setGeneric("getQC", signature = c("x"), function(x, ...)
+    standardGeneric("getQC"))
 
 #' @rdname getCrossAssociation
 #' @export
@@ -273,7 +308,8 @@ setGeneric("getUnique", signature = c("x"), function(x, ...)
 #' @export
 setGeneric("getTop", signature = "x",
     function(
-        x, top= 5L, method = c("mean", "sum", "median", "prevalence"),
+        x, top= 5L,
+        method = c("mean", "sum", "median", "sd", "cv", "prevalence"),
         assay.type = assay_name, assay_name = "counts", na.rm = TRUE, ...)
     standardGeneric("getTop"))
 
@@ -405,6 +441,16 @@ setGeneric("getMDS", signature = "x", function(x, ...)
 #' @export
 setGeneric("addMDS", signature = "x", function(x, ...)
     standardGeneric("addMDS"))
+
+#' @rdname addPCA
+#' @export
+setGeneric("getPCA", signature = "x", function(x, ...)
+    standardGeneric("getPCA"))
+
+#' @rdname addPCA
+#' @export
+setGeneric("addPCA", signature = "x", function(x, ...)
+    standardGeneric("addPCA"))
 
 #' @rdname utilization_functions
 #' @export
