@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.26</span>
       </span>
     </div>
 
@@ -143,12 +143,12 @@ feature loadings.</p>
 <span class="r-in"><span><span class="va">loadings</span> <span class="op">&lt;-</span> <span class="fu"><a href="utilization_functions.html">getReducedDimAttribute</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"LDA"</span>, <span class="st">"loadings"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">loadings</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                            1            2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AD3             1.695003e-07 0.0014987061</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Acidobacteria   2.693348e-05 0.0555929474</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  3.088624e-02 0.1684101367</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Armatimonadetes 1.259957e-05 0.0007885156</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BRC1            1.214322e-07 0.0001083080</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   2.904116e-01 0.0764100508</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AD3             9.997352e-04 2.440600e-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Acidobacteria   3.293477e-02 6.280754e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  5.570431e-02 1.316564e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Armatimonadetes 1.774704e-04 5.437265e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BRC1            5.600914e-05 2.462366e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   2.806213e-01 9.018023e-02</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Estimate models with number of topics from 2 to 10</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addLDA</span><span class="op">(</span><span class="va">tse</span>, k <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">9</span>, <span class="fl">10</span><span class="op">)</span>, name <span class="op">=</span> <span class="st">"LDA_10"</span><span class="op">)</span></span></span>
