@@ -427,18 +427,9 @@ setMethod("subsetByPrevalent", signature = c(x = "SummarizedExperiment"),
 #' @rdname getPrevalence
 #' @export
 setMethod("subsetByPrevalent", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, update.tree = TRUE, ...){
-        # Check that update.tree is logical value
-        if( !.is_a_bool(update.tree) ){
-            stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
-        }
-        #
+    function(x, ...){
         x <- callNextMethod(x, ...)
-        # Agglomerate tree if specified
-        if( update.tree ){
-            x <- .agglomerate_trees(x, ...)
-        }
-    return(x)
+        return(x)
     }
 )
 
@@ -457,17 +448,8 @@ setMethod("subsetByRare", signature = c(x = "SummarizedExperiment"),
 #' @rdname getPrevalence
 #' @export
 setMethod("subsetByRare", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, update.tree = TRUE, ...){
-        # Check that update.tree is logical value
-        if( !.is_a_bool(update.tree) ){
-            stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
-        }
-        #
+    function(x, ...){
         x <- callNextMethod(x, ...)
-        # Agglomerate tree if specified
-        if( update.tree ){
-            x <- .agglomerate_trees(x, ...)
-        }
         return(x)
     }
 )
@@ -601,6 +583,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname agglomerateByPrevalence
+#' @importFrom TreeSummarizedExperiment changeTree
 #' @export
 setMethod("agglomerateByPrevalence",
     signature = c(x = "TreeSummarizedExperiment"),
@@ -619,6 +602,11 @@ setMethod("agglomerateByPrevalence",
         }
         if( !.is_a_bool(merge_refseq) ){
             stop("'update.refseq' must be TRUE or FALSE.", call. = FALSE)
+        }
+        row_links <- NULL
+        if( update.tree ){
+            row_links <- rowLinks(x)
+            rownames(row_links) <- rownames(x)
         }
         # Agglomerate based on prevalence with SE method
         res <- callNextMethod()
@@ -644,8 +632,26 @@ setMethod("agglomerateByPrevalence",
             referenceSeq(res) <- ref_seq
         }
         # Update tree if user has specified to do so
-        if( update.tree ){
-            res <- .agglomerate_trees(res, 1)
+        if( !is.null(row_links) ){
+            trees <- lapply(rowTreeNames(x), function(name) rowTree(x, name))
+            names(trees) <- rowTreeNames(x)
+            trees <- .agglomerate_trees(trees, links = row_links, f = f)
+            # Add agglomerated trees back to TreeSE
+            for( tree_name in names(trees) ){
+                tree <- trees[[tree_name]][["tree"]]
+                links <- trees[[tree_name]][["links"]]
+                # Sort the links so that they match order of rownames
+                links <- links[ match(rownames(x), names(links)) ]
+                # Assign it back
+                x <- changeTree(
+                    x,
+                    rowTree = tree,
+                    rowNodeLab = links,
+                    whichRowTree = tree_name
+                )
+            }
+        } else{
+            rowTree(x) <- NULL
         }
         return(res)
     }
