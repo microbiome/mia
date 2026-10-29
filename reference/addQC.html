@@ -86,7 +86,7 @@ the result. Must have the same length as the number of metrics.
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
 <dd><p><code>Character scalar</code>. Determines if metrics are calculated
-for samples (<code>'cols'</code>) or features (<code>'rows'</code>).
+for samples (<code>"cols"</code>) or features (<code>"rows"</code>).
 (Default: <code>"cols"</code>)</p></dd>
 
 
@@ -103,10 +103,14 @@ feature). <code>addQC</code> returns <code>x</code> with the metrics added to
     </div>
     <div id="details">
     <h2>Details</h2>
-
-
-
-    </div>
+    <p>The following metrics are calculated for each sample (or feature):</p><ul><li><p><code>total</code>: Sum of values, e.g., library size.</p></li>
+<li><p><code>detected</code>: Number of values greater than zero.</p></li>
+<li><p><code>mean</code>: Mean of values.</p></li>
+<li><p><code>median</code>: Median of values.</p></li>
+<li><p><code>sd</code>: Standard deviation of values.</p></li>
+<li><p><code>cv</code>: Coefficient of variation of values.</p></li>
+<li><p><code>q*</code>: Quantiles. By default, 0%, 25%, 50%, and 100%</p></li>
+</ul></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
