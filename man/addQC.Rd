@@ -30,7 +30,7 @@ the result. Must have the same length as the number of metrics.
 }}
 
 \item{by}{\code{Character scalar}. Determines if metrics are calculated
-for samples (\code{'cols'}) or features (\code{'rows'}).
+for samples (\code{"cols"}) or features (\code{"rows"}).
 (Default: \code{"cols"})}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
@@ -46,7 +46,16 @@ These functions calculate simple quality control metrics, such as library
 sizes, for samples or features.
 }
 \details{
-
+The following metrics are calculated for each sample (or feature):
+\itemize{
+\item \code{total}: Sum of values, e.g., library size.
+\item \code{detected}: Number of values greater than zero.
+\item \code{mean}: Mean of values.
+\item \code{median}: Median of values.
+\item \code{sd}: Standard deviation of values.
+\item \code{cv}: Coefficient of variation of values.
+\item \code{q*}: Quantiles. By default, 0\%, 25\%, 50\%, and 100\%
+}
 }
 \examples{
 data(GlobalPatterns)

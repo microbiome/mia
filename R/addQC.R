@@ -9,7 +9,7 @@
 #' used in calculation. (Default: \code{"counts"})
 #'
 #' @param by \code{Character scalar}. Determines if metrics are calculated
-#' for samples (\code{'cols'}) or features (\code{'rows'}).
+#' for samples (\code{"cols"}) or features (\code{"rows"}).
 #' (Default: \code{"cols"})
 #'
 #' @param ... additional arguments passed to \code{getQC}:
@@ -32,7 +32,7 @@
 #'   \item \code{median}: Median of values.
 #'   \item \code{sd}: Standard deviation of values.
 #'   \item \code{cv}: Coefficient of variation of values.
-#'   \item \code{q*]: Quantiles. By default, 0%, 25%, 50%, and 100%
+#'   \item \code{q*}: Quantiles. By default, 0%, 25%, 50%, and 100%
 #' }
 #'
 #' @return
