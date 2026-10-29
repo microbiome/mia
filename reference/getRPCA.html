@@ -21,7 +21,7 @@ results of the analysis while add* adds them to the input object."><!-- mathjax 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.25</span>
       </span>
     </div>
 
@@ -141,6 +141,12 @@ object.</p>
 low-rank matrix approximation followed by principal component analysis.
 Missing values are handled using matrix completion based on the OptSpace
 algorithm.</p>
+<p>Before running RPCA or Joint-RPCA, untransformed assays can be filtered
+separately with <code><a href="filterRPCAInput.html">filterRPCAInput()</a></code>.
+When filtering is used, it must be performed before the robust centered
+log-ratio transformation. Filtering thresholds should be selected
+separately for each experiment according to its sequencing depth and
+prevalence.</p>
 <p><strong>Single-table RPCA</strong></p>
 <p>For a single assay, the workflow is:</p><ol><li><p>Extract the selected assay matrix</p></li>
 <li><p>Estimate a low-rank approximation of the matrix using the OptSpace
@@ -173,18 +179,33 @@ reconstructed matrix, and reconstruction error) stored in attributes.</p>
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Martino, C. and Shenhav, L. et al. (2020)
+    <p>Martino, C. et al. (2019).
+A Novel Sparse Compositional Technique Reveals Microbial Perturbations.
+<em>mSystems</em>, 4(1), e00016-19.
+<a href="https://doi.org/10.1128/mSystems.00016-19" class="external-link">doi:10.1128/mSystems.00016-19</a></p>
+<p>Martino, C. and Shenhav, L. et al. (2020).
 Context-aware dimensionality reduction deconvolutes gut microbial community
 dynamics.
-<em>Nat. Biotechnol.</em> doi:10.1038/s41587-020-0660-7</p>
+<em>Nature Biotechnology</em>.
+<a href="https://doi.org/10.1038/s41587-020-0660-7" class="external-link">doi:10.1038/s41587-020-0660-7</a></p>
+<p>Cordazzo Vargas, B. et al. (2026).
+Joint-RPCA: Domain-Aware Multi-Omics Integration for Systems Microbiology.
+<em>Molecular Systems Biology</em>.
+<a href="https://doi.org/10.1038/s44320-026-00236-3" class="external-link">doi:10.1038/s44320-026-00236-3</a></p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">scater::runPCA</a></code></p></div>
+    <div class="dont-index"><p><code><a href="filterRPCAInput.html">filterRPCAInput()</a></code>,
+<code><a href="transformAssay.html">transformAssay()</a></code>, and
+<code><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">scater::runPCA()</a></code>.</p>
+<p>Gemelli software:
+<a href="https://github.com/biocore/gemelli" class="external-link">https://github.com/biocore/gemelli</a></p>
+<p>Gemelli Joint-RPCA tutorial:
+<a href="https://github.com/biocore/gemelli/blob/master/ipynb/tutorials/Joint-RPCA-CLI-API.ipynb" class="external-link">https://github.com/biocore/gemelli/blob/master/ipynb/tutorials/Joint-RPCA-CLI-API.ipynb</a></p></div>
     </div>
     <div id="author">
     <h2>Author</h2>
-    <p>The RPCA method is reported in Martino et al. (2020) and the
+    <p>The RPCA method is reported in Martino et al. (2019) and the
 R/Bioconductor implementation utilizes the robust Aitchison
 distance from <code><a href="https://vegandevs.github.io/vegan/reference/decostand.html" class="external-link">vegan::decostand</a></code>.</p>
 <p>The Joint-RPCA method was adapted from the original
@@ -199,26 +220,59 @@ Aituar Bektanov, Sabuj Bhowmick, Tuomas Borman, and Leo Lahti.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ibdmdb"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mae</span> <span class="op">&lt;-</span> <span class="va">ibdmdb</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Apply filtering</span></span></span>
-<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="filterRPCAInput.html">filterRPCAInput</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, assay.type <span class="op">=</span> <span class="st">"mgx"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="filterRPCAInput.html">filterRPCAInput</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, assay.type <span class="op">=</span> <span class="st">"mtx"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Filter each untransformed assay before applying rclr.</span></span></span>
+<span class="r-in"><span><span class="co"># See filterRPCAInput() for data-specific filtering thresholds.</span></span></span>
+<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="st">"MGX"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="filterRPCAInput.html">filterRPCAInput</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">mae</span><span class="op">[[</span><span class="st">"MGX"</span><span class="op">]</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"mgx"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="st">"MTX"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="filterRPCAInput.html">filterRPCAInput</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">mae</span><span class="op">[[</span><span class="st">"MTX"</span><span class="op">]</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"mtx"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Apply data transformations. With impute=FALSE, missing values are preserved</span></span></span>
-<span class="r-in"><span><span class="co"># and not imputed.</span></span></span>
-<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, assay.type <span class="op">=</span> <span class="st">"mgx"</span>, method <span class="op">=</span> <span class="st">"rclr"</span>, impute <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, assay.type <span class="op">=</span> <span class="st">"mtx"</span>, method <span class="op">=</span> <span class="st">"rclr"</span>, impute <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Apply the robust centered log-ratio transformation.</span></span></span>
+<span class="r-in"><span><span class="co"># Specify that the 0-values are not imputed as Joint-RPCA</span></span></span>
+<span class="r-in"><span><span class="co"># itself does the matrix completion.</span></span></span>
+<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="st">"MGX"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">mae</span><span class="op">[[</span><span class="st">"MGX"</span><span class="op">]</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"mgx"</span>,</span></span>
+<span class="r-in"><span>    method <span class="op">=</span> <span class="st">"rclr"</span>,</span></span>
+<span class="r-in"><span>    impute <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="st">"MTX"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">mae</span><span class="op">[[</span><span class="st">"MTX"</span><span class="op">]</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"mtx"</span>,</span></span>
+<span class="r-in"><span>    method <span class="op">=</span> <span class="st">"rclr"</span>,</span></span>
+<span class="r-in"><span>    impute <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Run joint-RPCA</span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">getJointRPCA</span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="co"># Run Joint-RPCA.</span></span></span>
+<span class="r-in"><span><span class="va">joint_rpca</span> <span class="op">&lt;-</span> <span class="fu">getJointRPCA</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">mae</span>,</span></span>
-<span class="r-in"><span>    experiments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    experiments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MGX"</span>, <span class="st">"MTX"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    assay.types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rclr"</span>, <span class="st">"rclr"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Run RPCA for single experiment</span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">getRPCA</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, assay.type <span class="op">=</span> <span class="st">"rclr"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Inspect sample scores and variation across components.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">joint_rpca</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  PC1          PC2          PC3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CSM5MCZD -0.12153327  0.046793403  0.046527887</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CSM67UBZ -0.17323402 -0.091922507  0.106287209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CSM67UCK -0.01746996  0.066441216 -0.007040505</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CSM67UDF -0.16482651 -0.004155285 -0.068194972</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CSM67UDY -0.11492127 -0.035342705 -0.058941026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CSM7KOJO  0.13289309 -0.205676050  0.136539736</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">joint_rpca</span>, <span class="st">"percentVar"</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1   PC2   PC3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53.17 30.85 15.98 </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Run RPCA for one experiment.</span></span></span>
+<span class="r-in"><span><span class="va">single_rpca</span> <span class="op">&lt;-</span> <span class="fu">getRPCA</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">mae</span><span class="op">[[</span><span class="st">"MGX"</span><span class="op">]</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"rclr"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

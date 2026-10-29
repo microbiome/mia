@@ -27,7 +27,7 @@ is fairly straightforward."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.25</span>
       </span>
     </div>
 
@@ -54,7 +54,7 @@ is fairly straightforward."><!-- mathjax --><script src="https://cdnjs.cloudflar
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Exporters to common formats for microbiome data outside of R</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/exporters/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/exporters/R/exporters.R" class="external-link"><code>R/exporters.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/mia/blob/devel/R/exporters.R" class="external-link"><code>R/exporters.R</code></a></small>
     <div class="hidden name"><code>export-methods.Rd</code></div>
     </div>
 
@@ -80,20 +80,16 @@ is fairly straightforward.</p>
 <span><span class="fu">exportMothur</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
-<span><span class="fu">exportRaw</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  <span class="va">dpath</span>,</span>
-<span>  rowdata.file <span class="op">=</span> <span class="st">"rowdata"</span>,</span>
-<span>  coldata.file <span class="op">=</span> <span class="st">"coldata"</span>,</span>
-<span>  assay.dir <span class="op">=</span> <span class="st">"assays"</span>,</span>
-<span>  rowtree.dir <span class="op">=</span> <span class="st">"row_trees"</span>,</span>
-<span>  coltree.dir <span class="op">=</span> <span class="st">"col_trees"</span>,</span>
-<span>  dimred.dir <span class="op">=</span> <span class="st">"dim_reds"</span>,</span>
-<span>  altexp.dir <span class="op">=</span> <span class="st">"alt_exps"</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">exportRaw</span><span class="op">(</span><span class="va">x</span>, <span class="va">dpath</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
-<span><span class="fu">exportQIIME2</span><span class="op">(</span><span class="va">x</span>, <span class="va">dpath</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, tree.name <span class="op">=</span> <span class="st">"phylo"</span><span class="op">)</span></span>
+<span><span class="fu">exportQIIME2</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">dpath</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  tree.name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
+<span>  group.var <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">exportMothur</span><span class="op">(</span></span>
@@ -115,51 +111,47 @@ object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Unused.</p></dd>
+<dd><p>additional arguments:</p>
+<ul><li><p><code>rowdata.file</code>: <code>Character scalar</code>. Specifies the
+file where rowData should be written. (Default: <code>"rowData"</code>)</p></li>
+<li><p><code>coldata.file</code>: <code>Character scalar</code>. Specifies the
+file where colData should be written. (Default: <code>"colData"</code>)</p></li>
+<li><p><code>assay.dir</code>: <code>Character scalar</code>. Specifies the
+file where assays should be written. (Default: <code>"assays"</code>)</p></li>
+<li><p><code>refseq.file</code>: <code>Character scalar</code>. Specifies the
+file where referenceSeq should be written. (Default: <code>"referenceSeq"</code>)</p></li>
+<li><p><code>rowtree.dir</code>: <code>Character scalar</code>. Specifies the
+file where rowTrees should be written. (Default: <code>"rowTrees"</code>)</p></li>
+<li><p><code>coltree.dir</code>: <code>Character scalar</code>. Specifies the
+file where colTrees should be written. (Default: <code>"colTrees"</code>)</p></li>
+<li><p><code>dimred.dir</code>: <code>Character scalar</code>. Specifies the
+file where reducedDims should be written. (Default: <code>"reducedDims"</code>)</p></li>
+<li><p><code>altexp.dir</code>: <code>Character scalar</code>. Specifies the
+file where altExps should be written. (Default: <code>"altExps"</code>)</p></li>
+</ul></dd>
 
 
 <dt id="arg-dpath">dpath<a class="anchor" aria-label="anchor" href="#arg-dpath"></a></dt>
-<dd><p><code>Character scalar</code>.</p></dd>
-
-
-<dt id="arg-rowdata-file">rowdata.file<a class="anchor" aria-label="anchor" href="#arg-rowdata-file"></a></dt>
-<dd><p><code>Character scalar</code>. (Default: <code>"rowdata"</code>)</p></dd>
-
-
-<dt id="arg-coldata-file">coldata.file<a class="anchor" aria-label="anchor" href="#arg-coldata-file"></a></dt>
-<dd><p><code>Character scalar</code>. (Default: <code>"coldata"</code>)</p></dd>
-
-
-<dt id="arg-assay-dir">assay.dir<a class="anchor" aria-label="anchor" href="#arg-assay-dir"></a></dt>
-<dd><p><code>Character scalar</code>. (Default: <code>"assays"</code>)</p></dd>
-
-
-<dt id="arg-rowtree-dir">rowtree.dir<a class="anchor" aria-label="anchor" href="#arg-rowtree-dir"></a></dt>
-<dd><p><code>Character scalar</code>. (Default: <code>"row_trees"</code>)</p></dd>
-
-
-<dt id="arg-coltree-dir">coltree.dir<a class="anchor" aria-label="anchor" href="#arg-coltree-dir"></a></dt>
-<dd><p><code>Character scalar</code>. (Default: <code>"col_trees"</code>)</p></dd>
-
-
-<dt id="arg-dimred-dir">dimred.dir<a class="anchor" aria-label="anchor" href="#arg-dimred-dir"></a></dt>
-<dd><p><code>Character scalar</code>. (Default: <code>"dim_reds"</code>)</p></dd>
-
-
-<dt id="arg-altexp-dir">altexp.dir<a class="anchor" aria-label="anchor" href="#arg-altexp-dir"></a></dt>
-<dd><p><code>Character scalar</code>. (Default: <code>"alt_exps"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. String specifying the directory where
+<code>x</code> should be exported. If non-existent, it is created recursively.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. (Default: <code>"counts"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. String specifying which assay
+should be exported. Only for <code>exportQIIME2</code> and <code>exportMothur</code>.
+(Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
-<dd><p><code>Character scalar</code>. (Default: <code>"phylo"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. String specifying which row tree
+should be exported. Only for <code>exportQIIME2</code> and <code>exportMothur</code>.
+(Default: <code>"phylo"</code>)</p></dd>
 
 
 <dt id="arg-group-var">group.var<a class="anchor" aria-label="anchor" href="#arg-group-var"></a></dt>
-<dd><p><code>Character scalar</code>. (Default: <code>NULL</code>)</p></dd>
+<dd><p><code>Character scalar</code>. String specifying one variable of
+rowData to export as a custom grouping file. Only for <code>exportQIIME2</code>
+and <code>exportMothur</code>. (Default: <code>NULL</code>)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -178,10 +170,11 @@ vignettes on converting data:
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">TreeSummarizedExperiment</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Generate example TreeSE object</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/makeTSE.html" class="external-link">makeTSE</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Give name to counts assay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"counts"</span></span></span>
+<span class="r-in"><span><span class="co"># Give name to taxonomy variable</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"Genus"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Export raw TreeSE components in custom directory</span></span></span>
@@ -192,7 +185,7 @@ vignettes on converting data:
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Export TreeSE components in near-ready mothur format</span></span></span>
 <span class="r-in"><span><span class="fu">exportMothur</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"mothur_dir"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'group' is a reserved name in Mothur. colData variables with that name were made unique.</span>
 </code></pre></div>
     </div>
   </div>
@@ -207,7 +200,7 @@ vignettes on converting data:
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

@@ -23,7 +23,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.25</span>
       </span>
     </div>
 
@@ -491,13 +491,13 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-in"><span><span class="co"># Multi Dimensional Scaling applied to JSD dissimilarity matrix</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="addMDS.html">addMDS</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"overlap"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"MDS"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                [,1]      [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3      -43284.813 -45143.87</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       -4790.904 -40203.23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1       26147.150 -15952.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw -133864.366 -14824.29</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw  610755.430 803373.51</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  -78217.650   3434.70</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  [,1]       [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3       59443.48966   30449.91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       90318.88662  -39519.24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      -50022.89144  -38252.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw     -67.34763  209366.60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw -167716.35955 -569793.66</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  -27167.45045  104144.91</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Unifrac dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
@@ -785,140 +785,140 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-in"><span>    <span class="va">tse</span>, method <span class="op">=</span> <span class="st">"euclidean"</span>, transf <span class="op">=</span> <span class="va">rclr</span>, niter <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 CL3        CC1        SV1    M31Fcsw    M11Fcsw    M31Plmr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3        0.000000  19.965834  57.394678 121.085703 110.537813 142.192876</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       19.965834   0.000000  45.066452 127.828645 115.829381 135.490339</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1       57.394678  45.066452   0.000000 112.033156  98.560816 100.766367</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw  121.085703 127.828645 112.033156   0.000000  14.882075  91.487753</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw  110.537813 115.829381  98.560816  14.882075   0.000000  81.268469</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  142.192876 135.490339 100.766367  91.487753  81.268469   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr  112.405492 104.133008  69.679980  89.807203  76.375025  32.691497</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr  121.477856 115.100296  81.604864  81.386326  69.147880  20.853155</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong  119.957206 116.298408  86.839866  65.575505  53.693992  30.417969</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong  125.383350 123.100118  97.709457  61.797197  51.381862  38.022420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M 107.328226 102.271572  74.111667  72.896405  59.405239  38.054618</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M  98.326612  93.319790  65.875479  72.557417  58.358190  46.078436</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm   100.027317  95.470789  88.067921  98.024566  85.785474  79.958864</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm   103.916736  97.388583  86.924147 104.224436  91.548468  75.869259</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm   104.660786  97.787789  89.397099 109.855373  97.244854  81.411882</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP2       91.805091  94.143886  77.047477  41.715942  28.637258  72.633752</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP3       86.095383  83.787737  65.423756  66.853246  52.876098  63.249655</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP5       91.233060  89.863444  70.488624  59.322618  45.754619  62.272700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1   94.060895 105.018174 112.614812  65.670005  62.700035 123.680697</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2   74.598636  86.754148  95.480564  65.062113  59.866391 121.891168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3   87.657601  99.752032 105.651539  57.317149  54.759920 122.439307</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS28     115.337627 119.198413  97.749574  20.402864  11.377573  73.511423</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS29     109.849105 115.388222  98.745143  16.466337   6.925655  82.277720</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even1    116.581357 122.499177 107.368259  13.155653  11.318760  84.984535</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    118.502823 129.826268 126.084603  35.446911  43.195544 122.060544</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    127.153538 137.763009 130.898249  30.421534  41.256303 119.572084</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3        0.000000  12.566740  47.398941 114.925322 107.052130 143.045485</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       12.566740   0.000000  42.937266 120.705679 112.712463 140.275903</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1       47.398941  42.937266   0.000000 105.797926  98.658362 106.896200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw  114.925322 120.705679 105.797926   0.000000   9.433174  94.254211</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw  107.052130 112.712463  98.658362   9.433174   0.000000  92.792014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  143.045485 140.275903 106.896200  94.254211  92.792014   0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr  107.542616 104.119675  71.694644  85.475883  81.112435  36.628724</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr  120.334717 118.012117  85.931018  79.496485  76.490607  23.071697</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong  120.587512 119.851775  92.116669  64.290024  61.761603  33.225179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong  124.369003 124.245187 100.171607  60.635103  58.541665  42.242552</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M 103.264758 101.858207  75.924567  67.504288  62.862305  45.187420</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M  96.878019  95.686781  70.555809  65.427789  60.238540  50.884142</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm    98.757413  95.784533  89.046535  93.783502  87.523754  84.819775</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm   100.846651  97.069775  88.281674  98.167893  92.002328  81.518748</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm   102.381204  98.076457  90.677184 104.228649  98.027182  85.705645</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2       91.858857  95.173211  77.266296  34.407956  27.704515  76.152457</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3       88.209114  89.036058  68.578444  52.066274  45.633910  65.623143</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5       92.021727  93.626193  74.567545  45.688242  39.522781  67.524712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1   96.491665 103.050518 109.286491  59.013471  53.737034 126.670368</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2   82.431110  90.047300  97.717527  58.747571  52.577055 128.133995</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3   92.000020  99.713374 105.083518  53.270256  48.003011 128.101385</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28     107.628154 111.992289  92.613782  18.373769  15.091687  78.810276</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29     105.520008 110.335874  92.892202  15.252512  10.210063  83.570641</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1    118.609179 123.713458 109.186815  12.807946  14.611392  89.802342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    123.678490 131.592986 127.308255  35.787765  37.201628 126.759942</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    131.852130 139.492859 132.402175  33.867303  37.543174 124.421658</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             M11Plmr    F21Plmr    M31Tong    M11Tong   LMEpi24M   SLEpi20M</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3      112.405492 121.477856 119.957206 125.383350 107.328226  98.326612</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      104.133008 115.100296 116.298408 123.100118 102.271572  93.319790</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1       69.679980  81.604864  86.839866  97.709457  74.111667  65.875479</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw   89.807203  81.386326  65.575505  61.797197  72.896405  72.557417</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw   76.375025  69.147880  53.693992  51.381862  59.405239  58.358190</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr   32.691497  20.853155  30.417969  38.022420  38.054618  46.078436</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr    0.000000  15.490720  29.495003  41.893377  21.148955  23.157189</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr   15.490720   0.000000  18.218273  31.037321  19.619917  26.156302</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong   29.495003  18.218273   0.000000  15.267181  17.123340  24.159549</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong   41.893377  31.037321  15.267181   0.000000  25.707782  32.693976</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M  21.148955  19.619917  17.123340  25.707782   0.000000   9.076867</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M  23.157189  26.156302  24.159549  32.693976   9.076867   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm    62.071444  66.474587  62.934158  59.600978  50.747374  48.932422</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm    57.641266  63.283314  62.471779  60.531229  49.479869  48.308474</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm    62.942980  69.101968  68.726668  66.748508  55.651821  54.245874</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP2       58.749178  56.290749  43.622362  43.548704  41.107813  37.853270</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP3       41.970551  44.441669  37.539990  40.137788  25.940046  19.867208</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP5       44.600507  44.861625  34.456982  35.544611  26.488257  22.782321</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1  110.085643 108.406551  94.417921  88.119546  91.065420  87.115986</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2  104.264652 104.447629  92.361987  89.543058  87.293918  81.600818</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3  107.992757 106.373347  92.605725  88.233943  89.706912  85.141196</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS28      70.920024  62.579594  47.832735  47.197008  55.570362  55.455058</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS29      77.122719  70.116447  54.773488  52.318357  59.832110  58.945086</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even1     82.297970  74.230877  57.584706  52.511759  64.215906  63.857635</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    116.214434 110.004797  93.875681  88.262992  97.644360  95.510318</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    116.489492 109.035092  92.508463  86.631298  98.128701  96.859544</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3      107.542616 120.334717 120.587512 124.369003 103.264758  96.878019</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      104.119675 118.012117 119.851775 124.245187 101.858207  95.686781</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1       71.694644  85.931018  92.116669 100.171607  75.924567  70.555809</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw   85.475883  79.496485  64.290024  60.635103  67.504288  65.427789</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw   81.112435  76.490607  61.761603  58.541665  62.862305  60.238540</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr   36.628724  23.071697  33.225179  42.242552  45.187420  50.884142</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr    0.000000  17.068070  31.046340  42.284546  23.060019  25.310964</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr   17.068070   0.000000  18.967724  31.724276  24.194020  29.010232</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong   31.046340  18.967724   0.000000  13.931888  20.190108  25.195410</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong   42.284546  31.724276  13.931888   0.000000  25.770559  30.306256</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M  23.060019  24.194020  20.190108  25.770559   0.000000   6.583187</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M  25.310964  29.010232  25.195410  30.306256   6.583187   0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm    62.497885  69.032426  64.159284  60.429544  49.865260  48.554990</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm    59.154980  66.471459  63.504759  60.821326  48.951435  48.146623</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm    63.447226  71.298370  69.114783  66.580542  54.575138  53.814026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2       57.195393  56.284934  44.321768  43.812131  38.861046  35.052199</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3       41.457077  43.911956  35.454511  37.481101  23.832565  18.657414</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5       46.551729  46.839374  35.748506  35.830950  26.999896  22.799762</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1  107.352541 108.088961  93.666358  86.684869  86.457870  82.469085</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2  105.581963 107.932820  95.295568  90.589148  86.466989  81.609673</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3  108.046500 108.853591  94.952709  89.335784  87.996318  83.606639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28      68.270128  62.735600  48.828223  47.630171  51.522491  49.532268</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29      71.769072  67.011192  52.891494  50.909768  54.189853  51.790451</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1     82.741629  75.914142  59.055625  53.134234  63.099287  61.746125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    116.533376 111.747887  95.343500  88.939770  96.427094  93.814865</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    117.161579 110.925211  94.197313  87.702861  97.396513  95.361515</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              AQC1cm     AQC4cm     AQC7cm        NP2        NP3        NP5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3      100.027317 103.916736 104.660786  91.805091  86.095383  91.233060</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       95.470789  97.388583  97.787789  94.143886  83.787737  89.863444</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1       88.067921  86.924147  89.397099  77.047477  65.423756  70.488624</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw   98.024566 104.224436 109.855373  41.715942  66.853246  59.322618</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw   85.785474  91.548468  97.244854  28.637258  52.876098  45.754619</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr   79.958864  75.869259  81.411882  72.633752  63.249655  62.272700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr   62.071444  57.641266  62.942980  58.749178  41.970551  44.600507</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr   66.474587  63.283314  69.101968  56.290749  44.441669  44.861625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong   62.934158  62.471779  68.726668  43.622362  37.539990  34.456982</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong   59.600978  60.531229  66.748508  43.548704  40.137788  35.544611</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M  50.747374  49.479869  55.651821  41.107813  25.940046  26.488257</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M  48.932422  48.308474  54.245874  37.853270  19.867208  22.782321</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm     0.000000  10.686274  13.328996  63.292153  40.703158  47.102478</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm    10.686274   0.000000   6.394368  68.347740  43.935278  50.519966</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm    13.328996   6.394368   0.000000  73.969852  49.528265  56.375924</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP2       63.292153  68.347740  73.969852   0.000000  26.924239  19.621912</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP3       40.703158  43.935278  49.528265  26.924239   0.000000   9.154172</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP5       47.102478  50.519966  56.375924  19.621912   9.154172   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1   78.764742  88.976349  91.626579  59.358634  69.318842  68.080553</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2   80.562882  89.815774  92.683574  53.606434  63.688670  63.427125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3   85.492337  94.994873  98.266610  53.601454  67.989921  65.831994</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS28      88.377175  93.009396  98.981647  32.125881  53.838286  46.519507</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS29      85.856075  91.668602  97.371015  28.626948  52.993485  45.439464</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even1     86.138934  92.570844  98.102087  33.394841  57.275268  50.006688</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    107.680059 116.261697 120.762866  60.576842  83.608165  78.067728</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    112.058212 120.191140 125.012071  62.679349  86.886218  80.473256</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3       98.757413 100.846651 102.381204  91.858857  88.209114  92.021727</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       95.784533  97.069775  98.076457  95.173211  89.036058  93.626193</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1       89.046535  88.281674  90.677184  77.266296  68.578444  74.567545</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw   93.783502  98.167893 104.228649  34.407956  52.066274  45.688242</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw   87.523754  92.002328  98.027182  27.704515  45.633910  39.522781</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr   84.819775  81.518748  85.705645  76.152457  65.623143  67.524712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr   62.497885  59.154980  63.447226  57.195393  41.457077  46.551729</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr   69.032426  66.471459  71.298370  56.284934  43.911956  46.839374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong   64.159284  63.504759  69.114783  44.321768  35.454511  35.748506</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong   60.429544  60.821326  66.580542  43.812131  37.481101  35.830950</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M  49.865260  48.951435  54.575138  38.861046  23.832565  26.999896</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M  48.554990  48.146623  53.814026  35.052199  18.657414  22.799762</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm     0.000000   7.727167  11.746029  65.545806  51.517114  53.987090</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm     7.727167   0.000000   6.277798  68.998565  53.612071  56.744985</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm    11.746029   6.277798   0.000000  75.044837  59.569817  62.838042</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2       65.545806  68.998565  75.044837   0.000000  19.076306  13.542805</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3       51.517114  53.612071  59.569817  19.076306   0.000000   7.408093</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5       53.987090  56.744985  62.838042  13.542805   7.408093   0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1   78.194314  85.414575  89.568644  57.752137  67.065746  62.620161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2   81.782387  88.523123  92.726855  54.940818  64.750642  61.235325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3   85.851598  92.671746  97.156510  55.006854  66.842122  62.368241</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28      83.645150  87.042786  93.222525  22.163170  37.493453  32.227287</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29      83.244761  87.069032  93.207159  20.770290  38.229239  32.372570</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1     86.737895  91.262369  97.326059  33.445032  49.456036  42.539507</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    109.141082 115.214463 120.696292  60.971593  78.282260  71.814845</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    113.610871 119.361411 125.029857  63.270305  80.883468  74.157961</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             TRRsed1    TRRsed2    TRRsed3       TS28       TS29      Even1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3       94.060895  74.598636  87.657601 115.337627 109.849105 116.581357</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      105.018174  86.754148  99.752032 119.198413 115.388222 122.499177</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      112.614812  95.480564 105.651539  97.749574  98.745143 107.368259</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw   65.670005  65.062113  57.317149  20.402864  16.466337  13.155653</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw   62.700035  59.866391  54.759920  11.377573   6.925655  11.318760</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  123.680697 121.891168 122.439307  73.511423  82.277720  84.984535</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr  110.085643 104.264652 107.992757  70.920024  77.122719  82.297970</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr  108.406551 104.447629 106.373347  62.579594  70.116447  74.230877</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong   94.417921  92.361987  92.605725  47.832735  54.773488  57.584706</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong   88.119546  89.543058  88.233943  47.197008  52.318357  52.511759</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M  91.065420  87.293918  89.706912  55.570362  59.832110  64.215906</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M  87.115986  81.600818  85.141196  55.455058  58.945086  63.857635</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm    78.764742  80.562882  85.492337  88.377175  85.856075  86.138934</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm    88.976349  89.815774  94.994873  93.009396  91.668602  92.570844</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm    91.626579  92.683574  98.266610  98.981647  97.371015  98.102087</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP2       59.358634  53.606434  53.601454  32.125881  28.626948  33.394841</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP3       69.318842  63.688670  67.989921  53.838286  52.993485  57.275268</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP5       68.080553  63.427125  65.831994  46.519507  45.439464  50.006688</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1    0.000000  22.332432  16.815439  73.469276  62.009048  58.534229</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2   22.332432   0.000000  13.513129  69.982069  58.956542  59.574712</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3   16.815439  13.513129   0.000000  65.700425  53.861602  52.489609</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS28      73.469276  69.982069  65.700425   0.000000  12.764426  19.575614</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS29      62.009048  58.956542  53.861602  12.764426   0.000000  14.316510</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even1     58.534229  59.574712  52.489609  19.575614  14.316510   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even2     46.642797  49.984610  38.010543  53.302672  42.876869  37.650974</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even3     56.293931  60.199818  48.444052  50.014266  41.328700  34.940860</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3       96.491665  82.431110  92.000020 107.628154 105.520008 118.609179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      103.050518  90.047300  99.713374 111.992289 110.335874 123.713458</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      109.286491  97.717527 105.083518  92.613782  92.892202 109.186815</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw   59.013471  58.747571  53.270256  18.373769  15.252512  12.807946</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw   53.737034  52.577055  48.003011  15.091687  10.210063  14.611392</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  126.670368 128.133995 128.101385  78.810276  83.570641  89.802342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr  107.352541 105.581963 108.046500  68.270128  71.769072  82.741629</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr  108.088961 107.932820 108.853591  62.735600  67.011192  75.914142</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong   93.666358  95.295568  94.952709  48.828223  52.891494  59.055625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong   86.684869  90.589148  89.335784  47.630171  50.909768  53.134234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M  86.457870  86.466989  87.996318  51.522491  54.189853  63.099287</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M  82.469085  81.609673  83.606639  49.532268  51.790451  61.746125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm    78.194314  81.782387  85.851598  83.645150  83.244761  86.737895</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm    85.414575  88.523123  92.671746  87.042786  87.069032  91.262369</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm    89.568644  92.726855  97.156510  93.222525  93.207159  97.326059</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2       57.752137  54.940818  55.006854  22.163170  20.770290  33.445032</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3       67.065746  64.750642  66.842122  37.493453  38.229239  49.456036</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5       62.620161  61.235325  62.368241  32.227287  32.372570  42.539507</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1    0.000000  17.392499  14.168315  64.671528  59.795719  55.959994</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2   17.392499   0.000000  10.277864  63.263661  58.096065  59.076410</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3   14.168315  10.277864   0.000000  60.149048  54.846728  53.187152</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28      64.671528  63.263661  60.149048   0.000000   5.785944  20.373004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29      59.795719  58.096065  54.846728   5.785944   0.000000  17.982134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1     55.959994  59.076410  53.187152  20.373004  17.982134   0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2     46.587890  49.751440  40.294823  51.704742  47.089115  37.251532</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3     56.091192  59.609203  50.263422  50.805383  46.946888  35.272127</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Even2      Even3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3      118.502823 127.153538</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      129.826268 137.763009</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      126.084603 130.898249</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw   35.446911  30.421534</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw   43.195544  41.256303</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  122.060544 119.572084</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr  116.214434 116.489492</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr  110.004797 109.035092</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong   93.875681  92.508463</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong   88.262992  86.631298</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M  97.644360  98.128701</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M  95.510318  96.859544</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm   107.680059 112.058212</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm   116.261697 120.191140</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm   120.762866 125.012071</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP2       60.576842  62.679349</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP3       83.608165  86.886218</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP5       78.067728  80.473256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1   46.642797  56.293931</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2   49.984610  60.199818</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3   38.010543  48.444052</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS28      53.302672  50.014266</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS29      42.876869  41.328700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even1     37.650974  34.940860</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even2      0.000000  12.121407</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even3     12.121407   0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3      123.678490 131.852130</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      131.592986 139.492859</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      127.308255 132.402175</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw   35.787765  33.867303</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw   37.201628  37.543174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  126.759942 124.421658</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr  116.533376 117.161579</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr  111.747887 110.925211</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong   95.343500  94.197313</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong   88.939770  87.702861</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M  96.427094  97.396513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M  93.814865  95.361515</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm   109.141082 113.610871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm   115.214463 119.361411</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm   120.696292 125.029857</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2       60.971593  63.270305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3       78.282260  80.883468</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5       71.814845  74.157961</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1   46.587890  56.091192</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2   49.751440  59.609203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3   40.294823  50.263422</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28      51.704742  50.805383</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29      47.089115  46.946888</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1     37.251532  35.272127</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2      0.000000  11.770926</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3     11.770926   0.000000</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

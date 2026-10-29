@@ -19,7 +19,7 @@ scater::calculateMDS."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.25</span>
       </span>
     </div>
 
@@ -81,10 +81,12 @@ Analysis (PCoA). These functions are wrappers for
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional arguments.</p><ul><li><p><code>FUN</code>: <code>Function</code>. A function that is applied to
-calculate dissimilarity. (Default: <code>getDissimilarity</code>)</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>\item \code{subset.result}<span class="sc">:</span> \code{Logical result}. Specifies whether to</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>subset \code{x} to match the result <span class="cf">if</span> some samples were removed during</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">calculation.</span> (Default<span class="sc">:</span> \code{<span class="cn">TRUE</span>})</span></code></pre><p></p></div></li>
+calculate dissimilarity. (Default: <code>getDissimilarity</code>)</p></li>
+<li><p><code>subset.result</code>: <code>Logical result</code>. Specifies whether to
+subset <code>x</code> to match the result if some samples were removed during
+calculation. (Default: <code>TRUE</code>)</p></li>
+<li><p><code>ntop</code>: <code>Numeric scalar</code>. Number of the most variable
+features used. (Default: <code>Inf</code>)</p></li>
 </ul></dd>
 
 
@@ -112,6 +114,10 @@ used in calculation. (Default: <code>"counts"</code>)</p></dd>
 returns the results, <code>addMDS</code> adds them to <code>reducedDim(x)</code>. The
 difference is that these functions apply microbiome-specific options such
 as <code>getDissimilarity</code> function by default.</p>
+<p>Unlike <code><a href="https://rdrr.io/pkg/scater/man/runMDS.html" class="external-link">scater::calculateMDS</a></code>, which uses the 500 most variable
+features by default, these functions use all features (<code>ntop = Inf</code>).
+With rarefaction, read counts are summed over the features used, so
+filtering features can drop samples whose depth falls below <code>sample</code>.</p>
 <p>See <code><a href="https://rdrr.io/pkg/scater/man/runMDS.html" class="external-link">scater::calculateMDS</a></code> for details.</p>
     </div>
     <div id="see-also">
@@ -135,12 +141,14 @@ as <code>getDissimilarity</code> function by default.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate PCoA with Unifrac and rarefaction. (Note: increase iterations)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addMDS</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"unifrac"</span>, name <span class="op">=</span> <span class="st">"unifrac"</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Pruning tree...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate PCoA with Unifrac and rarefaction. (Note: increase iterations)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addMDS</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"unifrac"</span>, name <span class="op">=</span> <span class="st">"unifrac_rare"</span>, niter <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Pruning tree...</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Pruning tree...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Use only the 500 most variable features</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addMDS</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"bray"</span>, ntop <span class="op">=</span> <span class="fl">500</span>,</span></span>
+<span class="r-in"><span>    name <span class="op">=</span> <span class="st">"MDS_top500"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Visualize results</span></span></span>
 <span class="r-in"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"unifrac"</span>, colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span> <span class="op">+</span></span></span>

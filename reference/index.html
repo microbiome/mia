@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.25</span>
       </span>
     </div>
 
@@ -130,6 +130,10 @@
           <p><code><a href="rarefyAssay.html">rarefyAssay()</a></code> </p>
         </td>
         <td><p>Subsample Counts</p></td>
+      </tr><tr><td>
+          <p><code><a href="applyByModule.html">applyByModule()</a></code> </p>
+        </td>
+        <td><p>Apply a function by feature or sample group</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="datasets">Datasets <a href="#datasets" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
@@ -187,6 +191,10 @@
         </td>
         <td><p>Summarizing microbiome data</p></td>
       </tr><tr><td>
+          <p><code><a href="addQC.html">addQC()</a></code> <code><a href="addQC.html">getQC()</a></code> </p>
+        </td>
+        <td><p>Calculate quality control metrics</p></td>
+      </tr><tr><td>
           <p><code><a href="getDominant.html">getDominant()</a></code> <code><a href="getDominant.html">addDominant()</a></code> </p>
         </td>
         <td><p>Get dominant taxa</p></td>
@@ -195,7 +203,7 @@
         </td>
         <td><p>Determine abundant and rare taxa. Rare taxa can be further classified to conditionally rare and permanently rare.</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="data-loading">Data loading <a href="#data-loading" class="anchor" aria-hidden="true"></a></h2>
+          <h2 id="import-export-convert-data">Import/export/convert data <a href="#import-export-convert-data" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
@@ -230,6 +238,10 @@
           <p><code><a href="convertFromPhyloseq.html">convertToPhyloseq()</a></code> <code><a href="convertFromPhyloseq.html">convertFromPhyloseq()</a></code> </p>
         </td>
         <td><p>Create a <code>TreeSummarizedExperiment</code> object from a phyloseq object</p></td>
+      </tr><tr><td>
+          <p><code><a href="export-methods.html">exportRaw()</a></code> <code><a href="export-methods.html">exportQIIME2()</a></code> <code><a href="export-methods.html">exportMothur()</a></code> </p>
+        </td>
+        <td><p>Exporters to common formats for microbiome data outside of R</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="diversity">Diversity <a href="#diversity" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
@@ -254,6 +266,10 @@
           <p><code><a href="addDivergence.html">addDivergence()</a></code> <code><a href="addDivergence.html">getDivergence()</a></code> </p>
         </td>
         <td><p>Estimate divergence</p></td>
+      </tr><tr><td>
+          <p><code><a href="addDysbiosis.html">addDysbiosis()</a></code> <code><a href="addDysbiosis.html">getDysbiosis()</a></code> </p>
+        </td>
+        <td><p>Calculate dysbiosis scores</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h3 id="ordination">Ordination <a href="#ordination" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p>
@@ -282,6 +298,10 @@
           <p><code><a href="addMDS.html">getMDS()</a></code> <code><a href="addMDS.html">addMDS()</a></code> </p>
         </td>
         <td><p>Perform multi-dimensional scaling (MDS)</p></td>
+      </tr><tr><td>
+          <p><code><a href="addPCA.html">getPCA()</a></code> <code><a href="addPCA.html">addPCA()</a></code> </p>
+        </td>
+        <td><p>Perform principal component analysis (PCA)</p></td>
       </tr><tr><td>
           <p><code><a href="utilization_functions.html">getReducedDimAttribute()</a></code> <code><a href="utilization_functions.html">convertToMAE()</a></code> <code><a href="utilization_functions.html">convertToTreeSE()</a></code> </p>
         </td>

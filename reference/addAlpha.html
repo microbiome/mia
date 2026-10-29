@@ -18,7 +18,7 @@ rarefaction."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.25</span>
       </span>
     </div>
 
@@ -87,12 +87,14 @@ rarefaction.</p>
 depth i.e. the number of counts drawn from each sample.
 (Default: <code>min(colSums2(assay(x, assay.type)))</code>)</p></li>
 <li><p><code>tree.name</code>: <code>Character scalar</code>. Specifies which rowTree
-will be used. ( Faith's index). (Default: <code>"phylo"</code>)</p></li>
+will be used. (Phylogenetic indices: Allen, Faith, Rao).
+(Default: <code>"phylo"</code>)</p></li>
 <li><p><code>node.label</code>: <code>Character vector</code> or <code>NULL</code> Specifies
 the links between rows and node labels of phylogeny tree specified
 by <code>tree.name</code>. If a certain row is not linked with the tree, missing
 instance should be noted as NA. When <code>NULL</code>, all the rownames should
-be found from the tree. (Faith's index). (Default: <code>NULL</code>)</p></li>
+be found from the tree. (Phylogenetic indices: Allen, Faith, Rao).
+(Default: <code>NULL</code>)</p></li>
 <li><p><code>only.tips</code>: (Faith's index). <code>Logical scalar</code>. Specifies
 whether to remove internal nodes when Faith's index is calculated.
 When <code>only.tips=TRUE</code>, those rows that are not tips of tree are
@@ -170,7 +172,10 @@ dominance, Shannon index for "information", and Faith phylogenetic index.</p><di
 richness and evenness. Diversity increases, in general, when species richness
 or evenness increase.</p>
 <p>The following diversity indices are available:</p>
-<ul><li><p>'coverage': Number of species needed to cover a given fraction of
+<ul><li><p>'allen': Allen's phylogenetic entropy generalizes the Shannon index
+to phylogenetic trees by weighting branch lengths by descendant relative
+abundances (Allen et al. 2009). Using this index requires a tree.</p></li>
+<li><p>'coverage': Number of species needed to cover a given fraction of
 the ecosystem (50 percent by default). Tune this with the threshold
 argument.</p></li>
 <li><p>'faith': Faith's phylogenetic alpha diversity index measures how
@@ -211,6 +216,9 @@ These are typically right-skewed; to avoid taking log of occasional
 negative skews, we follow Locey &amp; Lennon (2016) and use the log-modulo
 transformation that adds a value of one to each measure of skewness to
 allow logarithmization.</p></li>
+<li><p>'rao': Rao's quadratic entropy calculates the expected phylogenetic
+distance between two randomly chosen individuals from the community
+(Rao 1982). Using this index requires a tree.</p></li>
 <li><p>'shannon': Shannon diversity (entropy).</p></li>
 </ul></div>
 
@@ -296,7 +304,8 @@ evenness indices are provided:</p>
 aspects: richness (the number of observed unique features),
 dominance (Berger-Parker), information (Shannon), and phylogenetics (Faith)
 (Cassol et al., 2025).</p>
-<p>The available evenness indices include the following (all in lowercase):</p><ul><li><p>'camargo': Camargo's evenness (Camargo 1992)</p></li>
+<p>The available evenness indices include the following (all in lowercase):</p><ul><li><p>'camargo': Camargo's evenness (Camargo 1992), computed over the
+observed (nonzero) features; NA for samples with no observed features.</p></li>
 <li><p>'simpson_evenness': Simpson’s evenness is calculated as inverse
 Simpson diversity (1/lambda) divided by
 observed species richness S: (1/lambda)/S.</p></li>
@@ -386,7 +395,8 @@ The biggest argument against rarefaction is the fact that it omits data.</p>
 is done <code>niter</code> times. In each sampling iteration, <code>sample</code> number
 of random samples are drawn, and alpha diversity is calculated for this
 subset. After the iterative process, there are <code>niter</code> number of
-result that are then averaged to get the final result.</p>
+result that are then averaged to get the final result. All requested
+indices are calculated from the same rarefied data in each iteration.</p>
 <p>Refer to Schloss (2024) for more details on rarefaction.</p>
 </div>
 
@@ -411,6 +421,10 @@ Diversity of Planktonic Foraminifera in Deep-Sea Sediments.
 <p>Bulla L. (1994)
 An  index of diversity and its associated diversity measure.
 <em>Oikos</em> 70:167–171</p>
+<p>Allen B, Kon M, Bar-Yam Y (2009)
+A new phylogenetic diversity measure generalizing the Shannon index and its
+application to phyllostomid bats.
+<em>The American Naturalist</em> 174(2):236–243.</p>
 <p>Camargo, JA. (1992)
 New diversity index for assessing structural alterations in aquatic
 communities.
@@ -456,6 +470,9 @@ Species richness estimators: how many species can dance on the head of a pin?
 <p>Pielou, EC. (1966)
 The measurement of diversity in different types of
 biological collections. <em>J Theoretical Biology</em> 13:131–144.</p>
+<p>Rao CR (1982)
+Diversity and dissimilarity coefficients: a unified approach.
+<em>Theoretical Population Biology</em> 21(1):24–43.</p>
 <p>Schloss PD (2024) Rarefaction is currently the best approach to control for
 uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 28;9(2):e0035423. doi: 10.1128/msphere.00354-23</p>
@@ -507,8 +524,9 @@ metrics. <em>Sci Rep</em> 15, 622. doi:10.1038/s41598-024-77864-y</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Shows the estimated observed richness</span></span></span>
 <span class="r-in"><span><span class="va">tse</span><span class="op">$</span><span class="va">observed_richness</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 3519 3873 2907  750  577 1323 2239 1739  552 1597  781  893 2289 2047 2278</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16]  970 1142  860 2995 2119 2445  828  718  874  688  670</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 3518.0 3856.8 2861.0  746.9  597.4 1329.9 2285.0 1782.0  537.7 1587.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11]  782.1  896.5 2265.8 2032.2 2240.5  969.3 1167.5  880.1 2995.0 2113.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] 2449.9  854.3  710.6  889.4  721.4  653.2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># One can also calculate the indices and get the results without adding</span></span></span>
 <span class="r-in"><span><span class="co"># them to colData</span></span></span>

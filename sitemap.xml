@@ -13,11 +13,15 @@
 <url><loc>https://microbiome.github.io/mia/reference/addAlpha.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/addCluster.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/addDivergence.html</loc></url>
+<url><loc>https://microbiome.github.io/mia/reference/addDysbiosis.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/addLDA.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/addMDS.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/addNMF.html</loc></url>
+<url><loc>https://microbiome.github.io/mia/reference/addPCA.html</loc></url>
+<url><loc>https://microbiome.github.io/mia/reference/addQC.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/agglomerate-methods.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/agglomerateByPrevalence.html</loc></url>
+<url><loc>https://microbiome.github.io/mia/reference/applyByModule.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/calculateDMN.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/convertFromDADA2.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/convertFromPhyloseq.html</loc></url>
@@ -25,6 +29,7 @@
 <url><loc>https://microbiome.github.io/mia/reference/dmn_se.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/enterotype.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/esophagus.html</loc></url>
+<url><loc>https://microbiome.github.io/mia/reference/export-methods.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/filterRPCAInput.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/getAbundant.html</loc></url>
 <url><loc>https://microbiome.github.io/mia/reference/getCrossAssociation.html</loc></url>
