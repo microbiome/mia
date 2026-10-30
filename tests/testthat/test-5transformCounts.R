@@ -110,19 +110,21 @@ test_that("transformAssay", {
             as.matrix(assays(tmp_log10)$log10), log10(cnts + 1),
             check.attributes = FALSE)
 
-        ########################### LOG.DECOSTAND ##############################
+        ########################### LOG_ZERO_REPLACE ###########################
         # Calculates Anderson's log transformation from vegan::decostand
-        tmp_dec <- mia::transformAssay(tse, method = "log.decostand")
-        ass_dec <- assays(tmp_dec)$log.decostand
+        tmp_dec <- mia::transformAssay(tse, method = "log_zero_replace")
+        ass_dec <- assays(tmp_dec)$log_zero_replace
         expect_equal(
             as.matrix(ass_dec),
             as.matrix(vegan::decostand(cnts, method = "log", MARGIN = 2)),
             check.attributes = FALSE)
 
-        # Alias log_decostand gives identical result
-        tmp_dec2 <- mia::transformAssay(tse, method = "log_decostand")
+        # logbase is passed to vegan::decostand
+        tmp_dec <- mia::transformAssay(
+            tse, method = "log_zero_replace", logbase = 10)
         expect_equal(
-            assays(tmp_dec)$log.decostand, assays(tmp_dec2)$log_decostand,
+            as.matrix(assays(tmp_dec)$log_zero_replace),
+            ifelse(cnts > 0, log10(cnts) + 1, 0),
             check.attributes = FALSE)
 
         ############################ CSS ######################################

@@ -78,9 +78,11 @@
 #' \itemize{
 #'
 #' \item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger',
-#' 'log.decostand', 'normalize', 'pa', 'rank', 'rclr', 'relabundance',
+#' 'log_zero_replace', 'normalize', 'pa', 'rank', 'rclr', 'relabundance',
 #' 'rrank', 'standardize', 'total': please refer to
-#' \code{\link[vegan:decostand]{decostand}} for details.
+#' \code{\link[vegan:decostand]{decostand}} for details. 'log_zero_replace'
+#' corresponds to \code{method = "log"} in
+#' \code{\link[vegan:decostand]{decostand}}.
 #'
 #' \item 'philr': please refer to \code{\link[philr:philr]{philr}} for details.
 #'
@@ -293,7 +295,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
             "alr", "binning", "chi.square", "clr", "css", "cutoff",
             "difference", "-",
             "division", "/", "frequency", "hellinger", "invnorm", "log",
-            "log.decostand", "log_decostand", "log10", "log2", "max",
+            "log10", "log2", "log_zero_replace", "max",
             "normalize", "pa", "philr", "pseudocount", "range", "rank", "rclr",
             "relabundance", "rrank", "standardize", "total", "z"),
         MARGIN = "samples",
@@ -427,8 +429,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     }
     # Adjust method if mia-specific alias was used
     method <- ifelse(method == "relabundance", "total", method)
-    method <- ifelse(
-        method %in% c("log.decostand", "log_decostand"), "log", method)
+    method <- ifelse(method == "log_zero_replace", "log", method)
     if (method == "z") {
         .Deprecated(old="z", new="standardize")
     }
