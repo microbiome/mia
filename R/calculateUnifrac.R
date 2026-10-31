@@ -1,6 +1,7 @@
 #' @importFrom ape drop.tip
 .get_unifrac <- function(
-        x, tree, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
+        x, tree, weighted = FALSE, normalized = !weighted, node.label = nodeLab,
+        nodeLab = NULL, ...){
     # Transpose the matrix so that the orientation is the same as in other
     # dissimilatity methods
     x <- t(x)
@@ -15,6 +16,9 @@
     # input check
     if(!.is_a_bool(weighted)){
         stop("'weighted' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if(!.is_a_bool(normalized)){
+        stop("'normalized' must be TRUE or FALSE.", call. = FALSE)
     }
     if(is.null(colnames(x)) || is.null(rownames(x))){
         stop("colnames and rownames must not be NULL", call. = FALSE)
@@ -71,7 +75,7 @@
     x <- .merge_assay_by_rows(x, node.label, ...)
 
     # Calculate unifrac with C++ algorithm
-    res <- .unifrac_cpp(x, tree, weighted)
+    res <- .unifrac_cpp(x, tree, weighted, normalized)
     return(res)
 }
 

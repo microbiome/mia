@@ -51,6 +51,17 @@
 #'   unweighted-Unifrac dissimilarity is calculated for all pairs of samples.
 #'   (Default: \code{FALSE})
 #'
+#'   \item \code{normalized}: (Unifrac) \code{Logical scalar}. Should
+#'   Unifrac be normalized to the range between 0 and 1? Normalized values
+#'   are comparable across trees. Unweighted-Unifrac is normalized by
+#'   dividing the unique branch length by the total branch length of both
+#'   samples; when unnormalized, it is the unique branch length. Weighted-Unifrac
+#'   is normalized by dividing by the sum of root-to-tip distances weighted by
+#'   the relative abundances of both samples; when unnormalized, it is in
+#'   branch-length units. The default keeps the conventional definitions:
+#'   normalized unweighted-Unifrac and unnormalized weighted-Unifrac.
+#'   (Default: \code{!weighted})
+#'
 #'   \item \code{node.label} (Unifrac) \code{character vector}. Used only if
 #'   \code{x} is a matrix. Specifies links between rows/columns and tips of
 #'   \code{tree}. All the node labs must be present in \code{tree}. For the
@@ -178,6 +189,14 @@
 #'
 #' tse <- addDissimilarity(tse, method = "unifrac", weighted = TRUE)
 #' metadata(tse)[["unifrac"]]
+#'
+#' # Normalized weighted Unifrac is bounded between 0 and 1. Unlike the
+#' # unnormalized default, it does not depend on the scale of the tree, which
+#' # can enhance comparability between data sets.
+#' tse <- addDissimilarity(
+#'     tse, method = "unifrac", weighted = TRUE, normalized = TRUE,
+#'     name = "unifrac_normalized")
+#' metadata(tse)[["unifrac_normalized"]]
 #'
 #' ### Bray dissimilarity
 #'

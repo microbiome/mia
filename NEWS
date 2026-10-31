@@ -215,3 +215,5 @@ Changes in version 1.21.x
 + Added exporters (1.21.25, 2026-10-28)
 + Fixed applyByModule failing on parallel workers in separate sessions, e.g. on Windows (1.21.26, 2026-10-29)
 + transformAssay: method = "log" now computes natural log consistently with "log2" and "log10"; the previous vegan::decostand log transformation is available as method = "log_zero_replace" (1.21.27, 2026-10-30)
++ Added normalized option for weighted and unweighted Unifrac
+  (1.21.28, 2026-10-31)
