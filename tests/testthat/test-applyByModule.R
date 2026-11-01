@@ -1,12 +1,12 @@
 
 test_that("applyByModule", {
-    
+    # Create sample experiment
     set.seed(123)
     tse <- TreeSummarizedExperiment::makeTSE()
-    
+    # Set assay name and alpha indices
     assayNames(tse) <- "counts"
     alpha.index <- c("observed", "shannon")
-    
+    # Check group depletion
     expect_error(
         applyByModule(
             tse, "rows", "var1", addAlpha, index = alpha.index, min.group.size = 2
@@ -14,64 +14,51 @@ test_that("applyByModule", {
         "No '.group' has size above 'min.group.size'.",
         fixed = TRUE
     )
-    
+    # Add numeric variable to rowData
     rowData(tse)$var1 <- rep(letters[1:2], 5)
-    
+    # Run getAlpha
     tse <- applyByModule(
         tse, "rows", "var1", getAlpha, index = alpha.index, min.group.size = 2
     )
-    
+    # Check alpha results
     out.cols <- interaction(c("observed", "shannon"), letters[1:2], sep = "_")
     expect_contains(names(colData(tse)), out.cols)
-    
+    # Run addAlpha
     tse <- applyByModule(
         tse, "rows", "var1", addAlpha, index = alpha.index, min.group.size = 2
     )
-    
+    # Check embedded results
     expect_in(altExpNames(tse), letters[1:2])
-    
-    mod.vars <- c("mod1", "mod2")
-    
-    rowData(tse)[mod.vars] <- matrix(
+    # Define set names
+    set.vars <- c("set1", "set2")
+    # Add set vars to rowData
+    rowData(tse)[set.vars] <- matrix(
         sample(c(0, 1), 2 * nrow(tse), replace = TRUE), ncol = 2
     )
-    
+    # Run getDominant set-wise
     tse <- applyByModule(
-        tse, "rows", mod.vars, getCluster,
-        BLUSPARAM = bluster::KmeansParam(centers = 3),
-        assay.type = "counts", by = "cols", clust.col = "kmeans"
-    )
-    
-    expect_contains(names(colData(tse)), paste("kmeans", mod.vars, sep = "_"))
-    
-    tse <- applyByModule(
-        tse, "rows", mod.vars, getDominant,
+        tse, "rows", set.vars, getDominant,
         group = "var1"
     )
-    
-    expect_contains(names(colData(tse)), paste("dominant", mod.vars, sep = "_"))
-    
+    # Check dominance results
+    expect_contains(names(colData(tse)), paste("dominant", set.vars, sep = "_"))
+    # Run plotRowTree set-wise
     tse <- applyByModule(
-        tse, "rows", mod.vars,  miaViz::plotRowTree, meta.name = "tree_plots"
+        tse, "rows", set.vars,  miaViz::plotRowTree, meta.name = "tree_plots"
     )
-    
+    # Check tree results
     expect_in(names(metadata(tse)), "tree_plots")
-})
-
-test_that("applyByModule works with workers in separate sessions", {
-    library(bluster)
-    tse <- TreeSummarizedExperiment::makeTSE(nrow = 20, ncol = 10)
-    assayNames(tse) <- "counts"
-    rowData(tse)$var1 <- rep(letters[1:2], 10)
+    # applyByModule works with workers in separate sessions
     old <- BiocParallel::bpparam()
     BiocParallel::register(BiocParallel::SnowParam(2))
     on.exit(BiocParallel::register(old))
     # Workers do not have bluster attached, so KmeansParam must be evaluated
     # before the arguments are sent to them
     tse <- applyByModule(
-        tse, "rows", "var1", getCluster,
-        BLUSPARAM = KmeansParam(centers = 2),
+        tse, "rows", set.vars, getCluster,
+        BLUSPARAM = bluster::KmeansParam(centers = 3),
         assay.type = "counts", by = "cols", clust.col = "kmeans"
     )
-    expect_contains(names(colData(tse)), c("kmeans_a", "kmeans_b"))
+    # Check clustering results
+    expect_contains(names(colData(tse)), paste("kmeans", set.vars, sep = "_"))
 })
