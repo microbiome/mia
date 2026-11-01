@@ -1,18 +1,18 @@
 #' Apply a function by feature or sample group
 #'
-#' @name applyByModule
+#' @name applyBySet
 #' 
 #' @description
-#' applyByModule provides a convenient method to apply the same operation on
+#' applyBySet provides a convenient method to apply the same operation on
 #' multiple, possibly overlapping groups of features or samples, representing
-#' for example functional microbial modules or sample categories, respectively.
+#' for example functional microbial sets or sample categories, respectively.
 #' 
 #' @param x A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
 #' @param .by \code{Character scalar}. Whether \code{.group} information pertains
 #'   the \code{"rows"} or \code{"cols"} of \code{x}.
 #'
-#' @param .group \code{Character vector}. Names of the groups or modules by which
+#' @param .group \code{Character vector}. Names of the groups or sets by which
 #'   \code{FUN} is applied.
 #'
 #' @param FUN \code{Function scalar}. A function which takes \code{x} as the
@@ -55,7 +55,7 @@
 #' tse <- Tengeler2020
 #'
 #' # Compute alpha diversity indices for each Order
-#' tse <- applyByModule(
+#' tse <- applyBySet(
 #'     tse,
 #'     .by = "rows",
 #'     .group = "Order",
@@ -68,7 +68,7 @@
 #' names(colData(tse))
 #' 
 #' # Compute beta diversity measures for each Order
-#' tse <- applyByModule(
+#' tse <- applyBySet(
 #'     tse,
 #'     .by = "rows",
 #'     .group = "Order",
@@ -81,7 +81,7 @@
 #' reducedDimNames(tse)
 #' 
 #' # Transform assay for each Order, storing results as altExps
-#' tse <- applyByModule(
+#' tse <- applyBySet(
 #'     tse,
 #'     .by = "rows",
 #'     .group = "Order",
@@ -93,12 +93,12 @@
 #' # View altExp names for newly transformed assays
 #' altExpNames(tse)
 #' 
-#' # Create two example microbial modules
-#' rowData(tse)$Mod1 <- rowData(tse)$Family == "Ruminococcaceae"
-#' rowData(tse)$Mod2 <- rowData(tse)$Order == "Clostridiales"
+#' # Create two example microbial sets
+#' rowData(tse)$Set1 <- rowData(tse)$Family == "Ruminococcaceae"
+#' rowData(tse)$Set2 <- rowData(tse)$Order == "Clostridiales"
 #' 
-#' # Find sample-wise most dominant genus for each module
-#' tse <- applyByModule(
+#' # Find sample-wise most dominant genus for each set
+#' tse <- applyBySet(
 #'     tse,
 #'     .by = "rows",
 #'     .group = c("Mod1", "Mod2"),
@@ -109,11 +109,11 @@
 #' # View colData names for dominance results
 #' names(colData(tse))
 #' 
-#' # Cluster samples by features for each module
-#' tse <- applyByModule(
+#' # Cluster samples by features for each set
+#' tse <- applyBySet(
 #'     tse,
 #'     .by = "rows",
-#'     .group = c("Mod1", "Mod2"),
+#'     .group = c("Set1", "Set2"),
 #'     FUN = getCluster,
 #'     assay.type = "counts",
 #'     by = "cols",
@@ -123,24 +123,24 @@
 #' # View colData names for clustering results
 #' names(colData(tse))
 #' 
-#' # Plot tree for each module, specifying metadata name
-#' tse <- applyByModule(
+#' # Plot tree for each set, specifying metadata name
+#' tse <- applyBySet(
 #'     tse,
 #'     .by = "rows",
-#'     .group = c("Mod1", "Mod2"),
+#'     .group = c("Set1", "Set2"),
 #'     FUN = plotRowTree,
 #'     edge.colour.by = "Genus",
 #'     meta.name = "tree_plots"
 #' )
 #' 
-#' # Visualize module-wise abundance plots
+#' # Visualize set-wise abundance plots
 #' metadata(tse)$tree_plots |>
 #'     wrap_plots()
 NULL
 
 #' @export
-#' @rdname applyByModule
-setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
+#' @rdname applyBySet
+setMethod("applyBySet", "SummarizedExperiment", function(x, .by, .group, FUN,
     min.group.size = NULL, meta.name = "mod_res", ...){
     if (length(.by) == 0L || !.by %in% c("rows", "cols")) {
         stop("'.by' must be either 'rows' or 'cols'.", call. = FALSE)
@@ -157,7 +157,7 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
         substitute() |>
         deparse()
     # Calculate group-wise results for function
-    calc <- .applyByModule_calculate(
+    calc <- .applyBySet_calculate(
         x = x,
         .by = .by,
         .group = .group,
@@ -167,7 +167,7 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
         ...
     )
     # Store results in the appropriate slot
-    x <- .applyByModule_store(
+    x <- .applyBySet_store(
         x = x,
         res = calc$res,
         .by = .by,
@@ -182,7 +182,7 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
 })
 
 #' @importFrom BiocParallel bplapply
-.applyByModule_calculate <- function(
+.applyBySet_calculate <- function(
     x, .by, .group, FUN, FUN.name, min.group.size, ...) {
     if (!(is.null(min.group.size) ||
         (is.numeric(min.group.size) && length(min.group.size) == 1L))) {
@@ -231,7 +231,7 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
     return(list(res = res, group = .group))
 }
 
-.applyByModule_store <- function(
+.applyBySet_store <- function(
     x, res, .by, .group, FUN, FUN.name, meta.name, ...) {
     if (!.is_a_string(meta.name)) {
         stop("'meta.name' must be a non-empty single character value.",
@@ -243,22 +243,22 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
     
     if (.by == "rows" && inherits(res[[1L]], "SummarizedExperiment")) {
         # Store add* results in altExp
-        altExps(x) <- .applyByModule_update_slot(altExps(x), res)
+        altExps(x) <- .applyBySet_update_slot(altExps(x), res)
     } else if (FUN.name == "getAlpha") {
         # Store alpha results in colData
-        x <- .applyByModule_store_alpha(x, res, .group)
+        x <- .applyBySet_store_alpha(x, res, .group)
     } else if (FUN.name %in% c("getDivergence", "getDominant")) {
         # Store divergence and dominance results in colData
-        x <- .applyByModule_store_div_dom(x, res, .group, FUN.name, kwargs)
+        x <- .applyBySet_store_div_dom(x, res, .group, FUN.name, kwargs)
     } else if (FUN.name %in% c(
         "getMDS", "getNMDS", "getCCA", "getRDA", "getLDA",
         "getNMF", "getDPCoA", "calculatePCA"
     )) {
         # Store beta diversity results in reducedDims
-        reducedDims(x) <- .applyByModule_update_slot(reducedDims(x), res)
+        reducedDims(x) <- .applyBySet_update_slot(reducedDims(x), res)
     } else if (FUN.name == "getCluster") {
         # Store clustering results in colData
-        x <- .applyByModule_store_cluster(x, res, .group, kwargs)
+        x <- .applyBySet_store_cluster(x, res, .group, kwargs)
     }else{
         # Store other results in meta data
         metadata(x)[[meta.name]] <- res
@@ -267,7 +267,7 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
 }
 
 #' @importFrom dplyr bind_cols
-.applyByModule_store_alpha <- function(x, res, .group) {
+.applyBySet_store_alpha <- function(x, res, .group) {
     # Find number of indices
     num_index <- ncol(res[[1L]])
     # Replicate index names
@@ -279,13 +279,13 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
     # Prepend group names with metric labels
     colnames(res_df) <- paste0(colnames(res_df), "_", col_labs)
     # Update side information with new results
-    colData(x) <- .applyByModule_update_slot(colData(x), res_df)
+    colData(x) <- .applyBySet_update_slot(colData(x), res_df)
 
     return(x)
 }
 
 #' @importFrom dplyr bind_cols
-.applyByModule_store_div_dom <- function(x, res, .group, FUN.name, kwargs) {
+.applyBySet_store_div_dom <- function(x, res, .group, FUN.name, kwargs) {
     # Retrieve result column label
     if ("name" %in% names(kwargs)) {
         lab <- kwargs$name
@@ -302,13 +302,13 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
     # Prepend group names with metric label
     colnames(res_df) <- paste0(lab, "_", .group)
     # Update side information with new results
-    colData(x) <- .applyByModule_update_slot(colData(x), res_df)
+    colData(x) <- .applyBySet_update_slot(colData(x), res_df)
 
     return(x)
 }
 
 #' @importFrom dplyr bind_cols
-.applyByModule_store_cluster <- function(x, res, .group, kwargs) {
+.applyBySet_store_cluster <- function(x, res, .group, kwargs) {
     # Bind resulting data frames
     res_df <- res |>
         lapply(as.data.frame) |>
@@ -320,15 +320,15 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
     colnames(res_df) <- paste0(clust_col, "_", .group)
     # Update side information with new results
     if (clust_by == "rows") {
-        rowData(x) <- .applyByModule_update_slot(rowData(x), res_df)
+        rowData(x) <- .applyBySet_update_slot(rowData(x), res_df)
     } else {
-        colData(x) <- .applyByModule_update_slot(colData(x), res_df)
+        colData(x) <- .applyBySet_update_slot(colData(x), res_df)
     }
 
     return(x)
 }
 
-.applyByModule_update_slot <- function(old, new) {
+.applyBySet_update_slot <- function(old, new) {
     # Find variables to replace
     to_remove <- which(names(old) %in% names(new))
     # Replace old variables with new ones
