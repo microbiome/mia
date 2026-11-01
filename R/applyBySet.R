@@ -25,7 +25,7 @@
 #'   (Default: \code{NULL})
 #'
 #' @param meta.name \code{Character scalar}. The name of the metadata
-#'   slot where results are stored. (Default: \code{"mod.res"})
+#'   slot where results are stored. (Default: \code{"set_res"})
 #'
 #' @param ... Additional arguments passed to \code{FUN}.
 #'
@@ -101,7 +101,7 @@
 #' tse <- applyBySet(
 #'     tse,
 #'     .by = "rows",
-#'     .group = c("Mod1", "Mod2"),
+#'     .group = c("Set1", "Set2"),
 #'     FUN = getDominant,
 #'     group = "Genus"
 #' )
@@ -141,7 +141,7 @@ NULL
 #' @export
 #' @rdname applyBySet
 setMethod("applyBySet", "SummarizedExperiment", function(x, .by, .group, FUN,
-    min.group.size = NULL, meta.name = "mod_res", ...){
+    min.group.size = NULL, meta.name = "set_res", ...){
     if (length(.by) == 0L || !.by %in% c("rows", "cols")) {
         stop("'.by' must be either 'rows' or 'cols'.", call. = FALSE)
     }

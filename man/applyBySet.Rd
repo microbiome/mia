@@ -13,7 +13,7 @@ applyBySet(x, ...)
   .group,
   FUN,
   min.group.size = NULL,
-  meta.name = "mod_res",
+  meta.name = "set_res",
   ...
 )
 }
@@ -38,7 +38,7 @@ features or samples in a group for \code{FUN} to be applied.
 (Default: \code{NULL})}
 
 \item{meta.name}{\code{Character scalar}. The name of the metadata
-slot where results are stored. (Default: \code{"mod.res"})}
+slot where results are stored. (Default: \code{"set_res"})}
 }
 \value{
 \code{x} updated with results stored in the appropriate slot
@@ -118,7 +118,7 @@ rowData(tse)$Set2 <- rowData(tse)$Order == "Clostridiales"
 tse <- applyBySet(
     tse,
     .by = "rows",
-    .group = c("Mod1", "Mod2"),
+    .group = c("Set1", "Set2"),
     FUN = getDominant,
     group = "Genus"
 )
