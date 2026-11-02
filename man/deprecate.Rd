@@ -8,6 +8,8 @@
 \alias{addTaxonomyTree,SummarizedExperiment-method}
 \alias{taxonomyTree}
 \alias{taxonomyTree,SummarizedExperiment-method}
+\alias{agglomerateByModule}
+\alias{agglomerateByModule,SummarizedExperiment-method}
 \alias{mergeRows}
 \alias{mergeRows,SummarizedExperiment-method}
 \alias{mergeRows,TreeSummarizedExperiment-method}
@@ -161,6 +163,10 @@ addTaxonomyTree(x, ...)
 taxonomyTree(x, ...)
 
 \S4method{taxonomyTree}{SummarizedExperiment}(x, ...)
+
+agglomerateByModule(x, ...)
+
+\S4method{agglomerateByModule}{SummarizedExperiment}(x, ...)
 
 mergeRows(x, ...)
 
