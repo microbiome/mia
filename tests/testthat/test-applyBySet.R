@@ -57,7 +57,7 @@ test_that("applyBySet", {
     # before the arguments are sent to them
     tse <- applyBySet(
         tse, "rows", set.vars, getCluster,
-        BLUSPARAM = bluster::KmeansParam(centers = 3),
+        BLUSPARAM = KmeansParam(centers = 3),
         assay.type = "counts", by = "cols", clust.col = "kmeans"
     )
     # Check clustering results
