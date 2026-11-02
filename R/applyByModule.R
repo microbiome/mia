@@ -222,8 +222,11 @@ setMethod("applyByModule", "SummarizedExperiment", function(x, .by, .group, FUN,
         stop("No '.group' has size above 'min.group.size'.", call. = FALSE)
     }
 
-    # Compute
-    res <- bplapply(idx, function(i) FUN(x[i, ], ...))
+    # Compute. FUN and its arguments are evaluated here so that workers
+    # running in separate sessions do not need to find them.
+    force(FUN)
+    args <- list(...)
+    res <- bplapply(idx, function(i) do.call(FUN, c(list(x[i, ]), args)))
 
     return(list(res = res, group = .group))
 }
