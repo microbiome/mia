@@ -267,33 +267,10 @@ setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, group = f, f = NULL, update.tree = update_rowTree,
-            update_rowTree = TRUE, ...){
-        # Input check
-        # Check update.tree
-        if( !.is_a_bool(update.tree) ){
-            stop("'update.tree' must be TRUE or FALSE.",
-                call. = FALSE)
-        }
-        # Input check end
+    function(x, group = f, f = NULL, ...){
         # Split data
         x <- callNextMethod()
-        # Manipulate rowTree or not?
-        if( update.tree ){
-            # Update both colTree and rowTree
-            for( direction in c(1, 2) ){
-                # If the returned value is a list, go through all of them
-                if( is(x, "SimpleList") ){
-                    x <- lapply(x, function(y){
-                        .agglomerate_trees(y, by = direction)})
-                    x <- SimpleList(x)
-                } else {
-                    # Otherwise, the returned value is TreeSE
-                    x <- .agglomerate_trees(x, by = direction)
-                }
-            }
-        }
-        x
+        return(x)
     }
 )
 
