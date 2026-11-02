@@ -433,8 +433,8 @@ setMethod("agglomerateBySet", signature = c(x = "SummarizedExperiment"),
         FUN <- switch(by, rowData, colData)
         # Check group
         if( !all(group %in% names(FUN(x))) ){
-            stop("some elements in 'group' did not match with any column of ",
-                as.character(substitute(FUN)), call. = FALSE)
+            stop("All elements of '.group' must be variables of 'x'.",
+                call. = FALSE)
         }
         # Extract sets table
         sets <- as.matrix(FUN(x)[ , group, drop = FALSE])
