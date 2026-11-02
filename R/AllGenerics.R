@@ -83,8 +83,8 @@ setGeneric("agglomerateByVariable", signature = "x", function(x, ...)
 
 #' @rdname agglomerate-methods
 #' @export
-setGeneric("agglomerateByModule", signature = "x", function(x, ...)
-    standardGeneric("agglomerateByModule"))
+setGeneric("agglomerateBySet", signature = "x", function(x, ...)
+    standardGeneric("agglomerateBySet"))
 
 #' @rdname calculateDMN
 #' @export

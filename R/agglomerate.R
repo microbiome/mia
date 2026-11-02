@@ -12,7 +12,7 @@
 #' with certain taxonomic ranks, as defined in \code{rowData}. Only available
 #' \code{\link{taxonomyRanks}} can be used.
 #'
-#' \code{agglomerateByVariable} and \code{agglomerateByModule} merge data on
+#' \code{agglomerateByVariable} and \code{agglomerateBySet} merge data on
 #' rows or columns of a \code{SummarizedExperiment} as defined by a
 #' \code{factor} alongside the chosen dimension. This function allows
 #' agglomeration of data based on other variables than taxonomy ranks.
@@ -35,16 +35,16 @@
 #' argument lets the user select how to preserve row or column data. For merge
 #' data of assays the function from \code{scuttle} are used.
 #'
-#' \code{agglomerateByModule} allows to agglomerate features or samples based
+#' \code{agglomerateBySet} allows to agglomerate features or samples based
 #' on one or multiple variables of numeric or logical type. It is particularly
-#' useful for agglomerating by taxonomic or functional modules, each defined by
+#' useful for agglomerating by taxonomic or functional sets, each defined by
 #' a logical or binary variable in the \code{rowData}, as features can belong to
-#' several modules.
+#' several sets.
 #'
 #' @return
 #' \code{agglomerateByRank} returns a taxonomically-agglomerated,
 #' optionally-pruned object of the same class as \code{x}.
-#' \code{agglomerateByVariable} and \code{agglomerateByModule} return an object
+#' \code{agglomerateByVariable} and \code{agglomerateBySet} return an object
 #' of the same class as \code{x} with the specified entries merged into one
 #' entry in all relevant components.
 #'
@@ -125,7 +125,7 @@
 #' performed. If vector, the value must be the same length as
 #' \code{nrow(x)/ncol(x)}. Rows or columns corresponding to the same level will
 #' be merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will
-#' be returned unchanged. For \code{agglomerateByModule}, \code{group} should
+#' be returned unchanged. For \code{agglomerateBySet}, \code{group} should
 #' specify one or several names of numeric or logical variables from the
 #' \code{rowData(x)/colData(x)} by which to agglomerate rows or columns.
 #'
@@ -218,34 +218,34 @@
 #'     GlobalPatterns, by = "cols", colData(GlobalPatterns)$SampleType)
 #' merged
 #'
-#' ## Agglomerate by multiple modules
+#' ## Agglomerate by multiple sets
 #'
-#' # Generate 30 random modules
-#' N_module <- 30L
-#' modules <- sample(
+#' # Generate 30 random sets
+#' N_set <- 30L
+#' sets <- sample(
 #'     c(TRUE, FALSE),
-#'     size = nrow(tse) * N_module,
+#'     size = nrow(tse) * N_set,
 #'     prob = c(0.2, 0.8),
 #'     replace = TRUE
 #' )
 #'
-#' # Convert modules to matrix
-#' modules <- matrix(modules, nrow = nrow(tse))
+#' # Convert sets to matrix
+#' sets <- matrix(sets, nrow = nrow(tse))
 #' 
-#' # Add module names as colnames
-#' colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
+#' # Add set names as colnames
+#' colnames(sets) <- paste0("set_", seq_len(ncol(sets)))
 #' 
-#' # Add modules to rowData
-#' rowData(tse) <- cbind(rowData(tse), modules)
+#' # Add sets to rowData
+#' rowData(tse) <- cbind(rowData(tse), sets)
 #' 
-#' # Extract module columns
-#' module_columns <- grep("module_", colnames(rowData(tse)), value = TRUE)
+#' # Extract set columns
+#' set_columns <- grep("set_", colnames(rowData(tse)), value = TRUE)
 #'
-#' # Agglomerate based on modules
-#' tse_module <- agglomerateByModule(tse, by = 1, group = module_columns)
+#' # Agglomerate based on sets
+#' tse_set <- agglomerateBySet(tse, by = 1, group = set_columns)
 #' 
 #' # Optionally, store results into altExp slot
-#' altExp(tse, "modules") <- tse_module
+#' altExp(tse, "sets") <- tse_set
 #'
 #' @seealso
 #' \code{\link[=splitOn]{splitOn}}
@@ -425,7 +425,7 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 #' @importFrom S4Vectors DataFrame SimpleList
-setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
+setMethod("agglomerateBySet", signature = c(x = "SummarizedExperiment"),
     function(x, by, group, na.rm = FALSE){
         # Check margin
         by <- .check_MARGIN(by)
@@ -436,30 +436,30 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
             stop("some elements in 'group' did not match with any column of ",
                 as.character(substitute(FUN)), call. = FALSE)
         }
-        # Extract modules table
-        modules <- as.matrix(FUN(x)[ , group, drop = FALSE])
-        # Check and process modules
-        modules <- .check_and_process_modules(modules)
-        # Merge assays by module
-        assays <- mapply(.agglomerate_module_assay, assayNames(x), assays(x),
-            MoreArgs = list(by = by, modules = modules, na.rm = na.rm),
+        # Extract sets table
+        sets <- as.matrix(FUN(x)[ , group, drop = FALSE])
+        # Check and process sets
+        sets <- .check_and_process_sets(sets)
+        # Merge assays by set
+        assays <- mapply(.agglomerate_set_assay, assayNames(x), assays(x),
+            MoreArgs = list(by = by, sets = sets, na.rm = na.rm),
             SIMPLIFY = FALSE)
         # Convert to SimpleList
         assays <- assays |> SimpleList()
-        # Construct module-wise experiment
+        # Construct set-wise experiment
         x <- do.call(class(x), list(
             assays = assays,
             colData = if (by == 1L)
-                colData(x) else DataFrame(row.names = colnames(modules)),
+                colData(x) else DataFrame(row.names = colnames(sets)),
             rowData = if (by == 1L)
-                DataFrame(row.names = colnames(modules)) else rowData(x),
+                DataFrame(row.names = colnames(sets)) else rowData(x),
             metadata = metadata(x))
         )
         # Add new names to agglomerated dimension
         if( by == 1L ){
-            rownames(x) <- colnames(modules)
+            rownames(x) <- colnames(sets)
         } else {
-            colnames(x) <- colnames(modules)
+            colnames(x) <- colnames(sets)
         }
         return(x)
     }
