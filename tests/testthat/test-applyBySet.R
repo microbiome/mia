@@ -49,6 +49,7 @@ test_that("applyBySet", {
     # Check tree results
     expect_in(names(metadata(tse)), "tree_plots")
     # applyBySet works with workers in separate sessions
+    library(bluster)
     old <- BiocParallel::bpparam()
     BiocParallel::register(BiocParallel::SnowParam(2))
     on.exit(BiocParallel::register(old))
