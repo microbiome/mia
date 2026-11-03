@@ -57,3 +57,21 @@ test_that("applyByModule", {
     
     expect_in(names(metadata(tse)), "tree_plots")
 })
+
+test_that("applyByModule works with workers in separate sessions", {
+    library(bluster)
+    tse <- TreeSummarizedExperiment::makeTSE(nrow = 20, ncol = 10)
+    assayNames(tse) <- "counts"
+    rowData(tse)$var1 <- rep(letters[1:2], 10)
+    old <- BiocParallel::bpparam()
+    BiocParallel::register(BiocParallel::SnowParam(2))
+    on.exit(BiocParallel::register(old))
+    # Workers do not have bluster attached, so KmeansParam must be evaluated
+    # before the arguments are sent to them
+    tse <- applyByModule(
+        tse, "rows", "var1", getCluster,
+        BLUSPARAM = KmeansParam(centers = 2),
+        assay.type = "counts", by = "cols", clust.col = "kmeans"
+    )
+    expect_contains(names(colData(tse)), c("kmeans_a", "kmeans_b"))
+})
