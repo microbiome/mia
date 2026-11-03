@@ -62,6 +62,14 @@
 #'   \item \code{node.labels}: \code{Character vector}. Linkages between
 #'   \code{tree} and \code{x}. Used in PhILR transformation.
 #'   (Default: \code{NULL}).
+#'   \item \code{detection}: \code{NULL} or \code{Numeric vector}. For
+#'   \code{"multiplicative_replacement"}, the detection limit of each sample
+#'   as a proportion. If \code{NULL}, one read (the inverse of the sample
+#'   total) for counts, and otherwise half the smallest positive proportion
+#'   of the sample. (Default: \code{NULL})
+#'   \item \code{fraction}: \code{Numeric scalar}. For
+#'   \code{"multiplicative_replacement"}, the fraction of the detection limit
+#'   that replaces zeros. (Default: \code{0.65})
 #' }
 #' @details
 #'
@@ -133,6 +141,15 @@
 #'
 #' \item 'pseudocount': Adds only pseudocount.
 #'
+#' \item 'multiplicative_replacement': Multiplicative replacement of zeros
+#' (Martín-Fernández et al. 2003). In each sample, every zero is replaced by
+#' \eqn{\delta}, \code{fraction} times the detection limit, and the non-zero
+#' proportions are multiplied by \eqn{1 - z \delta}, where \eqn{z} is the
+#' number of zeros, so that the sample still sums to one. Unlike a
+#' pseudocount, this keeps the ratios between non-zero parts, which
+#' log-ratio transformations such as 'clr' are built on. The result holds
+#' proportions; apply 'clr' to it.
+#'
 #' \item 'cutoff': In some ecological studies, only strictly positive values
 #' are taken into account. This method keeps only values greater than
 #' \code{threshold} and replaces all other values with \code{value}.
@@ -157,6 +174,12 @@
 #' Differential abundance analysis for microbial marker-gene surveys
 #' _Nature Methods_ 10, 1200–1202.
 #' doi:10.1038/nmeth.2658
+#'
+#' Martín-Fernández, J. A., Barceló-Vidal, C., & Pawlowsky-Glahn, V. (2003).
+#' Dealing with zeros and missing values in compositional data sets using
+#' nonparametric imputation.
+#' _Mathematical Geology_ 35, 253–278.
+#' doi:10.1023/A:1023866030544
 #'
 #' Medearis, N. A., Zhu, S., & Zomorrodi, A. R. (2026).
 #' BiomeGPT: A foundation model for the human gut microbiome
@@ -296,7 +319,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
             "difference", "-",
             "division", "/", "frequency", "hellinger", "invnorm", "log",
             "log10", "log2", "log_zero_replace", "max",
-            "normalize", "pa", "philr", "pseudocount", "range", "rank", "rclr",
+            "multiplicative_replacement", "normalize", "pa", "philr", "pseudocount", "range", "rank", "rclr",
             "relabundance", "rrank", "standardize", "total", "z"),
         MARGIN = "samples",
         name = method,
@@ -350,7 +373,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     # Calls help function that does the transformation
     # Help function is different for mia and vegan transformations
     if( method %in% c("binning", "log", "log10", "log2", "css", "difference",
-            "division", "invnorm") ){
+            "division", "invnorm", "multiplicative_replacement") ){
         transformed_table <- .apply_transformation(
             assay, method, MARGIN, ...)
     } else if( method %in% c("philr") ){
@@ -391,7 +414,8 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         css = .calc_css,
         difference = .apply_transformation_difference_or_division,
         division = .apply_transformation_difference_or_division,
-        invnorm = .apply_transformation_invnorm
+        invnorm = .apply_transformation_invnorm,
+        multiplicative_replacement = .calc_multiplicative_replacement
     )
     # Get transformed table
     assay <- do.call(
@@ -457,6 +481,50 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         transformed_table <- t(transformed_table)
     }
     return(transformed_table)
+}
+
+#########################.calc_multiplicative_replacement######################
+# Multiplicative replacement of zeros: in each sample (column), zeros are
+# replaced by fraction x detection limit and the non-zero proportions are
+# scaled so that the sample still sums to one
+.calc_multiplicative_replacement <- function(
+        mat, detection = NULL, fraction = 0.65, ...){
+    if( any(mat < 0, na.rm = TRUE) || anyNA(mat) ){
+        stop("Multiplicative replacement needs non-negative values without ",
+            "missing values.", call. = FALSE)
+    }
+    if( !.is_a_numeric(fraction) || fraction <= 0 || fraction > 1 ){
+        stop("'fraction' must be a number between 0 and 1.", call. = FALSE)
+    }
+    total <- colSums2(mat)
+    if( any(total == 0) ){
+        stop("Multiplicative replacement needs samples with a positive ",
+            "total.", call. = FALSE)
+    }
+    prop <- t(t(mat) / total)
+    if( is.null(detection) ){
+        if( all(mat == round(mat)) ){
+            # One read
+            detection <- 1 / total
+        } else{
+            detection <- apply(prop, 2L, function(v) min(v[v > 0]) / 2)
+        }
+    }
+    if( !is.numeric(detection) || any(detection <= 0) ||
+            !length(detection) %in% c(1L, ncol(mat)) ){
+        stop("'detection' must be NULL, or positive with one value or one ",
+            "per sample.", call. = FALSE)
+    }
+    delta <- fraction * rep_len(detection, ncol(mat))
+    zeros <- prop == 0
+    n_zeros <- colSums2(zeros)
+    if( any(n_zeros * delta >= 1) ){
+        stop("The replaced zeros would sum to one or more in some samples; ",
+            "lower 'detection' or 'fraction'.", call. = FALSE)
+    }
+    res <- t(t(prop) * (1 - n_zeros * delta))
+    res[zeros] <- matrix(delta, nrow(mat), ncol(mat), byrow = TRUE)[zeros]
+    return(res)
 }
 
 ####################################.calc_log###################################
