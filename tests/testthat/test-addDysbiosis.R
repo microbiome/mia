@@ -50,3 +50,23 @@ test_that("getDysbiosis and addDysbiosis", {
     expect_error(getDysbiosis(tse, col.var = "patient_status", index = "test"))
     expect_error(getDysbiosis(tse, col.var = "patient_status", group = "test"))
 })
+
+test_that("Dysbiosis index in getAlpha", {
+    data(Tengeler2020, package = "mia")
+    tse <- Tengeler2020
+    ref <- getDysbiosis(
+        tse, col.var = "patient_status", reference = "Control",
+        group = "cohort")
+    # The index gives the same values as getDysbiosis
+    res <- getAlpha(
+        tse, index = "median_distance", col.var = "patient_status",
+        reference = "Control", group = "cohort")
+    expect_equal(res[["median_distance"]], ref[["median_distance"]])
+    # It can be calculated together with other indices
+    res <- getAlpha(
+        tse, index = c("shannon", "median_distance"),
+        col.var = "patient_status", reference = "Control", group = "cohort")
+    expect_equal(res[["median_distance"]], ref[["median_distance"]])
+    # Controls must be defined
+    expect_error(getAlpha(tse, index = "median_distance"))
+})
