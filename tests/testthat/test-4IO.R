@@ -587,3 +587,29 @@ test_that("Import MetaPhlAn file", {
     tse <- importMetaPhlAn(temp_path)
     expect_true( nrow(altExp(tse, length(altExps(tse))))+num_missing == nrow(tse))
 })
+test_that("Importers add a tree from file", {
+    skip_if_not(require("biomformat", quietly = TRUE))
+    biom_file <- system.file(
+        "extdata", "Aggregated_humanization2.biom", package = "mia")
+    tree_file <- system.file(
+        "extdata", "Data_humanization_phylo_aggregation.tre", package = "mia")
+    tse <- importBIOM(biom_file, tree.file = tree_file)
+    expect_s3_class(rowTree(tse), "phylo")
+    expect_setequal(rowLinks(tse)[["nodeLab"]], rownames(tse))
+    # Tree labels that do not match rownames give an error
+    tree <- ape::read.tree(tree_file)
+    tree$tip.label <- paste0("x", tree$tip.label)
+    bad_file <- tempfile(fileext = ".tre")
+    ape::write.tree(tree, bad_file)
+    expect_error(
+        importBIOM(biom_file, tree.file = bad_file), "Rownames do not match")
+    expect_error(importBIOM(biom_file, tree.file = 1), "'tree.file'")
+    # Mothur
+    assay_file <- system.file(
+        "extdata", "mothur_example.shared", package = "mia")
+    tse <- importMothur(assay_file)
+    tree_file <- tempfile(fileext = ".tre")
+    ape::write.tree(ape::rtree(nrow(tse), tip.label = rownames(tse)), tree_file)
+    tse <- importMothur(assay_file, tree.file = tree_file)
+    expect_setequal(rowLinks(tse)[["nodeLab"]], rownames(tse))
+})
