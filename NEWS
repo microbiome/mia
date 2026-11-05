@@ -217,3 +217,4 @@ Changes in version 1.21.x
 + transformAssay: method = "log" now computes natural log consistently with "log2" and "log10"; the previous vegan::decostand log transformation is available as method = "log_zero_replace" (1.21.27, 2026-10-30)
 + Renamed agglomerateByModule to agglomerateBySet (1.21.28, 2026-11-05)
 + Renamed applyByModule to applyBySet (1.21.28, 2026-11-05)
++ getPERMANOVA: binary=TRUE when Jaccard calculated (1.21.28, 2026-11-05)
