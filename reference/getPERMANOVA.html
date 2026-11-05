@@ -92,7 +92,8 @@ returned directly or added to metadata in an object of class
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional arguments passed to <code><a href="https://vegandevs.github.io/vegan/reference/adonis.html" class="external-link">vegan::adonis2</a></code>.</p><ul><li><p><code>by</code>: <code>Character scalar</code>. Specifies how significance is
+<dd><p>additional arguments passed to <code>getDissimilarity</code> and
+<code><a href="https://vegandevs.github.io/vegan/reference/adonis.html" class="external-link">vegan::adonis2</a></code>.</p><ul><li><p><code>by</code>: <code>Character scalar</code>. Specifies how significance is
 calculated. (Default: <code>"margin"</code>)</p></li>
 <li><p><code>na.action</code>: <code>function</code>. Action to take when missing
 values for any of the variables in <code>formula</code> are encountered.
@@ -231,7 +232,7 @@ reliance on linear assumptions.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Permutation: free</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of permutations: 99</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> adonis2(formula = formula, data = data, permutations = 99, method = ..1, by = by, na.action = na.action)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> adonis2(formula = formula, data = data, permutations = 99, by = by, na.action = na.action)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Df SumOfSqs      R2      F Pr(&gt;F)   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SampleType  8   8.2466 0.73109 5.7773   0.01 **</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Residual   17   3.0332 0.26891                 </span>
