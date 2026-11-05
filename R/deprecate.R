@@ -66,6 +66,23 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname deprecate
 #' @export
+setGeneric("agglomerateByModule",
+            signature = "x",
+            function(x, ...)
+                standardGeneric("agglomerateByModule"))
+
+#' @rdname deprecate
+#' @export
+setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'agglomerateByModule' is deprecated.",
+                                        " Use 'agglomerateBySet' instead."))
+                agglomerateBySet(x, ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
 setGeneric("mergeRows",
             signature = "x",
             function(x, ...)

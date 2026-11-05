@@ -32,7 +32,7 @@ reference:
   - mergeSEs
   - meltSE
   - rarefyAssay
-  - applyByModule
+  - applyBySet
 
 - title: Datasets
 - contents:
