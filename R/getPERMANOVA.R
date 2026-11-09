@@ -57,7 +57,8 @@
 #' @param test.homogeneity \code{Logical scalar}. Should the homogeneity of
 #' group dispersions be evaluated? (Default: \code{TRUE})
 #'
-#' @param ... additional arguments passed to \code{vegan::adonis2}.
+#' @param ... additional arguments passed to \code{getDissimilarity} and
+#' \code{vegan::adonis2}.
 #' \itemize{
 #'   \item \code{by}: \code{Character scalar}. Specifies how significance is
 #'   calculated. (Default: \code{"margin"})
@@ -210,12 +211,15 @@ setMethod("getPERMANOVA", "ANY", function(
     if( !.is_a_bool(test.homogeneity) ){
         stop("'test.homogeneity' must be TRUE or FALSE.", call. = FALSE)
     }
+    # Calculate dissimilarities
+    if( !is_dist ){
+        x <- getDissimilarity(x |> t(), method = method, ...)
+    }
     # Calculate PERMANOVA
-    res <- .calculate_permanova(
-        x, formula = formula, data = data, method = method, ...)
+    res <- .calculate_permanova(x, formula = formula, data = data, ...)
     # Test homogeneity
     if( test.homogeneity ){
-        homogeneity <- .calculate_homogeneity(x, data, method = method, ...)
+        homogeneity <- .calculate_homogeneity(x, data, ...)
         res <- list(permanova = res, homogeneity = homogeneity)
     }
     return(res)
