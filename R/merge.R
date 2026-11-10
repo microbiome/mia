@@ -211,31 +211,31 @@
     return(assay)
 }
 
-# This function checks that modules are in correct format, i.e., there should
-# be module information for each row/column. Columns should represent modules
+# This function checks that sets are in correct format, i.e., there should
+# be set information for each row/column. Columns should represent sets
 # and rows features. Each cell specifies the membership of feature to the
-# specific module.
-.check_and_process_modules <- function(modules){
-    # Check validity of module type
-    if( !is.logical(modules) && !is.numeric(modules) ){
+# specific set.
+.check_and_process_sets <- function(sets){
+    # Check validity of set type
+    if( !is.logical(sets) && !is.numeric(sets) ){
         stop("'group' variables must be numeric or logical.", call. = FALSE)
     }
     # Find NAs
-    is_na <- which(is.na(modules))
+    is_na <- which(is.na(sets))
     # Replace NAs
     if( length(is_na) != 0L ){
         warning(
             "NAs in 'group' variables were removed before agglomeration.",
             call. = FALSE
         )
-        # Zero out NA modules
-        modules[is_na] <- 0
+        # Zero out NA sets
+        sets[is_na] <- 0
     }
-    return(modules)
+    return(sets)
 }
 
-# This function agglomerates an abundance table based on modules.
-.agglomerate_module_assay <- function(assay.type, assay, by, modules, na.rm){
+# This function agglomerates an abundance table based on sets.
+.agglomerate_set_assay <- function(assay.type, assay, by, sets, na.rm){
     # Check assay
     .check_assay_for_merge(assay.type, assay)
     # Replace NAs with 0
@@ -246,8 +246,8 @@
     if( by == 2L ){
         assay <- t(assay)
     }
-    # Compute module-wise assay by cross-product
-    assay <- as.matrix(crossprod(modules, assay))
+    # Compute set-wise assay by cross-product
+    assay <- as.matrix(crossprod(sets, assay))
     # Transpose back to original orientation
     if( by == 2L ){
         assay <- t(assay)
