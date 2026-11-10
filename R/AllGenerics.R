@@ -477,10 +477,30 @@ setGeneric("getJointRPCA", signature = "x", function(x, ...)
 setGeneric("addJointRPCA", signature = "x", function(x, ...)
     standardGeneric("addJointRPCA"))
 
-#' @rdname filterRPCAInput
+#' @rdname subsetBy
 #' @export
-setGeneric("filterRPCAInput", signature = "x", function(x, ...)
-    standardGeneric("filterRPCAInput"))
+setGeneric("subsetByAbundance", signature = "x", function(x, ...)
+    standardGeneric("subsetByAbundance"))
+
+#' @rdname subsetBy
+#' @export
+setGeneric("subsetByVariance", signature = "x", function(x, ...)
+    standardGeneric("subsetByVariance"))
+
+#' @rdname subsetBy
+#' @export
+setGeneric("subsetBySd", signature = "x", function(x, ...)
+    standardGeneric("subsetBySd"))
+
+#' @rdname subsetBy
+#' @export
+setGeneric("subsetByMissing", signature = "x", function(x, ...)
+    standardGeneric("subsetByMissing"))
+
+#' @rdname subsetBy
+#' @export
+setGeneric("subsetByTop", signature = "x", function(x, ...)
+    standardGeneric("subsetByTop"))
 
 #' @rdname applyBySet
 #' @export

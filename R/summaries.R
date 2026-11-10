@@ -44,7 +44,8 @@
 #' \dQuote{FeatureID}s
 #'
 #' @seealso
-#' \code{\link[=getPrevalence]{getPrevalent}}
+#' \code{\link[=getPrevalence]{getPrevalent}},
+#' \code{\link[=subsetBy]{subsetByTop}}
 #'
 #' @name summary
 #'

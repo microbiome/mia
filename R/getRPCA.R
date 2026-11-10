@@ -18,7 +18,7 @@
 #' algorithm.
 #'
 #' Before running RPCA or Joint-RPCA, untransformed assays can be filtered
-#' separately with \code{\link[=filterRPCAInput]{filterRPCAInput()}}.
+#' separately with \code{\link[=subsetBy]{subsetByAbundance()}}.
 #' When filtering is used, it must be performed before the robust centered
 #' log-ratio transformation. Filtering thresholds should be selected
 #' separately for each experiment according to its sequencing depth and
@@ -101,15 +101,14 @@
 #' mae <- ibdmdb
 #'
 #' # Filter each untransformed assay before applying rclr.
-#' # See filterRPCAInput() for data-specific filtering thresholds.
-#' mae[["MGX"]] <- filterRPCAInput(
-#'     mae[["MGX"]],
-#'     assay.type = "mgx"
-#' )
-#' mae[["MTX"]] <- filterRPCAInput(
-#'     mae[["MTX"]],
-#'     assay.type = "mtx"
-#' )
+#' # Features are filtered before samples as in Gemelli. See subsetByAbundance()
+#' # for data-specific filtering thresholds.
+#' mae[["MGX"]] <- mae[["MGX"]] |>
+#'     subsetByAbundance(assay.type = "mgx", MARGIN = "features") |>
+#'     subsetByAbundance(assay.type = "mgx", MARGIN = "samples")
+#' mae[["MTX"]] <- mae[["MTX"]] |>
+#'     subsetByAbundance(assay.type = "mtx", MARGIN = "features") |>
+#'     subsetByAbundance(assay.type = "mtx", MARGIN = "samples")
 #'
 #' # Apply the robust centered log-ratio transformation.
 #' # Specify that the 0-values are not imputed as Joint-RPCA
@@ -146,7 +145,7 @@
 #'
 #'
 #' @seealso
-#' \code{\link[=filterRPCAInput]{filterRPCAInput()}},
+#' \code{\link[=subsetBy]{subsetByAbundance()}},
 #' \code{\link[=transformAssay]{transformAssay()}}, and
 #' \code{\link[scater:runPCA]{scater::runPCA()}}.
 #'

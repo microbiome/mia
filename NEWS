@@ -218,3 +218,6 @@ Changes in version 1.21.x
 + Renamed agglomerateByModule to agglomerateBySet (1.21.28, 2026-11-05)
 + Renamed applyByModule to applyBySet (1.21.28, 2026-11-05)
 + getPERMANOVA: binary=TRUE when Jaccard calculated (1.21.28, 2026-11-05)
++ Replaced filterRPCAInput with subsetByAbundance, which filters features or samples by total abundance; prevalence filtering is done with subsetByPrevalent (1.21.29, 2026-11-10)
++ Added subsetByVariance, subsetBySd and subsetByTop, subsetByMissing (1.21.29, 2026-11-10)
++ subsetByPrevalent and subsetByRare support group-wise prevalence with col.var (1.21.29, 2026-11-10)

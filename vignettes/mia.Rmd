@@ -323,6 +323,25 @@ top_taxa <- getTop(
 top_taxa
 ```
 
+## Filtering features and samples
+
+Functions starting with `subsetBy` return the filtered object. See
+`?subsetBy` for an overview of all filtering functions.
+
+```{r}
+# Remove samples and features with low total counts
+tse_sub <- esophagus |>
+    subsetByAbundance(threshold = 100, MARGIN = "samples") |>
+    subsetByAbundance(threshold = 2)
+# Keep features that are present in over 20% of samples
+tse_sub <- subsetByPrevalent(tse_sub, prevalence = 0.2)
+# Remove features with zero variance
+tse_sub <- subsetByVariance(tse_sub)
+# Keep the 5 most abundant features
+tse_sub <- subsetByTop(tse_sub, top = 5)
+dim(tse_sub)
+```
+
 ## Generating tidy data
 
 To generate tidy data as used and required in most of the tidyverse, 

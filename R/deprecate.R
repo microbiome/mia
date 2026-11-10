@@ -1,16 +1,16 @@
 #' These functions will be deprecated. Please use other functions instead.
-#' 
+#'
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #' @param value a matrix to store as the \sQuote{relabundance} assay
-#' 
+#'
 #' @param mat An abundance matrix
-#' 
+#'
 #' @param tree A phylogenetic tree
-#'    
+#'
 #' @param ... Additional parameters. See dedicated function.
-#' 
+#'
 #' @name deprecate
 NULL
 
@@ -122,7 +122,7 @@ setGeneric("mergeCols",
 setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
                 .Deprecated(msg = paste0("'mergeCols' is deprecated. ",
-                                        "Use 'agglomerateByVariable' with ", 
+                                        "Use 'agglomerateByVariable' with ",
                                         "parameter by = 'cols' instead."))
                 agglomerateByVariable(x, by = "cols", ...)
             }
@@ -151,7 +151,7 @@ setGeneric("mergeFeatures",
 setMethod("mergeFeatures", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
                 .Deprecated(msg = paste0("'mergeFeatures' is deprecated. ",
-                                        "Use 'agglomerateByVariable' with ", 
+                                        "Use 'agglomerateByVariable' with ",
                                         "parameter by = 'rows' instead."))
                 agglomerateByVariable(x, by = "rows", ...)
             }
@@ -191,7 +191,7 @@ setMethod("mergeSamples", signature = c(x = "SummarizedExperiment"),
 setMethod("mergeSamples", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ...){
               .Deprecated(msg = paste0("'mergeSamples' is deprecated. ",
-                                       "Use 'agglomerateByVariable' with ", 
+                                       "Use 'agglomerateByVariable' with ",
                                         "parameter by = 'cols' instead."))
               agglomerateByVariable(x, by = "cols", ...)
           }
@@ -240,7 +240,7 @@ setMethod("mergeFeaturesByPrevalence", signature = c(x = "SummarizedExperiment")
                   "'mergeFeaturesByPrevalence' is deprecated. ",
                   "Use agglomerateByPrevalence instead."))
               x <- agglomerateByPrevalence(x, ...)
-              x 
+              x
           }
 )
 
@@ -252,11 +252,11 @@ setGeneric("getExperimentCrossAssociation", signature = c("x"),
 
 #' @rdname deprecate
 #' @export
-setMethod("getExperimentCrossAssociation", 
+setMethod("getExperimentCrossAssociation",
             signature = c(x = "MultiAssayExperiment"),
             function(x, ...){
                 .Deprecated(msg = paste0("'getExperimentCrossAssociation' is ",
-                                        "deprecated. Use ", 
+                                        "deprecated. Use ",
                                         "'getCrossAssociation' instead."))
                 getCrossAssociation(x, ...)
             }
@@ -267,7 +267,7 @@ setMethod("getExperimentCrossAssociation",
 setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
           function(x, ...){
               .Deprecated(msg = paste0("'getExperimentCrossAssociation' is ",
-                                       "deprecated. Use ", 
+                                       "deprecated. Use ",
                                        "'getCrossAssociation' instead."))
               getCrossAssociation(x, ...)
           }
@@ -295,7 +295,7 @@ setGeneric("testExperimentCrossAssociation", signature = c("x"),
 setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
           function(x, ...){
               .Deprecated(msg = paste0("'testExperimentCrossAssociation' is ",
-                                       "deprecated. Use ", 
+                                       "deprecated. Use ",
                                        "'getCrossAssociation' instead."))
               getCrossAssociation(x, test.signif = TRUE, ...)
           }
@@ -312,7 +312,7 @@ setGeneric("testExperimentCrossCorrelation", signature = c("x"),
 setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
           function(x, ...){
               .Deprecated(msg = paste0("'testExperimentCrossCorrelation' is ",
-                                       "deprecated. Use ", 
+                                       "deprecated. Use ",
                                        "'getCrossAssociation' instead."))
               getCrossAssociation(x, test.signif = TRUE, ...)
           }
@@ -329,7 +329,7 @@ setGeneric("getExperimentCrossCorrelation", signature = c("x"),
 setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
           function(x, ...){
               .Deprecated(msg = paste0("'getExperimentCrossCorrelation' is ",
-                                       "deprecated. Use ", 
+                                       "deprecated. Use ",
                                        "'getCrossAssociation' instead."))
               getCrossAssociation(x, ...)
           }
@@ -368,7 +368,7 @@ loadFromMothur <- function(...) {
 }
 
 #' @rdname deprecate
-#' @export   
+#' @export
 loadFromMetaphlan <- function(...) {
     .Deprecated(msg = paste0("'loadFromMetaphlan' is deprecated.",
                             " Use 'importMetaPhlAn' instead."))
@@ -376,7 +376,7 @@ loadFromMetaphlan <- function(...) {
 }
 
 #' @rdname deprecate
-#' @export    
+#' @export
 loadFromHumann <- function(...) {
     .Deprecated(msg = paste0("'loadFromHumann' is deprecated.",
                             " Use 'importHUMAnN' instead."))
@@ -402,7 +402,7 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
 #' @rdname deprecate
 #' @export
 setGeneric(
-    "subsetByRareTaxa", signature = c("x"), function(x, ...) 
+    "subsetByRareTaxa", signature = c("x"), function(x, ...)
         standardGeneric("subsetByRareTaxa"))
 
 #' @rdname deprecate
@@ -419,7 +419,7 @@ setMethod(
 #' @rdname deprecate
 #' @export
 setGeneric(
-    "subsetByRareFeatures", signature = c("x"), function(x, ...) 
+    "subsetByRareFeatures", signature = c("x"), function(x, ...)
         standardGeneric("subsetByRareFeatures"))
 
 #' @rdname deprecate
@@ -436,7 +436,7 @@ setMethod(
 #' @rdname deprecate
 #' @export
 setGeneric(
-    "subsetByPrevalentTaxa", signature = c("x"), function(x, ...) 
+    "subsetByPrevalentTaxa", signature = c("x"), function(x, ...)
         standardGeneric("subsetByPrevalentTaxa"))
 
 #' @rdname deprecate
@@ -453,7 +453,7 @@ setMethod(
 #' @rdname deprecate
 #' @export
 setGeneric(
-    "subsetByPrevalentFeatures", signature = c("x"), function(x, ...) 
+    "subsetByPrevalentFeatures", signature = c("x"), function(x, ...)
         standardGeneric("subsetByPrevalentFeatures"))
 
 #' @rdname deprecate
@@ -552,7 +552,7 @@ setMethod("right_join", signature = c(x = "ANY"),
 )
 
 #' @rdname deprecate
-#' @export    
+#' @export
 plotNMDS <- function(x, ...){
     .Deprecated(msg = paste0("'plotNMDS' is deprecated. ",
                              "Use 'scater::plotReducedDim' with ",
@@ -864,7 +864,7 @@ setMethod(
 #' @rdname deprecate
 #' @export
 setGeneric(
-    "addPerSampleDominantFeatures", signature = c("x"), function(x, ...) 
+    "addPerSampleDominantFeatures", signature = c("x"), function(x, ...)
         standardGeneric("addPerSampleDominantFeatures"))
 
 #' @rdname deprecate
@@ -882,7 +882,7 @@ setMethod(
 #' @rdname deprecate
 #' @export
 setGeneric(
-    "addPerSampleDominantTaxa", signature = c("x"), function(x, ...) 
+    "addPerSampleDominantTaxa", signature = c("x"), function(x, ...)
         standardGeneric("addPerSampleDominantTaxa"))
 
 #' @rdname deprecate
@@ -900,7 +900,7 @@ setMethod(
 #' @rdname deprecate
 #' @export
 setGeneric(
-    "perSampleDominantFeatures", signature = c("x"), function(x, ...) 
+    "perSampleDominantFeatures", signature = c("x"), function(x, ...)
         standardGeneric("perSampleDominantFeatures"))
 
 #' @rdname deprecate
@@ -918,7 +918,7 @@ setMethod(
 #' @rdname deprecate
 #' @export
 setGeneric(
-    "perSampleDominantTaxa", signature = c("x"), function(x, ...) 
+    "perSampleDominantTaxa", signature = c("x"), function(x, ...)
         standardGeneric("perSampleDominantTaxa"))
 
 #' @rdname deprecate
@@ -952,7 +952,7 @@ setMethod("makePhyloseqFromTreeSE", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname deprecate
 #' @export
-setMethod("makePhyloseqFromTreeSE", 
+setMethod("makePhyloseqFromTreeSE",
           signature = c(x = "TreeSummarizedExperiment"),
     function(x){
         .Deprecated(msg = paste0(
@@ -970,7 +970,7 @@ setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("x"),
 
 #' @rdname deprecate
 #' @export
-setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"), 
+setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
           function(x){
             .Deprecated(msg = paste0(
               "'makePhyloseqFromTreeSummarizedExperiment' is deprecated.",
@@ -987,7 +987,7 @@ setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("x"),
 
 #' @rdname deprecate
 #' @export
-setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(x = "ANY"), 
+setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(x = "ANY"),
     function(x){
         .Deprecated(msg = paste0(
             "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
@@ -1159,6 +1159,18 @@ setMethod("subsetFeatures", signature = "SummarizedExperiment",
           }
 )
 
+.get_subset_args <- function(x, subset = NULL, select = NULL, ...){
+    rows <- subset
+    columns <- select
+    if(is.null(rows)){
+        rows <- rep(TRUE,nrow(x))
+    }
+    if(is.null(columns)){
+        columns <- rep(TRUE,ncol(x))
+    }
+    return(list(rows = rows, columns = columns))
+}
+
 #' @rdname deprecate
 #' @export
 setMethod("subsetTaxa", signature = "SummarizedExperiment",
@@ -1250,7 +1262,7 @@ setMethod("calculateJSD", signature = c(x = "ANY"),
                                      "method = 'jsd' instead."))
             getDissimilarity(x, method = "jsd", ...)
           }
-          
+
 )
 
 #' @rdname deprecate
