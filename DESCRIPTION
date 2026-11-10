@@ -120,4 +120,4 @@ BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
 RdMacros: Rdpack
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1

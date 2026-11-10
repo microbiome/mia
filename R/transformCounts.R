@@ -762,7 +762,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     # Do data validity checks
     # The original object must be TreeSE or tree must be provided
     if( is.null(tree) &&
-        !(is(x, "TreeSummarizedExperiment") && !is.null(rowTree(x))) ){
+        !(is(x, "TreeSummarizedExperiment") && !is.null(tree_FUN(x))) ){
         stop("'tree' must be provided.", call. = FALSE)
     }
     # If tree is not specified, then we get rowTree
@@ -791,11 +791,13 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         warning("The tree named does not include all the features. 'x' is ",
                 "subsetted.", call. = FALSE)
         if( MARGIN == 1L ){
-            mat <- mat[ , !is.na(node.label), drop = FALSE]
-        } else{
             mat <- mat[ !is.na(node.label), , drop = FALSE]
+        } else{
+            mat <- mat[ , !is.na(node.label), drop = FALSE]
         }
         node.label <- node.label[ !is.na(node.label) ]
+        # Prune the tree to match the remaining features
+        tree <- .prune_tree(tree, node.label)
     }
     # If there are node labels, rename the features in matrix to match with
     # labels found in tree.

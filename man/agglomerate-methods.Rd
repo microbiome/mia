@@ -4,7 +4,7 @@
 \name{agglomerateByRank}
 \alias{agglomerateByRank}
 \alias{agglomerateByVariable}
-\alias{agglomerateByModule}
+\alias{agglomerateBySet}
 \alias{agglomerateByRanks}
 \alias{unsplitByRanks}
 \alias{agglomerate-methods}
@@ -13,7 +13,7 @@
 \alias{agglomerateByRank,SummarizedExperiment-method}
 \alias{agglomerateByVariable,TreeSummarizedExperiment-method}
 \alias{agglomerateByVariable,SummarizedExperiment-method}
-\alias{agglomerateByModule,SummarizedExperiment-method}
+\alias{agglomerateBySet,SummarizedExperiment-method}
 \alias{agglomerateByRanks,SummarizedExperiment-method}
 \alias{agglomerateByRanks,SingleCellExperiment-method}
 \alias{agglomerateByRanks,TreeSummarizedExperiment-method}
@@ -26,7 +26,7 @@ agglomerateByRank(x, ...)
 
 agglomerateByVariable(x, ...)
 
-agglomerateByModule(x, ...)
+agglomerateBySet(x, ...)
 
 agglomerateByRanks(x, ...)
 
@@ -70,7 +70,7 @@ unsplitByRanks(x, ...)
 
 \S4method{agglomerateByVariable}{SummarizedExperiment}(x, by, group = f, f, ...)
 
-\S4method{agglomerateByModule}{SummarizedExperiment}(x, by, group, na.rm = FALSE)
+\S4method{agglomerateBySet}{SummarizedExperiment}(x, by, group, na.rm = FALSE)
 
 \S4method{agglomerateByRanks}{SummarizedExperiment}(
   x,
@@ -163,7 +163,7 @@ Must be \code{'rows'} or \code{'cols'}.}
 performed. If vector, the value must be the same length as
 \code{nrow(x)/ncol(x)}. Rows or columns corresponding to the same level will
 be merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will
-be returned unchanged. For \code{agglomerateByModule}, \code{group} should
+be returned unchanged. For \code{agglomerateBySet}, \code{group} should
 specify one or several names of numeric or logical variables from the
 \code{rowData(x)/colData(x)} by which to agglomerate rows or columns.}
 
@@ -192,7 +192,7 @@ breaks the link between the data used to calculate the reduced dims.
 \value{
 \code{agglomerateByRank} returns a taxonomically-agglomerated,
 optionally-pruned object of the same class as \code{x}.
-\code{agglomerateByVariable} and \code{agglomerateByModule} return an object
+\code{agglomerateByVariable} and \code{agglomerateBySet} return an object
 of the same class as \code{x} with the specified entries merged into one
 entry in all relevant components.
 
@@ -216,7 +216,7 @@ such as taxonomic ranks, variables or prevalence.
 with certain taxonomic ranks, as defined in \code{rowData}. Only available
 \code{\link{taxonomyRanks}} can be used.
 
-\code{agglomerateByVariable} and \code{agglomerateByModule} merge data on
+\code{agglomerateByVariable} and \code{agglomerateBySet} merge data on
 rows or columns of a \code{SummarizedExperiment} as defined by a
 \code{factor} alongside the chosen dimension. This function allows
 agglomeration of data based on other variables than taxonomy ranks.
@@ -247,11 +247,11 @@ science field agnostic names were used. In addition the \code{archetype}
 argument lets the user select how to preserve row or column data. For merge
 data of assays the function from \code{scuttle} are used.
 
-\code{agglomerateByModule} allows to agglomerate features or samples based
+\code{agglomerateBySet} allows to agglomerate features or samples based
 on one or multiple variables of numeric or logical type. It is particularly
-useful for agglomerating by taxonomic or functional modules, each defined by
+useful for agglomerating by taxonomic or functional sets, each defined by
 a logical or binary variable in the \code{rowData}, as features can belong to
-several modules.
+several sets.
 
 \code{agglomerateByRanks} will use by default all available taxonomic ranks,
 but
@@ -355,34 +355,34 @@ merged <- agglomerateByVariable(
     GlobalPatterns, by = "cols", colData(GlobalPatterns)$SampleType)
 merged
 
-## Agglomerate by multiple modules
+## Agglomerate by multiple sets
 
-# Generate 30 random modules
-N_module <- 30L
-modules <- sample(
+# Generate 30 random sets
+N_set <- 30L
+sets <- sample(
     c(TRUE, FALSE),
-    size = nrow(tse) * N_module,
+    size = nrow(tse) * N_set,
     prob = c(0.2, 0.8),
     replace = TRUE
 )
 
-# Convert modules to matrix
-modules <- matrix(modules, nrow = nrow(tse))
+# Convert sets to matrix
+sets <- matrix(sets, nrow = nrow(tse))
 
-# Add module names as colnames
-colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
+# Add set names as colnames
+colnames(sets) <- paste0("set_", seq_len(ncol(sets)))
 
-# Add modules to rowData
-rowData(tse) <- cbind(rowData(tse), modules)
+# Add sets to rowData
+rowData(tse) <- cbind(rowData(tse), sets)
 
-# Extract module columns
-module_columns <- grep("module_", colnames(rowData(tse)), value = TRUE)
+# Extract set columns
+set_columns <- grep("set_", colnames(rowData(tse)), value = TRUE)
 
-# Agglomerate based on modules
-tse_module <- agglomerateByModule(tse, by = 1, group = module_columns)
+# Agglomerate based on sets
+tse_set <- agglomerateBySet(tse, by = 1, group = set_columns)
 
 # Optionally, store results into altExp slot
-altExp(tse, "modules") <- tse_module
+altExp(tse, "sets") <- tse_set
 
 data(GlobalPatterns)
 # print the available taxonomic ranks
