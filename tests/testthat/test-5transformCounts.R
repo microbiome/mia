@@ -442,7 +442,8 @@ test_that("transformAssay", {
         expect_error(transformAssay(
             tse, method = "philr", MARGIN = 1, pseudocount = 1,
             tree = rowTree(esophagus)))
-        tse <- agglomerateByRank(tse, rank = "Phylum")
+        # Tips of the tree correspond to rows
+        tse <- esophagus
         tse <- transformAssay(
             tse, method = "philr", pseudocount = 1, MARGIN = 1L,
             part.weights = "enorm.x.gm.counts",
