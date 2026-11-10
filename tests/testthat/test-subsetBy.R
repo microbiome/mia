@@ -177,16 +177,14 @@ test_that("subsetByMissing", {
           1,  2,  NA, NA, NA),
         nrow = 5, byrow = TRUE,
         dimnames = list(paste0("f", 1:5), paste0("s", 1:5)))
-    se <- SummarizedExperiment(
-        assays = list(counts = mat),
-        colData = DataFrame(group = c("a", "a", "b", "b", "b")))
+    se <- SummarizedExperiment(assays = list(counts = mat))
     prop <- rowMeans(is.na(mat))
-    # Default: at most 20% missing
-    res <- subsetByMissing(se)
+    # Default: features with missing values are removed
+    expect_identical(rownames(subsetByMissing(se)), "f1")
+    # Threshold
+    res <- subsetByMissing(se, threshold = 0.2)
     expect_identical(rownames(res), rownames(mat)[prop <= 0.2])
     expect_identical(rownames(res), c("f1", "f2"))
-    # Threshold
-    expect_identical(rownames(subsetByMissing(se, threshold = 0)), "f1")
     expect_identical(
         rownames(subsetByMissing(se, threshold = 0.6)),
         rownames(mat)[prop <= 0.6])
@@ -195,16 +193,12 @@ test_that("subsetByMissing", {
     res <- subsetByMissing(se, threshold = 0.4, MARGIN = "samples")
     expect_identical(
         colnames(res), colnames(mat)[colMeans(is.na(mat)) <= 0.4])
-    # Groups: f3 is complete in group b, f5 is complete in group a, f4 is
-    # mostly missing in both groups
-    res <- subsetByMissing(se, col.var = "group")
-    expect_identical(rownames(res), c("f1", "f2", "f3", "f5"))
-    expect_identical(colnames(res), colnames(se))
     # Works with DelayedArray and TreeSE
     se2 <- se
     assay(se2, "counts") <- DelayedArray(mat)
     expect_identical(
-        dimnames(subsetByMissing(se2, col.var = "group")), dimnames(res))
+        dimnames(subsetByMissing(se2, threshold = 0.4)),
+        dimnames(subsetByMissing(se, threshold = 0.4)))
     expect_s4_class(
         subsetByMissing(GlobalPatterns[1:20, ]), "TreeSummarizedExperiment")
     # Errors
@@ -213,10 +207,6 @@ test_that("subsetByMissing", {
     expect_error(subsetByMissing(se, threshold = -1))
     expect_error(subsetByMissing(se, threshold = "0.2"))
     expect_error(subsetByMissing(se, MARGIN = 3))
-    expect_error(subsetByMissing(se, col.var = "foo"))
-    expect_error(subsetByMissing(se, col.var = "group", MARGIN = "samples"))
-    se$group[1] <- NA
-    expect_error(subsetByMissing(se, col.var = "group"))
 })
 
 test_that("subsetByTop", {

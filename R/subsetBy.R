@@ -16,8 +16,8 @@
 #'   \item \code{subsetBySd()}: removes features (or samples) with low
 #'   standard deviation. By default, removes features with zero standard
 #'   deviation.
-#'   \item \code{subsetByMissing()}: removes features (or samples) with many
-#'   missing values. Optionally, missing values are evaluated within groups.
+#'   \item \code{subsetByMissing()}: removes features (or samples) with
+#'   missing values.
 #'   \item \code{subsetByTop()}: keeps the top features based on, e.g., mean
 #'   abundance or variance. See \code{\link[=getTop]{getTop()}}.
 #' }
@@ -79,13 +79,8 @@
 #' \strong{subsetByMissing}
 #'
 #' Features (or samples) whose proportion of missing values (\code{NA}) is
-#' less than or equal to \code{threshold} are kept. The default
-#' \code{threshold = 0.2} corresponds to the "80\% rule" that is commonly used
-#' with, e.g., metabolomics and proteomics data: features must be measured in
-#' at least 80\% of samples. If \code{col.var} is specified, features are kept
-#' if they pass the threshold in at least one group of samples
-#' ("modified 80\% rule"). With \code{threshold = 0}, all features with
-#' missing values are removed.
+#' less than or equal to \code{threshold} are kept. With the default
+#' \code{threshold = 0}, all features with missing values are removed.
 #'
 #' \strong{subsetByTop}
 #'
@@ -103,18 +98,12 @@
 #' abundance (\code{subsetByAbundance}), variance (\code{subsetByVariance})
 #' or standard deviation (\code{subsetBySd}) less than or equal to this value
 #' are removed. For \code{subsetByMissing}, the maximum allowed proportion of
-#' missing values (between 0 and 1). (Default: \code{0}, and \code{0.2} for
-#' \code{subsetByMissing})
+#' missing values (between 0 and 1). (Default: \code{0})
 #'
 #' @param method \code{Character scalar}. Specifies how abundances are
 #' summarized in \code{subsetByAbundance}. Must be one of \code{"sum"},
 #' \code{"mean"}, \code{"median"} or \code{"max"}. (Default: \code{"sum"})
-#'
-#' @param col.var \code{NULL} or \code{Character scalar}. Specifies a column
-#' from \code{colData(x)} that defines sample groups. If specified,
-#' \code{subsetByMissing} keeps features that pass the threshold in at least
-#' one group. Can only be used when features are filtered.
-#' (Default: \code{NULL})
+
 #'
 #' @param MARGIN \code{Character scalar}. Determines whether features
 #' (\code{"features"}) or samples (\code{"samples"}) are filtered.
@@ -176,17 +165,18 @@
 #' tse_sub <- subsetBySd(tse, assay.type = "relabundance", threshold = 0.01)
 #' dim(tse_sub)
 #'
-#' # Remove features that are missing in over 20% of samples. Here, we
-#' # simulate missing values by treating zeros as missing.
+#' # Add missing values to the first 5 features in 2 samples
 #' assay(tse, "na") <- assay(tse, "counts")
-#' assay(tse, "na")[assay(tse, "na") == 0] <- NA
+#' assay(tse, "na")[1:5, 1:2] <- NA
+#'
+#' # Remove features with missing values
 #' tse_sub <- subsetByMissing(tse, assay.type = "na")
 #' dim(tse_sub)
 #'
-#' # Keep features that are measured in at least 80% of samples in at least
-#' # one sample type
-#' tse_sub <- subsetByMissing(tse, assay.type = "na", col.var = "SampleType")
+#' # Allow missing values in up to 10% of samples
+#' tse_sub <- subsetByMissing(tse, assay.type = "na", threshold = 0.1)
 #' dim(tse_sub)
+
 #'
 #' # Keep the 10 most variable features
 #' tse_sub <- subsetByTop(tse, top = 10, method = "sd")
@@ -285,9 +275,8 @@ setMethod("subsetByMissing", signature = c(x = "SummarizedExperiment"),
     function(
         x,
         assay.type = "counts",
-        threshold = 0.2,
+        threshold = 0,
         MARGIN = "features",
-        col.var = NULL,
         ...
     ) {
         .check_assay_present(assay.type, x)
@@ -297,24 +286,10 @@ setMethod("subsetByMissing", signature = c(x = "SummarizedExperiment"),
                 "and 1.", call. = FALSE)
         }
         MARGIN <- .check_MARGIN(MARGIN)
-        if( !is.null(col.var) && MARGIN == 2L ){
-            stop("'col.var' can only be used when features are filtered.",
-                call. = FALSE)
-        }
         #
         missing <- is.na(assay(x, assay.type))
-        if( MARGIN == 2L ){
-            keep <- colMeans2(missing) <= threshold
-        } else if( is.null(col.var) ){
-            keep <- rowMeans2(missing) <= threshold
-        } else{
-            # Keep features that pass the threshold in at least one group
-            groups <- .get_sample_groups(x, col.var)
-            keep <- lapply(levels(groups), function(group){
-                rowMeans2(missing[, groups == group, drop = FALSE]) <= threshold
-            })
-            keep <- Reduce(`|`, keep)
-        }
+        FUN <- if( MARGIN == 1L ) rowMeans2 else colMeans2
+        keep <- FUN(missing) <= threshold
         x <- if( MARGIN == 1L ) x[keep, ] else x[, keep]
         return(x)
     }
