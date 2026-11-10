@@ -33,6 +33,13 @@
 #' @param update.tree \code{Logical scalar}. Should
 #' \code{rowTree()} also be agglomerated? (Default: \code{TRUE})
 #'
+#' @param col.var \code{NULL} or \code{Character scalar}. Specifies a column
+#' from \code{colData(x)} that defines sample groups. If specified,
+#' \code{subsetByPrevalent} keeps features that are prevalent in at least one
+#' group, and \code{subsetByRare} keeps features that are rare in all groups.
+#' This prevents removing features that are specific to a group, e.g., before
+#' differential abundance analysis. (Default: \code{NULL})
+#'
 #' @param name \code{Character scalar}. Specifies name of column in
 #' \code{rowData} where the results will be stored.
 #' (Default: \code{"prevalence"})
@@ -66,7 +73,8 @@
 #' \code{subsetPrevalent} and \code{subsetRareFeatures} return a subset of
 #' \code{x}.
 #' The subset includes the most prevalent or rare taxa that are calculated with
-#' \code{getPrevalent} or \code{getRare} respectively.
+#' \code{getPrevalent} or \code{getRare} respectively. With \code{col.var},
+#' prevalence is calculated within each group of samples.
 #'
 #' @return
 #' \code{subsetPrevalent} and \code{subsetRareFeatures} return subset of
@@ -92,7 +100,8 @@
 #'
 #' @seealso
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
-#' \code{\link[=getTop]{getTop}}
+#' \code{\link[=getTop]{getTop}},
+#' \code{\link[=subsetBy]{subsetBy}} for other filtering functions
 #'
 #'
 #' @name getPrevalence
@@ -137,6 +146,11 @@
 #'     rank = "Phylum",
 #'     detection = 10,
 #'     prevalence = 50/100)
+#'
+#' # Keep features that are present in over 50% of samples in at least one
+#' # sample type
+#' tse_sub <- subsetByPrevalent(tse, prevalence = 0.5, col.var = "SampleType")
+#' dim(tse_sub)
 #' head(prevalent)
 #'
 #' # Add relative aundance data
@@ -417,9 +431,9 @@ setMethod("getRare", signature = c(x = "SummarizedExperiment"),
 #' @rdname getPrevalence
 #' @export
 setMethod("subsetByPrevalent", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, ...){
+    function(x, rank = NULL, col.var = NULL, ...){
         x <- .merge_features(x, rank = rank, ...)
-        prevalent_indices <- .get_prevalent_indices(x, ...)
+        prevalent_indices <- .get_prevalent_indices_by_group(x, col.var, ...)
         x[prevalent_indices, ]
     }
 )
@@ -447,9 +461,16 @@ setMethod("subsetByPrevalent", signature = c(x = "TreeSummarizedExperiment"),
 #' @rdname getPrevalence
 #' @export
 setMethod("subsetByRare", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, ...){
+    function(x, rank = NULL, col.var = NULL, ...){
         x <- .merge_features(x, rank = rank, ...)
-        rare_indices <- .get_rare_indices(x, ...)
+        if( is.null(col.var) ){
+            rare_indices <- .get_rare_indices(x, ...)
+        } else{
+            # Rare features are those that are not prevalent in any group
+            prevalent_indices <- .get_prevalent_indices_by_group(
+                x, col.var, ...)
+            rare_indices <- setdiff(seq_len(nrow(x)), prevalent_indices)
+        }
         x[rare_indices, ]
     }
 )
@@ -471,6 +492,19 @@ setMethod("subsetByRare", signature = c(x = "TreeSummarizedExperiment"),
         return(x)
     }
 )
+
+# Gets indices of features that are prevalent in at least one group of samples
+.get_prevalent_indices_by_group <- function(x, col.var = NULL, ...){
+    if( is.null(col.var) ){
+        return(.get_prevalent_indices(x, ...))
+    }
+    groups <- .get_sample_groups(x, col.var)
+    indices <- lapply(levels(groups), function(group){
+        .get_prevalent_indices(x[, groups == group], ...)
+    })
+    indices <- sort(unique(unname(unlist(indices))))
+    return(indices)
+}
 
 ############################# getPrevalentAbundance ############################
 

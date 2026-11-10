@@ -510,3 +510,55 @@ test_that("agglomerateByPrevalence", {
         as.character(reference)
     )
 })
+
+test_that("subsetByPrevalent and subsetByRare with col.var", {
+    mat <- matrix(
+        c(1, 1, 1, 1, 1, 1,
+          1, 1, 1, 0, 0, 0,
+          0, 0, 0, 1, 1, 0,
+          1, 0, 0, 0, 0, 1),
+        nrow = 4, byrow = TRUE,
+        dimnames = list(paste0("f", 1:4), paste0("s", 1:6)))
+    se <- SummarizedExperiment(
+        assays = list(counts = mat),
+        colData = DataFrame(group = rep(c("a", "b"), each = 3)))
+    # Over all samples, only f1 is prevalent
+    expect_identical(
+        rownames(subsetByPrevalent(se, prevalence = 0.5)), "f1")
+    # f2 is prevalent in group a and f3 in group b
+    res <- subsetByPrevalent(se, prevalence = 0.5, col.var = "group")
+    expect_identical(rownames(res), c("f1", "f2", "f3"))
+    expect_identical(colnames(res), colnames(se))
+    res <- subsetByRare(se, prevalence = 0.5, col.var = "group")
+    expect_identical(rownames(res), "f4")
+    # Other arguments are passed
+    res <- subsetByPrevalent(
+        se, prevalence = 2/3, include.lowest = TRUE, col.var = "group")
+    expect_identical(rownames(res), c("f1", "f2", "f3"))
+    res <- subsetByPrevalent(
+        se, prevalence = 0.5, detection = 1, col.var = "group")
+    expect_equal(nrow(res), 0L)
+    # Works with rank and TreeSE
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns[1:200, ]
+    groups <- factor(tse$SampleType)
+    ref <- vapply(levels(groups), function(g){
+        rowMeans(assay(tse, "counts")[, groups == g] > 0) > 0.5
+    }, logical(nrow(tse)))
+    ref <- rownames(tse)[rowSums(ref) > 0]
+    res <- subsetByPrevalent(tse, prevalence = 0.5, col.var = "SampleType")
+    expect_s4_class(res, "TreeSummarizedExperiment")
+    expect_identical(rownames(res), ref)
+    expect_identical(length(rowTree(res)$tip.label), nrow(res))
+    res <- subsetByRare(tse, prevalence = 0.5, col.var = "SampleType")
+    expect_identical(rownames(res), setdiff(rownames(tse), ref))
+    res <- subsetByPrevalent(
+        tse, rank = "Phylum", prevalence = 0.5, col.var = "SampleType")
+    expect_true(all(rownames(res) %in% rownames(
+        agglomerateByRank(tse, rank = "Phylum"))))
+    # Errors
+    expect_error(subsetByPrevalent(se, col.var = "foo"))
+    expect_error(subsetByRare(se, col.var = c("group", "group")))
+    se$group[1] <- NA
+    expect_error(subsetByPrevalent(se, col.var = "group"))
+})

@@ -67,7 +67,6 @@ export(estimateRichness)
 export(exportMothur)
 export(exportQIIME2)
 export(exportRaw)
-export(filterRPCAInput)
 export(full_join)
 export(getAbundanceClass)
 export(getAbundant)
@@ -167,12 +166,17 @@ export(setTaxonomyRanks)
 export(splitByRanks)
 export(splitOn)
 export(subsampleCounts)
+export(subsetByAbundance)
+export(subsetByMissing)
 export(subsetByPrevalent)
 export(subsetByPrevalentFeatures)
 export(subsetByPrevalentTaxa)
 export(subsetByRare)
 export(subsetByRareFeatures)
 export(subsetByRareTaxa)
+export(subsetBySd)
+export(subsetByTop)
+export(subsetByVariance)
 export(subsetFeatures)
 export(subsetSamples)
 export(subsetTaxa)
@@ -244,7 +248,6 @@ exportMethods(estimateDominance)
 exportMethods(estimateEvenness)
 exportMethods(estimateFaith)
 exportMethods(estimateRichness)
-exportMethods(filterRPCAInput)
 exportMethods(full_join)
 exportMethods(getAbundanceClass)
 exportMethods(getAbundant)
@@ -320,12 +323,17 @@ exportMethods(runJSD)
 exportMethods(runOverlap)
 exportMethods(splitOn)
 exportMethods(subsampleCounts)
+exportMethods(subsetByAbundance)
+exportMethods(subsetByMissing)
 exportMethods(subsetByPrevalent)
 exportMethods(subsetByPrevalentFeatures)
 exportMethods(subsetByPrevalentTaxa)
 exportMethods(subsetByRare)
 exportMethods(subsetByRareFeatures)
 exportMethods(subsetByRareTaxa)
+exportMethods(subsetBySd)
+exportMethods(subsetByTop)
+exportMethods(subsetByVariance)
 exportMethods(subsetFeatures)
 exportMethods(subsetSamples)
 exportMethods(subsetTaxa)
@@ -377,16 +385,20 @@ importFrom(DelayedArray,
   type
 )
 importFrom(DelayedMatrixStats,
+  colMaxs,
   colMeans2,
+  colMedians,
   colQuantiles,
   colSds,
   colSums2,
+  colVars,
   rowMaxs,
   rowMeans2,
   rowMedians,
   rowMins,
   rowSds,
-  rowSums2
+  rowSums2,
+  rowVars
 )
 importFrom(DirichletMultinomial,
   AIC,

@@ -100,11 +100,11 @@ addPrevalence(x, ...)
   ...
 )
 
-\S4method{subsetByPrevalent}{SummarizedExperiment}(x, rank = NULL, ...)
+\S4method{subsetByPrevalent}{SummarizedExperiment}(x, rank = NULL, col.var = NULL, ...)
 
 \S4method{subsetByPrevalent}{TreeSummarizedExperiment}(x, update.tree = TRUE, ...)
 
-\S4method{subsetByRare}{SummarizedExperiment}(x, rank = NULL, ...)
+\S4method{subsetByRare}{SummarizedExperiment}(x, rank = NULL, col.var = NULL, ...)
 
 \S4method{subsetByRare}{TreeSummarizedExperiment}(x, update.tree = TRUE, ...)
 
@@ -169,6 +169,13 @@ value of \code{taxonomyRanks()} function.}
 required prevalence is strictly greater by default. To include the
 limit, set \code{include.lowest} to \code{TRUE}.}
 
+\item{col.var}{\code{NULL} or \code{Character scalar}. Specifies a column
+from \code{colData(x)} that defines sample groups. If specified,
+\code{subsetByPrevalent} keeps features that are prevalent in at least one
+group, and \code{subsetByRare} keeps features that are rare in all groups.
+This prevents removing features that are specific to a group, e.g., before
+differential abundance analysis. (Default: \code{NULL})}
+
 \item{update.tree}{\code{Logical scalar}. Should
 \code{rowTree()} also be agglomerated? (Default: \code{TRUE})}
 }
@@ -213,7 +220,8 @@ given detection level as set for \code{getPrevalent}.
 \code{subsetPrevalent} and \code{subsetRareFeatures} return a subset of
 \code{x}.
 The subset includes the most prevalent or rare taxa that are calculated with
-\code{getPrevalent} or \code{getRare} respectively.
+\code{getPrevalent} or \code{getRare} respectively. With \code{col.var},
+prevalence is calculated within each group of samples.
 
 \code{getPrevalent} returns taxa that are more prevalent with the
 given detection threshold for the selected taxonomic rank.
@@ -251,6 +259,11 @@ prevalent <- getPrevalent(
     rank = "Phylum",
     detection = 10,
     prevalence = 50/100)
+
+# Keep features that are present in over 50\% of samples in at least one
+# sample type
+tse_sub <- subsetByPrevalent(tse, prevalence = 0.5, col.var = "SampleType")
+dim(tse_sub)
 head(prevalent)
 
 # Add relative aundance data
@@ -297,5 +310,6 @@ To cite the R package, see citation('mia')
 }
 \seealso{
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
-\code{\link[=getTop]{getTop}}
+\code{\link[=getTop]{getTop}},
+\code{\link[=subsetBy]{subsetBy}} for other filtering functions
 }
