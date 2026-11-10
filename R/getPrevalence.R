@@ -30,9 +30,6 @@
 #' @param na.rm \code{Logical scalar}. Should NA values be omitted?
 #' (Default: \code{TRUE})
 #'
-#' @param update.tree \code{Logical scalar}. Should
-#' \code{rowTree()} also be agglomerated? (Default: \code{TRUE})
-#'
 #' @param name \code{Character scalar}. Specifies name of column in
 #' \code{rowData} where the results will be stored.
 #' (Default: \code{"prevalence"})
@@ -424,15 +421,6 @@ setMethod("subsetByPrevalent", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname getPrevalence
-#' @export
-setMethod("subsetByPrevalent", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, ...){
-        x <- callNextMethod(x, ...)
-        return(x)
-    }
-)
-
 ############################# subsetByRare #################################
 
 #' @rdname getPrevalence
@@ -442,15 +430,6 @@ setMethod("subsetByRare", signature = c(x = "SummarizedExperiment"),
         x <- .merge_features(x, rank = rank, ...)
         rare_indices <- .get_rare_indices(x, ...)
         x[rare_indices, ]
-    }
-)
-
-#' @rdname getPrevalence
-#' @export
-setMethod("subsetByRare", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, ...){
-        x <- callNextMethod(x, ...)
-        return(x)
     }
 )
 
@@ -518,6 +497,11 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' threshold) are agglomerated in an additional row taking the name indicated by
 #' \code{other.name} (by default "Other").
 #'
+#' If \code{update.tree = TRUE}, the tree is agglomerated based on \code{rank}
+#' (see \code{\link[=agglomerate-methods]{agglomerateByRank}}). The features
+#' that are agglomerated into \code{other.name} do not have a specific position
+#' in the tree, and this row is linked to the root of the tree.
+#'
 #' @return
 #' \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
 #' of the same class as x and based on prevalent taxonomic results.
@@ -583,15 +567,18 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname agglomerateByPrevalence
-#' @importFrom TreeSummarizedExperiment changeTree
 #' @export
 setMethod("agglomerateByPrevalence",
     signature = c(x = "TreeSummarizedExperiment"),
     function(x, rank = NULL, other.name = other_label, other_label = "Other",
-            update.tree = TRUE, ...){
+            update.tree = FALSE, ...){
         # input check
         if(!.is_a_bool(update.tree)){
             stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if(!.is_a_string(other.name)){
+            stop("'other.name' must be a single character value.",
+                call. = FALSE)
         }
         # update.refseq is a hidden parameter as for all other agglomeration
         # methods from the agglomerate-methods man page.
@@ -603,24 +590,27 @@ setMethod("agglomerateByPrevalence",
         if( !.is_a_bool(merge_refseq) ){
             stop("'update.refseq' must be TRUE or FALSE.", call. = FALSE)
         }
-        row_links <- NULL
-        if( update.tree ){
-            row_links <- rowLinks(x)
-            rownames(row_links) <- rownames(x)
+        # First, agglomerate based on rank. The tree is agglomerated in this
+        # step. If the groups are not monophyletic, the tree is removed.
+        x <- .merge_features(x, rank, update.tree = update.tree, ...)
+        # Then agglomerate non-prevalent features into "Other" group with SE
+        # method. The tree is not agglomerated in this step.
+        x_without_tree <- x
+        rowTree(x_without_tree) <- NULL
+        res <- callNextMethod(
+            x = x_without_tree, rank = NULL, other.name = other.name, ...)
+        # Add the name of "Other" group to the rank column. The SE method
+        # cannot do this, as the data was already agglomerated by rank.
+        other_row <- !rownames(res) %in% rownames(x)
+        if( !is.null(rank) && any(other_row) ){
+            rowData(res)[other_row, rank] <- other.name
         }
-        # Agglomerate based on prevalence with SE method
-        res <- callNextMethod()
-        # If user wants to agglomerate reference sequences. At this point,
-        # sequences are only subsetted without finding consensus sequences.
-        if( merge_refseq && !is.null(referenceSeq(x))  ){
-            # If user wants to agglomerate based on rank
-            x <- .merge_features(x, rank, check.assays = FALSE, ...)
-            # The agglomeration already merged sequences based on rank, but of
-            # course, it did not take into account prevalence agglomeration.
-            # We create a vector that we can use to merge the "other", i.e.,
-            # rare feature group. All features of rank-agglomerated data that
-            # cannot be found from prevalence agglomerated data belong to
-            # "other" group, i.e., they were merged together as rare features.
+        # If user wants to agglomerate reference sequences. Rank agglomeration
+        # already merged sequences, but it did not take into account prevalence
+        # agglomeration. All features of rank-agglomerated data that cannot be
+        # found from prevalence agglomerated data belong to "other" group,
+        # i.e., they were merged together as rare features.
+        if( merge_refseq && !is.null(referenceSeq(x)) ){
             f <- rownames(x)
             f[ !f %in% rownames(res) ] <- other.name
             # Find consensus sequences for "other" group.
@@ -631,31 +621,46 @@ setMethod("agglomerateByPrevalence",
             ref_seq <- ref_seq[ match(rownames(res), names(ref_seq)) ]
             referenceSeq(res) <- ref_seq
         }
-        # Update tree if user has specified to do so
-        if( !is.null(row_links) ){
-            trees <- lapply(rowTreeNames(x), function(name) rowTree(x, name))
-            names(trees) <- rowTreeNames(x)
-            trees <- .agglomerate_trees(trees, links = row_links, f = f)
-            # Add agglomerated trees back to TreeSE
-            for( tree_name in names(trees) ){
-                tree <- trees[[tree_name]][["tree"]]
-                links <- trees[[tree_name]][["links"]]
-                # Sort the links so that they match order of rownames
-                links <- links[ match(rownames(x), names(links)) ]
-                # Assign it back
-                x <- changeTree(
-                    x,
-                    rowTree = tree,
-                    rowNodeLab = links,
-                    whichRowTree = tree_name
-                )
-            }
-        } else{
-            rowTree(x) <- NULL
+        # Add the tree back. "Other" group is linked to the root.
+        if( update.tree && !is.null(rowLinks(x)) ){
+            res <- .add_tree_with_other_group(res, x)
         }
         return(res)
     }
 )
+
+# This function adds the tree of x to res. Rows of res that are found from x are
+# linked to the same nodes as in x. "Other" group of non-prevalent features
+# does not have a specific position in the tree, and it is linked to the root.
+.add_tree_with_other_group <- function(res, x){
+    tree <- .get_single_tree(x, by = 1L)
+    if( is.null(tree) ){
+        return(res)
+    }
+    tree <- .set_unique_root_label(tree)
+    ind <- match(rownames(res), rownames(x))
+    node_lab <- rowLinks(x)[["nodeLab"]][ind]
+    node_lab[ is.na(ind) ] <- tree[["node.label"]][[1L]]
+    res <- .set_tree(res, tree, node_lab, rowTreeNames(x)[[1L]], by = 1L)
+    return(res)
+}
+
+# Rows are linked to nodes by labels. This function ensures that the root has
+# a unique label so that rows can be linked to it.
+#' @importFrom ape Ntip
+.set_unique_root_label <- function(tree){
+    if( is.null(tree[["node.label"]]) ){
+        tree[["node.label"]] <- rep("", tree[["Nnode"]])
+    }
+    labels <- c(tree[["tip.label"]], tree[["node.label"]])
+    root_label <- tree[["node.label"]][[1L]]
+    if( is.na(root_label) || root_label == "" ||
+            sum(labels %in% root_label) > 1L ){
+        tree[["node.label"]][[1L]] <- make.unique(c(labels, "root"))[[
+            length(labels) + 1L]]
+    }
+    return(tree)
+}
 
 # Get abundance. Determines if relative abundance is calculated or not.
 .to_rel_abund <- function(

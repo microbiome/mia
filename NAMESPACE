@@ -451,11 +451,9 @@ importFrom(SummarizedExperiment,
   rowData,
   rowRanges
 )
-importFrom(TreeSummarizedExperiment,
-  changeTree,
-  subsetByLeaf
-)
+importFrom(TreeSummarizedExperiment,changeTree)
 importFrom(ape,
+  Ntip,
   as.phylo,
   bind.tree,
   collapse.singles,
@@ -467,6 +465,7 @@ importFrom(ape,
   node.depth.edgelength,
   read.tree,
   reorder.phylo,
+  root,
   write.FASTA,
   write.tree
 )
@@ -491,6 +490,10 @@ importFrom(dplyr,
   summarise,
   sym,
   tally
+)
+importFrom(methods,
+  "slot<-",
+  slot
 )
 importFrom(rlang,
   ":=",

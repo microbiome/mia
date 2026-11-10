@@ -71,16 +71,16 @@ test_that("agglomerate", {
     actual <- agglomerateByRank(se, rank = "Family",
         ignore.taxonomy = FALSE, empty.rm = FALSE, update.tree = FALSE)
     expect_equal(dim(actual),c(603,26))
-    expect_equal(length(rowTree(actual)$tip.label),
-                 length(rowTree(se)$tip.label))
-    actual <- agglomerateByRank(se, rank = "Family",
-        ignore.taxonomy = FALSE, empty.rm = FALSE, update.tree = TRUE)
+    # Tree is dropped if it is not updated
+    expect_null(rowTree(actual))
+    # Families are not monophyletic, so the tree cannot be updated. It is
+    # removed with a warning.
+    expect_warning(
+        actual <- agglomerateByRank(se, rank = "Family",
+            ignore.taxonomy = FALSE, empty.rm = FALSE, update.tree = TRUE),
+        "not monophyletic")
     expect_equal(dim(actual),c(603,26))
-    expect_equal(length(rowTree(actual)$tip.label), 603)
-    actual <- agglomerateByRank(se, rank = "Family",
-        ignore.taxonomy = FALSE, empty.rm = FALSE, update.tree = TRUE)
-    expect_equal(dim(actual),c(603,26))
-    expect_equal(length(rowTree(actual)$tip.label), nrow(actual))
+    expect_null(rowTree(actual))
     # Test that warning occurs when assay contian binary or negative values
     se1 <- transformAssay(se, method = "pa")
     se2 <- se1
@@ -236,4 +236,122 @@ test_that("agglomerate", {
                         "NYTDRRKDVHNKNDRVGRNDRSBRRAWTBYNHRKKKWRSSRKKRAAWKSSKWR",
                         "RWDWTNDBRVRRAMHHCMRDKKSSRARGSSVSYYHNYBRRVHNDNNHYKRMVV",
                         "YKVRDNNNSRAARSBDKGGKK"))
+})
+
+test_that("Tree agglomeration requires monophyletic groups", {
+    # Example from #867: (A, B) form one clade and (C, D, E) another
+    tree <- ape::read.tree(text = "((A:1,B:1)n1:1,(C:1,D:1,E:1)n2:1)root;")
+    tips <- match(c("A", "B", "C", "D", "E"), tree$tip.label)
+    df <- .tree_to_table(tree)
+    # Monophyletic groups
+    expect_true(.check_monophyly(df, tips, c("x", "x", "y", "y", "y")))
+    # Single-member groups and the whole tree as one group
+    expect_true(.check_monophyly(df, tips, c("a", "b", "c", "d", "e")))
+    expect_true(.check_monophyly(df, tips, rep("x", 5)))
+    # D belongs to the group of A and B, but it is in the other clade. Neither
+    # group is monophyletic: Firmicutes is in two clades, and the clade of
+    # Bacteroidota (C, E) also includes D.
+    groups <- c("Firmicutes", "Firmicutes", "Bacteroidota", "Firmicutes",
+        "Bacteroidota")
+    expect_false(.check_monophyly(df, tips, groups))
+    expect_setequal(
+        .get_non_monophyletic_groups(df, tips, groups),
+        c("Firmicutes", "Bacteroidota"))
+    # A single group that is split by another group. Only that group is
+    # reported.
+    expect_false(.check_monophyly(df, tips, c("x", "x", "y", "z", "y")))
+    expect_identical(
+        .get_non_monophyletic_groups(df, tips, c("x", "x", "y", "z", "y")),
+        "y")
+    expect_identical(
+        .get_non_monophyletic_groups(df, tips, c("x", "x", "y", "y", "y")),
+        character(0))
+    # Tips that are not linked to any feature are ignored
+    expect_true(.check_monophyly(df, tips[c(1, 3, 5)], c("x", "y", "y")))
+    # Features can be linked to internal nodes
+    clade_ab <- ape::getMRCA(tree, c("A", "B"))
+    expect_true(.check_monophyly(df, c(clade_ab, tips[3]), c("x", "y")))
+    expect_false(.check_monophyly(df, c(clade_ab, tips[1]), c("x", "y")))
+    # Multiple features linked to the same node with different groups
+    expect_false(.check_monophyly(df, tips[c(1, 1)], c("x", "y")))
+    # Through the user-facing function: monophyletic groups are agglomerated
+    tse <- TreeSummarizedExperiment(
+        assays = list(counts = matrix(1:10, nrow = 5,
+            dimnames = list(c("A", "B", "C", "D", "E"), c("s1", "s2")))),
+        rowTree = tree)
+    res <- agglomerateByVariable(
+        tse, by = "rows", group = c("x", "x", "y", "y", "y"),
+        update.tree = TRUE)
+    expect_identical(rowLinks(res)$nodeLab, c("n1", "n2"))
+    expect_identical(sort(rowTree(res)$tip.label), c("n1", "n2"))
+    # Non-monophyletic groups: warning that names the groups, and the tree is
+    # removed
+    expect_warning(
+        res <- agglomerateByVariable(
+            tse, by = "rows", group = groups, update.tree = TRUE),
+        "2 group\\(s\\) are not monophyletic: '(Firmicutes|Bacteroidota)'")
+    expect_null(rowTree(res))
+    expect_identical(nrow(res), 2L)
+})
+
+test_that(".get_levels_of_nodes", {
+    # Branch lengths do not affect levels, also zero-length branches
+    tree <- ape::read.tree(text = "((A:0,B:5)n1:0,(C:1,(D:1,E:1)n3:0)n2:1)root;")
+    df <- .tree_to_table(tree)
+    parent <- match(df[["parent"]], df[["node"]])
+    level <- .get_levels_of_nodes(parent)
+    labels <- df[["label"]]
+    expect_identical(
+        setNames(level, labels)[c("root", "n1", "n2", "n3", "A", "C", "D")],
+        c(root = 0L, n1 = 1L, n2 = 1L, n3 = 2L, A = 2L, C = 2L, D = 3L))
+    # Children always have a higher level than their parents
+    not_root <- parent != seq_along(parent)
+    expect_true(all(level[not_root] == level[ parent[not_root] ] + 1L))
+    # Multiple roots or no root
+    expect_error(.get_levels_of_nodes(c(1L, 2L, 1L, 2L)), "single root")
+    expect_error(.get_levels_of_nodes(c(2L, 1L, 2L)), "single root")
+    # Nodes that are not connected to the root (3 and 4 form a loop)
+    expect_error(.get_levels_of_nodes(c(1L, 1L, 4L, 3L)), "connected")
+})
+
+test_that("Tree agglomeration with multiple trees, single group and tree name", {
+    tree1 <- ape::read.tree(text = "((A:1,B:1)a1:1,(C:1,D:1)a2:1)a0;")
+    tree2 <- ape::read.tree(text = "((E:1,F:1)b1:1,G:1)b0;")
+    .create_tse <- function(tree){
+        n <- length(tree$tip.label)
+        mat <- matrix(seq_len(2*n), ncol = 2,
+            dimnames = list(tree$tip.label, c("s1", "s2")))
+        TreeSummarizedExperiment(assays = list(counts = mat), rowTree = tree)
+    }
+    # Tree agglomeration supports only a single tree. With multiple trees, the
+    # trees are removed with a warning, and the data is merged as usual.
+    tse <- rbind(.create_tse(tree1), .create_tse(tree2))
+    group <- c("x", "x", "y", "y", "z", "z", "G")
+    expect_warning(
+        res <- agglomerateByVariable(
+            tse, by = "rows", group = group, update.tree = TRUE),
+        "multiple trees")
+    ref <- agglomerateByVariable(
+        tse, by = "rows", group = group, update.tree = FALSE)
+    expect_null(rowTree(res))
+    expect_identical(assay(res), assay(ref))
+    # The name of the tree is kept
+    tse <- .create_tse(tree1)
+    rowTreeNames(tse) <- "my_tree"
+    res <- agglomerateByVariable(
+        tse, by = "rows", group = c("x", "x", "y", "y"), update.tree = TRUE)
+    expect_identical(rowTreeNames(res), "my_tree")
+    expect_identical(unname(rowLinks(res)$nodeLab), c("a1", "a2"))
+    # Single group: its MRCA is the root, so the tree has a single tip
+    res <- agglomerateByVariable(
+        .create_tse(tree1), by = "rows", group = rep("x", 4),
+        update.tree = TRUE)
+    expect_identical(rowTree(res)$tip.label, "a0")
+    expect_identical(unname(rowLinks(res)$nodeLab), "a0")
+    # Each feature is its own group, so the data is not merged. Rows are still
+    # linked correctly.
+    res <- agglomerateByVariable(
+        .create_tse(tree1), by = "rows", group = c("p", "q", "r", "s"),
+        update.tree = TRUE)
+    expect_identical(unname(rowLinks(res)$nodeLab), c("A", "B", "C", "D"))
 })

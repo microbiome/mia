@@ -21,7 +21,7 @@ agglomerateByPrevalence(x, ...)
   rank = NULL,
   other.name = other_label,
   other_label = "Other",
-  update.tree = TRUE,
+  update.tree = FALSE,
   ...
 )
 }
@@ -41,7 +41,11 @@ summary of non-prevalent taxa. (default: \code{"Other"})}
 \item{other_label}{Deprecated. use \code{other.name} instead.}
 
 \item{update.tree}{\code{Logical scalar}. Should
-\code{rowTree()} also be merged? (Default: \code{TRUE})}
+\code{rowTree()} also be agglomerated? Each group is collapsed into the
+most recent common ancestor of its features. This requires that groups are
+monophyletic, i.e., each group forms its own subtree. Otherwise, the tree is
+removed with a warning. If \code{FALSE}, the tree is removed.
+(Default: \code{FALSE})}
 }
 \value{
 \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
@@ -57,6 +61,11 @@ available) and selects the summed results that exceed the given population
 prevalence at the given detection level. The other summed values (below the
 threshold) are agglomerated in an additional row taking the name indicated by
 \code{other.name} (by default "Other").
+
+If \code{update.tree = TRUE}, the tree is agglomerated based on \code{rank}
+(see \code{\link[=agglomerate-methods]{agglomerateByRank}}). The features
+that are agglomerated into \code{other.name} do not have a specific position
+in the tree, and this row is linked to the root of the tree.
 }
 \examples{
 ## Data can be aggregated based on prevalent taxonomic results

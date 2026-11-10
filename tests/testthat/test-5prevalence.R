@@ -334,12 +334,14 @@ test_that("subsetByPrevalent", {
     alias <- unname(assay(alias, "counts"))
     expect_equal(alias, pr2)
 
-    # Check that tree subsetting works
-    expect_error(subsetByPrevalent(GlobalPatterns, update.tree = 1))
-    expect_error(subsetByPrevalent(GlobalPatterns, update.tree = NULL))
-    expect_error(subsetByPrevalent(GlobalPatterns, update.tree = c(TRUE, FALSE)))
-    tse_sub <- subsetByPrevalent(GlobalPatterns, prevalence = 0.4, rank = "Genus", update.tree = TRUE)
-    expect_equal(length(rowTree(tse_sub)$tip.label), nrow(tse_sub))
+    # Genera are not monophyletic, so the tree cannot be agglomerated. It is
+    # removed with a warning.
+    expect_warning(
+        tse_sub <- subsetByPrevalent(
+            GlobalPatterns, prevalence = 0.4, rank = "Genus",
+            update.tree = TRUE),
+        "not monophyletic")
+    expect_null(rowTree(tse_sub))
 
 })
 
@@ -402,12 +404,13 @@ test_that("subsetByRare", {
     alias <- unname(assay(alias, "counts"))
     expect_equal(alias, pr2)
 
-    # Check that tree subsetting works
-    expect_error(subsetByRare(GlobalPatterns, update.tree = 1))
-    expect_error(subsetByRare(GlobalPatterns, update.tree = NULL))
-    expect_error(subsetByRare(GlobalPatterns, update.tree = c(TRUE, FALSE)))
-    tse_sub <- subsetByRare(GlobalPatterns, rank = "Class", update.tree = TRUE)
-    expect_equal(length(rowTree(tse_sub)$tip.label), nrow(tse_sub))
+    # Classes are not monophyletic, so the tree cannot be agglomerated. It is
+    # removed with a warning.
+    expect_warning(
+        tse_sub <- subsetByRare(
+            GlobalPatterns, rank = "Class", update.tree = TRUE),
+        "not monophyletic")
+    expect_null(rowTree(tse_sub))
 })
 
 test_that("agglomerateByPrevalence", {
@@ -415,7 +418,8 @@ test_that("agglomerateByPrevalence", {
     data(GlobalPatterns, package="mia")
     expect_error(agglomerateByPrevalence(GlobalPatterns, other.name=TRUE),
                  "'other.name' must be a single character value")
-    actual <- agglomerateByPrevalence(GlobalPatterns, rank = "Kingdom")
+    actual <- agglomerateByPrevalence(
+        GlobalPatterns, rank = "Kingdom", update.tree = FALSE)
     expect_s4_class(actual,class(GlobalPatterns))
     expect_equal(dim(actual),c(2,26))
 
@@ -430,7 +434,7 @@ test_that("agglomerateByPrevalence", {
     expect_s4_class(actual,class(GlobalPatterns))
     expect_equal(dim(actual),c(6,26))
     expect_equal(rowData(actual)[6,"Phylum"],"test")
-    expect_false(length(rowTree(actual)$tip.label) == length(rownames(actual)))
+    expect_null(rowTree(actual))
 
     actual <- agglomerateByPrevalence(GlobalPatterns,
                                       rank = NULL,
@@ -454,15 +458,29 @@ test_that("agglomerateByPrevalence", {
     expect_s4_class(actual,class(GlobalPatterns))
     expect_equal(dim(actual),c(6,26))
     expect_true(all(is.na(rowData(actual)[6,])))
-    expect_equal(length(rowTree(actual)$tip.label), length(rownames(actual)))
-    actual <- agglomerateByPrevalence(GlobalPatterns,
-                                      rank = "Phylum",
-                                      detection = 1/100,
-                                      prevalence = 50/100,
-                                      as_relative = TRUE,
-                                      other_label = "test",
-                                      update.tree = TRUE)
-    expect_equal(length(rowTree(actual)$tip.label), length(rownames(actual)))
+    # Without rank, the tree is kept. Prevalent features are linked to their
+    # own nodes, and "Other" group is linked to the root.
+    tree <- rowTree(GlobalPatterns)
+    expect_identical(rowTree(actual)$edge, tree$edge)
+    expect_identical(
+        unname(rowLinks(actual)$nodeLab[1:5]),
+        rowLinks(GlobalPatterns)$nodeLab[
+            match(rownames(actual)[1:5], rownames(GlobalPatterns))])
+    expect_identical(
+        unname(rowLinks(actual)$nodeNum[6]), length(tree$tip.label) + 1L)
+    expect_false(rowLinks(actual)$isLeaf[6])
+    # Phyla are not monophyletic, so the tree cannot be agglomerated. It is
+    # removed with a warning.
+    expect_warning(
+        actual <- agglomerateByPrevalence(GlobalPatterns,
+                                          rank = "Phylum",
+                                          detection = 1/100,
+                                          prevalence = 50/100,
+                                          as_relative = TRUE,
+                                          other_label = "test",
+                                          update.tree = TRUE),
+        "not monophyletic")
+    expect_null(rowTree(actual))
 
     # Load data from miaTime package
     data("SilvermanAGutData", package = "miaTime")

@@ -37,7 +37,7 @@ unsplitByRanks(x, ...)
   rank = taxonomyRanks(x)[1],
   update.tree = agglomerateTree,
   agglomerate.tree = agglomerateTree,
-  agglomerateTree = TRUE,
+  agglomerateTree = FALSE,
   ...
 )
 
@@ -64,7 +64,7 @@ unsplitByRanks(x, ...)
   group = f,
   f,
   update.tree = mergeTree,
-  mergeTree = TRUE,
+  mergeTree = FALSE,
   ...
 )
 
@@ -125,7 +125,11 @@ See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}
 value of \code{taxonomyRanks()} function.}
 
 \item{update.tree}{\code{Logical scalar}. Should
-\code{rowTree()} also be merged? (Default: \code{TRUE})}
+\code{rowTree()} also be agglomerated? Each group is collapsed into the
+most recent common ancestor of its features. This requires that groups are
+monophyletic, i.e., each group forms its own subtree. Otherwise, the tree is
+removed with a warning. If \code{FALSE}, the tree is removed.
+(Default: \code{FALSE})}
 
 \item{agglomerate.tree}{Deprecated. Use \code{update.tree} instead.}
 
@@ -282,12 +286,15 @@ x1 <- agglomerateByRank(GlobalPatterns, rank="Family")
 nrow(GlobalPatterns)
 nrow(x1)
 
-# Do not agglomerate the tree
-x2 <- agglomerateByRank(
-    GlobalPatterns, rank="Family", update.tree = FALSE)
-nrow(x2) # same number of rows, but
-rowTree(x1) # ... different
-rowTree(x2) # ... tree
+# By default, the tree is removed, as it does not match the agglomerated
+# data
+rowTree(x1)
+
+# The tree can be agglomerated if the groups are monophyletic, i.e., each
+# group forms its own subtree. Here, the tree is agglomerated at the
+# Kingdom rank.
+x2 <- agglomerateByRank(GlobalPatterns, rank = "Kingdom", update.tree = TRUE)
+rowTree(x2)
 
 # If assay contains binary or negative values, summing might lead to
 # meaningless values, and you will get a warning. In these cases, you might
@@ -339,9 +346,8 @@ plot(rowTree(esophagus))
 # Get a factor for merging
 f <- factor(regmatches(rownames(esophagus),
     regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-merged <- agglomerateByVariable(
-    esophagus, by = "rows", f, update.tree = TRUE)
-plot(rowTree(merged))
+merged <- agglomerateByVariable(esophagus, by = "rows", f)
+merged
 #
 data(GlobalPatterns)
 GlobalPatterns

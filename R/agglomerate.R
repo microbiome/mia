@@ -132,7 +132,11 @@
 #' @param f Deprecated. Use \code{group} instead.
 #'
 #' @param update.tree \code{Logical scalar}. Should
-#' \code{rowTree()} also be merged? (Default: \code{TRUE})
+#' \code{rowTree()} also be agglomerated? Each group is collapsed into the
+#' most recent common ancestor of its features. This requires that groups are
+#' monophyletic, i.e., each group forms its own subtree. Otherwise, the tree is
+#' removed with a warning. If \code{FALSE}, the tree is removed.
+#' (Default: \code{FALSE})
 #'
 #' @param mergeTree Deprecated. Use \code{update.tree} instead.
 #'
@@ -151,12 +155,15 @@
 #' nrow(GlobalPatterns)
 #' nrow(x1)
 #'
-#' # Do not agglomerate the tree
-#' x2 <- agglomerateByRank(
-#'     GlobalPatterns, rank="Family", update.tree = FALSE)
-#' nrow(x2) # same number of rows, but
-#' rowTree(x1) # ... different
-#' rowTree(x2) # ... tree
+#' # By default, the tree is removed, as it does not match the agglomerated
+#' # data
+#' rowTree(x1)
+#'
+#' # The tree can be agglomerated if the groups are monophyletic, i.e., each
+#' # group forms its own subtree. Here, the tree is agglomerated at the
+#' # Kingdom rank.
+#' x2 <- agglomerateByRank(GlobalPatterns, rank = "Kingdom", update.tree = TRUE)
+#' rowTree(x2)
 #'
 #' # If assay contains binary or negative values, summing might lead to
 #' # meaningless values, and you will get a warning. In these cases, you might
@@ -208,9 +215,8 @@
 #' # Get a factor for merging
 #' f <- factor(regmatches(rownames(esophagus),
 #'     regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-#' merged <- agglomerateByVariable(
-#'     esophagus, by = "rows", f, update.tree = TRUE)
-#' plot(rowTree(merged))
+#' merged <- agglomerateByVariable(esophagus, by = "rows", f)
+#' merged
 #' #
 #' data(GlobalPatterns)
 #' GlobalPatterns
@@ -262,7 +268,7 @@ NULL
 setMethod(
     "agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], update.tree = agglomerateTree,
-        agglomerate.tree = agglomerateTree, agglomerateTree = TRUE, ...){
+        agglomerate.tree = agglomerateTree, agglomerateTree = FALSE, ...){
         # Input check
         if(!.is_a_bool(update.tree)){
             stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
@@ -385,7 +391,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable",
     signature = c(x = "TreeSummarizedExperiment"),
-    function(x, by, group = f, f, update.tree = mergeTree, mergeTree = TRUE,
+    function(x, by, group = f, f, update.tree = mergeTree, mergeTree = FALSE,
         ...){
         # Check by
         by <- .check_MARGIN(by)
@@ -494,39 +500,12 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
     return(x)
 }
 
-# Agglomerate all provided trees: for each group, get most
-# recent common ancestor. This function outputs a list of agglomerated trees
-# along with links.
-.agglomerate_trees <- function(trees, links, f, ...){
-    # Loop over trees
-    res <- lapply(names(trees), function(tree_name){
-        # Instead of bacteria names, we are interested in node numbers.
-        names(f) <- links[["nodeNum"]]
-        # Prepare vector that tells which nodes of this tree are merged
-        temp_links <- links[links[["whichTree"]] %in% tree_name, ]
-        # Take only nodes related to this current tree being merged
-        nodes <- f[ names(f) %in% temp_links[["nodeNum"]] ]
-        # Agglomerate tree
-        tree <- trees[[tree_name]]
-        res_temp <- .agglomerate_tree(tree, nodes)
-        return(res_temp)
-    })
-    names(res) <- names(trees)
-
-    return(res)
-}
-
 # This function agglomerates a tree by finding most recent common ancestor
 # (MRCA) for each group.
 #' @importFrom ape is.rooted root as.phylo
 .agglomerate_tree <- function(tree, f){
     # Tree must be rooted
-    if( !is.rooted(tree) ){
-        # Root node is the node with smallest depth
-        df <- .tree_to_table(tree)
-        root_node <- df[which.min(df[["depth"]]), "node"]
-        tree <- root(tree, node = root_node)
-    }
+    tree <- .root_tree(tree)
     # Convert tree into table
     df <- .tree_to_table(tree)
     # Check that f specified node numbers
@@ -537,9 +516,30 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
     # Agglomerate tree into MRCA
     node_num <- names(f) |> as.integer()
     groups <- f |> as.character()
+    # The method assumes that groups are monophyletic. If they are not, the
+    # tree cannot be agglomerated.
+    not_monophyletic <- .get_non_monophyletic_groups(df, node_num, groups)
+    if( length(not_monophyletic) > 0L ){
+        n <- length(not_monophyletic)
+        warning(
+            "The tree is removed because it cannot be agglomerated. ",
+            "Agglomeration requires that each group is monophyletic, i.e., ",
+            "the features of a group form a subtree of their own. ", n,
+            " group(s) are not monophyletic: '",
+            paste0(head(not_monophyletic, 5L), collapse = "', '"), "'",
+            if( n > 5L ) paste0(" and ", n - 5L, " more") else "", ".",
+            call. = FALSE)
+        return(NULL)
+    }
     new_df <- .agglomerate_tree_into_mrca(df, node_num, groups)
-    # Convert back into phylo
-    new_tree <- as.phylo(new_df)
+    # Convert back into phylo. If all features belong to a single group whose
+    # MRCA is the root, only one node is left. A tree must have at least one
+    # edge, so the node is added as a tip below a new root.
+    if( nrow(new_df) == 1L ){
+        new_tree <- .create_single_tip_tree(new_df[["label"]])
+    } else{
+        new_tree <- as.phylo(new_df)
+    }
 
     # Create links between nodes and groups
     links <- new_df[, c("label", "link_to_row")]
@@ -549,6 +549,33 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
     # Return list
     res <- list(tree = new_tree, links = links)
     return(res)
+}
+
+# Root tree if it does not already have a root.
+.root_tree <- function(tree){
+    if( !is.rooted(tree) ){
+        # Root node is the node with smallest depth
+        df <- .tree_to_table(tree)
+        root_node <- df[which.min(df[["depth"]]), "node"]
+        tree <- root(tree, node = root_node)
+        warning("Tree is rooted.", call. = FALSE)
+    }
+    return(tree)
+}
+
+# This function creates a tree that has a single tip below the root. The root
+# gets a label that differs from the tip label.
+.create_single_tip_tree <- function(tip_label){
+    root_label <- make.unique(c(tip_label, "root"))[[2L]]
+    tree <- list(
+        edge = matrix(c(2L, 1L), nrow = 1L),
+        edge.length = 0,
+        tip.label = tip_label,
+        Nnode = 1L,
+        node.label = root_label
+    )
+    class(tree) <- "phylo"
+    return(tree)
 }
 
 # This function trims tips until all tips can be found from provided set of
