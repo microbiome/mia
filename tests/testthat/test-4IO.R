@@ -491,17 +491,24 @@ test_that("convertToPhyloseq", {
     # reference sequences.
     expect_error(phyloseq::refseq(phy))
 
-    # Test with agglomeration that that pruning is done internally
-    test1 <- agglomerateByRank(tse, rank = "Phylum", update.tree = FALSE)
-    test2 <- agglomerateByRank(tse, rank = "Phylum", update.tree = TRUE)
-    test1_phy <- expect_warning(convertToPhyloseq(test1))
-    test2_phy <- convertToPhyloseq(test2)
-
-    expect_equal(length(phyloseq::phy_tree(test1_phy)$node),
-                length(ape::keep.tip(rowTree(test1), rowLinks(test1)$nodeLab)$node))
-    expect_equal(phyloseq::phy_tree(test1_phy)$tip.label, rownames(test2))
-    # The tip labels do not match because of renaming
-    expect_identical(phyloseq::phy_tree(test2_phy)$edge, rowTree(test2)$edge)
+    # Test that the tree is pruned internally if all tips are not in the data.
+    # Subsetting keeps the original tree, so it has more tips than rows.
+    tse_sub <- tse[1:100, ]
+    expect_identical(rowTree(tse_sub), rowTree(tse))
+    phy_sub <- expect_warning(convertToPhyloseq(tse_sub), "renamed")
+    tree_sub <- phyloseq::phy_tree(phy_sub)
+    expect_identical(ape::Ntip(tree_sub), nrow(tse_sub))
+    expect_setequal(tree_sub$tip.label, rownames(tse_sub))
+    expect_identical(
+        tree_sub$edge,
+        ape::keep.tip(rowTree(tse_sub), rowLinks(tse_sub)$nodeLab)$edge)
+    # If rownames differ from tip labels, the tips are renamed to match them
+    tse_renamed <- tse_sub
+    rownames(tse_renamed) <- paste0("taxon_", seq_len(nrow(tse_renamed)))
+    phy_renamed <- expect_warning(convertToPhyloseq(tse_renamed), "renamed")
+    tree_renamed <- phyloseq::phy_tree(phy_renamed)
+    expect_setequal(tree_renamed$tip.label, rownames(tse_renamed))
+    expect_identical(tree_renamed$edge, tree_sub$edge)
 
     # Check that everything works also with agglomerated data
     for (level in colnames(rowData(tse)) ){
