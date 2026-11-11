@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.28</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.29</span>
       </span>
     </div>
 
@@ -70,7 +70,7 @@
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  other.name <span class="op">=</span> <span class="va">other_label</span>,</span>
 <span>  other_label <span class="op">=</span> <span class="st">"Other"</span>,</span>
-<span>  update.tree <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  update.tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -105,7 +105,11 @@ summary of non-prevalent taxa. (default: <code>"Other"</code>)</p></dd>
 
 <dt id="arg-update-tree">update.tree<a class="anchor" aria-label="anchor" href="#arg-update-tree"></a></dt>
 <dd><p><code>Logical scalar</code>. Should
-<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-accessor.html" class="external-link">rowTree()</a></code> also be merged? (Default: <code>TRUE</code>)</p></dd>
+<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-accessor.html" class="external-link">rowTree()</a></code> also be agglomerated? Each group is collapsed into the
+most recent common ancestor of its features. This requires that groups are
+monophyletic, i.e., each group forms its own subtree. Otherwise, the tree is
+removed with a warning. If <code>FALSE</code>, the tree is removed.
+(Default: <code>FALSE</code>)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -121,6 +125,10 @@ available) and selects the summed results that exceed the given population
 prevalence at the given detection level. The other summed values (below the
 threshold) are agglomerated in an additional row taking the name indicated by
 <code>other.name</code> (by default "Other").</p>
+<p>If <code>update.tree = TRUE</code>, the tree is agglomerated based on <code>rank</code>
+(see <code><a href="agglomerate-methods.html">agglomerateByRank</a></code>). The features
+that are agglomerated into <code>other.name</code> do not have a specific position
+in the tree, and this row is linked to the root of the tree.</p>
     </div>
 
     <div id="ref-examples">
@@ -148,8 +156,8 @@ threshold) are agglomerated in an additional row taking the name indicated by
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (6 rows)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (6 leaves)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-in"><span></span></span>
