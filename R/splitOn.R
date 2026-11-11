@@ -14,8 +14,6 @@
 #'
 #' @param f Deprecated. Use \code{group} instead.
 #'
-#' @param update_rowTree Deprecated. Use \code{update.tree} instead.
-#'
 #' @param altexp \code{Character vector}. Specify the alternative experiments
 #'   to be unsplit. (Default: \code{names(altExps(x))})
 #'
@@ -43,9 +41,7 @@
 #' \code{SimpleList}.
 #'
 #' For \code{unsplitOn}: \code{x}, with \code{rowData} and \code{assay}
-#' data replaced by the unsplit data. \code{colData} of x is kept as well
-#' and any existing \code{rowTree} is dropped as well, since existing
-#' \code{rowLinks} are not valid anymore.
+#' data replaced by the unsplit data. \code{colData} of x is kept as well.
 #'
 #' @name splitOn
 #' @seealso
@@ -83,8 +79,8 @@
 #'
 #' altExps(tse)
 #'
-#' # If you want to split on columns and update rowTree, you can do
-#' se_list <- splitOn(tse, group = colData(tse)$group, update.tree = TRUE)
+#' # Split based on columns
+#' se_list <- splitOn(tse, group = colData(tse)$group)
 #'
 #' # If you want to combine groups back together, you can use unsplitBy
 #' unsplitOn(se_list)
@@ -264,55 +260,16 @@ setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
     }
 )
 
-#' @rdname splitOn
-#' @export
-setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, group = f, f = NULL, update.tree = update_rowTree,
-            update_rowTree = TRUE, ...){
-        # Input check
-        # Check update.tree
-        if( !.is_a_bool(update.tree) ){
-            stop("'update.tree' must be TRUE or FALSE.",
-                call. = FALSE)
-        }
-        # Input check end
-        # Split data
-        x <- callNextMethod()
-        # Manipulate rowTree or not?
-        if( update.tree ){
-            # Update both colTree and rowTree
-            for( direction in c(1, 2) ){
-                # If the returned value is a list, go through all of them
-                if( is(x, "SimpleList") ){
-                    x <- lapply(x, function(y){
-                        .agglomerate_trees(y, by = direction)})
-                    x <- SimpleList(x)
-                } else {
-                    # Otherwise, the returned value is TreeSE
-                    x <- .agglomerate_trees(x, by = direction)
-                }
-            }
-        }
-        x
-    }
-)
-
 ################################################################################
 # unsplitOn
 
 # Perform the unsplit
-.list_unsplit_on <- function(
-        ses, update.tree = FALSE, by = MARGIN, MARGIN = NULL, ...){
+.list_unsplit_on <- function(ses, by = MARGIN, MARGIN = NULL, ...){
     # Input check
     is_check <- vapply(ses,is,logical(1L),"SummarizedExperiment")
     if(!all(is_check)){
         stop("Input must be a list of SummarizedExperiment or derived objects ",
             "only.",
-            call. = FALSE)
-    }
-    # Check update.tree
-    if( !.is_a_bool(update.tree) ){
-        stop("'update.tree' must be TRUE or FALSE.",
             call. = FALSE)
     }
     # Check by
@@ -375,55 +332,44 @@ setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
     # Update rownames
     rownames(ans) <- rownames(rd)
 
-    # IF the object is TreeSE. add rowTree
+    # If the object is TreeSE, add rowTree and colTree as they are
     if( class_x == "TreeSummarizedExperiment" ){
-        # Add both colTree and rowTree
-        for( direction in c("row", "col") ){
-            ans <- .add_trees(ans, ses, direction, update.tree = update.tree)
+        for( margin in c("row", "col") ){
+            # Whether the elements were combined along this dimension
+            combined <- by == switch(margin, row = 1L, col = 2L)
+            ans <- .add_trees(ans, ses, margin, combined)
         }
     }
     return(ans)
 }
 
-# This function adds rowTrees and colTrees to result.
-.add_trees <- function(tse, tses, MARGIN, update.tree){
-    # Get functions based on MARGIN
-    tree_FUN <- switch(MARGIN, "row" = rowTree, "col" = colTree)
-    tree_name_FUN <- switch(MARGIN, "row" = rowTreeNames, "col" = colTreeNames)
-    tree_assign_FUN <- switch(MARGIN, "row" = `rowTree<-`, "col" = `colTree<-`)
-    link_FUN <- switch(MARGIN, "row" = rowLinks, "col" = colLinks)
-    name_FUN <- switch(MARGIN, "row" = rownames, "col" = colnames)
-    # Update or add old tree from the first element of list
-    if( update.tree ){
-        # Get trees as list.
-        trees <- list()
-        for( x in tses ){
-            temp <- tree_FUN(x, tree_name_FUN(x))
-            if( !is(temp, "list") ){
-                temp <- list(temp)
-                names(temp) <- tree_name_FUN(x)
-            }
-            trees <- c(trees, temp)
-        }
-        # If there are trees available
-        if( any(lengths(trees) > 0) ){
-            # Get links
-            links <- lapply(tses, link_FUN)
-            # Links must be single DF and it must have "name" column denoting
-            # row/colnames
-            links <- do.call(rbind, links)
-            links <- DataFrame(links)
-            nams <- lapply(tses, name_FUN)
-            nams <- unlist( nams[lengths(trees) > 0] )
-            links[["names"]] <- nams
-            # Combine trees into single tree
-            args <- list(trees = trees, links = links)
-            tse <- .check_and_add_trees(tse, args, MARGIN = MARGIN)
-        }
+# This function adds rowTrees or colTrees to the result. The trees are not
+# modified. combined tells whether the elements were combined along this
+# dimension. If so, the links of the elements are combined. Otherwise, the
+# elements share the rows (or columns), and the links are taken from the first
+# element. Then the trees that the links refer to are selected from the trees
+# of the elements.
+#' @importFrom methods slot slot<-
+.add_trees <- function(tse, tses, MARGIN, combined){
+    tree_slot <- paste0(MARGIN, "Tree")
+    link_slot <- paste0(MARGIN, "Links")
+    tses <- unname(tses)
+    # Combine links
+    if( combined ){
+        links <- do.call(rbind, lapply(tses, slot, link_slot))
     } else{
-        tree <- tree_FUN(tses[[1L]])
-        tse <- tree_assign_FUN(tse, value = tree)
+        links <- slot(tses[[1L]], link_slot)
     }
+    if( is.null(links) ){
+        return(tse)
+    }
+    # Select trees based on links
+    trees <- do.call(c, lapply(tses, slot, tree_slot))
+    trees <- trees[ !duplicated(names(trees)) ]
+    trees <- trees[ names(trees) %in% links[["whichTree"]] ]
+    slot(tse, tree_slot, check = FALSE) <- trees
+    slot(tse, link_slot, check = FALSE) <- links
+    validObject(tse)
     return(tse)
 }
 
@@ -444,17 +390,17 @@ setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
 setMethod("unsplitOn", signature = c(x = "list"),
-    function(x, update.tree = update_rowTree, update_rowTree = TRUE, ...){
+    function(x, ...){
         # Unsplit list and create SCE, SE, or TreeSE from it
-        .list_unsplit_on(x, update.tree, ...)
+        .list_unsplit_on(x, ...)
     }
 )
 #' @rdname splitOn
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
 setMethod("unsplitOn", signature = c(x = "SimpleList"),
-    function(x, update.tree = update_rowTree, update_rowTree = TRUE, ...){
-        unsplitOn(as.list(x), update.tree, ...)
+    function(x, ...){
+        unsplitOn(as.list(x), ...)
     }
 )
 

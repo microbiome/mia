@@ -5,7 +5,6 @@
 \alias{unsplitOn}
 \alias{splitOn,SummarizedExperiment-method}
 \alias{splitOn,SingleCellExperiment-method}
-\alias{splitOn,TreeSummarizedExperiment-method}
 \alias{unsplitOn,list-method}
 \alias{unsplitOn,SimpleList-method}
 \alias{unsplitOn,SingleCellExperiment-method}
@@ -20,18 +19,9 @@ unsplitOn(x, ...)
 
 \S4method{splitOn}{SingleCellExperiment}(x, group = f, f = NULL, ...)
 
-\S4method{splitOn}{TreeSummarizedExperiment}(
-  x,
-  group = f,
-  f = NULL,
-  update.tree = update_rowTree,
-  update_rowTree = TRUE,
-  ...
-)
+\S4method{unsplitOn}{list}(x, ...)
 
-\S4method{unsplitOn}{list}(x, update.tree = update_rowTree, update_rowTree = TRUE, ...)
-
-\S4method{unsplitOn}{SimpleList}(x, update.tree = update_rowTree, update_rowTree = TRUE, ...)
+\S4method{unsplitOn}{SimpleList}(x, ...)
 
 \S4method{unsplitOn}{SingleCellExperiment}(
   x,
@@ -66,11 +56,6 @@ returned unchanged. If \code{group} matches with both dimensions,
 
 \item{f}{Deprecated. Use \code{group} instead.}
 
-\item{update.tree}{\code{Logical scalar}. Should
-\code{rowTree()} also be merged? (Default: \code{TRUE})}
-
-\item{update_rowTree}{Deprecated. Use \code{update.tree} instead.}
-
 \item{altexp}{\code{Character vector}. Specify the alternative experiments
 to be unsplit. (Default: \code{names(altExps(x))})}
 
@@ -88,9 +73,7 @@ For \code{splitOn}: \code{SummarizedExperiment} objects in a
 \code{SimpleList}.
 
 For \code{unsplitOn}: \code{x}, with \code{rowData} and \code{assay}
-data replaced by the unsplit data. \code{colData} of x is kept as well
-and any existing \code{rowTree} is dropped as well, since existing
-\code{rowLinks} are not valid anymore.
+data replaced by the unsplit data. \code{colData} of x is kept as well.
 }
 \description{
 Split \code{TreeSummarizedExperiment} column-wise or row-wise based on
@@ -127,8 +110,8 @@ altExps(tse) <- se_list
 
 altExps(tse)
 
-# If you want to split on columns and update rowTree, you can do
-se_list <- splitOn(tse, group = colData(tse)$group, update.tree = TRUE)
+# Split based on columns
+se_list <- splitOn(tse, group = colData(tse)$group)
 
 # If you want to combine groups back together, you can use unsplitBy
 unsplitOn(se_list)
