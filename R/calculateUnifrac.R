@@ -88,7 +88,8 @@
     )
     # Remove NAs from node.label
     node.label <- node.label[ !is.na(node.label) ]
-    # Get the original order back
-    x <- x[ node.label, ]
+    # Get the original order back. Rows that were linked to the same node are
+    # now merged, so each node is selected only once.
+    x <- x[ unique(node.label), , drop = FALSE]
     return(x)
 }

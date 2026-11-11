@@ -25,6 +25,23 @@
     f
 }
 
+# If the group is specified as a column name of rowData or colData, this
+# function returns the values of that column. Otherwise, the group is returned
+# as it is.
+.get_group_vector <- function(x, f, by){
+    rowData_FUN <- switch(by, rowData, colData)
+    nrow_FUN <- switch(by, nrow, ncol)
+    if( .is_a_string(f) && f %in% colnames(rowData_FUN(x)) ){
+        f <- rowData_FUN(x)[[ f ]]
+    } else if( .is_a_string(f) && !f %in% colnames(rowData_FUN(x)) &&
+                nrow_FUN(x) != 1L){
+        stop("Specified grouping variable ('group' or 'rank' argument) must ",
+            "specify a column from ", switch(by, "row", "col"), "Data(x).",
+            call. = FALSE)
+    }
+    return(f)
+}
+
 # When we merge rows or columns, first member of group is kept as default
 # (in colData or rowData). This function controls this and allows user to
 # specify some other element than the first one.
@@ -87,14 +104,7 @@
     rownames_FUN <- switch(by, rownames, colnames)
     rownames_ass_FUN <- switch(by, `rownames<-`, `colnames<-`)
     # If user specified column name from row/colData, get the values
-    if( .is_a_string(f) && f %in% colnames(rowData_FUN(x)) ){
-        f <- rowData_FUN(x)[[ f ]]
-    } else if( .is_a_string(f) && !f %in% colnames(rowData_FUN(x)) &&
-                nrow_FUN(x) != 1L){
-        stop("Specified grouping variable ('group' or 'rank' argument) must ",
-            "specify a column from ", switch(by, "row", "col"), "Data(x).",
-            call. = FALSE)
-    }
+    f <- .get_group_vector(x, f, by)
     # Check that the group ID vector is specifying groups for each element
     f <- .norm_f(nrow_FUN(x), f, ...)
     # If the data is already agglomerated at each group
@@ -270,6 +280,98 @@
     seq
 }
 
+# Merged rows (or columns) are named by their groups. However, if each row was
+# its own group, the data was not merged, and rows keep their original names.
+# This function returns the group of each row of the merged data.
+.get_groups_of_merged <- function(names, f){
+    groups <- names
+    if( length(names) == length(f) ){
+        groups <- as.character(f)
+    }
+    return(groups)
+}
+
+# This function returns the row or column tree. Agglomeration supports only a
+# single tree. If the data has multiple trees, NULL is returned with a warning.
+.get_single_tree <- function(x, by){
+    tree_names <- switch(by, rowTreeNames, colTreeNames)(x)
+    if( length(tree_names) > 1L ){
+        warning(
+            "The tree is removed because the data has multiple trees. Tree ",
+            "agglomeration supports only a single tree.", call. = FALSE)
+        return(NULL)
+    }
+    tree <- switch(by, rowTree, colTree)(x)
+    return(tree)
+}
+
+# This function removes all row or column trees.
+.remove_trees <- function(x, by){
+    if( by == 1L ){
+        rowTree(x) <- NULL
+    } else{
+        colTree(x) <- NULL
+    }
+    return(x)
+}
+
+# This function agglomerates the tree based on groups and adds it to the
+# merged data. If the tree is not provided or it cannot be agglomerated, the
+# tree is removed.
+.update_tree_after_merge <- function(x, tree, tree_name, links, f, by){
+    res <- NULL
+    if( !is.null(tree) ){
+        # Features without a group are not merged, so they are not included in
+        # the tree either. Instead of feature names, nodes are identified by
+        # node numbers.
+        keep <- !is.na(f)
+        nodes <- f[keep]
+        names(nodes) <- links[["nodeNum"]][keep]
+        res <- .agglomerate_tree(tree, nodes)
+    }
+    if( is.null(res) ){
+        x <- .remove_trees(x, by)
+        return(x)
+    }
+    # Link each merged row to the node of its group
+    names <- switch(by, rownames, colnames)(x)
+    groups <- .get_groups_of_merged(names, f)
+    node_lab <- res[["links"]][ match(groups, names(res[["links"]])) ]
+    x <- .set_tree(x, res[["tree"]], node_lab, tree_name, by)
+    return(x)
+}
+
+# This function sets the tree. Each row (or column) i is linked to the node
+# node_lab[i].
+#' @importFrom TreeSummarizedExperiment changeTree
+.set_tree <- function(x, tree, node_lab, tree_name, by){
+    # All rows must be linked to the tree. Otherwise, changeTree() would drop
+    # them.
+    if( anyNA(node_lab) ){
+        warning(
+            "The tree is removed because some features could not be ",
+            "linked to the tree.", call. = FALSE)
+        x <- .remove_trees(x, by)
+        return(x)
+    }
+    names(node_lab) <- switch(by, rownames, colnames)(x)
+    # The data does not always have a tree. For example,
+    # agglomerateByPrevalence() removes the tree before merging non-prevalent
+    # features into "Other" group, and adds the tree back with this function.
+    # If the data does not have a tree, changeTree() adds it with the default
+    # name "phylo"; whichRowTree/whichColTree only selects an existing tree to
+    # replace. That is why the original name is set explicitly.
+    if( by == 1L ){
+        x <- changeTree(x, rowTree = tree, rowNodeLab = node_lab)
+        rowTreeNames(x) <- tree_name
+    } else{
+        x <- changeTree(x, colTree = tree, colNodeLab = node_lab)
+        colTreeNames(x) <- tree_name
+    }
+    return(x)
+}
+
+#' @importFrom TreeSummarizedExperiment changeTree
 .merge_rows_TSE <- function(x, f, archetype = 1L, update.tree = FALSE,
     update.refseq = mergeRefSeq, mergeRefSeq = FALSE, ...){
     # input check
@@ -279,17 +381,28 @@
     if(!.is_a_bool(update.refseq)){
         stop("'update.refseq' must be TRUE or FALSE.", call. = FALSE)
     }
-    # for optionally merging referenceSeq
+    # for optionally merging referenceSeq and rowTree
     refSeq <- NULL
     if(update.refseq){
         refSeq <- referenceSeq(x)
     }
+    # If user specified column name from rowData, get the values
+    f <- .get_group_vector(x, f, by = 1L)
+    row_links <- NULL
+    tree <- NULL
+    tree_name <- NULL
+    # Tree can be updated only if there is a tree
+    if( update.tree && !is.null(rowLinks(x)) ){
+        row_links <- rowLinks(x)
+        tree <- .get_single_tree(x, by = 1L)
+        tree_name <- rowTreeNames(x)[[1L]]
+        # Groups for the tree must match the groups used in merging
+        f <- .norm_f(nrow(x), f, dim.type = "rows", ...)
+    }
     #
     x <- .merge_rows_or_cols(x, f, by = 1L, archetype = 1L, ...)
-    # optionally merge rowTree
-    if( update.tree ){
-        x <- .agglomerate_trees(x, 1, ...)
-    }
+    # Optionally merge rowTree. If it is not possible, the tree is removed.
+    x <- .update_tree_after_merge(x, tree, tree_name, row_links, f, by = 1L)
     # optionally merge referenceSeq
     if(!is.null(refSeq)){
         referenceSeq(x) <- .merge_refseq_list(refSeq, f, rownames(x), ...)
@@ -297,16 +410,28 @@
     x
 }
 
+#' @importFrom TreeSummarizedExperiment changeTree
 .merge_cols_TSE <- function(x, f, archetype = 1L, update.tree = FALSE, ...){
     # input check
     if(!.is_a_bool(update.tree)){
         stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    x <- .merge_rows_or_cols(x, f, by = 2L, archetype = 1L, ...)
-    # optionally merge colTree
-    if( update.tree ){
-        x <- .agglomerate_trees(x, 2, ...)
+    # If user specified column name from colData, get the values
+    f <- .get_group_vector(x, f, by = 2L)
+    col_links <- NULL
+    tree <- NULL
+    tree_name <- NULL
+    # Tree can be updated only if there is a tree
+    if( update.tree && !is.null(colLinks(x)) ){
+        col_links <- colLinks(x)
+        tree <- .get_single_tree(x, by = 2L)
+        tree_name <- colTreeNames(x)[[1L]]
+        # Groups for the tree must match the groups used in merging
+        f <- .norm_f(ncol(x), f, dim.type = "columns", ...)
     }
+    x <- .merge_rows_or_cols(x, f, by = 2L, archetype = 1L, ...)
+    # Optionally merge colTree. If it is not possible, the tree is removed.
+    x <- .update_tree_after_merge(x, tree, tree_name, col_links, f, by = 2L)
     return(x)
 }

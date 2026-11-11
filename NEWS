@@ -218,3 +218,5 @@ Changes in version 1.21.x
 + Renamed agglomerateByModule to agglomerateBySet (1.21.28, 2026-11-05)
 + Renamed applyByModule to applyBySet (1.21.28, 2026-11-05)
 + getPERMANOVA: binary=TRUE when Jaccard calculated (1.21.28, 2026-11-05)
++ Tree agglomeration simplified. When data is agglomerated, tree is dropped by default as it is not matching with the agglomerated data. If specified, the tree is aggregated based on MRCA. (1.21.29, 2026-11-11)
++ Fixed weighted UniFrac when multiple rows are linked to the same node (1.21.29, 2026-11-11)
