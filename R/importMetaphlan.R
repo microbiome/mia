@@ -303,6 +303,21 @@ importMetaPhlAn <- function(
     return(se)
 }
 
+# This function reads a tree from a file and adds it to TreeSE. Rownames must
+# match the tip labels of the tree.
+#' @importFrom ape read.tree
+.add_tree_from_file <- function(tse, tree.file){
+    tree <- read.tree(tree.file)
+    if( !all(rownames(tse) %in% tree$tip.label) ){
+        stop("Rownames do not match with tree labels. Construct TreeSE ",
+            "without tree (tree.file = NULL) and add the tree with ",
+            "changeTree(tse, tree = tree, rowNodeLab = links).",
+            call. = FALSE)
+    }
+    rowTree(tse) <- tree
+    return(tse)
+}
+
 # This function can be used to add col.data to TreeSE. It checks that sample
 # names match (full or partial) and adds the metadata to altExps also.
 .add_coldata <- function(tse, coldata){
