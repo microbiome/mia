@@ -200,20 +200,13 @@ test_that("merge", {
     expect_equal(test_mat, test_mat2)
     expect_equal(ref_mat, ref_mat2)
 
-    # Check multiple rowTrees
-    data(esophagus, package="mia")
-    # Add arbitrary groups
-    rowData(esophagus)$group <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3),
-                                  rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )
-    rowData(esophagus)$group2 <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3),
-                                   rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )
-    rowData(GlobalPatterns)$group <- c(rep(c("C", "D", "E"), each = nrow(GlobalPatterns)/3),
-                                       rep("C", nrow(GlobalPatterns)-round(nrow(GlobalPatterns)/3)*3) )
-    # Merge
-    tse <- mergeSEs(esophagus, GlobalPatterns, assay.type="counts")
-    # Reorder data since mergeSEs does not order the data based on original order
-    # (trees are pruned differently --> first instance represent specific branch)
-    tse <- tse[c(rownames(esophagus), rownames(GlobalPatterns)), ]
+    # Check that trees are removed when groups are not monophyletic
+    tse <- GlobalPatterns
+    n <- nrow(tse)
+    # Add arbitrary groups. group2 is defined only for part of the rows.
+    rowData(tse)$group2 <- c(rep(c("A", "B", "C"), length.out = 1000),
+                             rep(NA, n - 1000))
+    rowData(tse)$group <- rep(c("C", "D", "E"), length.out = n)
     # The groups are arbitrary, i.e., not monophyletic, so the trees cannot be
     # updated. They are removed with a warning.
     expect_warning(
@@ -231,7 +224,7 @@ test_that("merge", {
         .merge_features(tse, merge.by = rowData(tse)$group2, update.tree = TRUE))
     expect_equal(merged4, merged)
 
-    # Both datasets have group variable
+    # All rows have group variable
     expect_warning(
         merged <- agglomerateByVariable(
             tse, by = "rows", group = rowData(tse)$group, update.tree = TRUE),
