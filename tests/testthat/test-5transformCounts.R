@@ -479,3 +479,39 @@ test_that("transformAssay and rarefyAssay warn when overwriting an assay", {
         rarefyAssay(se, name = "counts", sample = 5, verbose = FALSE),
         "already present in `assays`")
 })
+
+test_that("Multiplicative replacement of zeros", {
+    data(GlobalPatterns, package = "mia")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Phylum")
+    tse <- transformAssay(tse, method = "multiplicative_replacement")
+    x <- assay(tse, "counts")
+    y <- assay(tse, "multiplicative_replacement")
+    # Samples sum to one, zeros take 0.65 of one read
+    expect_equal(unname(colSums(y)), rep(1, ncol(y)))
+    total <- colSums(x)
+    expect_equal(y[x == 0], (matrix(0.65 / total, nrow(x), ncol(x),
+        byrow = TRUE))[x == 0])
+    # Ratios between non-zero parts are kept
+    nz <- which(x[, 1] > 0)[1:2]
+    expect_equal(y[nz[1], 1] / y[nz[2], 1], x[nz[1], 1] / x[nz[2], 1])
+    # Proportions: half the smallest positive proportion of each sample
+    tse <- transformAssay(tse, method = "relabundance")
+    tse <- transformAssay(tse, assay.type = "relabundance",
+        method = "multiplicative_replacement", name = "mr")
+    p <- assay(tse, "relabundance")
+    dl <- apply(p, 2, function(v) min(v[v > 0]) / 2)
+    expect_equal(assay(tse, "mr")[p == 0], (matrix(0.65 * dl, nrow(p),
+        ncol(p), byrow = TRUE))[p == 0])
+    # The clr of the replaced proportions
+    tse <- transformAssay(tse, assay.type = "multiplicative_replacement",
+        method = "clr")
+    expect_false(anyNA(assay(tse, "clr")))
+    expect_error(transformAssay(tse, method = "multiplicative_replacement",
+        fraction = 2))
+    # Zeros that would replace the whole sample
+    expect_error(transformAssay(GlobalPatterns[1:200, colSums(assay(
+        GlobalPatterns, "counts")[1:200, ]) > 0],
+        method = "multiplicative_replacement"), "sum to one")
+    expect_error(transformAssay(tse, method = "multiplicative_replacement",
+        detection = -1))
+})
