@@ -236,7 +236,7 @@ setGeneric("meltSE", signature = "x", function(x, ...)
 
 #' @rdname mergeSEs
 #' @export
-setGeneric("mergeSEs", signature = c("x"), function(x, ... )
+setGeneric("mergeSEs", signature = c("x", "y"), function(x, y, ... )
     standardGeneric("mergeSEs"))
 
 #' @rdname rarefyAssay
