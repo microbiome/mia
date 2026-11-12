@@ -536,10 +536,11 @@ test_that("convertToPhyloseq", {
     expect_identical(phyloseq::phy_tree(phy), rowTree(tse))
 
     # Test that merging objects lead to correct phyloseq
-    tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing.values = 0)
+    tse <- suppressWarnings(mergeSEs(
+        GlobalPatterns, esophagus, assay.type="counts", missing.values = 0))
     pseq <- convertToPhyloseq(tse, assay.type="counts")
 
-    # Include rownames from both trees
+    # Include rownames from both datasets
     tse_compare <- tse[ c(rownames(GlobalPatterns), rownames(esophagus)), ]
     pseq_compare <- convertToPhyloseq(tse_compare, assay.type="counts")
 

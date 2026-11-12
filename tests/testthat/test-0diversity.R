@@ -119,8 +119,7 @@ test_that("diversity estimates", {
     expect_error(addAlpha(tse, index = c("shannon", "faith"), tree.name = "test"))
 
     data(GlobalPatterns, package="mia")
-    data(esophagus, package="mia")
-    tse <- mergeSEs(GlobalPatterns, esophagus,  join = "full", assay.type = "counts")
+    tse <- GlobalPatterns
     expect_error(addAlpha(tse, index = c("shannon", "faith"), tree.name = "phylo.1", assay.type="counts"))
     expect_error(addAlpha(tse, index = c("faith"), tree.name = "test"))
     expect_error(addAlpha(tse, index = c("shannon", "faith"), tree.name = TRUE))

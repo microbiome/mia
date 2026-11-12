@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.21.30
+Version: 1.21.31
 Authors@R:
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -97,6 +97,7 @@ Suggests:
     dada2,
     ecodive,
     knitr,
+    Matrix,
     mediation,
     miaTime,
     miaViz,
