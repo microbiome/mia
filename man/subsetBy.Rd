@@ -101,6 +101,14 @@ tse_sub <- subsetBy(
     tse, rows = rowMeans(relabundance) > 0.01, collapse = TRUE)
 tail(rownames(tse_sub))
 
+# The same in a pipe: keep the 5 most abundant features and the rest as
+# "Other". The result can be plotted, e.g., with miaViz::plotBoxplot() or
+# miaViz::plotAbundance().
+tse_top <- GlobalPatterns |>
+    transformAssay(method = "relabundance") |>
+    subsetBy(rows = rank(-rowMeans(relabundance)) <= 5, collapse = TRUE)
+rownames(tse_top)
+
 # Conditions can also use rowData and colData variables
 tse_sub <- subsetBy(
     tse, rows = Kingdom == "Bacteria", cols = SampleType == "Feces")
