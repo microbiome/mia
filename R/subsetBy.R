@@ -93,6 +93,14 @@
 #' dim(tse_top)
 #' rownames(tse_top)
 #'
+#' # Plot the top features and "Other" by sample type
+#' if( requireNamespace("miaViz", quietly = TRUE) ){
+#'     miaViz::plotBoxplot(
+#'         tse_top, assay.type = "relabundance",
+#'         x = "SampleType", fill.by = "SampleType",
+#'         facet.by = "rownames", scales = "free_y")
+#' }
+#'
 #' # Conditions can also use rowData and colData variables
 #' tse_sub <- subsetBy(
 #'     tse, rows = Kingdom == "Bacteria", cols = SampleType == "Feces")
