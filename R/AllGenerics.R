@@ -496,3 +496,11 @@ setGeneric("convertToMAE", signature = "x", function(x, ...)
 #' @export
 setGeneric("convertToTreeSE", signature = "x", function(x, ...)
     standardGeneric("convertToTreeSE"))
+
+#' @rdname subsetBy
+#' @export
+setGeneric("subsetBy", signature = "x",
+    function(
+        x, rows = NULL, cols = NULL, collapse = FALSE,
+        collapse.name = "Other", ...)
+    standardGeneric("subsetBy"))
