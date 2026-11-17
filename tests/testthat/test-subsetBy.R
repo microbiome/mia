@@ -46,3 +46,44 @@ test_that("subsetBy", {
     expect_error(subsetBy(tse, rows = c(TRUE, FALSE)))
     expect_error(subsetBy(tse, cols = rowSums(counts) > 0))
 })
+
+test_that("subsetBy with collapse", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns
+    mat <- assay(tse, "counts")
+    keep <- rowSums(mat) > 1e5
+    res <- subsetBy(tse, rows = rowSums(counts) > 1e5, collapse = TRUE)
+    # Kept features in the original order, then the merged feature
+    expect_identical(rownames(res), c(rownames(tse)[keep], "Other"))
+    expect_equal(
+        unname(assay(res, "counts")["Other", ]),
+        unname(colSums(mat[!keep, ])))
+    # Sample totals do not change
+    expect_equal(colSums(assay(res, "counts")), colSums(mat))
+    # Kept features are unchanged
+    expect_equal(
+        assay(res, "counts")[rownames(tse)[keep], ], mat[keep, ])
+    # Custom name
+    res <- subsetBy(
+        tse, rows = rowSums(counts) > 1e5, collapse = TRUE,
+        collapse.name = "Rest")
+    expect_identical(tail(rownames(res), 1), "Rest")
+    # Nothing to merge: the object is returned as subsetted
+    res <- subsetBy(tse, rows = rowSums(counts) >= 0, collapse = TRUE)
+    expect_identical(dim(res), dim(tse))
+    # cols is evaluated after collapsing, so totals include the merged feature
+    res <- subsetBy(
+        tse, rows = rowSums(counts) > 1e5, cols = colSums(counts) > 1e6,
+        collapse = TRUE)
+    expect_identical(colnames(res), colnames(tse)[colSums(mat) > 1e6])
+    # Errors
+    expect_error(subsetBy(tse, rows = rowSums(counts) > 0, collapse = 1))
+    expect_error(
+        subsetBy(tse, rows = rowSums(counts) > 0, collapse = TRUE,
+            collapse.name = c("a", "b")))
+    tse2 <- tse
+    rownames(tse2)[1] <- "Other"
+    expect_error(
+        subsetBy(tse2, rows = rowSums(counts) > 1e5 | rownames(tse2) ==
+            "Other", collapse = TRUE))
+})

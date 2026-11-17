@@ -5,9 +5,23 @@
 \alias{subsetBy,SummarizedExperiment-method}
 \title{Subset features or samples by conditions on the data}
 \usage{
-subsetBy(x, rows = NULL, cols = NULL, ...)
+subsetBy(
+  x,
+  rows = NULL,
+  cols = NULL,
+  collapse = FALSE,
+  collapse.name = "Other",
+  ...
+)
 
-\S4method{subsetBy}{SummarizedExperiment}(x, rows = NULL, cols = NULL, ...)
+\S4method{subsetBy}{SummarizedExperiment}(
+  x,
+  rows = NULL,
+  cols = NULL,
+  collapse = FALSE,
+  collapse.name = "Other",
+  ...
+)
 }
 \arguments{
 \item{x}{a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object.}
@@ -20,7 +34,16 @@ value per feature, or \code{NULL} to keep all features. (Default:
 value per sample, or \code{NULL} to keep all samples. (Default:
 \code{NULL})}
 
-\item{...}{additional arguments. Currently not used.}
+\item{collapse}{\code{Logical scalar}. Should the features that do not
+meet the \code{rows} condition be merged into one feature instead of being
+removed? (Default: \code{FALSE})}
+
+\item{collapse.name}{\code{Character scalar}. Name of the merged feature
+when \code{collapse = TRUE}. (Default: \code{"Other"})}
+
+\item{...}{additional arguments passed to
+\code{\link[=agglomerateByVariable]{agglomerateByVariable}} when
+\code{collapse = TRUE}, e.g. \code{update.tree}.}
 }
 \value{
 \code{x} with the features and samples that meet the conditions.
@@ -43,6 +66,18 @@ thresholds, are taken from the environment where \code{subsetBy} is called.
 \code{rows} is evaluated before \code{cols}, and \code{cols} is evaluated
 on the data that remains after subsetting the rows. \code{NA} values in
 the result of a condition are treated as \code{FALSE}.
+
+With \code{collapse = TRUE}, the features that do not meet the \code{rows}
+condition are merged into a single feature named \code{collapse.name},
+placed after the kept features. Its values are the sums of the merged
+features, so the sample totals stay the same. This is useful, for example,
+for plotting the most abundant features together with the rest. Summing is
+meaningful for counts and relative abundances but not for transformed
+values such as clr. The merging is done with
+\code{\link[=agglomerateByVariable]{agglomerateByVariable}}, which drops the
+\code{rowTree} unless \code{update.tree = TRUE}. \code{collapse} affects
+only features; samples that do not meet the \code{cols} condition are
+always removed.
 }
 \examples{
 data(GlobalPatterns)
@@ -58,6 +93,13 @@ tse_sub <- tse |>
     subsetBy(rows = rowSums(counts) > 10) |>
     subsetBy(rows = rowMeans(counts > 0) > 0.25) |>
     subsetBy(cols = colSums(counts) > 100000)
+
+# Keep the features with a mean relative abundance above 1\% and merge the
+# rest into one feature called "Other"
+tse <- transformAssay(tse, method = "relabundance")
+tse_sub <- subsetBy(
+    tse, rows = rowMeans(relabundance) > 0.01, collapse = TRUE)
+tail(rownames(tse_sub))
 
 # Conditions can also use rowData and colData variables
 tse_sub <- subsetBy(

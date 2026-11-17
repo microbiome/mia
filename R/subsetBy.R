@@ -16,7 +16,16 @@
 #' value per sample, or \code{NULL} to keep all samples. (Default:
 #' \code{NULL})
 #'
-#' @param ... additional arguments. Currently not used.
+#' @param collapse \code{Logical scalar}. Should the features that do not
+#' meet the \code{rows} condition be merged into one feature instead of being
+#' removed? (Default: \code{FALSE})
+#'
+#' @param collapse.name \code{Character scalar}. Name of the merged feature
+#' when \code{collapse = TRUE}. (Default: \code{"Other"})
+#'
+#' @param ... additional arguments passed to
+#' \code{\link[=agglomerateByVariable]{agglomerateByVariable}} when
+#' \code{collapse = TRUE}, e.g. \code{update.tree}.
 #'
 #' @details
 #' The expressions can refer to the assays by their names (e.g.
@@ -29,6 +38,18 @@
 #' \code{rows} is evaluated before \code{cols}, and \code{cols} is evaluated
 #' on the data that remains after subsetting the rows. \code{NA} values in
 #' the result of a condition are treated as \code{FALSE}.
+#'
+#' With \code{collapse = TRUE}, the features that do not meet the \code{rows}
+#' condition are merged into a single feature named \code{collapse.name},
+#' placed after the kept features. Its values are the sums of the merged
+#' features, so the sample totals stay the same. This is useful, for example,
+#' for plotting the most abundant features together with the rest. Summing is
+#' meaningful for counts and relative abundances but not for transformed
+#' values such as clr. The merging is done with
+#' \code{\link[=agglomerateByVariable]{agglomerateByVariable}}, which drops the
+#' \code{rowTree} unless \code{update.tree = TRUE}. \code{collapse} affects
+#' only features; samples that do not meet the \code{cols} condition are
+#' always removed.
 #'
 #' @return
 #' \code{x} with the features and samples that meet the conditions.
@@ -54,6 +75,13 @@
 #'     subsetBy(rows = rowMeans(counts > 0) > 0.25) |>
 #'     subsetBy(cols = colSums(counts) > 100000)
 #'
+#' # Keep the features with a mean relative abundance above 1% and merge the
+#' # rest into one feature called "Other"
+#' tse <- transformAssay(tse, method = "relabundance")
+#' tse_sub <- subsetBy(
+#'     tse, rows = rowMeans(relabundance) > 0.01, collapse = TRUE)
+#' tail(rownames(tse_sub))
+#'
 #' # Conditions can also use rowData and colData variables
 #' tse_sub <- subsetBy(
 #'     tse, rows = Kingdom == "Bacteria", cols = SampleType == "Feces")
@@ -63,13 +91,26 @@ NULL
 #' @rdname subsetBy
 #' @export
 setMethod("subsetBy", signature = c(x = "SummarizedExperiment"),
-    function(x, rows = NULL, cols = NULL, ...){
+    function(
+        x, rows = NULL, cols = NULL, collapse = FALSE,
+        collapse.name = "Other", ...){
+        if( !.is_a_bool(collapse) ){
+            stop("'collapse' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if( !.is_a_string(collapse.name) ){
+            stop("'collapse.name' must be a single character value.",
+                call. = FALSE)
+        }
         rows <- rlang::enquo(rows)
         cols <- rlang::enquo(cols)
         if( !rlang::quo_is_null(rows) ){
             i <- .eval_subset_condition(
                 rows, x, rowData(x), n = nrow(x), arg = "rows")
-            x <- x[i, ]
+            if( collapse ){
+                x <- .collapse_rows(x, i, collapse.name, ...)
+            } else{
+                x <- x[i, ]
+            }
         }
         if( !rlang::quo_is_null(cols) ){
             j <- .eval_subset_condition(
@@ -79,6 +120,27 @@ setMethod("subsetBy", signature = c(x = "SummarizedExperiment"),
         return(x)
     }
 )
+
+# Merge the features that are not in 'keep' into one feature, placed after
+# the kept features.
+.collapse_rows <- function(x, keep, name, ...){
+    # Nothing to merge
+    if( length(keep) == nrow(x) ){
+        return(x)
+    }
+    if( is.null(rownames(x)) || anyDuplicated(rownames(x)) ){
+        stop("'collapse = TRUE' requires unique rownames.", call. = FALSE)
+    }
+    if( name %in% rownames(x)[keep] ){
+        stop("A kept feature is already named '", name, "'. Choose ",
+            "another 'collapse.name'.", call. = FALSE)
+    }
+    group <- rep(name, nrow(x))
+    group[keep] <- rownames(x)[keep]
+    x <- agglomerateByVariable(x, by = "rows", group = group, ...)
+    x <- x[c(group[keep], name), ]
+    return(x)
+}
 
 # Evaluate a condition with the assays and rowData/colData variables as a
 # data mask, and return the indices to keep.
