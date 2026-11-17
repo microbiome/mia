@@ -86,6 +86,13 @@
 #' tse_sub <- subsetBy(
 #'     tse, rows = Kingdom == "Bacteria", cols = SampleType == "Feces")
 #'
+#' # This includes quality control metrics stored with addQC(). Note that
+#' # stored metrics are not updated when the data is subsetted, so in stepwise
+#' # filtering, compute the metric in the condition or call addQC() again.
+#' tse <- addQC(tse, by = "rows")
+#' tse <- addQC(tse, by = "cols")
+#' tse_sub <- subsetBy(tse, rows = sd > 0 & detected >= 3, cols = total > 1e6)
+#'
 NULL
 
 #' @rdname subsetBy
@@ -145,7 +152,10 @@ setMethod("subsetBy", signature = c(x = "SummarizedExperiment"),
 # Evaluate a condition with the assays and rowData/colData variables as a
 # data mask, and return the indices to keep.
 .eval_subset_condition <- function(quo, x, df, n, arg){
-    data <- c(as.list(df), as.list(assays(x)))
+    # Assays take precedence over rowData/colData variables with the same name
+    data <- as.list(df)
+    assays <- as.list(assays(x))
+    data[names(assays)] <- assays
     res <- rlang::eval_tidy(quo, data = data)
     if( !is.logical(res) || length(res) != n ){
         stop("'", arg, "' must return a logical vector with one value per ",

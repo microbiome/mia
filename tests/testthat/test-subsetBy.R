@@ -87,3 +87,34 @@ test_that("subsetBy with collapse", {
         subsetBy(tse2, rows = rowSums(counts) > 1e5 | rownames(tse2) ==
             "Other", collapse = TRUE))
 })
+
+test_that("subsetBy with stored quality control metrics", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns
+    tse <- addQC(tse, by = "rows")
+    tse <- addQC(tse, by = "cols")
+    # rowData and colData metrics
+    res <- subsetBy(tse, rows = sd > 0 & detected >= 3, cols = total > 1e6)
+    ref <- tse[
+        rowData(tse)$sd > 0 & rowData(tse)$detected >= 3, tse$total > 1e6]
+    expect_identical(dimnames(res), dimnames(ref))
+    # Stored metrics combined with assays and collapse
+    keep <- rowData(tse)$sd > 0 & rowSums(assay(tse, "counts") > 0) >= 3
+    res <- subsetBy(
+        tse, rows = sd > 0 & rowSums(counts > 0) >= 3, collapse = TRUE)
+    expect_identical(rownames(res), c(rownames(tse)[keep], "Other"))
+    # Stored metrics are not updated after subsetting, unlike metrics computed
+    # in the condition
+    sub <- subsetBy(tse, rows = rowSums(counts) > 1e5)
+    expect_identical(sub$total, tse$total)
+    expect_false(
+        identical(
+            colnames(subsetBy(sub, cols = total > 1e5)),
+            colnames(subsetBy(sub, cols = colSums(counts) > 1e5))))
+    # Assays take precedence over rowData/colData fields with the same name
+    tse2 <- tse
+    rowData(tse2)$counts <- rep(-1, nrow(tse2))
+    res <- subsetBy(tse2, rows = rowSums(counts) > 1e5)
+    expect_identical(
+        rownames(res), rownames(tse)[rowSums(assay(tse, "counts")) > 1e5])
+})

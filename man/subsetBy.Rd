@@ -105,6 +105,13 @@ tail(rownames(tse_sub))
 tse_sub <- subsetBy(
     tse, rows = Kingdom == "Bacteria", cols = SampleType == "Feces")
 
+# This includes quality control metrics stored with addQC(). Note that
+# stored metrics are not updated when the data is subsetted, so in stepwise
+# filtering, compute the metric in the condition or call addQC() again.
+tse <- addQC(tse, by = "rows")
+tse <- addQC(tse, by = "cols")
+tse_sub <- subsetBy(tse, rows = sd > 0 & detected >= 3, cols = total > 1e6)
+
 }
 \seealso{
 \code{\link[=getPrevalence]{getPrevalent}},
