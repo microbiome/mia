@@ -38,6 +38,16 @@ jobs:
           cont: ~
           rspm: ~
     steps:
+    # Temporary: ggtree (Bioconductor devel) needs the CRAN packages
+    # treelayout and tidytree (>= 0.4.9), which are newer than the CRAN
+    # snapshot used in the Bioconductor devel container. Without them, ggtree
+    # and miaViz cannot be installed and the examples that use miaViz fail.
+    # Install them from CRAN before the dependencies are installed. Only the
+    # container job has R available at this point. Remove once the snapshot
+    # includes them. Same workaround as in microbiome/OMA#938.
+    - name: Install treelayout and tidytree from CRAN (temporary)
+      if: ${{ matrix.config.cont != null }}
+      run: Rscript -e 'install.packages(c("treelayout", "tidytree"), repos = "https://cloud.r-project.org")'
     - uses: neurogenomics/rworkflows@master
       with:
         run_bioccheck: ${{ false }}
@@ -53,5 +63,5 @@ jobs:
         run_docker: ${{ false }}
         DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
         runner_os: ${{ runner.os }}
-        cache_version: cache-v1
+        cache_version: cache-v2
         docker_registry: ghcr.io
