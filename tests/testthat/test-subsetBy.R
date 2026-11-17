@@ -118,3 +118,22 @@ test_that("subsetBy with stored quality control metrics", {
     expect_identical(
         rownames(res), rownames(tse)[rowSums(assay(tse, "counts")) > 1e5])
 })
+
+test_that("subsetBy with different subsettings in a pipe", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns
+    res <- tse |>
+        subsetBy(cols = colSums(counts) >= 500000) |>
+        transformAssay(method = "relabundance") |>
+        subsetBy(rows = rank(-rowMeans(relabundance)) <= 5, collapse = TRUE)
+    # Reference with base R: the top features are computed after the samples
+    # are removed
+    ref <- tse[, colSums(assay(tse, "counts")) >= 500000]
+    ref <- transformAssay(ref, method = "relabundance")
+    ab <- assay(ref, "relabundance")
+    top <- rownames(ref)[rank(-rowMeans(ab)) <= 5]
+    expect_identical(colnames(res), colnames(ref))
+    expect_identical(rownames(res), c(top, "Other"))
+    expect_equal(
+        unname(colSums(assay(res, "relabundance"))), rep(1, ncol(res)))
+})
