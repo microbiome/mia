@@ -137,3 +137,13 @@ test_that("subsetBy with different subsettings in a pipe", {
     expect_equal(
         unname(colSums(assay(res, "relabundance"))), rep(1, ncol(res)))
 })
+
+test_that("subsetBy with duplicated colData names", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns
+    cd <- colData(tse)
+    colData(tse) <- cbind(cd, cd)
+    res <- subsetBy(tse, cols = SampleType == "Feces")
+    expect_identical(
+        colnames(res), colnames(tse)[tse[["SampleType"]] == "Feces"])
+})

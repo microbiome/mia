@@ -222,3 +222,5 @@ Changes in version 1.21.x
 + Fixed weighted UniFrac when multiple rows are linked to the same node (1.21.29, 2026-11-11)
 + mergeSEs: improve efficency (1.21.30, 2026-11-12)
 + Added subsetBy for subsetting features and samples by conditions evaluated on the current data; collapse = TRUE merges the removed features into one (1.21.31, 2026-11-17)
++ Deprecated subsetByPrevalent, subsetByRare and agglomerateByPrevalence in favor of subsetBy (1.21.32, 2026-11-18)
++ Removed filterRPCAInput; use subsetBy instead (1.21.32, 2026-11-18)

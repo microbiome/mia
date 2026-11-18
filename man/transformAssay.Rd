@@ -234,7 +234,8 @@ altExp(tse, "Species")
 \dontrun{
 # philr transformation can be applied if the philr package is installed.
 # Subset data b taking only prevalent taxa
-tse <- subsetByPrevalent(tse)
+tse <- addPrevalence(tse)
+tse <- subsetBy(tse, rows = prevalence > 0.5)
 # Apply transformation
 tse <- transformAssay(tse, method = "philr", pseudocount = 1, MARGIN = 1L)
 # The transformed data is added to altExp

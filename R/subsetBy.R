@@ -173,6 +173,9 @@ setMethod("subsetBy", signature = c(x = "SummarizedExperiment"),
 .eval_subset_condition <- function(quo, x, df, n, arg){
     # Assays take precedence over rowData/colData variables with the same name
     data <- as.list(df)
+    # rowData/colData can have duplicated or empty column names, which cannot
+    # be used in a data mask. The first column with each name is used.
+    data <- data[ !duplicated(names(data)) & names(data) != "" ]
     assays <- as.list(assays(x))
     data[names(assays)] <- assays
     res <- rlang::eval_tidy(quo, data = data)
