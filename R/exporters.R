@@ -402,7 +402,8 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
         # If instance of SE
         if( is(altExp(x, altexp_name), "SummarizedExperiment") ){
             # Apply exporter recursively
-            exportToRaw(altExp(x, altexp_name), altexp_path)
+            altexp <- as(altExp(x, altexp_name), "TreeSummarizedExperiment")
+            exportRaw(altexp, altexp_path)
         }else{
             warning("altExps skipped.", call. = FALSE)
         }
