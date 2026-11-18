@@ -34,9 +34,9 @@ documentation. (Default: \code{NULL}).}
 the sample metadata to be imported. The File has to be in \code{design
 file} format as defined in Mothur documentation. (Default: \code{NULL}).}
 
-\item{tree.file}{\code{Character scalar}. Optional path to a phylogenetic
-tree in Newick format. If provided, the tree is attached as
-\code{rowTree}.}
+\item{tree.file}{\code{NULL} or \code{Character scalar}. Defines the file
+path of a phylogenetic tree in Newick format. The tip labels of the tree
+must match the OTU names, e.g., \code{Otu001}. (Default: \code{NULL})}
 }
 \value{
 A

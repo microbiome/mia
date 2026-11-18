@@ -22,9 +22,9 @@
 #' 
 #' @param designFile Deprecated. Use \code{col.file} instead.
 #'
-#' @param tree.file \code{Character scalar}. Optional path to a phylogenetic
-#'   tree in Newick format. If provided, the tree is attached as
-#'   \code{rowTree}.
+#' @param tree.file \code{NULL} or \code{Character scalar}. Defines the file
+#'   path of a phylogenetic tree in Newick format. The tip labels of the tree
+#'   must match the OTU names, e.g., \code{Otu001}. (Default: \code{NULL})
 #'
 #' @details
 #' Results exported from Mothur can be imported as a

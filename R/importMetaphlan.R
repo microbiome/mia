@@ -148,8 +148,7 @@ importMetaPhlAn <- function(
 
     # Load tree if it is provided
     if (!is.null(tree.file)) {
-        tree <- ape::read.tree(tree.file)
-        rowTree(tse) <- tree
+        tse <- .add_tree_from_file(tse, tree.file)
     }
 
     return(tse)
@@ -308,10 +307,15 @@ importMetaPhlAn <- function(
 #' @importFrom ape read.tree
 .add_tree_from_file <- function(tse, tree.file){
     tree <- read.tree(tree.file)
+    # read.tree() keeps the quotes of quoted labels, e.g., 'label'. Remove
+    # them so that the labels can be matched with rownames.
+    tree$tip.label <- sub("^'(.*)'$", "\\1", tree$tip.label)
+    tree$tip.label <- sub('^"(.*)"$', "\\1", tree$tip.label)
     if( !all(rownames(tse) %in% tree$tip.label) ){
         stop("Rownames do not match with tree labels. Construct TreeSE ",
             "without tree (tree.file = NULL) and add the tree with ",
-            "changeTree(tse, tree = tree, rowNodeLab = links).",
+            "changeTree(tse, rowTree = tree, rowNodeLab = links), where ",
+            "'links' maps each row to a node label of the tree.",
             call. = FALSE)
     }
     rowTree(tse) <- tree
@@ -319,8 +323,10 @@ importMetaPhlAn <- function(
 }
 
 # This function can be used to add col.data to TreeSE. It checks that sample
-# names match (full or partial) and adds the metadata to altExps also.
-.add_coldata <- function(tse, coldata){
+# names match (full or partial) and adds the metadata to altExps also. With
+# partial.match = FALSE, sample names must match exactly, otherwise an error
+# is given.
+.add_coldata <- function(tse, coldata, partial.match = TRUE){
     # If the coldata is character specifying the path
     if( .is_non_empty_character(coldata) ){
         coldata <- read.table(file = coldata, header = TRUE, sep = "\t")
@@ -328,6 +334,14 @@ importMetaPhlAn <- function(
     }
     # Ensure that the coldata is DF
     coldata <- DataFrame(coldata)
+    if( !partial.match && !all(colnames(tse) %in% rownames(coldata)) ){
+        stop("The sample names in 'col.data' do not match with the data. ",
+            "Each sample must be found from 'col.data'.", call. = FALSE)
+    }
+    # Exact match: metadata can include additional samples
+    if( !partial.match ){
+        coldata <- coldata[colnames(tse), , drop = FALSE]
+    }
 
     # Usually when metaphlan sample names are created, the workflow adds file
     # name as a suffix. Because of that sample names do not match anymore
@@ -362,7 +376,7 @@ importMetaPhlAn <- function(
 
     # Reorder sample metadata based on the data
     sample_names <- sample_names[match(colnames(tse), sample_names)]
-    coldata <- coldata[names(sample_names), ]
+    coldata <- coldata[names(sample_names), , drop = FALSE]
 
     # Give warning if partial match was used
     if( !all(rownames(coldata) %in% colnames(tse)) ){

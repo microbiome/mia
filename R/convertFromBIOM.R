@@ -68,12 +68,19 @@ NULL
 #'
 #' @param file BIOM file location
 #'
-#' @param col.data a DataFrame-like object that includes sample names in
-#'   rownames, or a single \code{character} value defining the file
-#'   path of the sample metadata file (tsv). (Default: \code{NULL}).
+#' @param col.data \code{NULL}, a DataFrame-like object with sample names in
+#'   rownames, or a \code{Character scalar} defining the file path of the
+#'   sample metadata file (tsv). In the file, the first column must contain the
+#'   sample names. The sample names must match exactly the sample names of the
+#'   BIOM file. If provided, the sample metadata replaces the sample metadata
+#'   stored in the BIOM file. (Default: \code{NULL})
 #'
-#' @param tree.file \code{Character scalar}. Optional path to a phylogenetic
-#'   tree. If provided, replaces any tree stored in the BIOM metadata.
+#' @param tree.file \code{NULL} or \code{Character scalar}. Defines the file
+#'   path of a phylogenetic tree in Newick format. BIOM files do not include a
+#'   tree, so it must be imported from a separate file. The tip labels of the
+#'   tree must match the feature names, e.g., feature IDs when the tree and
+#'   the BIOM file are exported from the same QIIME 2 analysis.
+#'   (Default: \code{NULL})
 #'
 #' @param ... additional arguments to be passed to \code{convertFromBIOM}
 #'
@@ -127,12 +134,13 @@ importBIOM <- function(file, col.data = NULL, tree.file = NULL, ...) {
     biom <- biomformat::read_biom(file)
     tse <- convertFromBIOM(biom, ...)
 
-    # Load sample metadata if provided (overrides BIOM sample metadata)
+    # Load sample metadata if provided (replaces BIOM sample metadata). Sample
+    # names must match exactly.
     if (!is.null(col.data)) {
-        tse <- .add_coldata(tse, col.data)
+        tse <- .add_coldata(tse, col.data, partial.match = FALSE)
     }
 
-    # Load/replace tree if provided
+    # Load tree if provided
     if (!is.null(tree.file)) {
         tse <- .add_tree_from_file(tse, tree.file)
     }
