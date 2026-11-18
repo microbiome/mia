@@ -91,7 +91,7 @@
 #' determines the normalization percentile for summing and scaling
 #' counts. If you want to specify the percentile value, good default value
 #' might be \code{0.5}. The method is inspired by the CSS methods in
-#' \code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}
+#' \href{https://bioconductor.org/packages/metagenomeSeq/}{metagenomeSeq}
 #' package.
 #'
 #' \item 'log': Logarithmic transformation (natural log, base \eqn{e}) can be

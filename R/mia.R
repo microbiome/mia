@@ -19,6 +19,7 @@ NULL
 #' @import scater
 #' @importFrom dplyr %>%
 #' @importFrom rlang sym :=
+#' @importFrom Rdpack reprompt
 NULL
 
 #' mia datasets

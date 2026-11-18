@@ -74,7 +74,6 @@ Imports:
     DelayedMatrixStats,
     DirichletMultinomial,
     dplyr,
-    ecodive,
     IRanges,
     MASS,
     MatrixGenerics,
