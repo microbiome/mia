@@ -147,3 +147,16 @@ test_that("subsetBy with duplicated colData names", {
     expect_identical(
         colnames(res), colnames(tse)[tse[["SampleType"]] == "Feces"])
 })
+
+test_that("subsetBy collapse with a single removed feature", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns[1:5, ]
+    keep <- rownames(tse) != rownames(tse)[3]
+    res <- subsetBy(tse, rows = keep, collapse = TRUE)
+    expect_identical(rownames(res), c(rownames(tse)[keep], "Other"))
+    expect_equal(
+        unname(assay(res, "counts")["Other", ]),
+        unname(assay(tse, "counts")[3, ]))
+    expect_equal(
+        colSums(assay(res, "counts")), colSums(assay(tse, "counts")))
+})

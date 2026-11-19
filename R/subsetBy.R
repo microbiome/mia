@@ -201,7 +201,14 @@ setMethod("subsetBy", signature = c(x = "SummarizedExperiment"),
     }
     group <- rep(name, nrow(x))
     group[keep] <- rownames(x)[keep]
-    x <- agglomerateByVariable(x, by = "rows", group = group, ...)
+    # If only one feature is collapsed, every group has a single member and
+    # agglomerateByVariable() returns the data unchanged, without renaming the
+    # collapsed feature. Rename it directly in that case.
+    if( sum(group == name) == 1L ){
+        rownames(x) <- group
+    } else{
+        x <- agglomerateByVariable(x, by = "rows", group = group, ...)
+    }
     x <- x[c(group[keep], name), ]
     return(x)
 }
