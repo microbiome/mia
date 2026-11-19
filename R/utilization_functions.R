@@ -75,7 +75,7 @@ setMethod("getReducedDimAttribute", "SingleCellExperiment",
 
 #' @export
 #' @rdname utilization_functions
-#' @importFrom SingleCellExperiment reducedDims
+#' @importFrom SingleCellExperiment reducedDims mainExpName
 setMethod("convertToMAE", "SingleCellExperiment",
     function(x, ...){
         exps <- setNames(
@@ -90,7 +90,8 @@ setMethod("convertToMAE", "SingleCellExperiment",
 
 #' @export
 #' @rdname utilization_functions
-#' @importFrom MultiAssayExperiment intersectColumns experiments
+#' @importFrom MultiAssayExperiment intersectColumns experiments getWithColData
+#' @importFrom SingleCellExperiment mainExpName<-
 setMethod("convertToTreeSE", "MultiAssayExperiment",
     function(x, ...){
         if( !all(vapply(

@@ -57,7 +57,7 @@
 #' \code{\link[DirichletMultinomial:dmn]{dmn}},
 #' \code{\link[DirichletMultinomial:dmngroup]{dmngroup}},
 #' \code{\link[DirichletMultinomial:cvdmngroup]{cvdmngroup }},
-#' \code{\link[DirichletMultinomial:fitted]{accessors for DMN objects}}
+#' \code{\link[DirichletMultinomial:mixture]{accessors for DMN objects}}
 #'
 #' @references
 #' \insertRef{Holmes2012}{mia}
