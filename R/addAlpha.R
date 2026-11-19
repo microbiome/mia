@@ -108,7 +108,7 @@
 #' (Faith 1992). Larger values represent higher diversity. The current
 #' implementation is based on the Stacked Faith's Phylogenetic Diversity (SFPhD)
 #' algorithm (Armstrong et al. 2021), which produces values equivalent to
-#' \code{\link[picante:pd]{picante::pd}} with the parameter
+#' \code{picante::pd} with the parameter
 #' \code{include.root=TRUE}. Using this index requires a rowTree.
 #'
 #' If the data includes features that are not in tree's tips but in

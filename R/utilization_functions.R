@@ -34,7 +34,8 @@
 #' tse <- GlobalPatterns
 #'
 #' # Reduce the number of features
-#' tse <- agglomerateByPrevalence(tse, rank = "Phylum")
+#' tse <- addPrevalence(tse, rank = "Phylum")
+#' tse <- subsetBy(tse, rows = prevalence > 0.5, collapse = TRUE)
 #'
 #' # Run NMF and add the result to reducedDim(tse, "NMF").
 #' tse <- addNMF(tse, k = 1, name = "NMF")
@@ -74,7 +75,7 @@ setMethod("getReducedDimAttribute", "SingleCellExperiment",
 
 #' @export
 #' @rdname utilization_functions
-#' @importFrom SingleCellExperiment reducedDims
+#' @importFrom SingleCellExperiment reducedDims mainExpName
 setMethod("convertToMAE", "SingleCellExperiment",
     function(x, ...){
         exps <- setNames(
@@ -89,7 +90,8 @@ setMethod("convertToMAE", "SingleCellExperiment",
 
 #' @export
 #' @rdname utilization_functions
-#' @importFrom MultiAssayExperiment intersectColumns experiments
+#' @importFrom MultiAssayExperiment intersectColumns experiments getWithColData
+#' @importFrom SingleCellExperiment mainExpName<-
 setMethod("convertToTreeSE", "MultiAssayExperiment",
     function(x, ...){
         if( !all(vapply(

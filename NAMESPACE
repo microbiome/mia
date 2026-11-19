@@ -67,7 +67,6 @@ export(estimateRichness)
 export(exportMothur)
 export(exportQIIME2)
 export(exportRaw)
-export(filterRPCAInput)
 export(full_join)
 export(getAbundanceClass)
 export(getAbundant)
@@ -167,6 +166,7 @@ export(setTaxonomyRanks)
 export(splitByRanks)
 export(splitOn)
 export(subsampleCounts)
+export(subsetBy)
 export(subsetByPrevalent)
 export(subsetByPrevalentFeatures)
 export(subsetByPrevalentTaxa)
@@ -244,7 +244,6 @@ exportMethods(estimateDominance)
 exportMethods(estimateEvenness)
 exportMethods(estimateFaith)
 exportMethods(estimateRichness)
-exportMethods(filterRPCAInput)
 exportMethods(full_join)
 exportMethods(getAbundanceClass)
 exportMethods(getAbundant)
@@ -320,6 +319,7 @@ exportMethods(runJSD)
 exportMethods(runOverlap)
 exportMethods(splitOn)
 exportMethods(subsampleCounts)
+exportMethods(subsetBy)
 exportMethods(subsetByPrevalent)
 exportMethods(subsetByPrevalentFeatures)
 exportMethods(subsetByPrevalentTaxa)
@@ -409,6 +409,7 @@ importFrom(MultiAssayExperiment,
   ExperimentList,
   MultiAssayExperiment,
   experiments,
+  getWithColData,
   intersectColumns,
   sampleMap
 )
@@ -416,6 +417,7 @@ importFrom(Rcpp,
   evalCpp,
   sourceCpp
 )
+importFrom(Rdpack,reprompt)
 importFrom(S4Vectors,
   "metadata<-",
   DataFrame,
@@ -430,12 +432,14 @@ importFrom(S4Vectors,
 importFrom(SingleCellExperiment,
   "altExp<-",
   "altExps<-",
+  "mainExpName<-",
   "reducedDim<-",
   "reducedDims<-",
   SingleCellExperiment,
   altExp,
   altExpNames,
   altExps,
+  mainExpName,
   reducedDim,
   reducedDimNames,
   reducedDims
@@ -461,7 +465,6 @@ importFrom(TreeSummarizedExperiment,
   rowTree
 )
 importFrom(ape,
-  Ntip,
   as.phylo,
   collapse.singles,
   cophenetic.phylo,
@@ -517,6 +520,7 @@ importFrom(stats,
   cmdscale,
   cor,
   cor.test,
+  delete.response,
   dist,
   formula,
   gaussian,

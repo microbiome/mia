@@ -806,10 +806,6 @@
     }
     # If specified, select altExps from experiments
     if( !is.null(altexps) ){
-        if( !require("SingleCellExperiment") ){
-            stop("To enable 'altexps' option, 'SingleCellExperiment' package ",
-                "must be installed.", call. = FALSE)
-        }
         names(altexps) <- names(mae)
         for ( exp in names(mae) ){
             # Get altExp if it is not NA, which disables altExp for single

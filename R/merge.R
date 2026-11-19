@@ -355,18 +355,13 @@
         return(x)
     }
     names(node_lab) <- switch(by, rownames, colnames)(x)
-    # The data does not always have a tree. For example,
-    # agglomerateByPrevalence() removes the tree before merging non-prevalent
-    # features into "Other" group, and adds the tree back with this function.
-    # If the data does not have a tree, changeTree() adds it with the default
-    # name "phylo"; whichRowTree/whichColTree only selects an existing tree to
-    # replace. That is why the original name is set explicitly.
+    # Add tree back
     if( by == 1L ){
-        x <- changeTree(x, rowTree = tree, rowNodeLab = node_lab)
-        rowTreeNames(x) <- tree_name
+        x <- changeTree(
+            x, whichRowTree = tree_name, rowTree = tree, rowNodeLab = node_lab)
     } else{
-        x <- changeTree(x, colTree = tree, colNodeLab = node_lab)
-        colTreeNames(x) <- tree_name
+        x <- changeTree(
+            x, whichColTree = tree_name, colTree = tree, colNodeLab = node_lab)
     }
     return(x)
 }
