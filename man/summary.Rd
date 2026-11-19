@@ -63,7 +63,8 @@ taxa. Either sum, mean, median, sd, cv or prevalence. With \code{"sd"} or
 coefficient of variation (standard deviation divided by mean) are returned.
 Features present in only one sample have the highest possible coefficient
 of variation, so rare features should be filtered out first, e.g., with
-\code{subsetByPrevalent()}.
+\code{\link[=getPrevalence]{addPrevalence()}} and
+\code{\link[=subsetBy]{subsetBy()}}.
 (Default: \code{"mean"})}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of the
@@ -130,7 +131,8 @@ top_taxa
 getTop(GlobalPatterns, method = "sd", top = 5)
 
 # Taxa with the highest coefficient of variation among prevalent taxa
-tse <- subsetByPrevalent(GlobalPatterns, prevalence = 0.5)
+tse <- addPrevalence(GlobalPatterns)
+tse <- subsetBy(tse, rows = prevalence > 0.5)
 getTop(tse, method = "cv", top = 5)
 
 # Use 'detection' to select detection threshold when using prevalence method

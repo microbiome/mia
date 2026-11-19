@@ -194,16 +194,6 @@ setGeneric("getRare", signature = "x", function(x, ...)
 
 #' @rdname getPrevalence
 #' @export
-setGeneric("subsetByPrevalent", signature = "x", function(x, ...)
-    standardGeneric("subsetByPrevalent"))
-
-#' @rdname getPrevalence
-#' @export
-setGeneric("subsetByRare", signature = "x", function(x, ...)
-    standardGeneric("subsetByRare"))
-
-#' @rdname getPrevalence
-#' @export
 setGeneric("getPrevalentAbundance", signature = "x",
     function(x, assay.type = assay_name, assay_name = "relabundance", ...)
     standardGeneric("getPrevalentAbundance"))
@@ -213,11 +203,6 @@ setGeneric("getPrevalentAbundance", signature = "x",
 setGeneric("addPrevalentAbundance", signature = "x",
     function(x, ...)
     standardGeneric("addPrevalentAbundance"))
-
-#'@rdname agglomerateByPrevalence
-#' @export
-setGeneric("agglomerateByPrevalence", signature = "x", function(x, ...)
-    standardGeneric("agglomerateByPrevalence"))
 
 #' @rdname getMediation
 #' @export
@@ -476,11 +461,6 @@ setGeneric("getJointRPCA", signature = "x", function(x, ...)
 #' @export
 setGeneric("addJointRPCA", signature = "x", function(x, ...)
     standardGeneric("addJointRPCA"))
-
-#' @rdname filterRPCAInput
-#' @export
-setGeneric("filterRPCAInput", signature = "x", function(x, ...)
-    standardGeneric("filterRPCAInput"))
 
 #' @rdname applyBySet
 #' @export

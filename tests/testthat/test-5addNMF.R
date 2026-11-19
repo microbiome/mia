@@ -5,7 +5,8 @@ test_that("addNMF", {
   #
   set.seed(123)
   tse <- GlobalPatterns
-  tse <- agglomerateByPrevalence(tse, rank = "Phylum")
+  tse <- addPrevalence(tse, rank = "Phylum")
+  tse <- subsetBy(tse, rows = prevalence > 0.5, collapse = TRUE)
   tse <- addNMF(tse, k = 2, seed = 123)
   expect_named(reducedDims(tse),"NMF")
   expect_true(is.matrix(reducedDim(tse,"NMF")))

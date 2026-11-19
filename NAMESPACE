@@ -67,7 +67,6 @@ export(estimateRichness)
 export(exportMothur)
 export(exportQIIME2)
 export(exportRaw)
-export(filterRPCAInput)
 export(full_join)
 export(getAbundanceClass)
 export(getAbundant)
@@ -245,7 +244,6 @@ exportMethods(estimateDominance)
 exportMethods(estimateEvenness)
 exportMethods(estimateFaith)
 exportMethods(estimateRichness)
-exportMethods(filterRPCAInput)
 exportMethods(full_join)
 exportMethods(getAbundanceClass)
 exportMethods(getAbundant)
@@ -467,7 +465,6 @@ importFrom(TreeSummarizedExperiment,
   rowTree
 )
 importFrom(ape,
-  Ntip,
   as.phylo,
   collapse.singles,
   cophenetic.phylo,

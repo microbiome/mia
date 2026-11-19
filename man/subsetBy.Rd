@@ -131,6 +131,44 @@ tse <- addQC(tse, by = "rows")
 tse <- addQC(tse, by = "cols")
 tse_sub <- subsetBy(tse, rows = sd > 0 & detected >= 3, cols = total > 1e6)
 
+# Keep the top 10 features, i.e., the features with the highest mean
+# abundance
+tse_top <- subsetBy(tse, rows = rank(-mean) <= 10)
+
+# Keep features that are abundant (over 1\%) in at least one sample, or
+# that have a median count above zero
+tse_sub <- subsetBy(tse, rows = rowMaxs(relabundance) > 0.01)
+tse_sub <- subsetBy(tse, rows = rowMedians(counts) > 0)
+
+# Remove constant features, i.e., features with zero variance
+tse_sub <- subsetBy(tse, rows = rowVars(counts) > 0)
+
+# Standard deviation is on the scale of the data, e.g., clr
+tse <- transformAssay(tse, method = "clr", pseudocount = 1)
+tse_sub <- subsetBy(tse, rows = rowSds(clr) > 1)
+
+# Keep features and samples with at most 10\% missing values
+tse_sub <- subsetBy(
+    tse,
+    rows = rowMeans(is.na(counts)) <= 0.1,
+    cols = colMeans(is.na(counts)) <= 0.1)
+
+# Keep rare features, i.e., features present in at most 50\% of samples
+tse_sub <- subsetBy(tse, rows = rowMeans(counts > 0) <= 0.5)
+
+# Use a detection limit: keep features whose relative abundance is above
+# 0.1\% in more than 20\% of samples
+tse_sub <- subsetBy(tse, rows = rowMeans(relabundance > 0.001) > 0.2)
+
+# Calculate prevalence in each sample type. Keep features that are
+# prevalent in at least one sample type, so that group-specific features
+# are not removed, e.g., before differential abundance analysis.
+prev <- sapply(splitOn(tse, group = "SampleType"), getPrevalence)
+tse_sub <- subsetBy(tse, rows = rowSums(prev > 0.5) > 0)
+
+# Keep features that are rare in all sample types
+tse_sub <- subsetBy(tse, rows = rowSums(prev > 0.5) == 0)
+
 }
 \seealso{
 \code{\link[=getPrevalence]{getPrevalent}},
