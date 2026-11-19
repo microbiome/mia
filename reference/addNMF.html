@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.32</span>
       </span>
     </div>
 
@@ -154,7 +154,8 @@ values contained in k, and the best fit is selected based on
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Reduce the number of features</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="agglomerateByPrevalence.html">agglomerateByPrevalence</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="getPrevalence.html">addPrevalence</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="subsetBy.html">subsetBy</a></span><span class="op">(</span><span class="va">tse</span>, rows <span class="op">=</span> <span class="va">prevalence</span> <span class="op">&gt;</span> <span class="fl">0.5</span>, collapse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run NMF and add the result to reducedDim(tse, "NMF").</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addNMF</span><span class="op">(</span><span class="va">tse</span>, k <span class="op">=</span> <span class="fl">2</span>, name <span class="op">=</span> <span class="st">"NMF"</span><span class="op">)</span></span></span>

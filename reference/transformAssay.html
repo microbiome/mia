@@ -18,7 +18,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.32</span>
       </span>
     </div>
 
@@ -185,7 +185,7 @@ by accounting for differences in library sizes. By default, the function
 determines the normalization percentile for summing and scaling
 counts. If you want to specify the percentile value, good default value
 might be <code>0.5</code>. The method is inspired by the CSS methods in
-<code>metagenomeSeq</code>
+<a href="https://bioconductor.org/packages/metagenomeSeq/" class="external-link">metagenomeSeq</a>
 package.</p></li>
 <li><p>'log': Logarithmic transformation (natural log, base \(e\)) can be
 used for reducing the skewness of the data.
@@ -478,7 +478,8 @@ doi:10.64898/2026.01.05.697599</p>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># philr transformation can be applied if the philr package is installed.</span></span></span>
 <span class="r-in"><span><span class="co"># Subset data b taking only prevalent taxa</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="getPrevalence.html">subsetByPrevalent</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="getPrevalence.html">addPrevalence</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="subsetBy.html">subsetBy</a></span><span class="op">(</span><span class="va">tse</span>, rows <span class="op">=</span> <span class="va">prevalence</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Apply transformation</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"philr"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span>, MARGIN <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># The transformed data is added to altExp</span></span></span>

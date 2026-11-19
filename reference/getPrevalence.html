@@ -18,7 +18,7 @@ SummarizedExperiment object."><!-- mathjax --><script src="https://cdnjs.cloudfl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.32</span>
       </span>
     </div>
 
@@ -60,10 +60,6 @@ SummarizedExperiment object."><!-- mathjax --><script src="https://cdnjs.cloudfl
 <span><span class="fu">getPrevalent</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getRare</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">subsetByPrevalent</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">subsetByRare</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getPrevalentAbundance</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
@@ -138,12 +134,6 @@ SummarizedExperiment object."><!-- mathjax --><script src="https://cdnjs.cloudfl
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">subsetByPrevalent</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
-<span><span class="fu">subsetByRare</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">addPrevalentAbundance</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"prevalent_abundance"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'ANY'</span></span>
@@ -170,9 +160,8 @@ SummarizedExperiment object."><!-- mathjax --><script src="https://cdnjs.cloudfl
 <dd><p>additional arguments</p><ul><li><p>If <code>!is.null(rank)</code> arguments are passed on to
 <code><a href="agglomerate-methods.html">agglomerateByRank</a></code>. See
 <code><a href="agglomerate-methods.html">?agglomerateByRank</a></code> for more details.</p></li>
-<li><p>for <code>getPrevalent</code>, <code>getRare</code>, <code>subsetByPrevalent</code>
-and <code>subsetByRare</code> additional parameters passed to
-<code>getPrevalence</code></p></li>
+<li><p>for <code>getPrevalent</code> and <code>getRare</code> additional parameters
+passed to <code>getPrevalence</code></p></li>
 <li><p>for <code>getPrevalentAbundance</code> additional parameters passed to
 <code>getPrevalent</code></p></li>
 </ul></dd>
@@ -233,9 +222,7 @@ limit, set <code>include.lowest</code> to <code>TRUE</code>.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>subsetPrevalent</code> and <code>subsetRareFeatures</code> return subset of
-<code>x</code>.</p>
-<p>All other functions return a named vectors:</p><ul><li><p><code>getPrevalence</code> returns a <code>numeric</code> vector with the
+    <p>The functions return named vectors:</p><ul><li><p><code>getPrevalence</code> returns a <code>numeric</code> vector with the
 names being set to either the row names of <code>x</code> or the names after
 agglomeration. <code>addPrevalence</code> adds these results to
 <code>rowData(x)</code>.</p></li>
@@ -259,10 +246,15 @@ prevalence by the number of samples (<code>ncol(x)</code>).</p>
 proportion of the core species (in between 0 and 1). The core taxa are
 defined as those that exceed the given population prevalence threshold at the
 given detection level as set for <code>getPrevalent</code>.</p>
-<p><code>subsetPrevalent</code> and <code>subsetRareFeatures</code> return a subset of
-<code>x</code>.
-The subset includes the most prevalent or rare taxa that are calculated with
-<code>getPrevalent</code> or <code>getRare</code> respectively.</p>
+<p>To subset the data to prevalent or rare features, add the prevalence to
+<code>rowData</code> with <code>addPrevalence</code> and subset the data with
+<code><a href="subsetBy.html">subsetBy</a></code>. For example,
+<code>subsetBy(addPrevalence(x), rows = prevalence &gt; 0.5)</code> keeps the
+features that are present in more than 50\<!-- % of the samples, and -->
+<code>rows = prevalence &lt;= 0.5</code> keeps the rest. With
+<code>collapse = TRUE</code>, the removed features are merged into one feature.
+Note that the stored prevalence is not updated when the data is subsetted
+afterwards.</p>
 <p><code>getPrevalent</code> returns taxa that are more prevalent with the
 given detection threshold for the selected taxonomic rank.</p>
 <p><code>getRare</code> returns complement of <code>getPrevalent</code>.</p>
@@ -277,7 +269,8 @@ To cite the R package, see citation('mia')</p>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="agglomerate-methods.html">agglomerateByRank</a></code>,
-<code><a href="summary.html">getTop</a></code></p></div>
+<code><a href="summary.html">getTop</a></code>,
+<code><a href="subsetBy.html">subsetBy</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -330,19 +323,17 @@ To cite the R package, see citation('mia')</p>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gets a subset of object that includes prevalent taxa</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"prevalent"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">subsetByPrevalent</span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>                                             rank <span class="op">=</span> <span class="st">"Family"</span>,</span></span>
-<span class="r-in"><span>                                             assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
-<span class="r-in"><span>                                             detection <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
-<span class="r-in"><span>                                             prevalence <span class="op">=</span> <span class="fl">0.55</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse_family</span> <span class="op">&lt;-</span> <span class="fu">addPrevalence</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Family"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, detection <span class="op">=</span> <span class="fl">0.001</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Duplicated labels were made unique.</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"prevalent"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="subsetBy.html">subsetBy</a></span><span class="op">(</span><span class="va">tse_family</span>, rows <span class="op">=</span> <span class="va">prevalence</span> <span class="op">&gt;</span> <span class="fl">0.55</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"prevalent"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 3 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): agglomerated_by_rank</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(2): counts relabundance</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rownames(3): Flavobacteriaceae Lachnospiraceae Rhodobacteraceae_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(8): Kingdom Phylum ... Species prevalence</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
@@ -364,19 +355,16 @@ To cite the R package, see citation('mia')</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "Armatimonadetes" "BRC1"           </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gets a subset of object that includes rare taxa</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">subsetByRare</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
-<span class="r-in"><span>    rank <span class="op">=</span> <span class="st">"Class"</span>,</span></span>
-<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
-<span class="r-in"><span>    detection <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
-<span class="r-in"><span>    prevalence <span class="op">=</span> <span class="fl">0.001</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse_class</span> <span class="op">&lt;-</span> <span class="fu">addPrevalence</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Class"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, detection <span class="op">=</span> <span class="fl">0.001</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="subsetBy.html">subsetBy</a></span><span class="op">(</span><span class="va">tse_class</span>, rows <span class="op">=</span> <span class="va">prevalence</span> <span class="op">&lt;=</span> <span class="fl">0.001</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 71 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): agglomerated_by_rank</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(2): counts relabundance</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rownames(71): 09D2Y74 12-24 ... koll11 vadinHA49</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(8): Kingdom Phylum ... Species prevalence</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
