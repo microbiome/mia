@@ -123,7 +123,7 @@ by accounting for differences in library sizes. By default, the function
 determines the normalization percentile for summing and scaling
 counts. If you want to specify the percentile value, good default value
 might be \code{0.5}. The method is inspired by the CSS methods in
-\code{\link[https://www.bioconductor.org/packages/metagenomeSeq/]{metagenomeSeq}}
+\href{https://bioconductor.org/packages/metagenomeSeq/}{metagenomeSeq}
 package.
 
 \item 'log': Logarithmic transformation (natural log, base \eqn{e}) can be
@@ -234,7 +234,8 @@ altExp(tse, "Species")
 \dontrun{
 # philr transformation can be applied if the philr package is installed.
 # Subset data b taking only prevalent taxa
-tse <- subsetByPrevalent(tse)
+tse <- addPrevalence(tse)
+tse <- subsetBy(tse, rows = prevalence > 0.5)
 # Apply transformation
 tse <- transformAssay(tse, method = "philr", pseudocount = 1, MARGIN = 1L)
 # The transformed data is added to altExp

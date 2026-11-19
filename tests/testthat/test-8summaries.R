@@ -77,7 +77,8 @@ test_that("summaries", {
     )
     # getTop with cv divides the standard deviation by the mean. Prevalent
     # taxa are used, as taxa present in one sample share the maximum value.
-    tse <- subsetByPrevalent(GlobalPatterns, prevalence = 0.5)
+    tse <- addPrevalence(GlobalPatterns)
+    tse <- subsetBy(tse, rows = prevalence > 0.5)
     mat <- assay(tse, "counts")
     cvs <- apply(mat, 1, sd) / rowMeans(mat)
     expect_identical(
