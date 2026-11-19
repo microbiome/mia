@@ -224,3 +224,5 @@ Changes in version 1.21.x
 + Added subsetBy for subsetting features and samples by conditions evaluated on the current data; collapse = TRUE merges the removed features into one (1.21.31, 2026-11-17)
 + Deprecated subsetByPrevalent, subsetByRare and agglomerateByPrevalence in favor of subsetBy (1.21.32, 2026-11-18)
 + Removed filterRPCAInput; use subsetBy instead (1.21.32, 2026-11-18)
++ subsetBy: fixed collapse = TRUE when only one feature is collapsed (1.21.33, 2026-11-19)
++ getPrevalentAbundance/addPrevalentAbundance: thresholds and rank are now passed on for SummarizedExperiment (1.21.33, 2026-11-19)

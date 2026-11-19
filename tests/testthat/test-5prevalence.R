@@ -183,9 +183,10 @@ test_that("getPrevalentAbundance", {
     data(GlobalPatterns)
     tse <- GlobalPatterns
     tse <- addPrevalentAbundance(
-        tse, rank = "Class", name = "res", prevalence = 0.35, detection = 2)
+        tse, rank = "Class", name = "res", prevalence = 0.35,
+        detection = 0.001)
     res <- getPrevalentAbundance(
-        tse, rank = "Class", prevalence = 0.35, detection = 2)
+        tse, rank = "Class", prevalence = 0.35, detection = 0.001)
     expect_equal(tse[["res"]], res)
 })
 
@@ -286,4 +287,21 @@ test_that("getRare", {
                        as.relative=TRUE, rank = "Family")
     expect_equal(pr1, pr2)
 
+})
+
+test_that("getPrevalentAbundance passes thresholds for SummarizedExperiment", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns
+    ref <- getPrevalentAbundance(
+        assay(tse, "counts"), prevalence = 0.1, detection = 0.001)
+    res <- getPrevalentAbundance(tse, prevalence = 0.1, detection = 0.001)
+    expect_equal(res, ref)
+    expect_false(isTRUE(all.equal(res, getPrevalentAbundance(tse))))
+    tse <- addPrevalentAbundance(tse, prevalence = 0.1, detection = 0.001)
+    expect_equal(unname(tse[["prevalent_abundance"]]), unname(ref))
+    # rank agglomerates the data before the calculation
+    agg <- agglomerateByRank(tse, rank = "Phylum")
+    expect_equal(
+        getPrevalentAbundance(tse, rank = "Phylum", prevalence = 0.1),
+        getPrevalentAbundance(agg, prevalence = 0.1))
 })

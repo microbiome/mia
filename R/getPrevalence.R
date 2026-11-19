@@ -440,11 +440,13 @@ setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", ...){
+    function(x, assay.type = assay_name, assay_name = "counts", rank = NULL,
+        ...){
         # check assay
         .check_assay_present(assay.type, x)
-        #
-        getPrevalentAbundance(assay(x,assay.type))
+        # Agglomerate to the given rank, as in getPrevalent()
+        x <- .merge_features(x, rank = rank, ...)
+        getPrevalentAbundance(assay(x, assay.type), ...)
     }
 )
 
