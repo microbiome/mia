@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.33</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.34</span>
       </span>
     </div>
 
@@ -74,6 +74,7 @@
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  reference <span class="op">=</span> <span class="st">"median"</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"bray"</span>,</span>
+<span>  FUN <span class="op">=</span> <span class="va">getDissimilarity</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -122,6 +123,16 @@ entire dataset is calculated and used as the reference value.
 <dd><p><code>Character scalar</code>. Specifies which dissimilarity to
 calculate. (Default: <code>"bray"</code>)</p></dd>
 
+
+<dt id="arg-fun">FUN<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
+<dd><p><code>Function</code> or <code>Character scalar</code>. A function that
+calculates the dissimilarity between a sample and its reference. It must
+take a matrix with samples in rows and the <code>method</code> argument, and
+return a <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></code> object. The default is
+<code><a href="getDissimilarity.html">getDissimilarity</a></code>, for consistency with
+<code><a href="addMDS.html">getMDS</a></code> and <code><a href="runNMDS.html">getNMDS</a></code>.
+(Default: <code>getDissimilarity</code>)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -133,8 +144,8 @@ calculate. (Default: <code>"bray"</code>)</p></dd>
     <p>Microbiota divergence (heterogeneity / spread) within a given sample
 set can be quantified by the average sample dissimilarity or beta
 diversity with respect to a given reference sample.</p>
-<p>The calculation makes use of the function <code><a href="getDissimilarity.html">getDissimilarity()</a></code>. The
-divergence
+<p>By default, the calculation makes use of the function
+<code><a href="getDissimilarity.html">getDissimilarity()</a></code>. The divergence
 measure is sensitive to sample size. Subsampling or bootstrapping can be
 applied to equalize sample sizes between comparisons.</p>
     </div>
