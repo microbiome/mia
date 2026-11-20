@@ -226,3 +226,4 @@ Changes in version 1.21.x
 + Removed filterRPCAInput; use subsetBy instead (1.21.32, 2026-11-18)
 + subsetBy: fixed collapse = TRUE when only one feature is collapsed (1.21.33, 2026-11-19)
 + getPrevalentAbundance/addPrevalentAbundance: thresholds and rank are now passed on for SummarizedExperiment (1.21.33, 2026-11-19)
++ getNMDS/addNMDS: FUN = getDissimilarity by default, for consistency with getMDS and getDivergence; getDivergence/addDivergence gain the FUN argument; getDissimilarity generic defaults to method = "bray", so getMDS and getNMDS work without method (1.21.34, 2026-11-20)

@@ -18,7 +18,12 @@
 #' @param keep_dist Deprecated. Use \code{keep.dist} instead.
 #'
 #' @param FUN \code{Function} or \code{Character scalar}. A value with a
-#' function name returning a \code{\link[stats:dist]{dist}} object
+#' function name returning a \code{\link[stats:dist]{dist}} object. The
+#' default is \code{\link[=getDissimilarity]{getDissimilarity}}, as in
+#' \code{\link[=getMDS]{getMDS}} and
+#' \code{\link[=getDivergence]{getDivergence}}, so that the same
+#' dissimilarities, such as UniFrac or rarefied dissimilarities, are available
+#' in all of them. (Default: \code{getDissimilarity})
 #'
 #' @param nmds.fun \code{Character scalar}. A value to choose the scaling
 #'   implementation, either \dQuote{isoMDS} for
@@ -76,9 +81,10 @@
 #'
 #' #
 #' data(esophagus)
-#' esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "BC")
-#' esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "euclidean",
-#'                      method = "euclidean")
+#' esophagus <- addNMDS(esophagus, name = "BC")
+#' esophagus <- addNMDS(esophagus, name = "euclidean", method = "euclidean")
+#' # Other functions that return a dist object can be used as well
+#' esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "BC_vegdist")
 #' reducedDims(esophagus)
 NULL
 
@@ -127,9 +133,9 @@ NULL
 
 #' @importFrom MASS isoMDS
 #' @importFrom stats cmdscale
-#' @importFrom vegan vegdist monoMDS
+#' @importFrom vegan monoMDS
 .calculate_nmds <- function(
-        x, FUN = vegdist,
+        x, FUN = getDissimilarity,
         nmds.fun = nmdsFUN,
         nmdsFUN = c("isoMDS","monoMDS"),
         ncomponents = 2, ntop = 500, subset.row = subset_row,
@@ -144,6 +150,7 @@ NULL
     }
     x <- as.matrix(x)
     sample_names <- rownames(x)
+    FUN <- match.fun(FUN)
     sample_dist <- do.call(
         FUN, c(list(x), list(...)))
     attributes(sample_dist) <- attributes(sample_dist)[c("class","Size")]
@@ -167,7 +174,7 @@ setMethod("getNMDS", "ANY", .calculate_nmds)
 #' @export
 setMethod("getNMDS", "SummarizedExperiment",
     function(x, ..., assay.type = assay_name, assay_name = exprs_values,
-        exprs_values = "counts", FUN = vegdist) {
+        exprs_values = "counts", FUN = getDissimilarity) {
         .calculate_nmds(assay(x, assay.type), FUN = FUN, ...)
     }
 )
@@ -177,7 +184,7 @@ setMethod("getNMDS", "SummarizedExperiment",
 setMethod("getNMDS", "SingleCellExperiment",
     function(x, ..., assay.type = assay_name, assay_name = exprs_values,
             exprs_values = "counts", dimred = NULL, ndimred = n_dimred,
-            n_dimred = NULL, FUN = vegdist){
+            n_dimred = NULL, FUN = getDissimilarity){
         mat <- .get_mat_from_sce(
             x, exprs_values = assay.type, dimred = dimred, n_dimred = ndimred)
         getNMDS(mat, transposed = !is.null(dimred), FUN = FUN,...)

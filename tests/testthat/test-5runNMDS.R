@@ -23,3 +23,28 @@ test_that("addNMDS", {
     expect_true(is.matrix(reducedDim(esophagus,"BC")))
     expect_equal(dim(reducedDim(esophagus,"BC")),c(3,2))
 })
+
+test_that("getNMDS uses getDissimilarity by default", {
+    skip_if_not(requireNamespace("vegan", quietly = TRUE))
+    data(esophagus, package = "mia")
+    tse <- esophagus
+    # The default gives the same result as vegdist for Bray-Curtis
+    set.seed(1)
+    res_default <- getNMDS(tse, method = "bray")
+    set.seed(1)
+    res_vegdist <- getNMDS(tse, method = "bray", FUN = vegan::vegdist)
+    expect_equal(res_default, res_vegdist)
+    # Function names are accepted
+    set.seed(1)
+    res_name <- getNMDS(tse, method = "bray", FUN = "getDissimilarity")
+    expect_equal(res_default, res_name)
+    # Bray-Curtis is used when method is not given, as with vegdist before
+    set.seed(1)
+    expect_equal(getNMDS(tse), res_default)
+    # Dissimilarities that only getDissimilarity supports work by default
+    res_unifrac <- getNMDS(
+        tse, method = "unifrac", tree = rowTree(tse), keep.dist = TRUE)
+    expect_equal(
+        unname(as.matrix(attr(res_unifrac, "dist"))),
+        unname(as.matrix(getDissimilarity(tse, method = "unifrac"))))
+})
