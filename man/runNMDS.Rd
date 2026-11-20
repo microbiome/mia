@@ -14,7 +14,7 @@ getNMDS(x, ...)
 
 \S4method{getNMDS}{ANY}(
   x,
-  FUN = vegdist,
+  FUN = getDissimilarity,
   nmds.fun = nmdsFUN,
   nmdsFUN = c("isoMDS", "monoMDS"),
   ncomponents = 2,
@@ -34,7 +34,7 @@ getNMDS(x, ...)
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts",
-  FUN = vegdist
+  FUN = getDissimilarity
 )
 
 \S4method{getNMDS}{SingleCellExperiment}(
@@ -46,7 +46,7 @@ getNMDS(x, ...)
   dimred = NULL,
   ndimred = n_dimred,
   n_dimred = NULL,
-  FUN = vegdist
+  FUN = getDissimilarity
 )
 
 calculateNMDS(x, ...)
@@ -62,7 +62,12 @@ runNMDS(x, ...)
 \code{nmds.fun}.}
 
 \item{FUN}{\code{Function} or \code{Character scalar}. A value with a
-function name returning a \code{\link[stats:dist]{dist}} object}
+function name returning a \code{\link[stats:dist]{dist}} object. The
+default is \code{\link[=getDissimilarity]{getDissimilarity}}, as in
+\code{\link[=getMDS]{getMDS}} and
+\code{\link[=getDivergence]{getDivergence}}, so that the same
+dissimilarities, such as UniFrac or rarefied dissimilarities, are available
+in all of them. (Default: \code{getDissimilarity})}
 
 \item{nmds.fun}{\code{Character scalar}. A value to choose the scaling
 implementation, either \dQuote{isoMDS} for
@@ -147,9 +152,10 @@ getNMDS(tse)
 
 #
 data(esophagus)
-esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "BC")
-esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "euclidean",
-                     method = "euclidean")
+esophagus <- addNMDS(esophagus, name = "BC")
+esophagus <- addNMDS(esophagus, name = "euclidean", method = "euclidean")
+# Other functions that return a dist object can be used as well
+esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "BC_vegdist")
 reducedDims(esophagus)
 }
 \references{

@@ -15,6 +15,14 @@
 #' entire dataset is calculated and used as the reference value.
 #' (Default: \code{"median"})
 #'
+#' @param FUN \code{Function} or \code{Character scalar}. A function that
+#' calculates the dissimilarity between a sample and its reference. It must
+#' take a matrix with samples in rows and the \code{method} argument, and
+#' return a \code{\link[stats:dist]{dist}} object. The default is
+#' \code{\link[=getDissimilarity]{getDissimilarity}}, for consistency with
+#' \code{\link[=getMDS]{getMDS}} and \code{\link[=getNMDS]{getNMDS}}.
+#' (Default: \code{getDissimilarity})
+#'
 #' @param ... optional arguments passed to
 #' \code{\link[=addDissimilarity]{addDissimilarity}}. Additionally:
 #' \itemize{
@@ -33,8 +41,8 @@
 #' set can be quantified by the average sample dissimilarity or beta
 #' diversity with respect to a given reference sample.
 #'
-#' The calculation makes use of the function \code{getDissimilarity()}. The
-#' divergence
+#' By default, the calculation makes use of the function
+#' \code{getDissimilarity()}. The divergence
 #' measure is sensitive to sample size. Subsampling or bootstrapping can be
 #' applied to equalize sample sizes between comparisons.
 #'
@@ -96,12 +104,14 @@ setMethod("addDivergence", signature = c(x="SummarizedExperiment"),
 setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
     function(
         x, assay.type = assay_name, assay_name = "counts",
-        reference = "median", method = "bray", ...){
+        reference = "median", method = "bray", FUN = getDissimilarity, ...){
         ################### Input check ###############
         # Get altExp if user has specified
         x <- .check_and_get_altExp(x, ...)
         # Check assay.type
         .check_assay_present(assay.type, x)
+        # Check FUN
+        FUN <- match.fun(FUN)
         # Check reference
         ref_type <- .get_reference_type(reference, x)
         if( is.null(ref_type) ){
@@ -119,7 +129,7 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
         args <- .get_matrix_and_reference(
             x, assay.type, reference, ref_type, ...)
         # Calculate sample-wise divergence
-        args <- c(args, list(method = method), list(...))
+        args <- c(args, list(method = method, FUN = FUN), list(...))
         res <- do.call(.calc_divergence, args)
         # Get only values and ensure that their order is correct
         res <- res[match(colnames(x), res[["sample"]]), "value"]
@@ -219,7 +229,7 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
 # For each sample-pair, this function calculates dissimilarity.
 #' @importFrom dplyr group_by summarise
 #' @importFrom tidyr unnest
-.calc_divergence <- function(mat, reference, method, ...){
+.calc_divergence <- function(mat, reference, method, FUN, ...){
     # This following line is to disable cmdcheck warning "no visible binding..."
     value <- NULL
 
@@ -242,7 +252,7 @@ setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
     temp <- lapply(temp, function(sample_pair){
         # Calculate dissimilarity between a sample pair
         temp <- mat[ sample_pair, ]
-        temp <- getDissimilarity(temp, method, ...)
+        temp <- FUN(temp, method = method, ...)
         # Get only the single value
         temp <- temp[[1]]
         return(temp)
