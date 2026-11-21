@@ -91,6 +91,7 @@ removed are listed in `?mia::deprecate`.
 | `mapTaxonomy()` | Look up taxa and their higher ranks |
 | `getHierarchyTree()`, `addHierarchyTree()` | Create a tree from the taxonomy |
 | `IdTaxaToDataFrame()` | Convert `DECIPHER::IdTaxa()` results to a taxonomy table |
+| `parseTaxonomy()` | Split taxonomy strings such as `"k__Bacteria; p__Firmicutes"` into ranks |
 
 ## Transformation and normalisation
 
