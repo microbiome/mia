@@ -423,116 +423,51 @@ res |> head()
 
 }
 \references{
-Armstrong G. et al. (2021)
-Efficient computation of Faith's phylogenetic diversity with applications
-in characterizing microbiomes.
-\emph{Genome Res.} 31(11):2131-2137. doi: 10.1101/gr.275777.121
+\insertRef{Armstrong2021}{mia}
 
-Armstrong G. et al. (2021)
-Efficient computation of Faith's phylogenetic diversity with applications
-in characterizing microbiomes.
-\emph{Genome Res.} 31(11):2131-2137. doi: 10.1101/gr.275777.121
+\insertRef{Beisel2003}{mia}
 
-Beisel J-N. et al. (2003)
-A Comparative Analysis of Diversity Index Sensitivity.
-\emph{Internal Rev. Hydrobiol.} 88(1):3-15.
-\url{https://portais.ufg.br/up/202/o/2003-comparative_evennes_index.pdf}
+\insertRef{Berger1970}{mia}
 
-Berger WH & Parker FL (1970)
-Diversity of Planktonic Foraminifera in Deep-Sea Sediments.
-\emph{Science} 168(3937):1345-1347. doi: 10.1126/science.168.3937.1345
+\insertRef{Bulla1994}{mia}
 
-Bulla L. (1994)
-An  index of diversity and its associated diversity measure.
-\emph{Oikos} 70:167--171
+\insertRef{Allen2009}{mia}
 
-Allen B, Kon M, Bar-Yam Y (2009)
-A new phylogenetic diversity measure generalizing the Shannon index and its
-application to phyllostomid bats.
-\emph{The American Naturalist} 174(2):236–243.
+\insertRef{Camargo1992}{mia}
 
-Camargo, JA. (1992)
-New diversity index for assessing structural alterations in aquatic
-communities.
-\emph{Bull. Environ. Contam. Toxicol.} 48:428--434.
+\insertRef{Cassol2025}{mia}
 
-Cassol, I. (2025) Key features and guidelines for the application of
-microbial alpha diversity metrics.
-\emph{Sci. Rep.} 15:622. doi: 10.1038/s41598-024-77864-y
+\insertRef{Chao1984}{mia}
 
-Chao A. (1984)
-Non-parametric estimation of the number of classes in a population.
-\emph{Scand J Stat.} 11:265–270.
+\insertRef{Chao2016}{mia}
 
-Chao A, Chun-Huo C, Jost L (2016).
-Phylogenetic Diversity Measures and Their Decomposition:
-A Framework Based on Hill Numbers. Biodiversity Conservation and
-Phylogenetic Systematics,
-Springer International Publishing, pp. 141–172,
-doi:10.1007/978-3-319-22461-9_8.
+\insertRef{Chiu2014}{mia}
 
-Chiu, C.H., Wang, Y.T., Walther, B.A. & Chao, A. (2014).
-Improved nonparametric lower bound of species richness via a modified
-Good-Turing frequency formula.
-\emph{Biometrics} 70, 671-682.
+\insertRef{Faith1992}{mia}
 
-Faith D.P. (1992)
-Conservation evaluation and phylogenetic diversity.
-\emph{Biological Conservation} 61(1):1-10.
+\insertRef{Fisher1943}{mia}
 
-Fisher R.A., Corbet, A.S. & Williams, C.B. (1943)
-The relation between the number of species and the number of individuals in
-a random sample of animal population.
-\emph{Journal of Animal Ecology} \emph{12}, 42-58.
+\insertRef{Gini1921}{mia}
 
-Gini C (1921)
-Measurement of Inequality of Incomes.
-\emph{The Economic Journal} 31(121): 124-126. doi: 10.2307/2223319
+\insertRef{Locey2016}{mia}
 
-Locey KJ and Lennon JT. (2016)
-Scaling laws predict global microbial diversity.
-\emph{PNAS} 113(21):5970-5975; doi:10.1073/pnas.1521291113.
+\insertRef{Magurran2011}{mia}
 
-Magurran AE, McGill BJ, eds (2011)
-Biological Diversity: Frontiers in Measurement and Assessment
-(Oxford Univ Press, Oxford), Vol 12.
+\insertRef{McNaughton1970}{mia}
 
-McNaughton, SJ and Wolf LL. (1970).
-Dominance and the niche in ecological systems.
-\emph{Science} 167:13, 1--139
+\insertRef{OHara2005}{mia}
 
-O'Hara, R.B. (2005).
-Species richness estimators: how many species can dance on the head of a pin?
-\emph{J. Anim. Ecol.} 74, 375-386.
+\insertRef{Pielou1966}{mia}
 
-Pielou, EC. (1966)
-The measurement of diversity in different types of
-biological collections. \emph{J Theoretical Biology} 13:131--144.
+\insertRef{Rao1982}{mia}
 
-Rao CR (1982)
-Diversity and dissimilarity coefficients: a unified approach.
-\emph{Theoretical Population Biology} 21(1):24–43.
+\insertRef{Schloss2024}{mia}
 
-Schloss PD (2024) Rarefaction is currently the best approach to control for
-uneven sequencing effort in amplicon sequence analyses. \emph{mSphere}
-28;9(2):e0035423. doi: 10.1128/msphere.00354-23
+\insertRef{Simpson1949}{mia}
 
-Simpson EH (1949)
-Measurement of Diversity.
-\emph{Nature} 163(688). doi: 10.1038/163688a0
+\insertRef{Smith1996}{mia}
 
-Smith B and Wilson JB. (1996)
-A Consumer's Guide to Evenness Indices.
-\emph{Oikos} 76(1):70-82.
-
-Spellerberg and Fedor (2003).
-A tribute to Claude Shannon (1916 –2001) and a plea for more rigorous use of
-species richness, species diversity and the ‘Shannon–Wiener’ Index.
-\emph{Alpha Ecology & Biogeography} 12, 177–197.
-
-Cassol, I., Ibañez, M. & Bustamante, J.P. (2025)
-Key features and guidelines for the application of microbial alpha diversity
-metrics. \emph{Sci Rep} 15, 622. doi:10.1038/s41598-024-77864-y
+\insertRef{Spellerberg2003}{mia}
 }
 \seealso{
 \itemize{

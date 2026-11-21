@@ -36,11 +36,7 @@ common for all experiments (microbiota, metabolites, biomarkers) and is
 described below.
 }
 \references{
-Hintikka L et al. (2021): Xylo-oligosaccharides in prevention of hepatic
-steatosis and adipose tissue inflammation: associating taxonomic and
-metabolomic patterns in fecal microbiota with biclustering. International
-Journal of Environmental Research and Public Health 18(8):4049.
-\url{https://doi.org/10.3390/ijerph18084049}
+\insertRef{Hintikka2021}{mia}
 }
 \seealso{
 \code{\link{mia-datasets}}

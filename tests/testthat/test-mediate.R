@@ -86,3 +86,26 @@ test_that("getMediation", {
       "total_lower", "total_upper", "total_pval", "acme_padj", "ade_padj",
       "total_padj"))
 })
+
+test_that("getMediation names reducedDim mediators by their components", {
+  skip_if_not_installed("mediation")
+  data("hitchip1006", package = "miaTime")
+  tse <- agglomerateByRank(hitchip1006, rank = "Phylum")
+  tse$bmi_group <- as.numeric(tse$bmi_group)
+  tse <- tse[, tse$nationality %in% c("Scandinavia", "CentralEurope")]
+  pcs <- matrix(rnorm(ncol(tse) * 2), ncol = 2)
+  # Component names of the reducedDim are kept
+  reducedDim(tse, "PCA") <- `colnames<-`(pcs, c("PC1", "PC2"))
+  med_df <- getMediation(
+    tse, outcome = "bmi_group", treatment = "nationality", dimred = "PCA",
+    treat.value = "Scandinavia", control.value = "CentralEurope",
+    boot = TRUE, sims = 1)
+  expect_setequal(med_df[["mediator"]], c("PC1", "PC2"))
+  # Without names, the components are named by the reducedDim
+  reducedDim(tse, "PCA") <- pcs
+  med_df <- getMediation(
+    tse, outcome = "bmi_group", treatment = "nationality", dimred = "PCA",
+    treat.value = "Scandinavia", control.value = "CentralEurope",
+    boot = TRUE, sims = 1)
+  expect_setequal(med_df[["mediator"]], c("PCA1", "PCA2"))
+})

@@ -96,6 +96,7 @@ reference:
 - title: Taxonomy information
 - contents:
   - taxonomyRanks
+  - parseTaxonomy
   - hierarchy-tree
 - subtitle: decontam
 - contents:

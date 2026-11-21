@@ -515,3 +515,37 @@ test_that("Multiplicative replacement of zeros", {
     expect_error(transformAssay(tse, method = "multiplicative_replacement",
         detection = -1))
 })
+
+test_that("transformAssay verbose = FALSE silences messages and warnings", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns[1:50, 1:5]
+    # Messages by default
+    expect_message(
+        transformAssay(tse, method = "clr", pseudocount = TRUE),
+        "A pseudocount of")
+    expect_no_message(
+        transformAssay(tse, method = "clr", pseudocount = TRUE,
+            verbose = FALSE))
+    # Warnings
+    assay(tse, "counts2") <- assay(tse, "counts") + 1
+    expect_warning(
+        transformAssay(tse, assay.type = "counts2", method = "log2",
+            pseudocount = 1),
+        "only positive values")
+    expect_no_warning(
+        res <- transformAssay(tse, assay.type = "counts2", method = "log2",
+            pseudocount = 1, verbose = FALSE))
+    # The result is the same
+    expect_equal(assay(res, "log2"),
+        suppressWarnings(assay(transformAssay(tse, assay.type = "counts2",
+            method = "log2", pseudocount = 1), "log2")))
+    # Also for altExps
+    altExp(tse, "alt") <- tse
+    expect_no_message(
+        transformAssay(tse, method = "clr", pseudocount = TRUE,
+            altexp = "alt", verbose = FALSE))
+    # Errors are still shown
+    expect_error(transformAssay(tse, method = "clr", verbose = "no"),
+        "'verbose' must be TRUE or FALSE.")
+    expect_error(transformAssay(tse, method = "wrong", verbose = FALSE))
+})

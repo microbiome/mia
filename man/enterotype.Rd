@@ -40,12 +40,9 @@ clusters, but as a way of stratifying samples to reduce complexity. It was
 converted into a TreeSummarizedExperiment from the \pkg{phyloseq} package.
 }
 \references{
-Arumugam, M., et al. (2011). Enterotypes of the human gut microbiome.
-Nature, 473(7346), 174-180. \url{https://doi.org/10.1038/nature09944}
+\insertRef{Arumugam2011}{mia}
 
-Arumugam, M., et al. (2014). Addendum: Enterotypes of the human gut
-microbiome.
-Nature 506, 516 (2014). \url{https://doi.org/10.1038/nature13075}
+\insertRef{Arumugam2014}{mia}
 }
 \seealso{
 \code{\link{mia-datasets}}

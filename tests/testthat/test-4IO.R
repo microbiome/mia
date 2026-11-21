@@ -621,3 +621,20 @@ test_that("Importers add a tree from file", {
     tse <- importMothur(assay_file, tree.file = tree_file)
     expect_setequal(rowLinks(tse)[["nodeLab"]], rownames(tse))
 })
+
+test_that("convertToPhyloseq with tree.name = NULL leaves out the tree", {
+    skip_if_not_installed("phyloseq")
+    data("Tengeler2020", package = "mia")
+    tse <- Tengeler2020
+    # With the tree, phyloseq orders the features by the tips
+    pseq <- convertToPhyloseq(tse)
+    expect_false(is.null(phyloseq::phy_tree(pseq, errorIfNULL = FALSE)))
+    expect_false(identical(phyloseq::taxa_names(pseq), rownames(tse)))
+    # Without the tree, the feature order of the TreeSE is kept
+    pseq <- convertToPhyloseq(tse, tree.name = NULL)
+    expect_null(phyloseq::phy_tree(pseq, errorIfNULL = FALSE))
+    expect_identical(phyloseq::taxa_names(pseq), rownames(tse))
+    expect_equal(
+        unname(as(phyloseq::otu_table(pseq), "matrix")),
+        unname(as.matrix(assay(tse, "counts"))))
+})
