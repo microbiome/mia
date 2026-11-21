@@ -47,6 +47,122 @@ BiocManager::install("mia")
 library("mia")
 ```
 
+# Overview of mia functions
+
+The table below lists the functions of `mia` by use case. Most analysis
+functions come in pairs: `get*()` returns the result, and `add*()` stores it
+in the object, e.g. in `colData`, `rowData`, `reducedDim` or `metadata`.
+Each function has a help page with examples, and the
+[Orchestrating Microbiome Analysis](https://microbiome.github.io/OMA/) (OMA)
+book shows them in complete workflows. Functions that are being
+removed are listed in `?mia::deprecate`.
+
+## Data import, export and conversion
+
+| Functions | Purpose |
+|:---|:---|
+| `importBIOM()`, `importQIIME2()`, `importQZA()`, `importMothur()`, `importMetaPhlAn()`, `importHUMAnN()`, `importTaxpasta()` | Import results of common pipelines as a `TreeSummarizedExperiment` (TreeSE) |
+| `convertFromPhyloseq()`, `convertFromBIOM()`, `convertFromDADA2()` | Convert phyloseq, BIOM and DADA2 objects to TreeSE |
+| `convertToPhyloseq()`, `convertToBIOM()` | Convert TreeSE to phyloseq or BIOM |
+| `convertToMAE()`, `convertToTreeSE()` | Convert a TreeSE with alternative experiments to a `MultiAssayExperiment` and back |
+| `exportQIIME2()`, `exportMothur()`, `exportRaw()` | Write data to files for QIIME 2, Mothur or as plain tables |
+| `meltSE()` | Convert assay and metadata into a long (tidy) `data.frame` |
+| `mergeSEs()` | Merge several objects into one |
+
+## Data wrangling
+
+| Functions | Purpose |
+|:---|:---|
+| `subsetBy()` | Subset features or samples by conditions on the data, optionally collapsing the rest into "Other" |
+| `agglomerateByRank()`, `agglomerateByRanks()` | Sum features to a taxonomic rank, or to all ranks as alternative experiments |
+| `agglomerateByVariable()` | Sum features or samples by a grouping variable |
+| `agglomerateBySet()`, `applyBySet()` | Summarise or apply a function by feature or sample sets |
+| `splitOn()`, `unsplitOn()` | Split an object by a grouping variable and combine it back |
+| `splitByRanks()`, `unsplitByRanks()` | Split by taxonomic ranks and combine back |
+| `getReducedDimAttribute()` | Get attributes, e.g. explained variance, of an ordination |
+
+## Taxonomy and trees
+
+| Functions | Purpose |
+|:---|:---|
+| `taxonomyRanks()`, `getTaxonomyRanks()`, `setTaxonomyRanks()` | Get or set the taxonomic ranks that mia recognises |
+| `taxonomyRankEmpty()`, `checkTaxonomy()` | Check the taxonomy table |
+| `getTaxonomyLabels()` | Create feature labels from the taxonomy |
+| `mapTaxonomy()` | Look up taxa and their higher ranks |
+| `getHierarchyTree()`, `addHierarchyTree()` | Create a tree from the taxonomy |
+| `IdTaxaToDataFrame()` | Convert `DECIPHER::IdTaxa()` results to a taxonomy table |
+
+## Transformation and normalisation
+
+| Functions | Purpose |
+|:---|:---|
+| `transformAssay()` | Relative abundance, CLR, rCLR, log, Hellinger, PA, z-score and other transformations |
+| `rarefyAssay()` | Subsample counts to an equal library size |
+
+## Quality control, summaries and core features
+
+| Functions | Purpose |
+|:---|:---|
+| `summary()` | Summary statistics of samples and features |
+| `getQC()`, `addQC()` | Quality control metrics per sample and feature |
+| `isContaminant()`, `isNotContaminant()`, `addContaminantQC()`, `addNotContaminantQC()` | Identify contaminants with the decontam package |
+| `getPrevalence()`, `addPrevalence()` | Prevalence of each feature |
+| `getPrevalent()`, `getRare()`, `getPrevalentAbundance()`, `addPrevalentAbundance()` | Prevalent and rare features, and the total abundance of prevalent features per sample |
+| `getTop()`, `getUnique()` | Most abundant features, and the unique taxa of a rank |
+| `getDominant()`, `addDominant()`, `summarizeDominance()` | The dominant feature of each sample |
+| `getAbundant()`, `getLowAbundant()`, `getConditionallyLowAbundant()`, `getPermanentlyLowAbundant()`, `getAbundanceClass()`, `addAbundanceClass()` | Classify features as abundant or rare |
+
+## Alpha diversity and other sample-wise indices
+
+| Functions | Purpose |
+|:---|:---|
+| `getAlpha()`, `addAlpha()` | Diversity, richness, evenness, dominance and rarity indices |
+| `getDivergence()`, `addDivergence()` | Divergence of samples from a reference |
+| `getDysbiosis()`, `addDysbiosis()` | Dysbiosis scores |
+
+## Beta diversity and ordination
+
+| Functions | Purpose |
+|:---|:---|
+| `getDissimilarity()`, `addDissimilarity()` | Dissimilarities, e.g. Bray-Curtis, Aitchison, UniFrac, JSD and overlap |
+| `getMDS()`, `addMDS()` | Multi-dimensional scaling (PCoA) |
+| `getNMDS()`, `addNMDS()`, `calculateNMDS()`, `runNMDS()` | Non-metric MDS |
+| `getPCA()`, `addPCA()` | Principal component analysis |
+| `getRPCA()`, `addRPCA()` | Robust PCA |
+| `getDPCoA()`, `addDPCoA()`, `calculateDPCoA()`, `runDPCoA()` | Double principal coordinate analysis |
+| `getCCA()`, `addCCA()`, `getRDA()`, `addRDA()`, `calculateCCA()`, `runCCA()`, `calculateRDA()`, `runRDA()` | Constrained ordination (CCA, RDA and db-RDA) |
+| `getNMF()`, `addNMF()`, `getLDA()`, `addLDA()` | Non-negative matrix factorisation and latent Dirichlet allocation |
+
+## Clustering
+
+| Functions | Purpose |
+|:---|:---|
+| `getCluster()`, `addCluster()` | Cluster samples or features with any `bluster` method, including Dirichlet-multinomial mixtures |
+| `calculateDMNgroup()`, `performDMNgroupCV()` | Dirichlet-multinomial mixture classification |
+
+## Association and group comparison
+
+| Functions | Purpose |
+|:---|:---|
+| `getPERMANOVA()`, `addPERMANOVA()` | PERMANOVA with a test for homogeneity of dispersion |
+| `getCrossAssociation()` | Correlations or other associations between two assays or experiments |
+| `getMediation()`, `addMediation()` | Mediation analysis with features, assays or ordination components as mediators |
+
+## Multi-omics
+
+| Functions | Purpose |
+|:---|:---|
+| `getJointRPCA()`, `addJointRPCA()` | Joint robust PCA of several experiments |
+| `getCrossAssociation()`, `convertToMAE()`, `mergeSEs()` | Associations and data integration across experiments |
+
+## Example datasets
+
+`GlobalPatterns`, `enterotype`, `esophagus`, `peerj13075`, `Tengeler2020`,
+`HintikkaXOData`, `Tito2024QMP`, `ibdmdb` and `dmn_se` can be loaded with
+`data()`, e.g. `data(GlobalPatterns, package = "mia")`. See
+`?mia::"mia-datasets"`. Larger datasets are available in the
+`microbiomeDataSets` package.
+
 # Loading a `TreeSummarizedExperiment` object
 
 A few example datasets are available via `mia`. For this vignette the 
@@ -98,7 +214,7 @@ provide by `TreeSummarizedExperiment` `agglomerateByRank` is available.
 
 `agglomerateByRank` constructs a `factor` to guide merging from the available
 taxonomic information. For more information on merging have a look at the man
-page via `?mergeFeatures`.
+page via `?agglomerateByRank`.
 
 ```{r}
 # agglomerate at the Family taxonomic rank
@@ -192,7 +308,7 @@ transformed counts are stored in a new `assay`.
 
 ```{r}
 assayNames(enterotype)
-anterotype <- transformAssay(enterotype, method = "log10", pseudocount = 1)
+enterotype <- transformAssay(enterotype, method = "log10", pseudocount = 1)
 assayNames(enterotype)
 ```
 
@@ -263,20 +379,57 @@ altExp(tse,"Genus") <- runMDS(
     keep_dist = TRUE)
 ```
 
-JSD and UniFrac are implemented in `mia` as well. `getJSD` can be used
-as a drop-in replacement in the example above (omit the `method` argument as 
-well) to calculate the JSD. For calculating the UniFrac distance via
-`getUniFrac` either a `TreeSummarizedExperiment` must be used or a tree
-supplied via the `tree` argument. For more details see `?getJSD`,
-`?getUnifrac` or `?getDPCoA`.
+`getDissimilarity()` also calculates, e.g., JSD (`method = "jsd"`) and
+UniFrac (`method = "unifrac"`, which uses the `rowTree`). `addMDS()` combines
+both steps, and `addNMDS()`, `addPCA()`, `addRDA()` and `addDPCoA()` provide
+other ordination methods. For more details see `?getDissimilarity` and
+`?addMDS`.
 
-`runMDS` performs the decomposition. Alternatively `addNMDS` can also be used.
+```{r}
+tse_phylum <- agglomerateByRank(GlobalPatterns, rank = "Phylum")
+tse_phylum <- transformAssay(tse_phylum, method = "relabundance")
+tse_phylum <- addMDS(
+    tse_phylum, assay.type = "relabundance", method = "bray", name = "MDS_bray")
+head(reducedDim(tse_phylum, "MDS_bray")[, 1:2])
+```
+
+`getPERMANOVA()` tests whether a variable explains differences in community
+composition, and checks the homogeneity of dispersion between the groups.
+
+```{r}
+set.seed(1)
+res <- getPERMANOVA(
+    tse_phylum, assay.type = "relabundance", method = "bray",
+    formula = x ~ SampleType, permutations = 99)
+res$permanova
+```
 
 ## Other indices
 
-`estimateDominance` and `estimateEvenness` implement other sample-wise indices.
-The function behave equivalently to `estimateDiversity`. For more information
-see the corresponding man pages.
+`addAlpha()` also calculates indices of richness, evenness, dominance and
+rarity. Each index is stored in its own `colData` column.
+
+```{r}
+tse_phylum <- addAlpha(
+    tse_phylum, assay.type = "counts",
+    index = c("observed_richness", "pielou", "gini_dominance"))
+head(colData(tse_phylum)[, c("observed_richness", "pielou", "gini_dominance")])
+```
+
+## Clustering
+
+`addCluster()` clusters samples or features with methods from the `bluster`
+package and stores the clusters in `colData` or `rowData`.
+
+```{r}
+library(bluster)
+tse_phylum <- addCluster(
+    tse_phylum, assay.type = "relabundance", by = "samples",
+    BLUSPARAM = HclustParam(
+        metric = "bray", dist.fun = vegan::vegdist, cut.dynamic = FALSE,
+        cut.params = list(k = 3)))
+table(tse_phylum$cluster, tse_phylum$SampleType)
+```
 
 # Utility functions
 
@@ -314,6 +467,24 @@ assay(tse[,'CC1'], "counts") |> head()
 
 ```
 
+`subsetBy()` subsets features or samples by conditions on the data. With
+`collapse = TRUE`, the features that are left out are summed into one
+feature called "Other".
+
+```{r}
+tse_sub <- subsetBy(
+    tse_phylum, rows = rowMeans(relabundance) > 0.01, collapse = TRUE)
+rownames(tse_sub)
+# Samples with at least 500,000 reads
+dim(subsetBy(tse_phylum, cols = colSums(counts) >= 500000))
+```
+
+`summary()` gives summary statistics of the samples and features.
+
+```{r}
+summary(tse_phylum, assay.type = "counts")
+```
+
 ## Selecting most interesting features 
 
 `getTop` returns a vector of the most `top` abundant feature IDs.
@@ -328,13 +499,32 @@ top_taxa <- getTop(
 top_taxa
 ```
 
+`getPrevalent()` returns the features that exceed a detection limit in a given
+fraction of the samples, and `addPrevalence()` stores the prevalence of each
+feature in `rowData`.
+
+```{r}
+getPrevalent(
+    tse_phylum, assay.type = "relabundance", detection = 0.01,
+    prevalence = 0.5)
+tse_phylum <- addPrevalence(
+    tse_phylum, assay.type = "relabundance", detection = 0.01)
+head(sort(rowData(tse_phylum)$prevalence, decreasing = TRUE))
+```
+
+`getDominant()` gives the most abundant feature of each sample.
+
+```{r}
+table(getDominant(tse_phylum, assay.type = "counts"))
+```
+
 ## Generating tidy data
 
 To generate tidy data as used and required in most of the tidyverse, 
-`meltAssay` can be used. A `data.frame` in the long format will be returned.
+`meltSE` can be used. A `data.frame` in the long format will be returned.
 
 ```{r}
-molten_data <- meltAssay(
+molten_data <- meltSE(
     tse,
     assay.type = "counts",
     add.row = TRUE,
