@@ -43,17 +43,11 @@
 #' }
 #' 
 #' @references
-#' McMurdie PJ, Holmes S. Waste not, want not: why rarefying microbiome data 
-#' is inadmissible. PLoS computational biology. 2014 Apr 3;10(4):e1003531.
-#' 
-#' Gloor GB, Macklaim JM, Pawlowsky-Glahn V & Egozcue JJ (2017)
-#' Microbiome Datasets Are Compositional: And This Is Not Optional.
-#' Frontiers in Microbiology 8: 2224. doi: 10.3389/fmicb.2017.02224
-#' 
-#' Weiss S, Xu ZZ, Peddada S, Amir A, Bittinger K, Gonzalez A, Lozupone C, 
-#' Zaneveld JR, Vázquez-Baeza Y, Birmingham A, Hyde ER. Normalization and 
-#' microbial differential abundance strategies depend upon data characteristics.
-#' Microbiome. 2017 Dec;5(1):1-8.
+#' \insertRef{McMurdie2014}{mia}
+#'
+#' \insertRef{Gloor2017}{mia}
+#'
+#' \insertRef{Weiss2017}{mia}
 #' 
 #' @return \code{rarefyAssay} return \code{x} with subsampled data.
 #' 

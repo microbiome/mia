@@ -57,8 +57,7 @@
 #' \code{colData(x)}.
 #'
 #' @references
-#' Lloyd-Price J, et al. (2019) Multi-omics of the gut microbial ecosystem in
-#' inflammatory bowel diseases. \emph{Nature} 569, 655-662.
+#' \insertRef{Lloyd-Price2019}{mia}
 #'
 #' @seealso
 #' \code{\link[=getDissimilarity]{getDissimilarity}},

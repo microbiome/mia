@@ -98,9 +98,8 @@
 #' @export
 #'
 #' @references
-#' A Salonen et al. The adult intestinal core microbiota is determined by
-#' analysis depth and health status. Clinical Microbiology and Infection
-#' 18(S4):16 20, 2012.
+#' \insertRef{Salonen2012}{mia}
+#'
 #' To cite the R package, see citation('mia')
 #'
 #' @export

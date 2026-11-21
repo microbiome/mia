@@ -244,15 +244,9 @@ altExp(tse, "philr")
 
 }
 \references{
-Paulson, J., Stine, O., Bravo, H. et al. (2013)
-Differential abundance analysis for microbial marker-gene surveys
-\emph{Nature Methods} 10, 1200–1202.
-doi:10.1038/nmeth.2658
+\insertRef{Paulson2013}{mia}
 
-Medearis, N. A., Zhu, S., & Zomorrodi, A. R. (2026).
-BiomeGPT: A foundation model for the human gut microbiome
-\emph{bioRxiv}
-doi:10.64898/2026.01.05.697599
+\insertRef{Medearis2026}{mia}
 }
 \seealso{
 \itemize{
