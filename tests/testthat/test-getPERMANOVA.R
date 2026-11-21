@@ -171,13 +171,14 @@ test_that("getPERMANOVA handles edge cases", {
     # Test for error when input matrix is NULL
     expect_error(getPERMANOVA(NULL, formula = x ~ SampleType))
 
-    # Test for warning when only one level exists in the factor variable
+    # Test for error when only one level exists in the factor variable
     tse_subset <- tse[, tse$SampleType == "Soil"]
-    expect_warning(
+    expect_error(
         getPERMANOVA(
             tse_subset, assay.type = "relabundance",
             formula = x ~ SampleType
-        )
+        ),
+        "Variables with only one group cannot be tested: 'SampleType'."
     )
 })
 
@@ -274,4 +275,14 @@ test_that("getPERMANOVA uses the rowTree for method = 'unifrac'", {
     ref <- getPERMANOVA(tse, dis.name = "unifrac",
         formula = x ~ SampleType, permutations = 99, test.homogeneity = FALSE)
     expect_equal(res, ref)
+})
+
+test_that("getPERMANOVA drops unused factor levels", {
+    data("GlobalPatterns", package = "mia")
+    tse <- GlobalPatterns[, GlobalPatterns$SampleType %in% c("Feces", "Soil")]
+    # SampleType keeps all 9 levels after subsetting
+    expect_gt(nlevels(tse$SampleType), 2L)
+    res <- getPERMANOVA(tse, assay.type = "counts", formula = x ~ SampleType,
+        permutations = 99, test.homogeneity = FALSE)
+    expect_equal(res["SampleType", "Df"], 1)
 })
