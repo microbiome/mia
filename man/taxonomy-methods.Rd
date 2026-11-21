@@ -95,7 +95,8 @@ suffix? For example: "Phylum:Crenarchaeota". (Default: \code{FALSE})}
 \item{with_rank}{Deprecated. Use \code{with.rank} instead.}
 
 \item{make.unique}{\code{Logical scalar}. Should the labels be made
-unique, if there are any duplicates? (Default: \code{TRUE})}
+unique, if there are any duplicates? A message lists the changed
+labels, e.g. \code{"o -> o_1"}. (Default: \code{TRUE})}
 
 \item{make_unique}{Deprecated. Use \code{make.unique} instead.}
 

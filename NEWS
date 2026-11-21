@@ -234,4 +234,5 @@ Changes in version 1.21.x
 + References in the documentation use Rdpack and inst/REFERENCES.bib (#707) (2026-11-21)
 + transformAssay: verbose = FALSE silences its messages and warnings, e.g. in pipelines (#788) (2026-11-21)
 + parseTaxonomy: new exported function that splits taxonomy strings such as "k__Bacteria; p__Firmicutes" into one column per rank; it uses the parser of the importers (#769) (2026-11-21)
++ getTaxonomyLabels: with make.unique = TRUE, the message lists the labels that were changed, e.g. "Family:o -> Family:o_1" (#729) (2026-11-21)
 + Vignette: overview of the functions grouped by use case, with examples (2026-11-21)

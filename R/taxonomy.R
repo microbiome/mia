@@ -37,7 +37,8 @@
 #' @param with_rank Deprecated. Use \code{with.rank} instead.
 #'
 #' @param make.unique \code{Logical scalar}. Should the labels be made
-#'   unique, if there are any duplicates? (Default: \code{TRUE})
+#'   unique, if there are any duplicates? A message lists the changed
+#'   labels, e.g. \code{"o -> o_1"}. (Default: \code{TRUE})
 #'
 #' @param make_unique Deprecated. Use \code{make.unique} instead.
 #'
@@ -351,12 +352,28 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
         # sometimes labeled as "circles"
         if(make.unique && anyDuplicated(ans)){
             dup <- which(ans %in% ans[which(duplicated(ans))])
+            old <- ans
             ans[dup] <- make.unique(ans[dup], sep = "_")
-            message("Duplicated labels were made unique.")
+            .message_unique_labels(old, ans)
         }
         ans
     }
 )
+
+# Tells which labels were changed by make.unique, e.g.
+# "Bacteroides -> Bacteroides_1". At most 'n' changes are listed.
+.message_unique_labels <- function(old, new, n = 5L){
+    changed <- which(old != new)
+    shown <- head(changed, n)
+    txt <- paste0(old[shown], " -> ", new[shown], collapse = ", ")
+    more <- length(changed) - length(shown)
+    if( more > 0L ){
+        txt <- paste0(txt, ", ... (", more, " more)")
+    }
+    message(length(changed), " duplicated label(s) were made unique ",
+        "(make.unique = TRUE): ", txt)
+    invisible(NULL)
+}
 
 # This function is for collapsing the lowest taxonomy ranks into single value.
 # For instance, if user specifies genus rank, genus and species are collapsed
