@@ -144,7 +144,7 @@ all the abundances of features are equal between two samples, and 0 means
 that samples have completely different relative abundances.
 
 Unifrac is calculated with a C++ implementation of the Striped Unifrac
-algorithm (McDonald et al. 2021).
+algorithm (McDonald et al. 2018).
 
 If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
 utilized.
@@ -232,10 +232,8 @@ See also additional descriptions of Unifrac in the following articles:
 \insertRef{McDonald2018}{mia}
 
 For JSD dissimilarity:
-Jensen-Shannon Divergence and Hilbert space embedding.
-Bent Fuglede and Flemming Topsoe University of Copenhagen,
-Department of Mathematics
-\url{http://www.math.ku.dk/~topsoe/ISIT2004JSD.pdf}
+
+\insertRef{Fuglede2004}{mia}
 
 For rarefaction:
 

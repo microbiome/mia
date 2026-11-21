@@ -182,7 +182,7 @@ rowData(tse)
 
 }
 \references{
-\insertRef{Sizhong2017}{mia}
+\insertRef{Yang2017}{mia}
 }
 \seealso{
 \code{\link[=getPrevalence]{getPrevalent}} and

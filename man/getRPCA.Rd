@@ -178,7 +178,7 @@ single_rpca <- getRPCA(
 \references{
 \insertRef{Martino2019}{mia}
 
-\insertRef{Martino2020}{mia}
+\insertRef{Martino2021}{mia}
 
 \insertRef{CordazzoVargas2026}{mia}
 }

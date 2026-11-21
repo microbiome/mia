@@ -117,7 +117,7 @@
 #'
 #' @references
 #'
-#' \insertRef{Sizhong2017}{mia}
+#' \insertRef{Yang2017}{mia}
 #'
 NULL
 
