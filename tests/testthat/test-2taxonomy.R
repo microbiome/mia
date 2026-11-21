@@ -62,6 +62,10 @@ test_that("taxonomy", {
     expect_equal(getTaxonomyLabels(xtse),
                  c("Family:j","Phylum:a","Family:k","Family:l","Family:m",
                    "Family:n","Family:o","Phylum:c","Family:o_1"))
+    expect_message(getTaxonomyLabels(xtse),
+        "1 duplicated label(s) were made unique (make.unique = TRUE): Family:o -> Family:o_1",
+        fixed = TRUE)
+    expect_no_message(getTaxonomyLabels(xtse, make.unique = FALSE))
     expect_equal(getTaxonomyLabels(xtse, make.unique = FALSE),
                  c("Family:j","Phylum:a","Family:k","Family:l","Family:m",
                    "Family:n","Family:o","Phylum:c","Family:o"))
@@ -145,4 +149,12 @@ test_that("taxonomy", {
     expect_s4_class(actual,"DataFrame")
     expect_equal("confidence",names(metadata(actual)))
     expect_equal(dim(actual),c(175,6))
+})
+
+test_that("the make.unique message lists at most five changes", {
+    old <- rep("a", 8L)
+    new <- make.unique(old, sep = "_")
+    expect_message(mia:::.message_unique_labels(old, new),
+        "7 duplicated label(s) were made unique (make.unique = TRUE): a -> a_1, a -> a_2, a -> a_3, a -> a_4, a -> a_5, ... (2 more)",
+        fixed = TRUE)
 })
