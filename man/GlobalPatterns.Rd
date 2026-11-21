@@ -39,10 +39,7 @@ files for inclusion in the \pkg{phyloseq} package, from which this data was
 converted to \code{TreeSummarizedExperiment}.
 }
 \references{
-Caporaso, J. G., et al. (2011).
-Global patterns of 16S rRNA diversity at a depth of millions of sequences per
-sample.
-PNAS, 108, 4516-4522. \url{https://doi.org/10.1073/pnas.1000080107}
+\insertRef{Caporaso2011}{mia}
 }
 \seealso{
 \code{\link{mia-datasets}}

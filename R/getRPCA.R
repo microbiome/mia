@@ -168,21 +168,11 @@
 #'
 #' @references
 #'
-#' Martino, C. et al. (2019).
-#' A Novel Sparse Compositional Technique Reveals Microbial Perturbations.
-#' \emph{mSystems}, 4(1), e00016-19.
-#' \doi{10.1128/mSystems.00016-19}
+#' \insertRef{Martino2019}{mia}
 #'
-#' Martino, C. and Shenhav, L. et al. (2020).
-#' Context-aware dimensionality reduction deconvolutes gut microbial community
-#' dynamics.
-#' \emph{Nature Biotechnology}.
-#' \doi{10.1038/s41587-020-0660-7}
+#' \insertRef{Martino2021}{mia}
 #'
-#' Cordazzo Vargas, B. et al. (2026).
-#' Joint-RPCA: Domain-Aware Multi-Omics Integration for Systems Microbiology.
-#' \emph{Molecular Systems Biology}.
-#' \doi{10.1038/s44320-026-00236-3}
+#' \insertRef{CordazzoVargas2026}{mia}
 #'
 NULL
 

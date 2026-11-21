@@ -30,10 +30,7 @@ investigated by colonizing young, male, germ-free C57BL/6JOlaHsd mice with
 microbiota from individuals with and without ADHD.
 }
 \references{
-Tengeler, A.C., Dam, S.A., Wiesmann, M. et al.
-Gut microbiota from persons with attention-deficit/hyperactivity disorder
-affects the brain in mice.
-Microbiome 8, 44 (2020). \url{https://doi.org/10.1186/s40168-020-00816-x}
+\insertRef{Tengeler2020}{mia}
 
 Supplemental information includes Home-cage activity, methods, results and imaging parameters and publicly-accessible from:
 \url{https://static-content.springer.com/esm/art\%3A10.1186\%2Fs40168-020-00816-x/MediaObjects/40168_2020_816_MOESM1_ESM.docx}

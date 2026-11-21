@@ -182,9 +182,7 @@ rowData(tse)
 
 }
 \references{
-Sizhong Y. et al. (2017) Community structure of rare methanogenic archaea:
-insight from a single functional group- \emph{FEMS Microbiol. Ecol.} 93(11).
-\url{https://doi.org/10.1093/femsec/fix126}
+\insertRef{Yang2017}{mia}
 }
 \seealso{
 \code{\link[=getPrevalence]{getPrevalent}} and

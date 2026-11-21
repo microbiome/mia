@@ -105,10 +105,7 @@ NULL
 #' @seealso \code{\link{mia-datasets}}
 #' @author Caporaso, J. G., et al.
 #' @references
-#' Caporaso, J. G., et al. (2011).
-#' Global patterns of 16S rRNA diversity at a depth of millions of sequences per
-#' sample.
-#' PNAS, 108, 4516-4522. \url{https://doi.org/10.1073/pnas.1000080107}
+#' \insertRef{Caporaso2011}{mia}
 NULL
 
 #' Human gut microbiome dataset from 22 subjects based on shotgun DNA sequencing
@@ -147,12 +144,9 @@ NULL
 #' @seealso \code{\link{mia-datasets}}
 #' @author Arumugam, M., Raes, J., et al.
 #' @references
-#' Arumugam, M., et al. (2011). Enterotypes of the human gut microbiome.
-#' Nature, 473(7346), 174-180. \url{https://doi.org/10.1038/nature09944}
+#' \insertRef{Arumugam2011}{mia}
 #'
-#' Arumugam, M., et al. (2014). Addendum: Enterotypes of the human gut
-#' microbiome.
-#' Nature 506, 516 (2014). \url{https://doi.org/10.1038/nature13075}
+#' \insertRef{Arumugam2014}{mia}
 #'
 #' @source \url{http://www.bork.embl.de/Docu/Arumugam_et_al_2011/downloads.html}
 NULL
@@ -175,17 +169,9 @@ NULL
 #' @seealso \code{\link{mia-datasets}}
 #' @author Pei et al. \email{zhiheng.pei@@med.nyu.edu}.
 #' @references
-#' Pei, Z., Bini, E. J., Yang, L., Zhou, M., Francois, F., & Blaser, M. J.
-#' (2004).
-#' Bacterial biota in the human distal esophagus.
-#' Proceedings of the National Academy of Sciences of the United States of
-#' America, 101(12), 4250-4255.
-#' \url{https://doi.org/10.1073/pnas.0306398101}
+#' \insertRef{Pei2004}{mia}
 #'
-#' McMurdie, J. & Holmes, S. (2013) \emph{phyloseq}: An R Package for
-#' reproducible interactive analysis
-#' and graphics of microbiome census data. PLoS ONE. 8(4):e61217.
-#' \url{https://doi.org/10.1371/journal.pone.0061217}
+#' \insertRef{McMurdie2013}{mia}
 #'
 #' @source \url{http://www.mothur.org/wiki/Esophageal_community_analysis}
 NULL
@@ -213,13 +199,9 @@ NULL
 #' \code{\link{calculateDMN}}
 #' @author Turnbaugh, PJ et al.
 #' @references
-#' Holmes I, Harris K, Quince C (2012).
-#' Dirichlet Multinomial Mixtures: Generative Models for Microbial Metagenomics.
-#' PLoS ONE 7(2): e30126. \url{https://doi.org/10.1371/journal.pone.0030126}
+#' \insertRef{Holmes2012}{mia}
 #'
-#' Turnbaugh PJ, Hamady M, Yatsunenko T, Cantarel BL, Duncan A, et al. (2009).
-#' A core gut microbiome in obese and lean twins. Nature 457: 480–484.
-#' \url{https://doi.org/10.1038/nature07540}
+#' \insertRef{Turnbaugh2009}{mia}
 NULL
 
 #' Skin microbial profiles 58 genetically unrelated individuals
@@ -251,10 +233,8 @@ NULL
 #' @seealso \code{\link{mia-datasets}}
 #' @author Potbhare, R., et al.
 #' @references
-#' Potbhare, R., RaviKumar, A., Munukka, E., Lahti, L., & Ashma, R. (2022).
-#' Skin microbiota diversity among genetically unrelated individuals of Indian
-#' origin.
-#' PeerJ, 10, e13075. \url{https://doi.org/10.7717/peerj.13075}
+#' \insertRef{Potbhare2022}{mia}
+#'
 #' Supplemental information includes OTU table and taxonomy table
 #' publicly-accessible from:
 #' \url{https://www.doi.org/10.7717/peerj.13075/supp-1}
@@ -296,11 +276,7 @@ NULL
 #' @seealso \code{\link{mia-datasets}}
 #' @author Hintikka L et al.
 #' @references
-#' Hintikka L et al. (2021): Xylo-oligosaccharides in prevention of hepatic
-#' steatosis and adipose tissue inflammation: associating taxonomic and
-#' metabolomic patterns in fecal microbiota with biclustering. International
-#' Journal of Environmental Research and Public Health 18(8):4049.
-#' \url{https://doi.org/10.3390/ijerph18084049}
+#' \insertRef{Hintikka2021}{mia}
 #'
 NULL
 
@@ -333,10 +309,7 @@ NULL
 #' @seealso \code{\link{mia-datasets}}
 #' @author A.C. Tengeler, et al.
 #' @references
-#' Tengeler, A.C., Dam, S.A., Wiesmann, M. et al.
-#' Gut microbiota from persons with attention-deficit/hyperactivity disorder
-#' affects the brain in mice.
-#' Microbiome 8, 44 (2020). \url{https://doi.org/10.1186/s40168-020-00816-x}
+#' \insertRef{Tengeler2020}{mia}
 #'
 #' Supplemental information includes Home-cage activity, methods, results and imaging parameters and publicly-accessible from:
 #' \url{https://static-content.springer.com/esm/art%3A10.1186%2Fs40168-020-00816-x/MediaObjects/40168_2020_816_MOESM1_ESM.docx}
@@ -380,14 +353,7 @@ NULL
 #' @author
 #' Shadman Ishraq
 #' @references
-#' Raúl Y. Tito, Sara Verbandt, Marta Aguirre Vazquez, Leo Lahti, Chloe
-#' Verspecht, Verónica Lloréns-Rico, Sara Vieira-Silva,
-#' Janine Arts, Gwen Falony, Evelien Dekker, Joke Reumers, Sabine Tejpar &
-#' Jeroen Raes (2024).
-#' Microbiome confounders and quantitative profiling challenge predicted
-#' microbial targets in colorectal cancer development.
-#' Nature Medicine,30, 1339-1348.
-#' \url{https://doi.org/10.1038/s41591-024-02963-2}
+#' \insertRef{Tito2024}{mia}
 #'
 NULL
 
@@ -427,9 +393,5 @@ NULL
 #'   for vignettes.
 #'
 #' @references
-#' Lloyd-Price J, Arze C, Ananthakrishnan AN, et al.
-#' \emph{Multi-omics of the gut microbial ecosystem in inflammatory bowel
-#' diseases.}
-#' Nature 569, 655–662 (2019).
-#' \doi{10.1038/s41586-019-1237-9}
+#' \insertRef{Lloyd-Price2019}{mia}
 NULL

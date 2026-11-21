@@ -22,13 +22,9 @@ their community composition through Dirichlet Multinomial Mixtures (DMM). It
 was derived from the \pkg{DirichletMultinomial} package.
 }
 \references{
-Holmes I, Harris K, Quince C (2012).
-Dirichlet Multinomial Mixtures: Generative Models for Microbial Metagenomics.
-PLoS ONE 7(2): e30126. \url{https://doi.org/10.1371/journal.pone.0030126}
+\insertRef{Holmes2012}{mia}
 
-Turnbaugh PJ, Hamady M, Yatsunenko T, Cantarel BL, Duncan A, et al. (2009).
-A core gut microbiome in obese and lean twins. Nature 457: 480–484.
-\url{https://doi.org/10.1038/nature07540}
+\insertRef{Turnbaugh2009}{mia}
 }
 \seealso{
 \code{\link{mia-datasets}}

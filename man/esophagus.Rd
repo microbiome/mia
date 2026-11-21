@@ -22,17 +22,9 @@ was
 converted into a TreeSummarizedExperiment from the \pkg{phyloseq} package.
 }
 \references{
-Pei, Z., Bini, E. J., Yang, L., Zhou, M., Francois, F., & Blaser, M. J.
-(2004).
-Bacterial biota in the human distal esophagus.
-Proceedings of the National Academy of Sciences of the United States of
-America, 101(12), 4250-4255.
-\url{https://doi.org/10.1073/pnas.0306398101}
+\insertRef{Pei2004}{mia}
 
-McMurdie, J. & Holmes, S. (2013) \emph{phyloseq}: An R Package for
-reproducible interactive analysis
-and graphics of microbiome census data. PLoS ONE. 8(4):e61217.
-\url{https://doi.org/10.1371/journal.pone.0061217}
+\insertRef{McMurdie2013}{mia}
 }
 \seealso{
 \code{\link{mia-datasets}}
