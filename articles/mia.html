@@ -100,6 +100,520 @@ from <code>BiocManager</code>.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://microbiome.github.io/mia/">"mia"</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="overview-of-mia-functions">Overview of mia functions<a class="anchor" aria-label="anchor" href="#overview-of-mia-functions"></a>
+</h2>
+<p>The table below lists the functions of <code>mia</code> by use case.
+Most analysis functions come in pairs: <code>get*()</code> returns the
+result, and <code>add*()</code> stores it in the object, e.g. in
+<code>colData</code>, <code>rowData</code>, <code>reducedDim</code> or
+<code>metadata</code>. Each function has a help page with examples, and
+the <a href="https://microbiome.github.io/OMA/" class="external-link">Orchestrating Microbiome
+Analysis</a> (OMA) book shows them in complete workflows. Functions that
+are being removed are listed in <code><a href="../reference/deprecate.html">?mia::deprecate</a></code>.</p>
+<div class="section level3">
+<h3 id="data-import-export-and-conversion">Data import, export and conversion<a class="anchor" aria-label="anchor" href="#data-import-export-and-conversion"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Functions</th>
+<th align="left">Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/importBIOM.html">importBIOM()</a></code>, <code><a href="../reference/importQIIME2.html">importQIIME2()</a></code>,
+<code><a href="../reference/importQIIME2.html">importQZA()</a></code>, <code><a href="../reference/importMothur.html">importMothur()</a></code>,
+<code><a href="../reference/importMetaPhlAn.html">importMetaPhlAn()</a></code>, <code><a href="../reference/importHUMAnN.html">importHUMAnN()</a></code>,
+<code><a href="../reference/importTaxpasta.html">importTaxpasta()</a></code>
+</td>
+<td align="left">Import results of common pipelines as a
+<code>TreeSummarizedExperiment</code> (TreeSE)</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/convertFromPhyloseq.html">convertFromPhyloseq()</a></code>,
+<code><a href="../reference/importBIOM.html">convertFromBIOM()</a></code>, <code><a href="../reference/convertFromDADA2.html">convertFromDADA2()</a></code>
+</td>
+<td align="left">Convert phyloseq, BIOM and DADA2 objects to TreeSE</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/convertFromPhyloseq.html">convertToPhyloseq()</a></code>,
+<code><a href="../reference/importBIOM.html">convertToBIOM()</a></code>
+</td>
+<td align="left">Convert TreeSE to phyloseq or BIOM</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/utilization_functions.html">convertToMAE()</a></code>,
+<code><a href="../reference/utilization_functions.html">convertToTreeSE()</a></code>
+</td>
+<td align="left">Convert a TreeSE with alternative experiments to a
+<code>MultiAssayExperiment</code> and back</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/export-methods.html">exportQIIME2()</a></code>,
+<code><a href="../reference/export-methods.html">exportMothur()</a></code>, <code><a href="../reference/export-methods.html">exportRaw()</a></code>
+</td>
+<td align="left">Write data to files for QIIME 2, Mothur or as plain
+tables</td>
+</tr>
+<tr class="even">
+<td align="left"><code><a href="../reference/meltSE.html">meltSE()</a></code></td>
+<td align="left">Convert assay and metadata into a long (tidy)
+<code>data.frame</code>
+</td>
+</tr>
+<tr class="odd">
+<td align="left"><code><a href="../reference/mergeSEs.html">mergeSEs()</a></code></td>
+<td align="left">Merge several objects into one</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="data-wrangling">Data wrangling<a class="anchor" aria-label="anchor" href="#data-wrangling"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Functions</th>
+<th align="left">Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code><a href="../reference/subsetBy.html">subsetBy()</a></code></td>
+<td align="left">Subset features or samples by conditions on the data,
+optionally collapsing the rest into “Other”</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/agglomerate-methods.html">agglomerateByRank()</a></code>,
+<code><a href="../reference/agglomerate-methods.html">agglomerateByRanks()</a></code>
+</td>
+<td align="left">Sum features to a taxonomic rank, or to all ranks as
+alternative experiments</td>
+</tr>
+<tr class="odd">
+<td align="left"><code><a href="../reference/agglomerate-methods.html">agglomerateByVariable()</a></code></td>
+<td align="left">Sum features or samples by a grouping variable</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/agglomerate-methods.html">agglomerateBySet()</a></code>,
+<code><a href="../reference/applyBySet.html">applyBySet()</a></code>
+</td>
+<td align="left">Summarise or apply a function by feature or sample
+sets</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/splitOn.html">splitOn()</a></code>, <code><a href="../reference/splitOn.html">unsplitOn()</a></code>
+</td>
+<td align="left">Split an object by a grouping variable and combine it
+back</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/agglomerate-methods.html">splitByRanks()</a></code>,
+<code><a href="../reference/agglomerate-methods.html">unsplitByRanks()</a></code>
+</td>
+<td align="left">Split by taxonomic ranks and combine back</td>
+</tr>
+<tr class="odd">
+<td align="left"><code><a href="../reference/utilization_functions.html">getReducedDimAttribute()</a></code></td>
+<td align="left">Get attributes, e.g. explained variance, of an
+ordination</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="taxonomy-and-trees">Taxonomy and trees<a class="anchor" aria-label="anchor" href="#taxonomy-and-trees"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Functions</th>
+<th align="left">Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/taxonomy-methods.html">taxonomyRanks()</a></code>,
+<code><a href="../reference/taxonomy-methods.html">getTaxonomyRanks()</a></code>, <code><a href="../reference/taxonomy-methods.html">setTaxonomyRanks()</a></code>
+</td>
+<td align="left">Get or set the taxonomic ranks that mia recognises</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/taxonomy-methods.html">taxonomyRankEmpty()</a></code>,
+<code><a href="../reference/taxonomy-methods.html">checkTaxonomy()</a></code>
+</td>
+<td align="left">Check the taxonomy table</td>
+</tr>
+<tr class="odd">
+<td align="left"><code><a href="../reference/taxonomy-methods.html">getTaxonomyLabels()</a></code></td>
+<td align="left">Create feature labels from the taxonomy</td>
+</tr>
+<tr class="even">
+<td align="left"><code><a href="../reference/taxonomy-methods.html">mapTaxonomy()</a></code></td>
+<td align="left">Look up taxa and their higher ranks</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/hierarchy-tree.html">getHierarchyTree()</a></code>,
+<code><a href="../reference/hierarchy-tree.html">addHierarchyTree()</a></code>
+</td>
+<td align="left">Create a tree from the taxonomy</td>
+</tr>
+<tr class="even">
+<td align="left"><code><a href="../reference/taxonomy-methods.html">IdTaxaToDataFrame()</a></code></td>
+<td align="left">Convert <code><a href="https://rdrr.io/pkg/DECIPHER/man/IdTaxa.html" class="external-link">DECIPHER::IdTaxa()</a></code> results to a
+taxonomy table</td>
+</tr>
+<tr class="odd">
+<td align="left"><code><a href="../reference/parseTaxonomy.html">parseTaxonomy()</a></code></td>
+<td align="left">Split taxonomy strings such as
+<code>"k__Bacteria; p__Firmicutes"</code> into ranks</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="transformation-and-normalisation">Transformation and normalisation<a class="anchor" aria-label="anchor" href="#transformation-and-normalisation"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Functions</th>
+<th align="left">Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code><a href="../reference/transformAssay.html">transformAssay()</a></code></td>
+<td align="left">Relative abundance, CLR, rCLR, log, Hellinger, PA,
+z-score and other transformations</td>
+</tr>
+<tr class="even">
+<td align="left"><code><a href="../reference/rarefyAssay.html">rarefyAssay()</a></code></td>
+<td align="left">Subsample counts to an equal library size</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="quality-control-summaries-and-core-features">Quality control, summaries and core features<a class="anchor" aria-label="anchor" href="#quality-control-summaries-and-core-features"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Functions</th>
+<th align="left">Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code><a href="../reference/summary.html">summary()</a></code></td>
+<td align="left">Summary statistics of samples and features</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/addQC.html">getQC()</a></code>, <code><a href="../reference/addQC.html">addQC()</a></code>
+</td>
+<td align="left">Quality control metrics per sample and feature</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/isContaminant.html">isContaminant()</a></code>,
+<code>isNotContaminant()</code>, <code><a href="../reference/isContaminant.html">addContaminantQC()</a></code>,
+<code><a href="../reference/isContaminant.html">addNotContaminantQC()</a></code>
+</td>
+<td align="left">Identify contaminants with the decontam package</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/getPrevalence.html">getPrevalence()</a></code>,
+<code><a href="../reference/getPrevalence.html">addPrevalence()</a></code>
+</td>
+<td align="left">Prevalence of each feature</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/getPrevalence.html">getPrevalent()</a></code>, <code><a href="../reference/getPrevalence.html">getRare()</a></code>,
+<code><a href="../reference/getPrevalence.html">getPrevalentAbundance()</a></code>,
+<code><a href="../reference/getPrevalence.html">addPrevalentAbundance()</a></code>
+</td>
+<td align="left">Prevalent and rare features, and the total abundance of
+prevalent features per sample</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/summary.html">getTop()</a></code>, <code><a href="../reference/summary.html">getUnique()</a></code>
+</td>
+<td align="left">Most abundant features, and the unique taxa of a
+rank</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/getDominant.html">getDominant()</a></code>, <code><a href="../reference/getDominant.html">addDominant()</a></code>,
+<code><a href="../reference/summary.html">summarizeDominance()</a></code>
+</td>
+<td align="left">The dominant feature of each sample</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/getAbundant.html">getAbundant()</a></code>,
+<code><a href="../reference/getAbundant.html">getLowAbundant()</a></code>,
+<code><a href="../reference/getAbundant.html">getConditionallyLowAbundant()</a></code>,
+<code><a href="../reference/getAbundant.html">getPermanentlyLowAbundant()</a></code>,
+<code><a href="../reference/getAbundant.html">getAbundanceClass()</a></code>, <code><a href="../reference/getAbundant.html">addAbundanceClass()</a></code>
+</td>
+<td align="left">Classify features as abundant or rare</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="alpha-diversity-and-other-sample-wise-indices">Alpha diversity and other sample-wise indices<a class="anchor" aria-label="anchor" href="#alpha-diversity-and-other-sample-wise-indices"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Functions</th>
+<th align="left">Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/addAlpha.html">getAlpha()</a></code>, <code><a href="../reference/addAlpha.html">addAlpha()</a></code>
+</td>
+<td align="left">Diversity, richness, evenness, dominance and rarity
+indices</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/addDivergence.html">getDivergence()</a></code>,
+<code><a href="../reference/addDivergence.html">addDivergence()</a></code>
+</td>
+<td align="left">Divergence of samples from a reference</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/addDysbiosis.html">getDysbiosis()</a></code>,
+<code><a href="../reference/addDysbiosis.html">addDysbiosis()</a></code>
+</td>
+<td align="left">Dysbiosis scores</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="beta-diversity-and-ordination">Beta diversity and ordination<a class="anchor" aria-label="anchor" href="#beta-diversity-and-ordination"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Functions</th>
+<th align="left">Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/getDissimilarity.html">getDissimilarity()</a></code>,
+<code><a href="../reference/getDissimilarity.html">addDissimilarity()</a></code>
+</td>
+<td align="left">Dissimilarities, e.g. Bray-Curtis, Aitchison, UniFrac,
+JSD and overlap</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/addMDS.html">getMDS()</a></code>, <code><a href="../reference/addMDS.html">addMDS()</a></code>
+</td>
+<td align="left">Multi-dimensional scaling (PCoA)</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/runNMDS.html">getNMDS()</a></code>, <code><a href="../reference/runNMDS.html">addNMDS()</a></code>,
+<code><a href="../reference/runNMDS.html">calculateNMDS()</a></code>, <code><a href="../reference/runNMDS.html">runNMDS()</a></code>
+</td>
+<td align="left">Non-metric MDS</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/addPCA.html">getPCA()</a></code>, <code><a href="../reference/addPCA.html">addPCA()</a></code>
+</td>
+<td align="left">Principal component analysis</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/getRPCA.html">getRPCA()</a></code>, <code><a href="../reference/getRPCA.html">addRPCA()</a></code>
+</td>
+<td align="left">Robust PCA</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/runDPCoA.html">getDPCoA()</a></code>, <code><a href="../reference/runDPCoA.html">addDPCoA()</a></code>,
+<code><a href="../reference/runDPCoA.html">calculateDPCoA()</a></code>, <code><a href="../reference/runDPCoA.html">runDPCoA()</a></code>
+</td>
+<td align="left">Double principal coordinate analysis</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/runCCA.html">getCCA()</a></code>, <code><a href="../reference/runCCA.html">addCCA()</a></code>,
+<code><a href="../reference/runCCA.html">getRDA()</a></code>, <code><a href="../reference/runCCA.html">addRDA()</a></code>,
+<code><a href="../reference/runCCA.html">calculateCCA()</a></code>, <code><a href="../reference/runCCA.html">runCCA()</a></code>,
+<code><a href="../reference/runCCA.html">calculateRDA()</a></code>, <code><a href="../reference/runCCA.html">runRDA()</a></code>
+</td>
+<td align="left">Constrained ordination (CCA, RDA and db-RDA)</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/addNMF.html">getNMF()</a></code>, <code><a href="../reference/addNMF.html">addNMF()</a></code>,
+<code><a href="../reference/addLDA.html">getLDA()</a></code>, <code><a href="../reference/addLDA.html">addLDA()</a></code>
+</td>
+<td align="left">Non-negative matrix factorisation and latent Dirichlet
+allocation</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="clustering">Clustering<a class="anchor" aria-label="anchor" href="#clustering"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Functions</th>
+<th align="left">Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/addCluster.html">getCluster()</a></code>,
+<code><a href="../reference/addCluster.html">addCluster()</a></code>
+</td>
+<td align="left">Cluster samples or features with any
+<code>bluster</code> method, including Dirichlet-multinomial
+mixtures</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/calculateDMN.html">calculateDMNgroup()</a></code>,
+<code><a href="../reference/calculateDMN.html">performDMNgroupCV()</a></code>
+</td>
+<td align="left">Dirichlet-multinomial mixture classification</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="association-and-group-comparison">Association and group comparison<a class="anchor" aria-label="anchor" href="#association-and-group-comparison"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Functions</th>
+<th align="left">Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/getPERMANOVA.html">getPERMANOVA()</a></code>,
+<code><a href="../reference/getPERMANOVA.html">addPERMANOVA()</a></code>
+</td>
+<td align="left">PERMANOVA with a test for homogeneity of
+dispersion</td>
+</tr>
+<tr class="even">
+<td align="left"><code><a href="../reference/getCrossAssociation.html">getCrossAssociation()</a></code></td>
+<td align="left">Correlations or other associations between two assays
+or experiments</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/getMediation.html">getMediation()</a></code>,
+<code><a href="../reference/getMediation.html">addMediation()</a></code>
+</td>
+<td align="left">Mediation analysis with features, assays or ordination
+components as mediators</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="multi-omics">Multi-omics<a class="anchor" aria-label="anchor" href="#multi-omics"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Functions</th>
+<th align="left">Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">
+<code><a href="../reference/getRPCA.html">getJointRPCA()</a></code>,
+<code><a href="../reference/getRPCA.html">addJointRPCA()</a></code>
+</td>
+<td align="left">Joint robust PCA of several experiments</td>
+</tr>
+<tr class="even">
+<td align="left">
+<code><a href="../reference/getCrossAssociation.html">getCrossAssociation()</a></code>,
+<code><a href="../reference/utilization_functions.html">convertToMAE()</a></code>, <code><a href="../reference/mergeSEs.html">mergeSEs()</a></code>
+</td>
+<td align="left">Associations and data integration across
+experiments</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="example-datasets">Example datasets<a class="anchor" aria-label="anchor" href="#example-datasets"></a>
+</h3>
+<p><code>GlobalPatterns</code>, <code>enterotype</code>,
+<code>esophagus</code>, <code>peerj13075</code>,
+<code>Tengeler2020</code>, <code>HintikkaXOData</code>,
+<code>Tito2024QMP</code>, <code>ibdmdb</code> and <code>dmn_se</code>
+can be loaded with <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code>,
+e.g. <code>data(GlobalPatterns, package = "mia")</code>. See
+<code><a href="../reference/mia-datasets.html">?mia::"mia-datasets"</a></code>. Larger datasets are available in the
+<code>microbiomeDataSets</code> package.</p>
+</div>
+</div>
+<div class="section level2">
 <h2 id="loading-a-treesummarizedexperiment-object">Loading a <code>TreeSummarizedExperiment</code> object<a class="anchor" aria-label="anchor" href="#loading-a-treesummarizedexperiment-object"></a>
 </h2>
 <p>A few example datasets are available via <code>mia</code>. For this
@@ -200,7 +714,7 @@ be present.</p>
 <p><code>agglomerateByRank</code> constructs a <code>factor</code> to
 guide merging from the available taxonomic information. For more
 information on merging have a look at the man page via
-<code><a href="../reference/deprecate.html">?mergeFeatures</a></code>.</p>
+<code><a href="../reference/agglomerate-methods.html">?agglomerateByRank</a></code>.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># agglomerate at the Family taxonomic rank</span></span>
 <span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span>
@@ -333,9 +847,9 @@ counts are stored in a new <code>assay</code>.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "counts"</span></span></code></pre>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">anterotype</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">enterotype</span>, method <span class="op">=</span> <span class="st">"log10"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">enterotype</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">enterotype</span>, method <span class="op">=</span> <span class="st">"log10"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "counts"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "counts" "log10"</span></span></code></pre>
 <p>For more details have a look at the man page
 <code><a href="../reference/transformAssay.html">?transformAssay</a></code>.</p>
 <p>Sub-sampling to equal number of counts per sample. Also known as
@@ -437,24 +951,93 @@ any other package using comparable inputs.</p>
 <span>    ncomponents <span class="op">=</span> <span class="fl">5</span>, </span>
 <span>    assay.type <span class="op">=</span> <span class="st">"counts"</span>, </span>
 <span>    keep_dist <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>JSD and UniFrac are implemented in <code>mia</code> as well.
-<code>getJSD</code> can be used as a drop-in replacement in the example
-above (omit the <code>method</code> argument as well) to calculate the
-JSD. For calculating the UniFrac distance via <code>getUniFrac</code>
-either a <code>TreeSummarizedExperiment</code> must be used or a tree
-supplied via the <code>tree</code> argument. For more details see
-<code>?getJSD</code>, <code>?getUnifrac</code> or
-<code><a href="../reference/runDPCoA.html">?getDPCoA</a></code>.</p>
-<p><code>runMDS</code> performs the decomposition. Alternatively
-<code>addNMDS</code> can also be used.</p>
+<p><code><a href="../reference/getDissimilarity.html">getDissimilarity()</a></code> also calculates, e.g., JSD
+(<code>method = "jsd"</code>) and UniFrac
+(<code>method = "unifrac"</code>, which uses the <code>rowTree</code>).
+<code><a href="../reference/addMDS.html">addMDS()</a></code> combines both steps, and <code><a href="../reference/runNMDS.html">addNMDS()</a></code>,
+<code><a href="../reference/addPCA.html">addPCA()</a></code>, <code><a href="../reference/runCCA.html">addRDA()</a></code> and <code><a href="../reference/runDPCoA.html">addDPCoA()</a></code>
+provide other ordination methods. For more details see
+<code><a href="../reference/getDissimilarity.html">?getDissimilarity</a></code> and <code><a href="../reference/addMDS.html">?addMDS</a></code>.</p>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tse_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span>
+<span><span class="va">tse_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse_phylum</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
+<span><span class="va">tse_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addMDS.html">addMDS</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"bray"</span>, name <span class="op">=</span> <span class="st">"MDS_bray"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse_phylum</span>, <span class="st">"MDS_bray"</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##               [,1]        [,2]</span></span>
+<span><span class="co">## CL3     -0.2332392  0.19365489</span></span>
+<span><span class="co">## CC1     -0.2189401  0.16923903</span></span>
+<span><span class="co">## SV1     -0.1845316  0.13668094</span></span>
+<span><span class="co">## M31Fcsw  0.5242987 -0.03888072</span></span>
+<span><span class="co">## M11Fcsw  0.2541713 -0.14448349</span></span>
+<span><span class="co">## M31Plmr  0.2615676  0.03896672</span></span></code></pre>
+<p><code><a href="../reference/getPERMANOVA.html">getPERMANOVA()</a></code> tests whether a variable explains
+differences in community composition, and checks the homogeneity of
+dispersion between the groups.</p>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getPERMANOVA.html">getPERMANOVA</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"bray"</span>,</span>
+<span>    formula <span class="op">=</span> <span class="va">x</span> <span class="op">~</span> <span class="va">SampleType</span>, permutations <span class="op">=</span> <span class="fl">99</span><span class="op">)</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="va">permanova</span></span></code></pre></div>
+<pre><code><span><span class="co">## Permutation test for adonis under reduced model</span></span>
+<span><span class="co">## Marginal effects of terms</span></span>
+<span><span class="co">## Permutation: free</span></span>
+<span><span class="co">## Number of permutations: 99</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## adonis2(formula = formula, data = data, permutations = 99, by = by, na.action = na.action)</span></span>
+<span><span class="co">##            Df SumOfSqs      R2      F Pr(&gt;F)   </span></span>
+<span><span class="co">## SampleType  8   3.7257 0.79927 8.4611   0.01 **</span></span>
+<span><span class="co">## Residual   17   0.9357 0.20073                 </span></span>
+<span><span class="co">## Total      25   4.6614 1.00000                 </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="other-indices">Other indices<a class="anchor" aria-label="anchor" href="#other-indices"></a>
 </h3>
-<p><code>estimateDominance</code> and <code>estimateEvenness</code>
-implement other sample-wise indices. The function behave equivalently to
-<code>estimateDiversity</code>. For more information see the
-corresponding man pages.</p>
+<p><code><a href="../reference/addAlpha.html">addAlpha()</a></code> also calculates indices of richness,
+evenness, dominance and rarity. Each index is stored in its own
+<code>colData</code> column.</p>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tse_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addAlpha.html">addAlpha</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>    index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"observed_richness"</span>, <span class="st">"pielou"</span>, <span class="st">"gini_dominance"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse_phylum</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"observed_richness"</span>, <span class="st">"pielou"</span>, <span class="st">"gini_dominance"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## DataFrame with 6 rows and 3 columns</span></span>
+<span><span class="co">##         observed_richness    pielou gini_dominance</span></span>
+<span><span class="co">##                 &lt;numeric&gt; &lt;numeric&gt;      &lt;numeric&gt;</span></span>
+<span><span class="co">## CL3                    46  0.460961       0.931763</span></span>
+<span><span class="co">## CC1                    45  0.500392       0.923509</span></span>
+<span><span class="co">## SV1                    39  0.549947       0.915079</span></span>
+<span><span class="co">## M31Fcsw                27  0.249869       0.968889</span></span>
+<span><span class="co">## M11Fcsw                28  0.294179       0.968366</span></span>
+<span><span class="co">## M31Plmr                31  0.427536       0.949460</span></span></code></pre>
+</div>
+<div class="section level3">
+<h3 id="clustering-1">Clustering<a class="anchor" aria-label="anchor" href="#clustering-1"></a>
+</h3>
+<p><code><a href="../reference/addCluster.html">addCluster()</a></code> clusters samples or features with methods
+from the <code>bluster</code> package and stores the clusters in
+<code>colData</code> or <code>rowData</code>.</p>
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">bluster</span><span class="op">)</span></span>
+<span><span class="va">tse_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addCluster.html">addCluster</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, by <span class="op">=</span> <span class="st">"samples"</span>,</span>
+<span>    BLUSPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/bluster/man/HclustParam-class.html" class="external-link">HclustParam</a></span><span class="op">(</span></span>
+<span>        metric <span class="op">=</span> <span class="st">"bray"</span>, dist.fun <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://vegandevs.github.io/vegan/reference/vegdist.html" class="external-link">vegdist</a></span>, cut.dynamic <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>        cut.params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">tse_phylum</span><span class="op">$</span><span class="va">cluster</span>, <span class="va">tse_phylum</span><span class="op">$</span><span class="va">SampleType</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##    </span></span>
+<span><span class="co">##     Feces Freshwater Freshwater (creek) Mock Ocean Sediment (estuary) Skin Soil</span></span>
+<span><span class="co">##   1     0          0                  0    0     3                  3    1    3</span></span>
+<span><span class="co">##   2     4          0                  0    3     0                  0    2    0</span></span>
+<span><span class="co">##   3     0          2                  3    0     0                  0    0    0</span></span>
+<span><span class="co">##    </span></span>
+<span><span class="co">##     Tongue</span></span>
+<span><span class="co">##   1      1</span></span>
+<span><span class="co">##   2      1</span></span>
+<span><span class="co">##   3      0</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -468,15 +1051,15 @@ functions are available.</p>
 <p>Functions to load data from <code>biom</code> files,
 <code>QIIME2</code> output, <code>DADA2</code> objects <span class="citation">(Callahan et al. 2016)</span> or <code>phyloseq</code>
 objects are available.</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.plos.org/10.1371/journal.pone.0061217" class="external-link">phyloseq</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span>, package <span class="op">=</span> <span class="st">"phyloseq"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">esophagus</span></span></code></pre></div>
 <pre><code><span><span class="co">## phyloseq-class experiment-level object</span></span>
 <span><span class="co">## otu_table()   OTU Table:         [ 58 taxa and 3 samples ]</span></span>
 <span><span class="co">## phy_tree()    Phylogenetic Tree: [ 58 tips and 57 internal nodes ]</span></span></code></pre>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/convertFromPhyloseq.html">convertFromPhyloseq</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span>
 <span><span class="va">esophagus</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
@@ -501,7 +1084,7 @@ objects are available.</p>
 <h3 id="general-wrapper-functions">General wrapper functions<a class="anchor" aria-label="anchor" href="#general-wrapper-functions"></a>
 </h3>
 <p>Row-wise or column-wise assay data subsetting.</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Specific taxa</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span><span class="op">[</span><span class="st">'522457'</span>,<span class="op">]</span>, <span class="st">"counts"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        CL3 CC1 SV1 M31Fcsw M11Fcsw M31Plmr M11Plmr F21Plmr M31Tong M11Tong</span></span>
@@ -510,7 +1093,7 @@ objects are available.</p>
 <span><span class="co">## 522457        0        0      0      2      6   0   0   0       0       0</span></span>
 <span><span class="co">##        TRRsed3 TS28 TS29 Even1 Even2 Even3</span></span>
 <span><span class="co">## 522457       0    0    0     0     0     0</span></span></code></pre>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Specific sample</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span><span class="op">[</span>,<span class="st">'CC1'</span><span class="op">]</span>, <span class="st">"counts"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        CC1</span></span>
@@ -520,13 +1103,42 @@ objects are available.</p>
 <span><span class="co">## 244423   0</span></span>
 <span><span class="co">## 586076   0</span></span>
 <span><span class="co">## 246140   0</span></span></code></pre>
+<p><code><a href="../reference/subsetBy.html">subsetBy()</a></code> subsets features or samples by conditions on
+the data. With <code>collapse = TRUE</code>, the features that are left
+out are summed into one feature called “Other”.</p>
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tse_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subsetBy.html">subsetBy</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_phylum</span>, rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowMeans.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">relabundance</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0.01</span>, collapse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse_sub</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##  [1] "Acidobacteria"   "Actinobacteria"  "Bacteroidetes"   "Cyanobacteria"  </span></span>
+<span><span class="co">##  [5] "Firmicutes"      "Fusobacteria"    "Planctomycetes"  "Proteobacteria" </span></span>
+<span><span class="co">##  [9] "Verrucomicrobia" "Other"</span></span></code></pre>
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Samples with at least 500,000 reads</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu"><a href="../reference/subsetBy.html">subsetBy</a></span><span class="op">(</span><span class="va">tse_phylum</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">500000</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 66 20</span></span></code></pre>
+<p><code><a href="../reference/summary.html">summary()</a></code> gives summary statistics of the samples and
+features.</p>
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/summary.html">summary</a></span><span class="op">(</span><span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $samples</span></span>
+<span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
+<span><span class="co">##   total_counts min_counts max_counts median_counts mean_counts stdev_counts</span></span>
+<span><span class="co">##          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>     28<span style="text-decoration: underline;">215</span>995      <span style="text-decoration: underline;">58</span>631    2<span style="text-decoration: underline;">357</span>124       1<span style="text-decoration: underline;">106</span>823    1<span style="text-decoration: underline;">085</span>231.      <span style="text-decoration: underline;">650</span>159.</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $features</span></span>
+<span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 3</span></span></span>
+<span><span class="co">##   total singletons per_sample_avg</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>    66          0             38</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="selecting-most-interesting-features">Selecting most interesting features<a class="anchor" aria-label="anchor" href="#selecting-most-interesting-features"></a>
 </h3>
 <p><code>getTop</code> returns a vector of the most <code>top</code>
 abundant feature IDs.</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
 <span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summary.html">getTop</a></span><span class="op">(</span></span>
 <span>    <span class="va">esophagus</span>,</span>
@@ -535,15 +1147,40 @@ abundant feature IDs.</p>
 <span>    assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
 <span><span class="va">top_taxa</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "59_2_6"  "59_7_6"  "59_8_22" "59_5_19" "65_6_2"</span></span></code></pre>
+<p><code><a href="../reference/getPrevalence.html">getPrevalent()</a></code> returns the features that exceed a
+detection limit in a given fraction of the samples, and
+<code><a href="../reference/getPrevalence.html">addPrevalence()</a></code> stores the prevalence of each feature in
+<code>rowData</code>.</p>
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getPrevalence.html">getPrevalent</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, detection <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>    prevalence <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "Actinobacteria" "Bacteroidetes"  "Cyanobacteria"  "Firmicutes"    </span></span>
+<span><span class="co">## [5] "Proteobacteria"</span></span></code></pre>
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tse_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getPrevalence.html">addPrevalence</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, detection <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse_phylum</span><span class="op">)</span><span class="op">$</span><span class="va">prevalence</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##   Bacteroidetes  Proteobacteria  Actinobacteria   Cyanobacteria      Firmicutes </span></span>
+<span><span class="co">##       1.0000000       0.9230769       0.8461538       0.6153846       0.5769231 </span></span>
+<span><span class="co">## Verrucomicrobia </span></span>
+<span><span class="co">##       0.4615385</span></span></code></pre>
+<p><code><a href="../reference/getDominant.html">getDominant()</a></code> gives the most abundant feature of each
+sample.</p>
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="../reference/getDominant.html">getDominant</a></span><span class="op">(</span><span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Actinobacteria  Bacteroidetes  Cyanobacteria     Firmicutes Proteobacteria </span></span>
+<span><span class="co">##              1              3              4              8             10</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="generating-tidy-data">Generating tidy data<a class="anchor" aria-label="anchor" href="#generating-tidy-data"></a>
 </h3>
 <p>To generate tidy data as used and required in most of the tidyverse,
-<code>meltAssay</code> can be used. A <code>data.frame</code> in the
-long format will be returned.</p>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">molten_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deprecate.html">meltAssay</a></span><span class="op">(</span></span>
+<code>meltSE</code> can be used. A <code>data.frame</code> in the long
+format will be returned.</p>
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">molten_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/meltSE.html">meltSE</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span>,</span>
 <span>    assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>    add.row <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -572,7 +1209,7 @@ long format will be returned.</p>
 <div class="section level2">
 <h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
@@ -598,17 +1235,17 @@ long format will be returned.</p>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] phyloseq_1.57.0                 scater_1.41.3                  </span></span>
-<span><span class="co">##  [3] ggplot2_4.0.3                   scuttle_1.23.2                 </span></span>
-<span><span class="co">##  [5] mia_1.21.36                     TreeSummarizedExperiment_2.21.0</span></span>
-<span><span class="co">##  [7] Biostrings_2.81.9               XVector_0.53.0                 </span></span>
-<span><span class="co">##  [9] SingleCellExperiment_1.35.2     MultiAssayExperiment_1.39.1    </span></span>
-<span><span class="co">## [11] SummarizedExperiment_1.43.0     Biobase_2.73.2                 </span></span>
-<span><span class="co">## [13] GenomicRanges_1.65.4            Seqinfo_1.3.2                  </span></span>
-<span><span class="co">## [15] IRanges_2.47.5                  S4Vectors_0.51.10              </span></span>
-<span><span class="co">## [17] BiocGenerics_0.59.13            generics_0.1.4                 </span></span>
-<span><span class="co">## [19] MatrixGenerics_1.25.0           matrixStats_1.5.0              </span></span>
-<span><span class="co">## [21] BiocStyle_2.41.0               </span></span>
+<span><span class="co">##  [1] phyloseq_1.57.0                 bluster_1.23.1                 </span></span>
+<span><span class="co">##  [3] scater_1.41.3                   ggplot2_4.0.3                  </span></span>
+<span><span class="co">##  [5] scuttle_1.23.2                  mia_1.21.36                    </span></span>
+<span><span class="co">##  [7] TreeSummarizedExperiment_2.21.0 Biostrings_2.81.9              </span></span>
+<span><span class="co">##  [9] XVector_0.53.0                  SingleCellExperiment_1.35.2    </span></span>
+<span><span class="co">## [11] MultiAssayExperiment_1.39.1     SummarizedExperiment_1.43.0    </span></span>
+<span><span class="co">## [13] Biobase_2.73.2                  GenomicRanges_1.65.4           </span></span>
+<span><span class="co">## [15] Seqinfo_1.3.2                   IRanges_2.47.5                 </span></span>
+<span><span class="co">## [17] S4Vectors_0.51.10               BiocGenerics_0.59.13           </span></span>
+<span><span class="co">## [19] generics_0.1.4                  MatrixGenerics_1.25.0          </span></span>
+<span><span class="co">## [21] matrixStats_1.5.0               BiocStyle_2.41.0               </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] Rdpack_2.6.6                DBI_1.3.0                  </span></span>
@@ -623,47 +1260,46 @@ long format will be returned.</p>
 <span><span class="co">##  [19] utf8_1.2.6                  rmarkdown_2.32             </span></span>
 <span><span class="co">##  [21] ggbeeswarm_0.7.3            ragg_1.5.2                 </span></span>
 <span><span class="co">##  [23] DirichletMultinomial_1.55.1 purrr_1.2.2                </span></span>
-<span><span class="co">##  [25] xfun_0.62                   bluster_1.23.1             </span></span>
-<span><span class="co">##  [27] cachem_1.1.0                beachmat_2.29.3            </span></span>
-<span><span class="co">##  [29] jsonlite_2.0.0              biomformat_1.41.0          </span></span>
-<span><span class="co">##  [31] DelayedArray_0.39.8         BiocParallel_1.47.0        </span></span>
-<span><span class="co">##  [33] irlba_2.4.1                 parallel_4.6.1             </span></span>
-<span><span class="co">##  [35] cluster_2.1.8.3             R6_2.6.1                   </span></span>
-<span><span class="co">##  [37] stringi_1.8.9               bslib_0.12.0               </span></span>
-<span><span class="co">##  [39] RColorBrewer_1.1-3          jquerylib_0.1.4            </span></span>
-<span><span class="co">##  [41] iterators_1.0.14            Rcpp_1.1.2                 </span></span>
-<span><span class="co">##  [43] bookdown_0.48               knitr_1.52                 </span></span>
-<span><span class="co">##  [45] DECIPHER_3.9.6              splines_4.6.1              </span></span>
-<span><span class="co">##  [47] Matrix_1.7-6                igraph_2.3.4               </span></span>
-<span><span class="co">##  [49] tidyselect_1.2.1            abind_1.4-8                </span></span>
-<span><span class="co">##  [51] yaml_2.3.12                 viridis_0.6.5              </span></span>
-<span><span class="co">##  [53] vegan_2.7-6                 codetools_0.2-20           </span></span>
-<span><span class="co">##  [55] plyr_1.8.9                  lattice_0.23-1             </span></span>
-<span><span class="co">##  [57] tibble_3.3.1                withr_3.0.3                </span></span>
-<span><span class="co">##  [59] treeio_1.37.1               S7_0.2.2                   </span></span>
-<span><span class="co">##  [61] evaluate_1.0.5              survival_3.8-12            </span></span>
-<span><span class="co">##  [63] desc_1.4.3                  pillar_1.11.1              </span></span>
-<span><span class="co">##  [65] BiocManager_1.30.27         foreach_1.5.2              </span></span>
-<span><span class="co">##  [67] sparseMatrixStats_1.25.0    scales_1.4.0               </span></span>
-<span><span class="co">##  [69] tidytree_0.4.9              glue_1.8.1                 </span></span>
-<span><span class="co">##  [71] lazyeval_0.2.3              tools_4.6.1                </span></span>
-<span><span class="co">##  [73] data.table_1.18.6.1         BiocNeighbors_2.7.3        </span></span>
-<span><span class="co">##  [75] ScaledMatrix_1.21.0         fs_2.1.0                   </span></span>
-<span><span class="co">##  [77] grid_4.6.1                  tidyr_1.3.2                </span></span>
-<span><span class="co">##  [79] ape_5.8-1                   rbibutils_2.4.1            </span></span>
-<span><span class="co">##  [81] nlme_3.1-171                beeswarm_0.4.0             </span></span>
-<span><span class="co">##  [83] BiocSingular_1.29.3         vipor_0.4.7                </span></span>
-<span><span class="co">##  [85] cli_3.6.6                   rsvd_1.0.6                 </span></span>
-<span><span class="co">##  [87] rappdirs_0.3.4              textshaping_1.0.5          </span></span>
-<span><span class="co">##  [89] S4Arrays_1.13.3             viridisLite_0.4.3          </span></span>
-<span><span class="co">##  [91] dplyr_1.2.1                 gtable_0.3.6               </span></span>
-<span><span class="co">##  [93] yulab.utils_0.2.6           sass_0.4.10                </span></span>
-<span><span class="co">##  [95] digest_0.6.39               SparseArray_1.13.5         </span></span>
-<span><span class="co">##  [97] ggrepel_0.9.8               decontam_1.33.0            </span></span>
-<span><span class="co">##  [99] htmlwidgets_1.6.4           farver_2.1.2               </span></span>
-<span><span class="co">## [101] multtest_2.69.0             htmltools_0.5.9            </span></span>
-<span><span class="co">## [103] pkgdown_2.2.1               lifecycle_1.0.5            </span></span>
-<span><span class="co">## [105] MASS_7.3-66</span></span></code></pre>
+<span><span class="co">##  [25] xfun_0.62                   cachem_1.1.0               </span></span>
+<span><span class="co">##  [27] beachmat_2.29.3             jsonlite_2.0.0             </span></span>
+<span><span class="co">##  [29] biomformat_1.41.0           DelayedArray_0.39.8        </span></span>
+<span><span class="co">##  [31] BiocParallel_1.47.0         irlba_2.4.1                </span></span>
+<span><span class="co">##  [33] parallel_4.6.1              cluster_2.1.8.3            </span></span>
+<span><span class="co">##  [35] R6_2.6.1                    stringi_1.8.9              </span></span>
+<span><span class="co">##  [37] bslib_0.12.0                RColorBrewer_1.1-3         </span></span>
+<span><span class="co">##  [39] jquerylib_0.1.4             iterators_1.0.14           </span></span>
+<span><span class="co">##  [41] Rcpp_1.1.2                  bookdown_0.48              </span></span>
+<span><span class="co">##  [43] knitr_1.52                  DECIPHER_3.9.6             </span></span>
+<span><span class="co">##  [45] splines_4.6.1               Matrix_1.7-6               </span></span>
+<span><span class="co">##  [47] igraph_2.3.4                tidyselect_1.2.1           </span></span>
+<span><span class="co">##  [49] abind_1.4-8                 yaml_2.3.12                </span></span>
+<span><span class="co">##  [51] viridis_0.6.5               vegan_2.7-6                </span></span>
+<span><span class="co">##  [53] codetools_0.2-20            plyr_1.8.9                 </span></span>
+<span><span class="co">##  [55] lattice_0.23-1              tibble_3.3.1               </span></span>
+<span><span class="co">##  [57] withr_3.0.3                 treeio_1.37.1              </span></span>
+<span><span class="co">##  [59] S7_0.2.2                    evaluate_1.0.5             </span></span>
+<span><span class="co">##  [61] survival_3.8-12             desc_1.4.3                 </span></span>
+<span><span class="co">##  [63] pillar_1.11.1               BiocManager_1.30.27        </span></span>
+<span><span class="co">##  [65] foreach_1.5.2               sparseMatrixStats_1.25.0   </span></span>
+<span><span class="co">##  [67] scales_1.4.0                tidytree_0.4.9             </span></span>
+<span><span class="co">##  [69] glue_1.8.1                  lazyeval_0.2.3             </span></span>
+<span><span class="co">##  [71] tools_4.6.1                 data.table_1.18.6.1        </span></span>
+<span><span class="co">##  [73] BiocNeighbors_2.7.3         ScaledMatrix_1.21.0        </span></span>
+<span><span class="co">##  [75] fs_2.1.0                    grid_4.6.1                 </span></span>
+<span><span class="co">##  [77] tidyr_1.3.2                 ape_5.8-1                  </span></span>
+<span><span class="co">##  [79] rbibutils_2.4.1             nlme_3.1-171               </span></span>
+<span><span class="co">##  [81] beeswarm_0.4.0              BiocSingular_1.29.3        </span></span>
+<span><span class="co">##  [83] vipor_0.4.7                 cli_3.6.6                  </span></span>
+<span><span class="co">##  [85] rsvd_1.0.6                  rappdirs_0.3.4             </span></span>
+<span><span class="co">##  [87] textshaping_1.0.5           S4Arrays_1.13.3            </span></span>
+<span><span class="co">##  [89] viridisLite_0.4.3           dplyr_1.2.1                </span></span>
+<span><span class="co">##  [91] gtable_0.3.6                yulab.utils_0.2.6          </span></span>
+<span><span class="co">##  [93] sass_0.4.10                 digest_0.6.39              </span></span>
+<span><span class="co">##  [95] SparseArray_1.13.5          ggrepel_0.9.8              </span></span>
+<span><span class="co">##  [97] decontam_1.33.0             htmlwidgets_1.6.4          </span></span>
+<span><span class="co">##  [99] farver_2.1.2                multtest_2.69.0            </span></span>
+<span><span class="co">## [101] htmltools_0.5.9             pkgdown_2.2.1              </span></span>
+<span><span class="co">## [103] lifecycle_1.0.5             MASS_7.3-66</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
