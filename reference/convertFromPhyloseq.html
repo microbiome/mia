@@ -90,8 +90,10 @@ used. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of the
-tree to be included in the phyloseq object that is created,
+<dd><p><code>NULL</code> or <code>Character scalar</code>. Specifies the name
+of the tree to be included in the phyloseq object that is created. If
+<code>NULL</code>, no tree is included. As phyloseq orders the features by the
+tips of the tree, this keeps the feature order of <code>x</code>.
 (Default: <code>"phylo"</code>)</p></dd>
 
 
@@ -173,6 +175,12 @@ from <code>assay</code> is added to the phyloseq object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> sample_data() Sample Data:       [ 26 samples by 7 sample variables ]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> tax_table()   Taxonomy Table:    [ 19216 taxa by 7 taxonomic ranks ]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phy_tree()    Phylogenetic Tree: [ 19216 tips and 19215 internal nodes ]</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># phyloseq orders the features by the tips of the tree. To keep the</span></span></span>
+<span class="r-in"><span><span class="co"># feature order of the TreeSE, leave out the tree with tree.name = NULL.</span></span></span>
+<span class="r-in"><span><span class="va">phy3</span> <span class="op">&lt;-</span> <span class="fu">convertToPhyloseq</span><span class="op">(</span><span class="va">tse</span>, tree.name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu">phyloseq</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/taxa_names-methods.html" class="external-link">taxa_names</a></span><span class="op">(</span><span class="va">phy3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
