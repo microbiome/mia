@@ -229,4 +229,5 @@ Changes in version 1.21.x
 + getNMDS/addNMDS: FUN = getDissimilarity by default, for consistency with getMDS and getDivergence; getDivergence/addDivergence gain the FUN argument; getDissimilarity generic defaults to method = "bray", so getMDS and getNMDS work without method (1.21.34, 2026-11-20)
 + getMediation/addMediation: with dimred, mediators are named by the component names of the reducedDim (e.g. "PC1") instead of the reducedDim name and an index ("PCA1"), which is still used when the components have no names (#901) (2026-11-21)
 + Added normalized option for weighted and unweighted Unifrac (1.21.35, 2026-11-21)
++ Tengeler2020: sample names and colData are matched to the counts by sample name; they were misaligned, so patient_status was correct for only 11 of 27 samples (#904) (2026-11-21)
 + convertToPhyloseq: tree.name = NULL leaves out the tree, which keeps the feature order of the TreeSE (#821) (2026-11-21)
