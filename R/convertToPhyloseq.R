@@ -11,8 +11,10 @@
 #'   
 #' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'   
-#' @param tree.name \code{Character scalar}. Specifies the name of the
-#'   tree to be included in the phyloseq object that is created, 
+#' @param tree.name \code{NULL} or \code{Character scalar}. Specifies the name
+#'   of the tree to be included in the phyloseq object that is created. If
+#'   \code{NULL}, no tree is included. As phyloseq orders the features by the
+#'   tips of the tree, this keeps the feature order of \code{x}.
 #'   (Default: \code{"phylo"})
 #'   
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
@@ -48,6 +50,11 @@
 #' tse <- transformAssay(tse, method = "relabundance")
 #' phy2 <- convertToPhyloseq(tse, assay.type = "relabundance")
 #' phy2
+#'
+#' # phyloseq orders the features by the tips of the tree. To keep the
+#' # feature order of the TreeSE, leave out the tree with tree.name = NULL.
+#' phy3 <- convertToPhyloseq(tse, tree.name = NULL)
+#' identical(phyloseq::taxa_names(phy3), rownames(tse))
 #' 
 #' @export
 NULL
@@ -116,8 +123,9 @@ setMethod("convertToPhyloseq", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("convertToPhyloseq", signature = c(x = "TreeSummarizedExperiment"),
     function(x, tree.name = tree_name, tree_name = "phylo", ...){
-        # If rowTrees exist, check tree.name
-        if( length(rowTreeNames(x)) > 0 ){
+        # If rowTrees exist, check tree.name. With tree.name = NULL, the tree
+        # is not added, so phyloseq does not reorder the features by its tips.
+        if( length(rowTreeNames(x)) > 0 && !is.null(tree.name) ){
             .check_rowTree_present(tree.name, x)
             # Subset the data based on the tree
             x <- x[ rowLinks(x)$whichTree == tree.name, ]
