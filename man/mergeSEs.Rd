@@ -2,17 +2,18 @@
 % Please edit documentation in R/AllGenerics.R, R/mergeSEs.R
 \name{mergeSEs}
 \alias{mergeSEs}
-\alias{mergeSEs,SimpleList-method}
-\alias{mergeSEs,SummarizedExperiment-method}
-\alias{mergeSEs,list-method}
+\alias{mergeSEs,SimpleList,missing-method}
+\alias{mergeSEs,SummarizedExperiment,SummarizedExperiment-method}
+\alias{mergeSEs,list,missing-method}
 \title{Merge SE objects into single SE object.}
 \usage{
-mergeSEs(x, ...)
+mergeSEs(x, y, ...)
 
-\S4method{mergeSEs}{SimpleList}(
+\S4method{mergeSEs}{SimpleList,missing}(
   x,
-  assay.type = "counts",
-  assay_name = NULL,
+  y,
+  assay.type = assay_name,
+  assay_name = "counts",
   join = "full",
   missing.values = missing_values,
   missing_values = NA,
@@ -20,16 +21,19 @@ mergeSEs(x, ...)
   collapse_samples = FALSE,
   collapse.rows = collapse_features,
   collapse_features = TRUE,
-  verbose = TRUE,
   ...
 )
 
-\S4method{mergeSEs}{SummarizedExperiment}(x, y = NULL, ...)
+\S4method{mergeSEs}{SummarizedExperiment,SummarizedExperiment}(x, y, ...)
 
-\S4method{mergeSEs}{list}(x, ...)
+\S4method{mergeSEs}{list,missing}(x, y, ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
+
+\item{y}{a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
+when \code{x} is a \code{\link[SummarizedExperiment]{SummarizedExperiment}}
+object. Must be missing when \code{x} is a list.}
 
 \item{...}{optional arguments (not used).}
 
@@ -53,24 +57,11 @@ identically named samples to one. (Default: \code{FALSE})}
 
 \item{collapse_samples}{Deprecated. Use \code{collapse.cols} instead.}
 
-\item{collapse.rows}{\code{Logical scalar}. Selects whether to collapse
-identically named features to one. Since all taxonomy information is
-taken into account,
-this concerns rownames-level (usually strain level) comparison. Often
-OTU or ASV level is just an arbitrary number series from sequencing machine
-meaning that the OTU information is not comparable between studies. With this
-option, it is possible to specify whether these strains are combined if their
-taxonomy information along with OTU number matches.
+\item{collapse.rows}{\code{Logical scalar}. Determines whether to collapse
+features that have identical names and taxonomy to one.
 (Default: \code{TRUE})}
 
 \item{collapse_features}{Deprecated. Use \code{collapse.rows} instead.}
-
-\item{verbose}{\code{Logical scalar}. Choose whether to show
-messages. (Default: \code{TRUE})}
-
-\item{y}{a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object
-when \code{x} is a \code{\link[SummarizedExperiment]{SummarizedExperiment}}
-object. Disabled when \code{x} is a list.}
 }
 \value{
 A single \code{SummarizedExperiment} object.
@@ -80,29 +71,37 @@ Merge SE objects into single SE object.
 }
 \details{
 This function merges multiple \code{SummarizedExperiment} objects. It
-combines
-\code{rowData}, \code{assays}, and \code{colData} so that the output includes
-each unique row and column ones. The merging is done based on
-\code{rownames} and
-\code{colnames}. \code{rowTree} and \code{colTree} are preserved if linkage
-between rows/cols and the tree is found.
+combines \code{assays}, \code{rowData}, \code{colData}, and
+\code{metadata} so that the output includes each unique row and column.
+The merging is done based on \code{rownames} and \code{colnames}.
 
-Equally named rows are interpreted as equal. Further
-matching based on \code{rowData} is not done. For samples, collapsing
-is disabled by default meaning that equally named samples that are stored
-in different objects are interpreted as unique. Collapsing can be enabled
-with \code{collapse.cols = TRUE} when equally named samples describe the same
-sample.
+Rows are matched based on \code{rownames} and taxonomy ranks of
+\code{rowData}, i.e., rows are interpreted as equal if they have the same
+name and taxonomy (unless \code{collapse.rows = FALSE}). Rows that have
+the same name but differently annotated taxonomy are kept as separate rows.
+To merge data at certain taxonomy level, agglomerate the objects first with
+\code{\link{agglomerateByRank}}. Duplicated
+names within an object are made unique. For samples, collapsing is disabled by default meaning that
+equally named samples that are stored in different objects are interpreted
+as unique. Collapsing can be enabled with \code{collapse.cols = TRUE} when
+equally named samples describe the same sample. Equally named rows or
+columns that are not collapsed are made unique with
+\code{\link[base:make.unique]{make.unique}}. When the same value is found
+from multiple objects, the value from the first object is used. If equally
+named \code{rowData} or \code{colData} variables have different classes,
+they are combined as character. Taxonomy rank columns of \code{rowData}
+are matched case-insensitively, e.g., \code{"genus"} and \code{"Genus"}.
 
-If, for example, all rows are not shared with
-individual objects, there are missing values in \code{assays}.
-The notation of missing
-can be specified with the \code{missing.values} argument. If input consists
-of
-\code{TreeSummarizedExperiment} objects, also \code{rowTree}, \code{colTree},
-and
-\code{referenceSeq} are preserved if possible. The data is preserved if
-all the rows or columns can be found from it.
+If, for example, all rows are not shared with individual objects, there are
+missing values in \code{assays}. The notation of missing can be specified
+with the \code{missing.values} argument.
+
+If input consists of \code{TreeSummarizedExperiment} objects, also
+\code{referenceSeq}, \code{rowTree}, and \code{colTree} are preserved if
+possible. Reference sequences are merged if a sequence is available for
+every row. Trees are not merged; a tree is added only if a single input
+tree includes all the rows (or columns) of the merged data. Otherwise, the
+tree is dropped with a warning.
 
 Compared to \code{cbind} and \code{rbind} \code{mergeSEs}
 allows more freely merging since \code{cbind} and \code{rbind} expect

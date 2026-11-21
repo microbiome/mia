@@ -34,8 +34,9 @@ export(agglomerateByModule)
 export(agglomerateByPrevalence)
 export(agglomerateByRank)
 export(agglomerateByRanks)
+export(agglomerateBySet)
 export(agglomerateByVariable)
-export(applyByModule)
+export(applyBySet)
 export(bestDMNFit)
 export(calculateCCA)
 export(calculateDMN)
@@ -66,7 +67,6 @@ export(estimateRichness)
 export(exportMothur)
 export(exportQIIME2)
 export(exportRaw)
-export(filterRPCAInput)
 export(full_join)
 export(getAbundanceClass)
 export(getAbundant)
@@ -166,6 +166,7 @@ export(setTaxonomyRanks)
 export(splitByRanks)
 export(splitOn)
 export(subsampleCounts)
+export(subsetBy)
 export(subsetByPrevalent)
 export(subsetByPrevalentFeatures)
 export(subsetByPrevalentTaxa)
@@ -220,8 +221,9 @@ exportMethods(agglomerateByModule)
 exportMethods(agglomerateByPrevalence)
 exportMethods(agglomerateByRank)
 exportMethods(agglomerateByRanks)
+exportMethods(agglomerateBySet)
 exportMethods(agglomerateByVariable)
-exportMethods(applyByModule)
+exportMethods(applyBySet)
 exportMethods(bestDMNFit)
 exportMethods(calculateDMN)
 exportMethods(calculateDMNgroup)
@@ -242,7 +244,6 @@ exportMethods(estimateDominance)
 exportMethods(estimateEvenness)
 exportMethods(estimateFaith)
 exportMethods(estimateRichness)
-exportMethods(filterRPCAInput)
 exportMethods(full_join)
 exportMethods(getAbundanceClass)
 exportMethods(getAbundant)
@@ -318,6 +319,7 @@ exportMethods(runJSD)
 exportMethods(runOverlap)
 exportMethods(splitOn)
 exportMethods(subsampleCounts)
+exportMethods(subsetBy)
 exportMethods(subsetByPrevalent)
 exportMethods(subsetByPrevalentFeatures)
 exportMethods(subsetByPrevalentTaxa)
@@ -407,6 +409,7 @@ importFrom(MultiAssayExperiment,
   ExperimentList,
   MultiAssayExperiment,
   experiments,
+  getWithColData,
   intersectColumns,
   sampleMap
 )
@@ -414,6 +417,7 @@ importFrom(Rcpp,
   evalCpp,
   sourceCpp
 )
+importFrom(Rdpack,reprompt)
 importFrom(S4Vectors,
   "metadata<-",
   DataFrame,
@@ -428,12 +432,14 @@ importFrom(S4Vectors,
 importFrom(SingleCellExperiment,
   "altExp<-",
   "altExps<-",
+  "mainExpName<-",
   "reducedDim<-",
   "reducedDims<-",
   SingleCellExperiment,
   altExp,
   altExpNames,
   altExps,
+  mainExpName,
   reducedDim,
   reducedDimNames,
   reducedDims
@@ -453,11 +459,13 @@ importFrom(SummarizedExperiment,
 )
 importFrom(TreeSummarizedExperiment,
   changeTree,
-  subsetByLeaf
+  colLinks,
+  colTree,
+  rowLinks,
+  rowTree
 )
 importFrom(ape,
   as.phylo,
-  bind.tree,
   collapse.singles,
   cophenetic.phylo,
   drop.tip,
@@ -467,6 +475,7 @@ importFrom(ape,
   node.depth.edgelength,
   read.tree,
   reorder.phylo,
+  root,
   write.FASTA,
   write.tree
 )
@@ -478,10 +487,8 @@ importFrom(decontam,
 importFrom(dplyr,
   "%>%",
   arrange,
-  as_tibble,
   bind_cols,
   bind_rows,
-  coalesce,
   desc,
   group_by,
   mutate,
@@ -491,6 +498,10 @@ importFrom(dplyr,
   summarise,
   sym,
   tally
+)
+importFrom(methods,
+  "slot<-",
+  slot
 )
 importFrom(rlang,
   ":=",
@@ -509,6 +520,7 @@ importFrom(stats,
   cmdscale,
   cor,
   cor.test,
+  delete.response,
   dist,
   formula,
   gaussian,

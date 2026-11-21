@@ -4,8 +4,6 @@
 \alias{getPrevalence}
 \alias{getPrevalent}
 \alias{getRare}
-\alias{subsetByPrevalent}
-\alias{subsetByRare}
 \alias{getPrevalentAbundance}
 \alias{addPrevalentAbundance}
 \alias{addPrevalence}
@@ -16,10 +14,6 @@
 \alias{getPrevalent,SummarizedExperiment-method}
 \alias{getRare,ANY-method}
 \alias{getRare,SummarizedExperiment-method}
-\alias{subsetByPrevalent,SummarizedExperiment-method}
-\alias{subsetByPrevalent,TreeSummarizedExperiment-method}
-\alias{subsetByRare,SummarizedExperiment-method}
-\alias{subsetByRare,TreeSummarizedExperiment-method}
 \alias{addPrevalentAbundance,SummarizedExperiment-method}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
@@ -30,10 +24,6 @@ getPrevalence(x, ...)
 getPrevalent(x, ...)
 
 getRare(x, ...)
-
-subsetByPrevalent(x, ...)
-
-subsetByRare(x, ...)
 
 getPrevalentAbundance(
   x,
@@ -100,14 +90,6 @@ addPrevalence(x, ...)
   ...
 )
 
-\S4method{subsetByPrevalent}{SummarizedExperiment}(x, rank = NULL, ...)
-
-\S4method{subsetByPrevalent}{TreeSummarizedExperiment}(x, update.tree = TRUE, ...)
-
-\S4method{subsetByRare}{SummarizedExperiment}(x, rank = NULL, ...)
-
-\S4method{subsetByRare}{TreeSummarizedExperiment}(x, update.tree = TRUE, ...)
-
 \S4method{addPrevalentAbundance}{SummarizedExperiment}(x, name = "prevalent_abundance", ...)
 
 \S4method{getPrevalentAbundance}{ANY}(
@@ -117,7 +99,13 @@ addPrevalence(x, ...)
   ...
 )
 
-\S4method{getPrevalentAbundance}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts", ...)
+\S4method{getPrevalentAbundance}{SummarizedExperiment}(
+  x,
+  assay.type = assay_name,
+  assay_name = "counts",
+  rank = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
@@ -128,9 +116,8 @@ addPrevalence(x, ...)
 \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 
-\item for \code{getPrevalent}, \code{getRare}, \code{subsetByPrevalent}
-and \code{subsetByRare} additional parameters passed to
-\code{getPrevalence}
+\item for \code{getPrevalent} and \code{getRare} additional parameters
+passed to \code{getPrevalence}
 
 \item for \code{getPrevalentAbundance} additional parameters passed to
 \code{getPrevalent}
@@ -168,15 +155,9 @@ value of \code{taxonomyRanks()} function.}
 \item{prevalence}{Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
 limit, set \code{include.lowest} to \code{TRUE}.}
-
-\item{update.tree}{\code{Logical scalar}. Should
-\code{rowTree()} also be agglomerated? (Default: \code{TRUE})}
 }
 \value{
-\code{subsetPrevalent} and \code{subsetRareFeatures} return subset of
-\code{x}.
-
-All other functions return a named vectors:
+The functions return named vectors:
 \itemize{
 \item \code{getPrevalence} returns a \code{numeric} vector with the
 names being set to either the row names of \code{x} or the names after
@@ -210,10 +191,15 @@ proportion of the core species (in between 0 and 1). The core taxa are
 defined as those that exceed the given population prevalence threshold at the
 given detection level as set for \code{getPrevalent}.
 
-\code{subsetPrevalent} and \code{subsetRareFeatures} return a subset of
-\code{x}.
-The subset includes the most prevalent or rare taxa that are calculated with
-\code{getPrevalent} or \code{getRare} respectively.
+To subset the data to prevalent or rare features, add the prevalence to
+\code{rowData} with \code{addPrevalence} and subset the data with
+\code{\link[=subsetBy]{subsetBy}}. For example,
+\code{subsetBy(addPrevalence(x), rows = prevalence > 0.5)} keeps the
+features that are present in more than 50\\% of the samples, and
+\code{rows = prevalence <= 0.5} keeps the rest. With
+\code{collapse = TRUE}, the removed features are merged into one feature.
+Note that the stored prevalence is not updated when the data is subsetted
+afterwards.
 
 \code{getPrevalent} returns taxa that are more prevalent with the
 given detection threshold for the selected taxonomic rank.
@@ -257,11 +243,9 @@ head(prevalent)
 tse <- transformAssay(tse, assay.type = "counts", method = "relabundance")
 
 # Gets a subset of object that includes prevalent taxa
-altExp(tse, "prevalent") <- subsetByPrevalent(tse,
-                                             rank = "Family",
-                                             assay.type = "relabundance",
-                                             detection = 0.001,
-                                             prevalence = 0.55)
+tse_family <- addPrevalence(
+    tse, rank = "Family", assay.type = "relabundance", detection = 0.001)
+altExp(tse, "prevalent") <- subsetBy(tse_family, rows = prevalence > 0.55)
 altExp(tse, "prevalent")
 
 # getRare returns the inverse
@@ -273,12 +257,9 @@ rare <- getRare(tse,
 head(rare)
 
 # Gets a subset of object that includes rare taxa
-altExp(tse, "rare") <- subsetByRare(
-    tse,
-    rank = "Class",
-    assay.type = "relabundance",
-    detection = 0.001,
-    prevalence = 0.001)
+tse_class <- addPrevalence(
+    tse, rank = "Class", assay.type = "relabundance", detection = 0.001)
+altExp(tse, "rare") <- subsetBy(tse_class, rows = prevalence <= 0.001)
 altExp(tse, "rare")
 
 # Names of both experiments, prevalent and rare, can be found from slot
@@ -297,5 +278,6 @@ To cite the R package, see citation('mia')
 }
 \seealso{
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
-\code{\link[=getTop]{getTop}}
+\code{\link[=getTop]{getTop}},
+\code{\link[=subsetBy]{subsetBy}}
 }

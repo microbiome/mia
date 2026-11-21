@@ -108,16 +108,21 @@ nrow(tse)
 nrow(x1)
 ```
 
-Tree data can also be shrunk alongside agglomeration, but this is turned of 
-by default.
+By default, the tree is removed, as it does not match the agglomerated data.
 
 ```{r}
-# with agglomeration of the tree
-x2 <- agglomerateByRank(tse, rank = "Family",
-                        agglomerateTree = TRUE)
-nrow(x2) # same number of rows, but
-rowTree(x1) # ... different
-rowTree(x2) # ... tree
+rowTree(x1)
+```
+
+The tree can also be agglomerated alongside the data with
+`update.tree = TRUE`. Each group is collapsed into the most recent common
+ancestor of its features. This requires that groups are monophyletic, i.e.,
+each group forms its own subtree. Otherwise, the tree is removed with a
+warning. Here, the tree is agglomerated at the Kingdom rank.
+
+```{r}
+x2 <- agglomerateByRank(tse, rank = "Kingdom", update.tree = TRUE)
+rowTree(x2)
 ```
 
 For `agglomerateByRank` to work, taxonomic data must be present. Even though

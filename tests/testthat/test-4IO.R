@@ -491,17 +491,24 @@ test_that("convertToPhyloseq", {
     # reference sequences.
     expect_error(phyloseq::refseq(phy))
 
-    # Test with agglomeration that that pruning is done internally
-    test1 <- agglomerateByRank(tse, rank = "Phylum", update.tree = FALSE)
-    test2 <- agglomerateByRank(tse, rank = "Phylum", update.tree = TRUE)
-    test1_phy <- expect_warning(convertToPhyloseq(test1))
-    test2_phy <- convertToPhyloseq(test2)
-
-    expect_equal(length(phyloseq::phy_tree(test1_phy)$node),
-                length(ape::keep.tip(rowTree(test1), rowLinks(test1)$nodeLab)$node))
-    expect_equal(phyloseq::phy_tree(test1_phy)$tip.label, rownames(test2))
-    # The tip labels do not match because of renaming
-    expect_identical(phyloseq::phy_tree(test2_phy)$edge, rowTree(test2)$edge)
+    # Test that the tree is pruned internally if all tips are not in the data.
+    # Subsetting keeps the original tree, so it has more tips than rows.
+    tse_sub <- tse[1:100, ]
+    expect_identical(rowTree(tse_sub), rowTree(tse))
+    phy_sub <- expect_warning(convertToPhyloseq(tse_sub), "renamed")
+    tree_sub <- phyloseq::phy_tree(phy_sub)
+    expect_identical(ape::Ntip(tree_sub), nrow(tse_sub))
+    expect_setequal(tree_sub$tip.label, rownames(tse_sub))
+    expect_identical(
+        tree_sub$edge,
+        ape::keep.tip(rowTree(tse_sub), rowLinks(tse_sub)$nodeLab)$edge)
+    # If rownames differ from tip labels, the tips are renamed to match them
+    tse_renamed <- tse_sub
+    rownames(tse_renamed) <- paste0("taxon_", seq_len(nrow(tse_renamed)))
+    phy_renamed <- expect_warning(convertToPhyloseq(tse_renamed), "renamed")
+    tree_renamed <- phyloseq::phy_tree(phy_renamed)
+    expect_setequal(tree_renamed$tip.label, rownames(tse_renamed))
+    expect_identical(tree_renamed$edge, tree_sub$edge)
 
     # Check that everything works also with agglomerated data
     for (level in colnames(rowData(tse)) ){
@@ -529,10 +536,11 @@ test_that("convertToPhyloseq", {
     expect_identical(phyloseq::phy_tree(phy), rowTree(tse))
 
     # Test that merging objects lead to correct phyloseq
-    tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing.values = 0)
+    tse <- suppressWarnings(mergeSEs(
+        GlobalPatterns, esophagus, assay.type="counts", missing.values = 0))
     pseq <- convertToPhyloseq(tse, assay.type="counts")
 
-    # Include rownames from both trees
+    # Include rownames from both datasets
     tse_compare <- tse[ c(rownames(GlobalPatterns), rownames(esophagus)), ]
     pseq_compare <- convertToPhyloseq(tse_compare, assay.type="counts")
 
@@ -586,4 +594,30 @@ test_that("Import MetaPhlAn file", {
     write.table(df, file = temp_path, sep = "\t", quote = FALSE, row.names = FALSE)
     tse <- importMetaPhlAn(temp_path)
     expect_true( nrow(altExp(tse, length(altExps(tse))))+num_missing == nrow(tse))
+})
+test_that("Importers add a tree from file", {
+    skip_if_not(require("biomformat", quietly = TRUE))
+    biom_file <- system.file(
+        "extdata", "Aggregated_humanization2.biom", package = "mia")
+    tree_file <- system.file(
+        "extdata", "Data_humanization_phylo_aggregation.tre", package = "mia")
+    tse <- importBIOM(biom_file, tree.file = tree_file)
+    expect_s3_class(rowTree(tse), "phylo")
+    expect_setequal(rowLinks(tse)[["nodeLab"]], rownames(tse))
+    # Tree labels that do not match rownames give an error
+    tree <- ape::read.tree(tree_file)
+    tree$tip.label <- paste0("x", tree$tip.label)
+    bad_file <- tempfile(fileext = ".tre")
+    ape::write.tree(tree, bad_file)
+    expect_error(
+        importBIOM(biom_file, tree.file = bad_file), "Rownames do not match")
+    expect_error(importBIOM(biom_file, tree.file = 1), "'tree.file'")
+    # Mothur
+    assay_file <- system.file(
+        "extdata", "mothur_example.shared", package = "mia")
+    tse <- importMothur(assay_file)
+    tree_file <- tempfile(fileext = ".tre")
+    ape::write.tree(ape::rtree(nrow(tse), tip.label = rownames(tse)), tree_file)
+    tse <- importMothur(assay_file, tree.file = tree_file)
+    expect_setequal(rowLinks(tse)[["nodeLab"]], rownames(tse))
 })

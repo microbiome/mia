@@ -11,7 +11,7 @@
 \usage{
 addDissimilarity(x, method, ...)
 
-getDissimilarity(x, method, ...)
+getDissimilarity(x, method = "bray", ...)
 
 \S4method{addDissimilarity}{SummarizedExperiment}(x, method = "bray", name = method, ...)
 

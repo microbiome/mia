@@ -8,6 +8,8 @@
 \alias{addTaxonomyTree,SummarizedExperiment-method}
 \alias{taxonomyTree}
 \alias{taxonomyTree,SummarizedExperiment-method}
+\alias{agglomerateByModule}
+\alias{agglomerateByModule,SummarizedExperiment-method}
 \alias{mergeRows}
 \alias{mergeRows,SummarizedExperiment-method}
 \alias{mergeRows,TreeSummarizedExperiment-method}
@@ -148,6 +150,12 @@
 \alias{calculateUnifrac}
 \alias{calculateUnifrac,ANY-method}
 \alias{runUnifrac}
+\alias{subsetByPrevalent}
+\alias{subsetByPrevalent,SummarizedExperiment-method}
+\alias{agglomerateByPrevalence}
+\alias{agglomerateByPrevalence,SummarizedExperiment-method}
+\alias{subsetByRare}
+\alias{subsetByRare,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -161,6 +169,10 @@ addTaxonomyTree(x, ...)
 taxonomyTree(x, ...)
 
 \S4method{taxonomyTree}{SummarizedExperiment}(x, ...)
+
+agglomerateByModule(x, ...)
+
+\S4method{agglomerateByModule}{SummarizedExperiment}(x, ...)
 
 mergeRows(x, ...)
 
@@ -441,6 +453,18 @@ calculateUnifrac(x, ...)
 \S4method{calculateUnifrac}{ANY}(x, ...)
 
 runUnifrac(mat, tree, ...)
+
+subsetByPrevalent(x, ...)
+
+\S4method{subsetByPrevalent}{SummarizedExperiment}(x, ...)
+
+agglomerateByPrevalence(x, ...)
+
+\S4method{agglomerateByPrevalence}{SummarizedExperiment}(x, ...)
+
+subsetByRare(x, ...)
+
+\S4method{subsetByRare}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

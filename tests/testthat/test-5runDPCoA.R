@@ -60,8 +60,4 @@ test_that("addDPCoA", {
                  subset.row = NULL, scale = FALSE, transposed = FALSE)
     )
     
-    data(GlobalPatterns, package="mia")
-    tse <- mergeSEs(esophagus, GlobalPatterns)
-    # expect_warning(addDPCoA(tse))
-    # expect_warning(addDPCoA(tse, tree.name = "phylo.1"))
 })

@@ -65,7 +65,8 @@
 #' tse <- GlobalPatterns
 #'
 #' # Reduce the number of features
-#' tse <- agglomerateByPrevalence(tse, rank = "Phylum")
+#' tse <- addPrevalence(tse, rank = "Phylum")
+#' tse <- subsetBy(tse, rows = prevalence > 0.5, collapse = TRUE)
 #'
 #' # Run NMF and add the result to reducedDim(tse, "NMF").
 #' tse <- addNMF(tse, k = 2, name = "NMF")

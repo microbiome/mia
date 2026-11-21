@@ -12,7 +12,7 @@
 #' with certain taxonomic ranks, as defined in \code{rowData}. Only available
 #' \code{\link{taxonomyRanks}} can be used.
 #'
-#' \code{agglomerateByVariable} and \code{agglomerateByModule} merge data on
+#' \code{agglomerateByVariable} and \code{agglomerateBySet} merge data on
 #' rows or columns of a \code{SummarizedExperiment} as defined by a
 #' \code{factor} alongside the chosen dimension. This function allows
 #' agglomeration of data based on other variables than taxonomy ranks.
@@ -35,16 +35,16 @@
 #' argument lets the user select how to preserve row or column data. For merge
 #' data of assays the function from \code{scuttle} are used.
 #'
-#' \code{agglomerateByModule} allows to agglomerate features or samples based
+#' \code{agglomerateBySet} allows to agglomerate features or samples based
 #' on one or multiple variables of numeric or logical type. It is particularly
-#' useful for agglomerating by taxonomic or functional modules, each defined by
+#' useful for agglomerating by taxonomic or functional sets, each defined by
 #' a logical or binary variable in the \code{rowData}, as features can belong to
-#' several modules.
+#' several sets.
 #'
 #' @return
 #' \code{agglomerateByRank} returns a taxonomically-agglomerated,
 #' optionally-pruned object of the same class as \code{x}.
-#' \code{agglomerateByVariable} and \code{agglomerateByModule} return an object
+#' \code{agglomerateByVariable} and \code{agglomerateBySet} return an object
 #' of the same class as \code{x} with the specified entries merged into one
 #' entry in all relevant components.
 #'
@@ -125,14 +125,18 @@
 #' performed. If vector, the value must be the same length as
 #' \code{nrow(x)/ncol(x)}. Rows or columns corresponding to the same level will
 #' be merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will
-#' be returned unchanged. For \code{agglomerateByModule}, \code{group} should
+#' be returned unchanged. For \code{agglomerateBySet}, \code{group} should
 #' specify one or several names of numeric or logical variables from the
 #' \code{rowData(x)/colData(x)} by which to agglomerate rows or columns.
 #'
 #' @param f Deprecated. Use \code{group} instead.
 #'
 #' @param update.tree \code{Logical scalar}. Should
-#' \code{rowTree()} also be merged? (Default: \code{TRUE})
+#' \code{rowTree()} also be agglomerated? Each group is collapsed into the
+#' most recent common ancestor of its features. This requires that groups are
+#' monophyletic, i.e., each group forms its own subtree. Otherwise, the tree is
+#' removed with a warning. If \code{FALSE}, the tree is removed.
+#' (Default: \code{FALSE})
 #'
 #' @param mergeTree Deprecated. Use \code{update.tree} instead.
 #'
@@ -151,12 +155,15 @@
 #' nrow(GlobalPatterns)
 #' nrow(x1)
 #'
-#' # Do not agglomerate the tree
-#' x2 <- agglomerateByRank(
-#'     GlobalPatterns, rank="Family", update.tree = FALSE)
-#' nrow(x2) # same number of rows, but
-#' rowTree(x1) # ... different
-#' rowTree(x2) # ... tree
+#' # By default, the tree is removed, as it does not match the agglomerated
+#' # data
+#' rowTree(x1)
+#'
+#' # The tree can be agglomerated if the groups are monophyletic, i.e., each
+#' # group forms its own subtree. Here, the tree is agglomerated at the
+#' # Kingdom rank.
+#' x2 <- agglomerateByRank(GlobalPatterns, rank = "Kingdom", update.tree = TRUE)
+#' rowTree(x2)
 #'
 #' # If assay contains binary or negative values, summing might lead to
 #' # meaningless values, and you will get a warning. In these cases, you might
@@ -208,9 +215,8 @@
 #' # Get a factor for merging
 #' f <- factor(regmatches(rownames(esophagus),
 #'     regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-#' merged <- agglomerateByVariable(
-#'     esophagus, by = "rows", f, update.tree = TRUE)
-#' plot(rowTree(merged))
+#' merged <- agglomerateByVariable(esophagus, by = "rows", f)
+#' merged
 #' #
 #' data(GlobalPatterns)
 #' GlobalPatterns
@@ -218,34 +224,34 @@
 #'     GlobalPatterns, by = "cols", colData(GlobalPatterns)$SampleType)
 #' merged
 #'
-#' ## Agglomerate by multiple modules
+#' ## Agglomerate by multiple sets
 #'
-#' # Generate 30 random modules
-#' N_module <- 30L
-#' modules <- sample(
+#' # Generate 30 random sets
+#' N_set <- 30L
+#' sets <- sample(
 #'     c(TRUE, FALSE),
-#'     size = nrow(tse) * N_module,
+#'     size = nrow(tse) * N_set,
 #'     prob = c(0.2, 0.8),
 #'     replace = TRUE
 #' )
 #'
-#' # Convert modules to matrix
-#' modules <- matrix(modules, nrow = nrow(tse))
+#' # Convert sets to matrix
+#' sets <- matrix(sets, nrow = nrow(tse))
 #' 
-#' # Add module names as colnames
-#' colnames(modules) <- paste0("module_", seq_len(ncol(modules)))
+#' # Add set names as colnames
+#' colnames(sets) <- paste0("set_", seq_len(ncol(sets)))
 #' 
-#' # Add modules to rowData
-#' rowData(tse) <- cbind(rowData(tse), modules)
+#' # Add sets to rowData
+#' rowData(tse) <- cbind(rowData(tse), sets)
 #' 
-#' # Extract module columns
-#' module_columns <- grep("module_", colnames(rowData(tse)), value = TRUE)
+#' # Extract set columns
+#' set_columns <- grep("set_", colnames(rowData(tse)), value = TRUE)
 #'
-#' # Agglomerate based on modules
-#' tse_module <- agglomerateByModule(tse, by = 1, group = module_columns)
+#' # Agglomerate based on sets
+#' tse_set <- agglomerateBySet(tse, by = 1, group = set_columns)
 #' 
 #' # Optionally, store results into altExp slot
-#' altExp(tse, "modules") <- tse_module
+#' altExp(tse, "sets") <- tse_set
 #'
 #' @seealso
 #' \code{\link[=splitOn]{splitOn}}
@@ -262,26 +268,14 @@ NULL
 setMethod(
     "agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], update.tree = agglomerateTree,
-        agglomerate.tree = agglomerateTree, agglomerateTree = TRUE, ...){
+        agglomerate.tree = agglomerateTree, agglomerateTree = FALSE, ...){
         # Input check
         if(!.is_a_bool(update.tree)){
             stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
         }
         #
-        # If there are multiple rowTrees, it might be that multiple
-        # trees are preserved after agglomeration even though the
-        # dataset could be presented with one tree.
-        # --> order the data so that the taxa are searched from one tree
-        # first.
-        if( length(rowTreeNames(x)) > 1 ){
-            x <- .order_based_on_trees(x)
-        }
         # Agglomerate data by using SCE method
         x <- callNextMethod(x, rank = rank, update.tree = update.tree, ...)
-        # Rename tree to correspond the current rownames
-        if( update.tree ){
-            x <- .rename_all_tree_nodes(x, by = 1L)
-        }
         return(x)
     }
 )
@@ -397,7 +391,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable",
     signature = c(x = "TreeSummarizedExperiment"),
-    function(x, by, group = f, f, update.tree = mergeTree, mergeTree = TRUE,
+    function(x, by, group = f, f, update.tree = mergeTree, mergeTree = FALSE,
         ...){
         # Check by
         by <- .check_MARGIN(by)
@@ -425,7 +419,7 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 #' @importFrom S4Vectors DataFrame SimpleList
-setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
+setMethod("agglomerateBySet", signature = c(x = "SummarizedExperiment"),
     function(x, by, group, na.rm = FALSE){
         # Check margin
         by <- .check_MARGIN(by)
@@ -433,33 +427,33 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
         FUN <- switch(by, rowData, colData)
         # Check group
         if( !all(group %in% names(FUN(x))) ){
-            stop("some elements in 'group' did not match with any column of ",
-                as.character(substitute(FUN)), call. = FALSE)
+            stop("All elements of 'group' must be columns of rowData(x) or ",
+                "colData(x).", call. = FALSE)
         }
-        # Extract modules table
-        modules <- as.matrix(FUN(x)[ , group, drop = FALSE])
-        # Check and process modules
-        modules <- .check_and_process_modules(modules)
-        # Merge assays by module
-        assays <- mapply(.agglomerate_module_assay, assayNames(x), assays(x),
-            MoreArgs = list(by = by, modules = modules, na.rm = na.rm),
+        # Extract sets table
+        sets <- as.matrix(FUN(x)[ , group, drop = FALSE])
+        # Check and process sets
+        sets <- .check_and_process_sets(sets)
+        # Merge assays by set
+        assays <- mapply(.agglomerate_set_assay, assayNames(x), assays(x),
+            MoreArgs = list(by = by, sets = sets, na.rm = na.rm),
             SIMPLIFY = FALSE)
         # Convert to SimpleList
         assays <- assays |> SimpleList()
-        # Construct module-wise experiment
+        # Construct set-wise experiment
         x <- do.call(class(x), list(
             assays = assays,
             colData = if (by == 1L)
-                colData(x) else DataFrame(row.names = colnames(modules)),
+                colData(x) else DataFrame(row.names = colnames(sets)),
             rowData = if (by == 1L)
-                DataFrame(row.names = colnames(modules)) else rowData(x),
+                DataFrame(row.names = colnames(sets)) else rowData(x),
             metadata = metadata(x))
         )
         # Add new names to agglomerated dimension
         if( by == 1L ){
-            rownames(x) <- colnames(modules)
+            rownames(x) <- colnames(sets)
         } else {
-            colnames(x) <- colnames(modules)
+            colnames(x) <- colnames(sets)
         }
         return(x)
     }
@@ -506,130 +500,82 @@ setMethod("agglomerateByModule", signature = c(x = "SummarizedExperiment"),
     return(x)
 }
 
-# Order the data so that taxa from tree1 comes first, then taxa
-# from tree2...
-.order_based_on_trees <- function(x){
-    # Get rowlinks and unique trees
-    links <- DataFrame(rowLinks(x))
-    uniq_trees <- sort(unique(links$whichTree))
-    # Get row index to the data
-    links$row_i <- seq_len(nrow(x))
-    # Calculate, how many rows each tree has, and add it to data
-    freq <- as.data.frame(table(links$whichTree))
-    links <- merge(links, freq, all.x = TRUE, all.y = FALSE,
-                    by.x = "whichTree", by.y = "Var1")
-    # Factorize the names of trees
-    links$whichTree <- factor(links$whichTree, levels = uniq_trees)
-    # Order the data back to its original order based on row indices
-    links <- links[order(links$row_i), ]
-    # Get the order based on size of tree and name
-    order <- order(links$whichTree)
-    # Order the data
-    x <- x[order, ]
-    return(x)
+# This function agglomerates a tree by finding most recent common ancestor
+# (MRCA) for each group.
+#' @importFrom ape is.rooted root as.phylo
+.agglomerate_tree <- function(tree, f){
+    # Tree must be rooted
+    tree <- .root_tree(tree)
+    # Convert tree into table
+    df <- .tree_to_table(tree)
+    # Check that f specified node numbers
+    if( any(!names(f) %in% df[["node"]]) ){
+        stop("'names(f)' must specify node numbers.", call. = FALSE)
+    }
+
+    # Agglomerate tree into MRCA
+    node_num <- names(f) |> as.integer()
+    groups <- f |> as.character()
+    # The method assumes that groups are monophyletic. If they are not, the
+    # tree cannot be agglomerated.
+    not_monophyletic <- .get_non_monophyletic_groups(df, node_num, groups)
+    if( length(not_monophyletic) > 0L ){
+        n <- length(not_monophyletic)
+        warning(
+            "The tree is removed because it cannot be agglomerated. ",
+            "Agglomeration requires that each group is monophyletic, i.e., ",
+            "the features of a group form a subtree of their own. ", n,
+            " group(s) are not monophyletic: '",
+            paste0(head(not_monophyletic, 5L), collapse = "', '"), "'",
+            if( n > 5L ) paste0(" and ", n - 5L, " more") else "", ".",
+            call. = FALSE)
+        return(NULL)
+    }
+    new_df <- .agglomerate_tree_into_mrca(df, node_num, groups)
+    # Convert back into phylo. If all features belong to a single group whose
+    # MRCA is the root, only one node is left. A tree must have at least one
+    # edge, so the node is added as a tip below a new root.
+    if( nrow(new_df) == 1L ){
+        new_tree <- .create_single_tip_tree(new_df[["label"]])
+    } else{
+        new_tree <- as.phylo(new_df)
+    }
+
+    # Create links between nodes and groups
+    links <- new_df[, c("label", "link_to_row")]
+    links <- links[!is.na(links[["link_to_row"]]), ]
+    links <- setNames(links[["label"]], links[["link_to_row"]])
+
+    # Return list
+    res <- list(tree = new_tree, links = links)
+    return(res)
 }
 
-# Agglomerate all rowTrees found in TreeSE object. Get tips that represent
-# rows and remove all others.
-#' @importFrom TreeSummarizedExperiment subsetByLeaf
-.agglomerate_trees <- function(x, by = MARGIN, MARGIN = 1L, ...){
-    # Get right functions based on direction
-    tree_names_FUN <- switch(
-        by, "1" = rowTreeNames, "2" = colTreeNames, stop("."))
-    links_FUN <- switch(by, "1" = rowLinks, "2" = colLinks, stop("."))
-    tree_FUN <- switch(by, "1" = rowTree, "2" = colTree, stop("."))
-    # Get right argument names for subsetByLeaf call
-    args_names <- switch(
-        by,
-        "1" = c("x", "rowLeaf", "updateTree"),
-        "2" = c("x", "colLeaf", "updateTree"),
-        stop("."))
-    # Get names of trees and links between trees and rows
-    tree_names <- tree_names_FUN(x)
-    row_links <- links_FUN(x)
-    if( !is.null(row_links) ){
-        # Agglomerate the tree(s). If whichRowTree is not specified,
-        # subsetByLeaf automatically subsets all trees by selecting nodes from
-        # the available tree(s). This approach naturally works even when there
-        # is only a single tree.
-        args <- setNames(list(x, row_links[["nodeLab"]], TRUE), args_names)
-        x <- do.call(subsetByLeaf, args)
+# Root tree if it does not already have a root.
+.root_tree <- function(tree){
+    if( !is.rooted(tree) ){
+        # Root node is the node with smallest depth
+        df <- .tree_to_table(tree)
+        root_node <- df[which.min(df[["depth"]]), "node"]
+        tree <- root(tree, node = root_node)
+        warning("Tree is rooted.", call. = FALSE)
     }
-    # Rename all tree nodes
-    x <- .rename_all_tree_nodes(x, by)
-    return(x)
+    return(tree)
 }
 
-# This function loops through all trees and replace their node names by
-# corresponding feature / sample name found in data.
-.rename_all_tree_nodes <- function(x, by = 1L){
-    # Loop through tree names
-    tree_names_FUN <- switch(by, rowTreeNames, colTreeNames)
-    tree_names <- tree_names_FUN(x)
-    for( name in tree_names ){
-        # Rename nodes
-        x <- .rename_tree_nodes(x, name, by)
-    }
-    return(x)
-}
-
-# This function renames the nodes of tree based on the row/colnames of TreeSE so
-# that the names of nodes match with row/colnames.
-.rename_tree_nodes <- function(tse, tree.name, by){
-    # Get correct functions based on MARGIN/by
-    links_FUN <- switch(by, rowLinks, colLinks)
-    tree_FUN <- switch(by, rowTree, colTree)
-    #
-    # Get rowlinks for the tree
-    links <- links_FUN(tse) |> DataFrame()
-    links <- links[links[["whichTree"]] == tree.name, , drop = FALSE]
-    # The rownames must be unique in order to use them as names of the nodes.
-    # Moreover, rows must have one-to-one matching.
-    if( !is.null(rownames(links)) && !anyDuplicated(rownames(links)) &&
-            nrow(links) > 0L && !anyDuplicated(links[["nodeLab"]]) ){
-        # Get the tree
-        tree <- tree_FUN(tse, tree.name)
-        # Rename tips
-        if( any(links[["isLeaf"]]) ){
-            # Get new labels
-            new_labels <- links[
-                match(tree[["tip.label"]], links[["nodeLab"]]), ]
-            new_labels[["nodeLab"]] <- rownames(new_labels)
-            missing <- is.na(new_labels[["nodeLab"]])
-            new_labels[missing, "nodeLab"] <- tree[["tip.label"]][missing]
-            # Rename
-            tree[["tip.label"]] <- new_labels[["nodeLab"]]
-            # Update rowlinks
-            new_labels <- new_labels[
-                match(rownames(links), rownames(new_labels)), ]
-            not_missing <- !is.na(new_labels[["nodeLab"]])
-            links[not_missing, ] <- new_labels[not_missing, ]
-        }
-        # Rename internal nodes
-        if( any(!links[["isLeaf"]]) ){
-            # Get new labels
-            new_labels <- links[
-                match(tree[["node.label"]], links[["nodeLab"]]), ]
-            new_labels[["nodeLab"]] <- rownames(new_labels)
-            missing <- is.na(new_labels[["nodeLab"]])
-            new_labels[missing, "nodeLab"] <- tree[["node.label"]][missing]
-            # Rename
-            tree[["node.label"]] <- new_labels[["nodeLab"]]
-            # Update rowlinks
-            new_labels <- new_labels[
-                match(rownames(links), rownames(new_labels)), ]
-            not_missing <- !is.na(new_labels[["nodeLab"]])
-            links[not_missing, ] <- new_labels[not_missing, ]
-        }
-        # Assign the tree back
-        args <- list(tse, tree, links[["nodeLab"]], tree.name)
-        names(args) <- c("x", paste0(
-            ifelse(by == 1L, "row", "col"), c("Tree", "NodeLab")),
-            paste0("which", ifelse(by == 1L, "Row", "Col"), "Tree")
-        )
-        tse <- do.call(changeTree, args)
-    }
-    return(tse)
+# This function creates a tree that has a single tip below the root. The root
+# gets a label that differs from the tip label.
+.create_single_tip_tree <- function(tip_label){
+    root_label <- make.unique(c(tip_label, "root"))[[2L]]
+    tree <- list(
+        edge = matrix(c(2L, 1L), nrow = 1L),
+        edge.length = 0,
+        tip.label = tip_label,
+        Nnode = 1L,
+        node.label = root_label
+    )
+    class(tree) <- "phylo"
+    return(tree)
 }
 
 # This function trims tips until all tips can be found from provided set of

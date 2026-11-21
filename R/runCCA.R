@@ -470,7 +470,7 @@ setMethod("addRDA", "SingleCellExperiment",
 
 # This function fetch variables from colData based on formula. If formula
 # was not specified, the function returns an empty table.
-#' @importFrom stats terms
+#' @importFrom stats terms delete.response
 #' @importFrom SummarizedExperiment colData
 .get_variables_based_on_formula <- function(x, formula){
     # If user specified "all" covariates, give error. User should use col.var

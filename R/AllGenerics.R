@@ -21,7 +21,7 @@ setGeneric(
 #' @rdname getDissimilarity
 #' @export
 setGeneric(
-    "getDissimilarity", signature = c("x"), function(x, method, ...)
+    "getDissimilarity", signature = c("x"), function(x, method = "bray", ...)
         standardGeneric("getDissimilarity"))
 
 
@@ -83,8 +83,8 @@ setGeneric("agglomerateByVariable", signature = "x", function(x, ...)
 
 #' @rdname agglomerate-methods
 #' @export
-setGeneric("agglomerateByModule", signature = "x", function(x, ...)
-    standardGeneric("agglomerateByModule"))
+setGeneric("agglomerateBySet", signature = "x", function(x, ...)
+    standardGeneric("agglomerateBySet"))
 
 #' @rdname calculateDMN
 #' @export
@@ -194,16 +194,6 @@ setGeneric("getRare", signature = "x", function(x, ...)
 
 #' @rdname getPrevalence
 #' @export
-setGeneric("subsetByPrevalent", signature = "x", function(x, ...)
-    standardGeneric("subsetByPrevalent"))
-
-#' @rdname getPrevalence
-#' @export
-setGeneric("subsetByRare", signature = "x", function(x, ...)
-    standardGeneric("subsetByRare"))
-
-#' @rdname getPrevalence
-#' @export
 setGeneric("getPrevalentAbundance", signature = "x",
     function(x, assay.type = assay_name, assay_name = "relabundance", ...)
     standardGeneric("getPrevalentAbundance"))
@@ -213,11 +203,6 @@ setGeneric("getPrevalentAbundance", signature = "x",
 setGeneric("addPrevalentAbundance", signature = "x",
     function(x, ...)
     standardGeneric("addPrevalentAbundance"))
-
-#'@rdname agglomerateByPrevalence
-#' @export
-setGeneric("agglomerateByPrevalence", signature = "x", function(x, ...)
-    standardGeneric("agglomerateByPrevalence"))
 
 #' @rdname getMediation
 #' @export
@@ -236,7 +221,7 @@ setGeneric("meltSE", signature = "x", function(x, ...)
 
 #' @rdname mergeSEs
 #' @export
-setGeneric("mergeSEs", signature = c("x"), function(x, ... )
+setGeneric("mergeSEs", signature = c("x", "y"), function(x, y, ... )
     standardGeneric("mergeSEs"))
 
 #' @rdname rarefyAssay
@@ -477,15 +462,10 @@ setGeneric("getJointRPCA", signature = "x", function(x, ...)
 setGeneric("addJointRPCA", signature = "x", function(x, ...)
     standardGeneric("addJointRPCA"))
 
-#' @rdname filterRPCAInput
+#' @rdname applyBySet
 #' @export
-setGeneric("filterRPCAInput", signature = "x", function(x, ...)
-    standardGeneric("filterRPCAInput"))
-
-#' @rdname applyByModule
-#' @export
-setGeneric("applyByModule", signature = "x", function(x, ...)
-    standardGeneric("applyByModule"))
+setGeneric("applyBySet", signature = "x", function(x, ...)
+    standardGeneric("applyBySet"))
 
 #' @rdname utilization_functions
 #' @export
@@ -496,3 +476,11 @@ setGeneric("convertToMAE", signature = "x", function(x, ...)
 #' @export
 setGeneric("convertToTreeSE", signature = "x", function(x, ...)
     standardGeneric("convertToTreeSE"))
+
+#' @rdname subsetBy
+#' @export
+setGeneric("subsetBy", signature = "x",
+    function(
+        x, rows = NULL, cols = NULL, collapse = FALSE,
+        collapse.name = "Other", ...)
+    standardGeneric("subsetBy"))

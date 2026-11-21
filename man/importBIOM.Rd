@@ -10,7 +10,7 @@ results}
 \usage{
 convertToBIOM(x, assay.type = "counts", ...)
 
-importBIOM(file, ...)
+importBIOM(file, col.data = NULL, tree.file = NULL, ...)
 
 convertFromBIOM(
   x,
@@ -34,6 +34,20 @@ convertFromBIOM(
 \item{...}{Additional arguments. Not used currently.}
 
 \item{file}{BIOM file location}
+
+\item{col.data}{\code{NULL}, a DataFrame-like object with sample names in
+rownames, or a \code{Character scalar} defining the file path of the
+sample metadata file (tsv). In the file, the first column must contain the
+sample names. The sample names must match exactly the sample names of the
+BIOM file. If provided, the sample metadata replaces the sample metadata
+stored in the BIOM file. (Default: \code{NULL})}
+
+\item{tree.file}{\code{NULL} or \code{Character scalar}. Defines the file
+path of a phylogenetic tree in Newick format. BIOM files do not include a
+tree, so it must be imported from a separate file. The tip labels of the
+tree must match the feature names, e.g., feature IDs when the tree and
+the BIOM file are exported from the same QIIME 2 analysis.
+(Default: \code{NULL})}
 
 \item{prefix.rm}{\code{Logical scalar}. Should
 taxonomic prefixes be removed? The prefixes is removed only from detected

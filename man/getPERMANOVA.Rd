@@ -31,7 +31,8 @@ addPERMANOVA(x, ...)
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
-\item{...}{additional arguments passed to \code{vegan::adonis2}.
+\item{...}{additional arguments passed to \code{getDissimilarity} and
+\code{vegan::adonis2}.
 \itemize{
 \item \code{by}: \code{Character scalar}. Specifies how significance is
 calculated. (Default: \code{"margin"})

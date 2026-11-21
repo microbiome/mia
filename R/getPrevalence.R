@@ -30,9 +30,6 @@
 #' @param na.rm \code{Logical scalar}. Should NA values be omitted?
 #' (Default: \code{TRUE})
 #'
-#' @param update.tree \code{Logical scalar}. Should
-#' \code{rowTree()} also be agglomerated? (Default: \code{TRUE})
-#'
 #' @param name \code{Character scalar}. Specifies name of column in
 #' \code{rowData} where the results will be stored.
 #' (Default: \code{"prevalence"})
@@ -43,9 +40,8 @@
 #'   \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'   \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'
-#'   \item for \code{getPrevalent}, \code{getRare}, \code{subsetByPrevalent}
-#'   and \code{subsetByRare} additional parameters passed to
-#'   \code{getPrevalence}
+#'   \item for \code{getPrevalent} and \code{getRare} additional parameters
+#'   passed to \code{getPrevalence}
 #'
 #'   \item for \code{getPrevalentAbundance} additional parameters passed to
 #'   \code{getPrevalent}
@@ -63,16 +59,18 @@
 #' defined as those that exceed the given population prevalence threshold at the
 #' given detection level as set for \code{getPrevalent}.
 #'
-#' \code{subsetPrevalent} and \code{subsetRareFeatures} return a subset of
-#' \code{x}.
-#' The subset includes the most prevalent or rare taxa that are calculated with
-#' \code{getPrevalent} or \code{getRare} respectively.
+#' To subset the data to prevalent or rare features, add the prevalence to
+#' \code{rowData} with \code{addPrevalence} and subset the data with
+#' \code{\link[=subsetBy]{subsetBy}}. For example,
+#' \code{subsetBy(addPrevalence(x), rows = prevalence > 0.5)} keeps the
+#' features that are present in more than 50\% of the samples, and
+#' \code{rows = prevalence <= 0.5} keeps the rest. With
+#' \code{collapse = TRUE}, the removed features are merged into one feature.
+#' Note that the stored prevalence is not updated when the data is subsetted
+#' afterwards.
 #'
 #' @return
-#' \code{subsetPrevalent} and \code{subsetRareFeatures} return subset of
-#' \code{x}.
-#'
-#' All other functions return a named vectors:
+#' The functions return named vectors:
 #' \itemize{
 #'   \item \code{getPrevalence} returns a \code{numeric} vector with the
 #'     names being set to either the row names of \code{x} or the names after
@@ -92,7 +90,8 @@
 #'
 #' @seealso
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
-#' \code{\link[=getTop]{getTop}}
+#' \code{\link[=getTop]{getTop}},
+#' \code{\link[=subsetBy]{subsetBy}}
 #'
 #'
 #' @name getPrevalence
@@ -143,11 +142,9 @@
 #' tse <- transformAssay(tse, assay.type = "counts", method = "relabundance")
 #'
 #' # Gets a subset of object that includes prevalent taxa
-#' altExp(tse, "prevalent") <- subsetByPrevalent(tse,
-#'                                              rank = "Family",
-#'                                              assay.type = "relabundance",
-#'                                              detection = 0.001,
-#'                                              prevalence = 0.55)
+#' tse_family <- addPrevalence(
+#'     tse, rank = "Family", assay.type = "relabundance", detection = 0.001)
+#' altExp(tse, "prevalent") <- subsetBy(tse_family, rows = prevalence > 0.55)
 #' altExp(tse, "prevalent")
 #'
 #' # getRare returns the inverse
@@ -159,12 +156,9 @@
 #' head(rare)
 #'
 #' # Gets a subset of object that includes rare taxa
-#' altExp(tse, "rare") <- subsetByRare(
-#'     tse,
-#'     rank = "Class",
-#'     assay.type = "relabundance",
-#'     detection = 0.001,
-#'     prevalence = 0.001)
+#' tse_class <- addPrevalence(
+#'     tse, rank = "Class", assay.type = "relabundance", detection = 0.001)
+#' altExp(tse, "rare") <- subsetBy(tse_class, rows = prevalence <= 0.001)
 #' altExp(tse, "rare")
 #'
 #' # Names of both experiments, prevalent and rare, can be found from slot
@@ -412,66 +406,6 @@ setMethod("getRare", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-############################# subsetByPrevalent ############################
-
-#' @rdname getPrevalence
-#' @export
-setMethod("subsetByPrevalent", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, ...){
-        x <- .merge_features(x, rank = rank, ...)
-        prevalent_indices <- .get_prevalent_indices(x, ...)
-        x[prevalent_indices, ]
-    }
-)
-
-#' @rdname getPrevalence
-#' @export
-setMethod("subsetByPrevalent", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, update.tree = TRUE, ...){
-        # Check that update.tree is logical value
-        if( !.is_a_bool(update.tree) ){
-            stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
-        }
-        #
-        x <- callNextMethod(x, ...)
-        # Agglomerate tree if specified
-        if( update.tree ){
-            x <- .agglomerate_trees(x, ...)
-        }
-    return(x)
-    }
-)
-
-############################# subsetByRare #################################
-
-#' @rdname getPrevalence
-#' @export
-setMethod("subsetByRare", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, ...){
-        x <- .merge_features(x, rank = rank, ...)
-        rare_indices <- .get_rare_indices(x, ...)
-        x[rare_indices, ]
-    }
-)
-
-#' @rdname getPrevalence
-#' @export
-setMethod("subsetByRare", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, update.tree = TRUE, ...){
-        # Check that update.tree is logical value
-        if( !.is_a_bool(update.tree) ){
-            stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
-        }
-        #
-        x <- callNextMethod(x, ...)
-        # Agglomerate tree if specified
-        if( update.tree ){
-            x <- .agglomerate_trees(x, ...)
-        }
-        return(x)
-    }
-)
-
 ############################# getPrevalentAbundance ############################
 
 #' @rdname getPrevalence
@@ -506,150 +440,16 @@ setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", ...){
+    function(x, assay.type = assay_name, assay_name = "counts", rank = NULL,
+        ...){
         # check assay
         .check_assay_present(assay.type, x)
-        #
-        getPrevalentAbundance(assay(x,assay.type))
+        # Agglomerate to the given rank, as in getPrevalent()
+        x <- .merge_features(x, rank = rank, ...)
+        getPrevalentAbundance(assay(x, assay.type), ...)
     }
 )
 
-
-############################# agglomerateByPrevalence ##########################
-
-#' Agglomerate data based on population prevalence
-#'
-#' @name agglomerateByPrevalence
-#'
-#' @inheritParams agglomerateByRank
-#'
-#' @param other.name \code{Character scalar}. Used as the label for the
-#'   summary of non-prevalent taxa. (default: \code{"Other"})
-#'
-#' @param other_label Deprecated. use \code{other.name} instead.
-#'
-#' @details
-#' \code{agglomerateByPrevalence} sums up the values of assays at the taxonomic
-#' level specified by \code{rank} (by default the highest taxonomic level
-#' available) and selects the summed results that exceed the given population
-#' prevalence at the given detection level. The other summed values (below the
-#' threshold) are agglomerated in an additional row taking the name indicated by
-#' \code{other.name} (by default "Other").
-#'
-#' @return
-#' \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
-#' of the same class as x and based on prevalent taxonomic results.
-#'
-#' @examples
-#' ## Data can be aggregated based on prevalent taxonomic results
-#' data(GlobalPatterns)
-#' tse <- GlobalPatterns
-#' tse <- transformAssay(tse, method = "relabundance")
-#' tse <- agglomerateByPrevalence(
-#'     tse,
-#'     rank = "Phylum",
-#'     assay.type = "relabundance",
-#'     detection = 1/100,
-#'     prevalence = 50/100)
-#'
-#' tse
-#'
-#' # Here data is aggregated at the taxonomic level "Phylum". The five phyla
-#' # that exceed the population prevalence threshold of 50/100 represent the
-#' # five first rows of the assay in the aggregated data. The sixth and last row
-#' # named by default "Other" takes the summed up values of all the other phyla
-#' # that are below the prevalence threshold.
-#'
-#' assay(tse)[,1:5]
-#'
-#' @export
-NULL
-
-#' @rdname agglomerateByPrevalence
-#' @export
-setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, other.name = other_label, other_label = "Other",
-        ...){
-        # input check
-        if(!.is_a_string(other.name)){
-            stop("'other.name' must be a single character value.",
-                call. = FALSE)
-        }
-        #
-        # Check assays that they can be merged safely
-        mapply(.check_assay_for_merge, assayNames(x), assays(x))
-        #
-        x <- .merge_features(x, rank, check.assays = FALSE, ...)
-        pr <- getPrevalent(x, rank = NULL, ...)
-        f <- rownames(x) %in% pr
-        if(any(!f)){
-            other_x <- agglomerateByVariable(
-                x[!f,], by = "rows",
-                factor(rep(1L,sum(!f))),
-                check_assays = FALSE,
-                update.tree = FALSE)
-            rowData(other_x)[,colnames(rowData(other_x))] <- NA
-            # set the other label
-            rownames(other_x) <- other.name
-            if(!is.null(rank)){
-                rowData(other_x)[,rank] <- other.name
-            }
-            x <- rbind(x[f,], other_x)
-        }
-        x
-    }
-)
-
-#' @rdname agglomerateByPrevalence
-#' @export
-setMethod("agglomerateByPrevalence",
-    signature = c(x = "TreeSummarizedExperiment"),
-    function(x, rank = NULL, other.name = other_label, other_label = "Other",
-            update.tree = TRUE, ...){
-        # input check
-        if(!.is_a_bool(update.tree)){
-            stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
-        }
-        # update.refseq is a hidden parameter as for all other agglomeration
-        # methods from the agglomerate-methods man page.
-        # Here 'list(...)[["update.refseq"]]' is used to access it.
-        merge_refseq <- list(...)[["update.refseq"]]
-        if( is.null(merge_refseq) ){
-            merge_refseq <- FALSE
-        }
-        if( !.is_a_bool(merge_refseq) ){
-            stop("'update.refseq' must be TRUE or FALSE.", call. = FALSE)
-        }
-        # Agglomerate based on prevalence with SE method
-        res <- callNextMethod()
-        # If user wants to agglomerate reference sequences. At this point,
-        # sequences are only subsetted without finding consensus sequences.
-        if( merge_refseq && !is.null(referenceSeq(x))  ){
-            # If user wants to agglomerate based on rank
-            x <- .merge_features(x, rank, check.assays = FALSE, ...)
-            # The agglomeration already merged sequences based on rank, but of
-            # course, it did not take into account prevalence agglomeration.
-            # We create a vector that we can use to merge the "other", i.e.,
-            # rare feature group. All features of rank-agglomerated data that
-            # cannot be found from prevalence agglomerated data belong to
-            # "other" group, i.e., they were merged together as rare features.
-            f <- rownames(x)
-            f[ !f %in% rownames(res) ] <- other.name
-            # Find consensus sequences for "other" group.
-            ref_seq <- referenceSeq(x)
-            ref_seq <- .merge_refseq_list(ref_seq, f, unique(f), ...)
-            # Sort the sequences to match the agglomerated data and add them to
-            # the final results.
-            ref_seq <- ref_seq[ match(rownames(res), names(ref_seq)) ]
-            referenceSeq(res) <- ref_seq
-        }
-        # Update tree if user has specified to do so
-        if( update.tree ){
-            res <- .agglomerate_trees(res, 1)
-        }
-        return(res)
-    }
-)
 
 # Get abundance. Determines if relative abundance is calculated or not.
 .to_rel_abund <- function(
