@@ -232,3 +232,4 @@ Changes in version 1.21.x
 + Tengeler2020: sample names and colData are matched to the counts by sample name; they were misaligned, so patient_status was correct for only 11 of 27 samples (#904) (2026-11-21)
 + convertToPhyloseq: tree.name = NULL leaves out the tree, which keeps the feature order of the TreeSE (#821) (2026-11-21)
 + References in the documentation use Rdpack and inst/REFERENCES.bib (#707) (2026-11-21)
++ transformAssay: verbose = FALSE silences its messages and warnings, e.g. in pipelines (#788) (2026-11-21)
