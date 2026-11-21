@@ -23,7 +23,7 @@ by default."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.34</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.35</span>
       </span>
     </div>
 
@@ -131,6 +131,16 @@ species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is <code>FALSE</code>, meaning the
 unweighted-Unifrac dissimilarity is calculated for all pairs of samples.
 (Default: <code>FALSE</code>)</p></li>
+<li><p><code>normalized</code>: (Unifrac) <code>Logical scalar</code>. Should
+Unifrac be normalized to the range between 0 and 1? Normalized values
+are comparable across trees. Unweighted-Unifrac is normalized by
+dividing the unique branch length by the total branch length of both
+samples; when unnormalized, it is the unique branch length. Weighted-Unifrac
+is normalized by dividing by the sum of root-to-tip distances weighted by
+the relative abundances of both samples; when unnormalized, it is in
+branch-length units. The default keeps the conventional definitions:
+normalized unweighted-Unifrac and unnormalized weighted-Unifrac.
+(Default: <code>!weighted</code>)</p></li>
 <li><p><code>node.label</code> (Unifrac) <code>character vector</code>. Used only if
 <code>x</code> is a matrix. Specifies links between rows/columns and tips of
 <code>tree</code>. All the node labs must be present in <code>tree</code>. For the
@@ -491,13 +501,13 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-in"><span><span class="co"># Multi Dimensional Scaling applied to JSD dissimilarity matrix</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="addMDS.html">addMDS</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"overlap"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"MDS"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  [,1]       [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3       59443.48966   30449.91</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       90318.88662  -39519.24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      -50022.89144  -38252.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw     -67.34763  209366.60</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw -167716.35955 -569793.66</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  -27167.45045  104144.91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 [,1]       [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3     -59443.48966   30449.91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1     -90318.88662  -39519.24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      50022.89144  -38252.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw     67.34763  209366.60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw 167716.35955 -569793.66</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  27167.45045  104144.91</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Unifrac dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
@@ -637,6 +647,144 @@ uneven sequencing effort in amplicon sequence analyses. <em>mSphere</em>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Even1              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Even2              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Even3    0.04234192</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Normalized weighted Unifrac is bounded between 0 and 1. Unlike the</span></span></span>
+<span class="r-in"><span><span class="co"># unnormalized default, it does not depend on the scale of the tree, which</span></span></span>
+<span class="r-in"><span><span class="co"># can enhance comparability between data sets.</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDissimilarity</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>, method <span class="op">=</span> <span class="st">"unifrac"</span>, weighted <span class="op">=</span> <span class="cn">TRUE</span>, normalized <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>    name <span class="op">=</span> <span class="st">"unifrac_normalized"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"unifrac_normalized"</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 CL3        CC1        SV1    M31Fcsw    M11Fcsw    M31Plmr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      0.17203857                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      0.28170159 0.24732071                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw  0.57725308 0.57826400 0.57010390                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw  0.56254869 0.56320830 0.55170974 0.19249489                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  0.45048630 0.44933487 0.46096023 0.52447704 0.54848971           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr  0.38231270 0.37752590 0.38548080 0.56598890 0.54451287 0.33406866</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr  0.43160102 0.42997832 0.41606292 0.51436957 0.51495221 0.14738018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong  0.45733469 0.45716203 0.47436697 0.55557487 0.54017974 0.31454410</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong  0.44995202 0.44861514 0.43823057 0.50176438 0.49698436 0.25411048</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M 0.41819868 0.40227271 0.40372940 0.58129023 0.54986024 0.45064023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M 0.38320408 0.36478685 0.35522040 0.55621187 0.52812160 0.43221694</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm   0.42671362 0.41895130 0.44021286 0.61146247 0.57981373 0.50988158</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm   0.45506285 0.44865273 0.46207317 0.61326059 0.58109445 0.51377036</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm   0.42328895 0.41546397 0.43453677 0.60225527 0.57005239 0.48971600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2      0.39834721 0.40070584 0.38563404 0.55964940 0.52947121 0.46738806</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3      0.45867251 0.45615913 0.42075146 0.44096383 0.42234708 0.50905201</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5      0.43846680 0.43590884 0.40985669 0.53823187 0.51043987 0.47210857</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1  0.36176637 0.36543716 0.36458323 0.55269456 0.53398753 0.42182477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2  0.38691624 0.39451450 0.40309858 0.58977123 0.56546407 0.45695350</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3  0.38740446 0.39536104 0.37805585 0.56090647 0.54627186 0.45231302</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28     0.56193942 0.56285274 0.55395035 0.31226574 0.46613100 0.50456834</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29     0.56417631 0.56582210 0.57163846 0.40543186 0.55480461 0.51577366</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1    0.49645008 0.49927687 0.49422960 0.30903183 0.38749766 0.38384480</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    0.50188141 0.50502733 0.50095475 0.31218831 0.39207669 0.38810378</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    0.49938392 0.50249250 0.49791642 0.31012044 0.39543553 0.38175749</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             M11Plmr    F21Plmr    M31Tong    M11Tong   LMEpi24M   SLEpi20M</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr  0.29221042                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong  0.34252307 0.29894010                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong  0.36858310 0.20614863 0.26891546                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M 0.36292276 0.41100664 0.45160431 0.37050078                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M 0.34141428 0.37576718 0.43530429 0.38097584 0.28106375           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm   0.41787282 0.48081140 0.50091824 0.46584751 0.32201544 0.41580194</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm   0.43176273 0.48615376 0.50300412 0.47393294 0.33538990 0.42806608</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm   0.41361001 0.46094156 0.48075753 0.44901900 0.31132336 0.40112638</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2      0.38287916 0.40611957 0.44339528 0.39953522 0.35687669 0.35054530</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3      0.44775419 0.45324354 0.50257016 0.46651889 0.46174600 0.41985486</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5      0.39642710 0.41096073 0.46362228 0.41001326 0.36421361 0.36616020</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1  0.33093861 0.38541140 0.38678224 0.39916946 0.39819763 0.36494740</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2  0.30850273 0.42423257 0.41054835 0.45345682 0.41693141 0.39616546</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3  0.35321129 0.43144133 0.41749742 0.44874028 0.44396426 0.42105171</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28     0.55349769 0.49296599 0.53640100 0.48009217 0.56614719 0.53804642</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29     0.53786026 0.52962658 0.56831124 0.53779091 0.56862957 0.55930793</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1    0.43164643 0.37078314 0.39126419 0.35800492 0.50687072 0.47117894</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    0.43913140 0.37952850 0.39820049 0.36702679 0.51458619 0.47949650</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    0.43333918 0.37245660 0.39149383 0.36026399 0.51105057 0.47575217</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              AQC1cm     AQC4cm     AQC7cm        NP2        NP3        NP5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm                                                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm   0.05544541                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm   0.08737916 0.06524419                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2      0.39090728 0.40900744 0.38646967                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3      0.49339829 0.49293700 0.47075096 0.28668402                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5      0.37861536 0.37898084 0.35487997 0.18234152 0.26996163           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1  0.40062173 0.41012515 0.37453498 0.32179029 0.38850665 0.35232522</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2  0.41256776 0.40640655 0.38734969 0.36789118 0.42820148 0.39209632</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3  0.44075221 0.43900961 0.40984874 0.39853037 0.44810785 0.41845820</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28     0.59950937 0.60261421 0.58989773 0.55148967 0.58064855 0.56284684</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29     0.59408364 0.59816956 0.59120466 0.59120555 0.62069402 0.59409681</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1    0.54922692 0.55202937 0.53335896 0.46857423 0.47192867 0.44072480</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    0.55670617 0.55945279 0.54097890 0.47604212 0.47867391 0.44858118</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    0.55388630 0.55661941 0.53797640 0.47260461 0.47930495 0.44564281</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             TRRsed1    TRRsed2    TRRsed3       TS28       TS29      Even1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm                                                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm                                                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm                                                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2  0.17458518                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3  0.18370621 0.16042743                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28     0.53604252 0.57551570 0.54465217                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29     0.55481372 0.56855849 0.54184002 0.16758170                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1    0.44965829 0.49654548 0.46533627 0.34107607 0.42108469           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    0.45758649 0.50379628 0.47233106 0.34894811 0.42701075 0.02555803</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    0.45377652 0.50024465 0.46940194 0.33707798 0.41883366 0.01770624</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               Even2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    0.02832905</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Bray dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
