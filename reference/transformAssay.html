@@ -66,11 +66,12 @@ See details for options.</p>
 <span>  MARGIN <span class="op">=</span> <span class="st">"samples"</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
 <span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
-<span><span class="fu">transformAssay</span><span class="op">(</span><span class="va">x</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">transformAssay</span><span class="op">(</span><span class="va">x</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -149,6 +150,13 @@ value of <code>assay.type</code> (missing values ignored by default:
 When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.
 (Default: <code>FALSE</code>).</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p><code>Logical scalar</code>. Should messages and warnings be
+shown, e.g. the pseudocount that was applied? <code>FALSE</code> keeps them
+silent, which can be useful in pipelines; errors are still reported.
+(Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
