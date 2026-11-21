@@ -257,8 +257,11 @@ setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
             }
             # Define matrix for analysis
             mat <- t(reducedDim(x, dimred))
-            # Give component names to matrix rows
-            rownames(mat) <- paste0(dimred, seq(1, nrow(mat)))
+            # Use the component names of the reducedDim (e.g. "PC1"), or
+            # name the components by the reducedDim if they have no names
+            if( is.null(rownames(mat)) ){
+                rownames(mat) <- paste0(dimred, seq_len(nrow(mat)))
+            }
             # Use reducedDim for analysis
             mediators <- rownames(mat)
         }
