@@ -25,6 +25,11 @@
 #' be stored. An existing assay with the same name is overwritten with a
 #' warning. (Default: \code{method})
 #'
+#' @param verbose \code{Logical scalar}. Should messages and warnings be
+#'   shown, e.g. the pseudocount that was applied? \code{FALSE} keeps them
+#'   silent, which can be useful in pipelines; errors are still reported.
+#'   (Default: \code{TRUE})
+#'
 #' @param altexp \code{Character vector} or \code{NULL}. Specifies the names
 #' of alternative experiments to which the transformation should also be
 #' applied. If \code{NULL}, the transformation is only applied to the main
@@ -241,11 +246,12 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         MARGIN = "samples",
         name = method,
         pseudocount = FALSE,
+        verbose = TRUE,
         ...){
         #
-        x <- .transform_assay(
+        x <- .with_verbosity(.transform_assay(
             x = x, method = method, name = name, assay.type = assay.type,
-            MARGIN = MARGIN, pseudocount =  pseudocount, ...)
+            MARGIN = MARGIN, pseudocount =  pseudocount, ...), verbose)
         return(x)
     }
 )
@@ -253,7 +259,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 #' @rdname transformAssay
 #' @export
 setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
-    function(x, altexp = NULL, ...){
+    function(x, altexp = NULL, verbose = TRUE, ...){
         # Check altexp
         if( !(is.null(altexp) || all(altexp %in% altExpNames(x)) ||
                 (.is_integer(altexp) &&
@@ -263,12 +269,12 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         }
         #
         # Transform the main object
-        x <- .transform_assay(x, ...)
+        x <- .with_verbosity(.transform_assay(x, ...), verbose)
         # Transform alternative experiments
         altExps(x)[altexp] <- lapply(altExps(x)[altexp], function(y){
             # Give informative error message that states that the error
             # happened during processing alternative experiments.
-            tryCatch({.transform_assay(y, ...)},
+            tryCatch({.with_verbosity(.transform_assay(y, ...), verbose)},
                 error = function(e){
                     stop("Transforming altExps: ", conditionMessage(e),
                         call. = FALSE)
@@ -695,9 +701,9 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         if( pseudocount && all(mat > 0, na.rm = TRUE) ){
             pseudocount <- 0
             message("The assay contains already only strictly positive ",
-                    "values. It is not recommended to add pseudocount",
-		    "in such case. To force adding pseudocount you can",
-		    "provide a numeric value for the pseudocount argument.")
+                "values. It is not recommended to add pseudocount ",
+                "in such case. To force adding pseudocount you can ",
+                "provide a numeric value for the pseudocount argument.")
         }
         # If pseudocount TRUE, set it to half of non-zero minimum value
         # else set it to zero.

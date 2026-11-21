@@ -914,3 +914,15 @@
 }
 
 ################################################################################
+
+# Evaluates 'expr' with or without its messages and warnings. 'expr' is
+# evaluated lazily, i.e., inside suppressMessages/suppressWarnings.
+.with_verbosity <- function(expr, verbose = TRUE){
+    if( !.is_a_bool(verbose) ){
+        stop("'verbose' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( verbose ){
+        return(expr)
+    }
+    suppressWarnings(suppressMessages(expr))
+}
