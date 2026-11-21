@@ -26,6 +26,7 @@ getDivergence(
   assay_name = "counts",
   reference = "median",
   method = "bray",
+  FUN = getDissimilarity,
   ...
 )
 }
@@ -58,6 +59,14 @@ entire dataset is calculated and used as the reference value.
 
 \item{method}{\code{Character scalar}. Specifies which dissimilarity to
 calculate. (Default: \code{"bray"})}
+
+\item{FUN}{\code{Function} or \code{Character scalar}. A function that
+calculates the dissimilarity between a sample and its reference. It must
+take a matrix with samples in rows and the \code{method} argument, and
+return a \code{\link[stats:dist]{dist}} object. The default is
+\code{\link[=getDissimilarity]{getDissimilarity}}, for consistency with
+\code{\link[=getMDS]{getMDS}} and \code{\link[=getNMDS]{getNMDS}}.
+(Default: \code{getDissimilarity})}
 }
 \value{
 \code{x} with additional
@@ -71,8 +80,8 @@ Microbiota divergence (heterogeneity / spread) within a given sample
 set can be quantified by the average sample dissimilarity or beta
 diversity with respect to a given reference sample.
 
-The calculation makes use of the function \code{getDissimilarity()}. The
-divergence
+By default, the calculation makes use of the function
+\code{getDissimilarity()}. The divergence
 measure is sensitive to sample size. Subsampling or bootstrapping can be
 applied to equalize sample sizes between comparisons.
 }

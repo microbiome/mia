@@ -21,7 +21,7 @@ setGeneric(
 #' @rdname getDissimilarity
 #' @export
 setGeneric(
-    "getDissimilarity", signature = c("x"), function(x, method, ...)
+    "getDissimilarity", signature = c("x"), function(x, method = "bray", ...)
         standardGeneric("getDissimilarity"))
 
 

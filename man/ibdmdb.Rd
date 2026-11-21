@@ -40,10 +40,6 @@ Load with:
 \code{data("ibdmdb")}.
 }
 \references{
-Lloyd-Price J, Arze C, Ananthakrishnan AN, et al.
-\emph{Multi-omics of the gut microbial ecosystem in inflammatory bowel
-diseases.}
-Nature 569, 655–662 (2019).
-\doi{10.1038/s41586-019-1237-9}
+\insertRef{Lloyd-Price2019}{mia}
 }
 \keyword{datasets}

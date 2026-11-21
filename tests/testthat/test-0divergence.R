@@ -133,3 +133,15 @@ test_that("divergence estimates", {
   }) |> unlist()
   expect_equal(res, ref)
 })
+
+test_that("getDivergence supports FUN", {
+    skip_if_not(requireNamespace("vegan", quietly = TRUE))
+    data(esophagus, package = "mia")
+    tse <- esophagus
+    res_default <- getDivergence(tse, method = "bray")
+    res_vegdist <- getDivergence(tse, method = "bray", FUN = vegan::vegdist)
+    expect_equal(res_default, res_vegdist)
+    res_name <- getDivergence(tse, method = "bray", FUN = "getDissimilarity")
+    expect_equal(res_default, res_name)
+    expect_error(getDivergence(tse, FUN = "not_a_function"))
+})

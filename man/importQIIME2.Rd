@@ -142,9 +142,7 @@ se
 
 }
 \references{
-Bolyen E et al. 2019: Reproducible, interactive, scalable and extensible
-microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
-\url{https://doi.org/10.1038/s41587-019-0209-9}
+\insertRef{Bolyen2019}{mia}
 
 \url{https://qiime2.org}
 }

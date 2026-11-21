@@ -35,14 +35,7 @@ intestinal
 inflammation, rather than the cancer diagnosis itself.
 }
 \references{
-Raúl Y. Tito, Sara Verbandt, Marta Aguirre Vazquez, Leo Lahti, Chloe
-Verspecht, Verónica Lloréns-Rico, Sara Vieira-Silva,
-Janine Arts, Gwen Falony, Evelien Dekker, Joke Reumers, Sabine Tejpar &
-Jeroen Raes (2024).
-Microbiome confounders and quantitative profiling challenge predicted
-microbial targets in colorectal cancer development.
-Nature Medicine,30, 1339-1348.
-\url{https://doi.org/10.1038/s41591-024-02963-2}
+\insertRef{Tito2024}{mia}
 }
 \seealso{
 \code{\link{mia-datasets}}

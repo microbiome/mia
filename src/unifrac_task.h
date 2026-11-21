@@ -290,6 +290,27 @@ class UnifracUnnormalizedWeightedTask : public UnifracTask<double> {
         std::vector<double> sums;
 };
 
+
+
+// Accumulates the unnormalized distance into dm_stripes and the normalization
+// term sum(length * (u + v)) into dm_stripes_total. The division is done in
+// unifracTT when want_total is true.
+class UnifracNormalizedWeightedTask : public UnifracUnnormalizedWeightedTask {
+    public:
+        UnifracNormalizedWeightedTask(su::StripeMap & _dm_stripes,
+                                        su::StripeMap & _dm_stripes_total,
+                                        unsigned int _max_embs,
+                                        su::task_parameters _task_p);
+
+        virtual ~UnifracNormalizedWeightedTask();
+
+        virtual void run(unsigned int filled_embs,
+                            const std::vector<double> & lengths);
+
+        void _run(unsigned int filled_embs,
+                    const std::vector<double> & lengths);
+};
+
 }
 
 #endif /* __UNIFRAC_TASK_H */

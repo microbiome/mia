@@ -33,24 +33,18 @@ supported:
 the group in \code{col.var} that is used as controls. If \code{NULL}, the
 first level of \code{factor(x[[col.var]])} is used. (Default:
 \code{NULL})
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{\\item \code{group}: \code{NULL} or \code{Character scalar}. Specifies a
+\item \code{group}: \code{NULL} or \code{Character scalar}. Specifies a
 variable from \code{colData(x)} (e.g., subject ID). Control samples that
 share the same value with the current sample are excluded from its
 comparison. (Default: \code{NULL})
-
-\\item \code{k}: \code{Integer scalar}. Number of nearest control
-samples used by \code{cloud}. (Default: 5\\\% of the control samples, at
+\item \code{k}: \code{Integer scalar}. Number of nearest control
+samples used by \code{cloud}. (Default: 5\% of the control samples, at
 least 1)
-
-\\item \code{altexp}: \code{NULL} or \code{Character scalar}. If provided,
+\item \code{altexp}: \code{NULL} or \code{Character scalar}. If provided,
 use this \code{altExp} assay container of \code{x} for the computation.
 (Default: \code{NULL})
-
-\\item Further arguments are passed to
+\item Further arguments are passed to
 \code{\link[=getDissimilarity]{getDissimilarity}}.
-}\if{html}{\out{</div>}}
-
 }}
 
 \item{col.var}{\code{Character scalar}. Specifies a variable from
@@ -129,22 +123,15 @@ head(res)
 
 }
 \references{
-AlShawaqfeh MK, et al. (2017) A dysbiosis index to assess microbial changes
-in fecal samples of dogs with chronic inflammatory enteropathy.
-\emph{FEMS Microbiology Ecology} 93(11), fix136.
+\insertRef{AlShawaqfeh2017}{mia}
 
-Halfvarson J, et al. (2017) Dynamics of the human gut microbiome in
-inflammatory bowel disease. \emph{Nature Microbiology} 2, 17004.
+\insertRef{Halfvarson2017}{mia}
 
-Lloyd-Price J, et al. (2019) Multi-omics of the gut microbial ecosystem in
-inflammatory bowel diseases. \emph{Nature} 569, 655-662.
+\insertRef{Lloyd-Price2019}{mia}
 
-Montassier E, et al. (2018) CLOUD: a non-parametric detection test for
-microbiome outliers. \emph{Microbiome} 6, 137.
+\insertRef{Montassier2018}{mia}
 
-Santiago M, et al. (2019) Microbiome predictors of dysbiosis and VRE
-decolonization in patients with recurrent C. difficile infections in a
-multi-center retrospective study. \emph{AIMS Microbiology} 5(1), 1-18.
+\insertRef{Santiago2019}{mia}
 }
 \seealso{
 \code{\link[=getDissimilarity]{getDissimilarity}},

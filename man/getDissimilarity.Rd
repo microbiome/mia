@@ -11,7 +11,7 @@
 \usage{
 addDissimilarity(x, method, ...)
 
-getDissimilarity(x, method, ...)
+getDissimilarity(x, method = "bray", ...)
 
 \S4method{addDissimilarity}{SummarizedExperiment}(x, method = "bray", name = method, ...)
 
@@ -69,6 +69,17 @@ species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is \code{FALSE}, meaning the
 unweighted-Unifrac dissimilarity is calculated for all pairs of samples.
 (Default: \code{FALSE})
+
+\item \code{normalized}: (Unifrac) \code{Logical scalar}. Should
+Unifrac be normalized to the range between 0 and 1? Normalized values
+are comparable across trees. Unweighted-Unifrac is normalized by
+dividing the unique branch length by the total branch length of both
+samples; when unnormalized, it is the unique branch length. Weighted-Unifrac
+is normalized by dividing by the sum of root-to-tip distances weighted by
+the relative abundances of both samples; when unnormalized, it is in
+branch-length units. The default keeps the conventional definitions:
+normalized unweighted-Unifrac and unnormalized weighted-Unifrac.
+(Default: \code{!weighted})
 
 \item \code{node.label} (Unifrac) \code{character vector}. Used only if
 \code{x} is a matrix. Specifies links between rows/columns and tips of
@@ -133,7 +144,7 @@ all the abundances of features are equal between two samples, and 0 means
 that samples have completely different relative abundances.
 
 Unifrac is calculated with a C++ implementation of the Striped Unifrac
-algorithm (McDonald et al. 2021).
+algorithm (McDonald et al. 2018).
 
 If rarefaction is enabled, \code{\link[vegan:avgdist]{vegan:avgdist()}} is
 utilized.
@@ -181,6 +192,14 @@ dim(as.matrix(res))
 tse <- addDissimilarity(tse, method = "unifrac", weighted = TRUE)
 metadata(tse)[["unifrac"]]
 
+# Normalized weighted Unifrac is bounded between 0 and 1. Unlike the
+# unnormalized default, it does not depend on the scale of the tree, which
+# can enhance comparability between data sets.
+tse <- addDissimilarity(
+    tse, method = "unifrac", weighted = TRUE, normalized = TRUE,
+    name = "unifrac_normalized")
+metadata(tse)[["unifrac_normalized"]]
+
 ### Bray dissimilarity
 
 # Bray is usually applied to relative abundances so we have to apply
@@ -204,32 +223,21 @@ For unifrac dissimilarity: \url{http://bmf.colorado.edu/unifrac/}
 
 See also additional descriptions of Unifrac in the following articles:
 
-Lozupone, Hamady and Knight, ``Unifrac - An Online Tool for Comparing
-Microbial Community Diversity in a Phylogenetic Context.'', BMC
-Bioinformatics 2006, 7:371
+\insertRef{Lozupone2006}{mia}
 
-Lozupone, Hamady, Kelley and Knight, ``Quantitative and qualitative (beta)
-diversity measures lead to different insights into factors that structure
-microbial communities.'' Appl Environ Microbiol. 2007
+\insertRef{Lozupone2007}{mia}
 
-Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
-microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
+\insertRef{Lozupone2005}{mia}
 
-McDonald D, Vázquez-Baeza Y, Koslicki D, McClelland J, Reeve N, Xu Z,
-Gonzalez A, Knight R. ``Striped UniFrac: enabling microbiome analysis at
-unprecedented scale.'' Nat Methods. 2018 15 (11):847-848.
-doi: 10.1038/s41592-018-0187-8.
+\insertRef{McDonald2018}{mia}
 
 For JSD dissimilarity:
-Jensen-Shannon Divergence and Hilbert space embedding.
-Bent Fuglede and Flemming Topsoe University of Copenhagen,
-Department of Mathematics
-\url{http://www.math.ku.dk/~topsoe/ISIT2004JSD.pdf}
+
+\insertRef{Fuglede2004}{mia}
 
 For rarefaction:
-Schloss PD (2024) Rarefaction is currently the best approach to control for
-uneven sequencing effort in amplicon sequence analyses. \emph{mSphere}
-28;9(2):e0035423. doi: 10.1128/msphere.00354-23
+
+\insertRef{Schloss2024}{mia}
 }
 \seealso{
 \url{http://en.wikipedia.org/wiki/Jensen-Shannon_divergence}
