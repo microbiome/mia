@@ -235,3 +235,4 @@ Changes in version 1.21.x
 + transformAssay: verbose = FALSE silences its messages and warnings, e.g. in pipelines (#788) (2026-11-21)
 + parseTaxonomy: new exported function that splits taxonomy strings such as "k__Bacteria; p__Firmicutes" into one column per rank; it uses the parser of the importers (#769) (2026-11-21)
 + getTaxonomyLabels: with make.unique = TRUE, the message lists the labels that were changed, e.g. "Family:o -> Family:o_1" (#729) (2026-11-21)
++ getPERMANOVA/addPERMANOVA: method = "unifrac" uses the rowTree of a TreeSE; earlier it failed with "argument tree is missing"; unused factor levels are dropped from the covariates, as vegan::adonis2() can crash R with them, e.g. when samples are subsetted for pairwise tests, and a grouping variable with only one group gives an error instead of a warning (1.21.36, 2026-11-21)

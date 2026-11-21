@@ -169,6 +169,11 @@ setMethod("getPERMANOVA", "SummarizedExperiment",
             # Get assay
             .check_assay_present(assay.type, x)
             mat <- assay(x, assay.type)
+            # UniFrac needs the tree, which is taken from the TreeSE
+            if( is(x, "TreeSummarizedExperiment") &&
+                    identical(list(...)[["method"]], "unifrac") ){
+                mat <- getDissimilarity(x, assay.type = assay.type, ...)
+            }
         } else{
             # Get dissimilarity matrix
             .check_metadata_present(dis.name, x)
@@ -257,8 +262,19 @@ setMethod("addPERMANOVA", "SummarizedExperiment",
     if( is.matrix(x) ){
         x <- x |> t()
     }
-    # Covariate table must be data.frame
-    data <- data.frame(data, check.names = FALSE)
+    # Covariate table must be data.frame. Unused factor levels (e.g. after
+    # subsetting samples) are dropped: vegan::adonis2() can crash R with them.
+    data <- droplevels(data.frame(data, check.names = FALSE))
+    # A grouping variable with one group cannot explain any variation
+    vars <- intersect(all.vars(formula), colnames(data))
+    one_group <- vapply(data[vars], function(v)
+        (is.factor(v) || is.character(v)) && length(unique(na.omit(v))) < 2L,
+        logical(1L))
+    if( any(one_group) ){
+        stop("Variables with only one group cannot be tested: ",
+            paste0("'", vars[one_group], "'", collapse = ", "), ".",
+            call. = FALSE)
+    }
     # Instead of letting na.action pass through, give informative error
     # about missing values.
     if( any(is.na(data)) && isTRUE(all.equal(na.action, na.fail)) ){
