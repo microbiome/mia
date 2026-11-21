@@ -28,8 +28,10 @@ used. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
-\item{tree.name}{\code{Character scalar}. Specifies the name of the
-tree to be included in the phyloseq object that is created,
+\item{tree.name}{\code{NULL} or \code{Character scalar}. Specifies the name
+of the tree to be included in the phyloseq object that is created. If
+\code{NULL}, no tree is included. As phyloseq orders the features by the
+tips of the tree, this keeps the feature order of \code{x}.
 (Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
@@ -85,5 +87,10 @@ phy
 tse <- transformAssay(tse, method = "relabundance")
 phy2 <- convertToPhyloseq(tse, assay.type = "relabundance")
 phy2
+
+# phyloseq orders the features by the tips of the tree. To keep the
+# feature order of the TreeSE, leave out the tree with tree.name = NULL.
+phy3 <- convertToPhyloseq(tse, tree.name = NULL)
+identical(phyloseq::taxa_names(phy3), rownames(tse))
 
 }
