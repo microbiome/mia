@@ -237,3 +237,4 @@ Changes in version 1.21.x
 + getTaxonomyLabels: with make.unique = TRUE, the message lists the labels that were changed, e.g. "Family:o -> Family:o_1" (#729) (2026-11-21)
 + getPERMANOVA/addPERMANOVA: method = "unifrac" uses the rowTree of a TreeSE; earlier it failed with "argument tree is missing"; unused factor levels are dropped from the covariates, as vegan::adonis2() can crash R with them, e.g. when samples are subsetted for pairwise tests, and a grouping variable with only one group gives an error instead of a warning (1.21.36, 2026-11-21)
 + transformAssay: method = "multiplicative_replacement" replaces zeros multiplicatively before log-ratio transformations (1.21.37, 2026-11-22)
++ Vignette: overview of the functions grouped by use case, with examples (2026-11-21)
