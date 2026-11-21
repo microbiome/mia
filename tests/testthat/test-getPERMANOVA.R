@@ -260,3 +260,18 @@ test_that("getPERMANOVA input validations for dis.name and dist objects", {
     )
 })
 
+
+test_that("getPERMANOVA uses the rowTree for method = 'unifrac'", {
+    data("GlobalPatterns", package = "mia")
+    tse <- GlobalPatterns[, GlobalPatterns$SampleType %in% c("Feces", "Soil",
+        "Ocean")]
+    set.seed(1)
+    res <- getPERMANOVA(tse, assay.type = "counts", method = "unifrac",
+        formula = x ~ SampleType, permutations = 99, test.homogeneity = FALSE)
+    # Same as with the pre-calculated UniFrac dissimilarity
+    tse <- addDissimilarity(tse, method = "unifrac", name = "unifrac")
+    set.seed(1)
+    ref <- getPERMANOVA(tse, dis.name = "unifrac",
+        formula = x ~ SampleType, permutations = 99, test.homogeneity = FALSE)
+    expect_equal(res, ref)
+})

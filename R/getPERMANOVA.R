@@ -169,6 +169,11 @@ setMethod("getPERMANOVA", "SummarizedExperiment",
             # Get assay
             .check_assay_present(assay.type, x)
             mat <- assay(x, assay.type)
+            # UniFrac needs the tree, which is taken from the TreeSE
+            if( is(x, "TreeSummarizedExperiment") &&
+                    identical(list(...)[["method"]], "unifrac") ){
+                mat <- getDissimilarity(x, assay.type = assay.type, ...)
+            }
         } else{
             # Get dissimilarity matrix
             .check_metadata_present(dis.name, x)
