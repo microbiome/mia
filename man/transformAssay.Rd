@@ -16,10 +16,11 @@ transformAssay(x, ...)
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
+  verbose = TRUE,
   ...
 )
 
-\S4method{transformAssay}{SingleCellExperiment}(x, altexp = NULL, ...)
+\S4method{transformAssay}{SingleCellExperiment}(x, altexp = NULL, verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
@@ -81,6 +82,11 @@ value of \code{assay.type} (missing values ignored by default:
 When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.
 (Default: \code{FALSE}).}
+
+\item{verbose}{\code{Logical scalar}. Should messages and warnings be
+shown, e.g. the pseudocount that was applied? \code{FALSE} keeps them
+silent, which can be useful in pipelines; errors are still reported.
+(Default: \code{TRUE})}
 
 \item{altexp}{\code{Character vector} or \code{NULL}. Specifies the names
 of alternative experiments to which the transformation should also be
