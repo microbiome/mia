@@ -27,14 +27,16 @@
 #'   (Default: \code{min(colSums2(assay(x, assay.type)))})
 #'
 #'   \item \code{tree.name}: \code{Character scalar}. Specifies which rowTree
-#'   will be used. (Phylogenetic indices: Allen, Faith, Rao).
+#'   will be used. (Phylogenetic indices: Allen, Faith, Rao, phylogenetic
+#'   Pielou).
 #'   (Default: \code{"phylo"})
 #'
 #'   \item \code{node.label}: \code{Character vector} or \code{NULL} Specifies
 #'   the links between rows and node labels of phylogeny tree specified
 #'   by \code{tree.name}. If a certain row is not linked with the tree, missing
 #'   instance should be noted as NA. When \code{NULL}, all the rownames should
-#'   be found from the tree. (Phylogenetic indices: Allen, Faith, Rao).
+#'   be found from the tree. (Phylogenetic indices: Allen, Faith, Rao,
+#'   phylogenetic Pielou).
 #'   (Default: \code{NULL})
 #'
 #'   \item \code{only.tips}: (Faith's index). \code{Logical scalar}. Specifies
@@ -271,6 +273,14 @@
 #'   evenness; H/ln(S). The Shannon-Weaver is the preferred term; see
 #'   Spellerberg and Fedor (2003).
 #'   \item 'evar': Smith and Wilson’s Evar index (Smith & Wilson 1996).
+#'   \item 'phylo_pielou': Phylogenetic Pielou's evenness, the ratio of the
+#'   logarithms of the phylogenetic Hill numbers of order 1 and 0 (Chao et al.
+#'   2010): (H/T)/ln(PD/T), where H is Allen's phylogenetic entropy, and PD
+#'   and T are the total and the abundance-weighted branch length below the
+#'   most recent common ancestor of the sample's features. Branches above it
+#'   and absent features do not affect the value. On a star tree with
+#'   equal branch lengths it equals 'pielou'. It is NA when the sample has
+#'   only one lineage. Using this index requires a tree.
 #'   \item 'bulla': Bulla’s index (O) (Bulla 1994).
 #' }
 #'
@@ -382,6 +392,8 @@
 #' \insertRef{Cassol2025}{mia}
 #'
 #' \insertRef{Chao1984}{mia}
+#'
+#' \insertRef{Chao2010}{mia}
 #'
 #' \insertRef{Chao2016}{mia}
 #'
@@ -545,11 +557,11 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     supported[["dominance"]] <- temp
     # Supported evenness indices
     temp <- c(
-        "camargo", "pielou", "simpson", "evar", "bulla")
+        "camargo", "pielou", "simpson", "evar", "bulla", "phylo_pielou")
     temp <- data.frame(index = temp)
     temp[["measure"]] <- "evenness"
     temp[["index_long"]] <- paste0(temp[["index"]], "_", temp[["measure"]])
-    temp[["non_neg"]] <- c(FALSE, FALSE, FALSE, FALSE, FALSE)
+    temp[["non_neg"]] <- c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
     supported[["eveness"]] <- temp
     # Supported richness indices
     temp <- c(
@@ -582,7 +594,7 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     }
     # Tree indices are available only for TreeSE with rowTree or with tree
     # provided
-    tree_indices <- c("allen", "faith", "rao")
+    tree_indices <- c("allen", "faith", "phylo_pielou", "rao")
     missing_tree <- intersect(detected[["index"]], tree_indices)
     tse_with_tree <- (is(x, "TreeSummarizedExperiment") &&
         !is.null(rowTree(x))) || !is.null(tree)
@@ -686,7 +698,7 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
     mat <- assay(x, assay.type)
     # Get correct function based on index
     FUN <- switch(index,
-        allen = .estimate_allen,
+        allen = .estimate_tree_diversity,
         shannon = .calc_shannon,
         gini_simpson = .calc_gini_simpson,
         inverse_simpson = .calc_inverse_simpson,
@@ -694,7 +706,7 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
         fisher = .calc_fisher,
         faith = .estimate_faith,
         log_modulo_skewness = .calc_log_modulo_skewness,
-        rao = .estimate_rao,
+        rao = .estimate_tree_diversity,
         #
         simpson_lambda = .simpson_lambda,
         core_abundance = .calc_core_dominance,
@@ -709,6 +721,7 @@ setMethod("getAlpha", signature = c(x = "SummarizedExperiment"),
         simpson = .calc_simpson_evenness,
         evar = .calc_evar_evenness,
         bulla = .calc_bulla_evenness,
+        phylo_pielou = .estimate_tree_diversity,
         #
         observed = .calc_observed,
         chao1 = .calc_chao1,

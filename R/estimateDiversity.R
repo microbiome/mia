@@ -78,22 +78,21 @@
     return(res)
 }
 
-.estimate_allen <- function(x, mat, ...){
-    temp <- .get_tree_and_linked_mat(x, mat, index_name = "Allen's", ...)
+.estimate_tree_diversity <- function(
+        x, mat, index = c("allen", "rao", "phylo_pielou"), ...){
+    index <- match.arg(index)
+    # The threshold applies to the evenness index
+    if( index == "phylo_pielou" ){
+        mat <- .apply_threshold(mat, ...)
+    }
+    index_name <- c(
+        allen = "Allen's", rao = "Rao's",
+        phylo_pielou = "Phylogenetic Pielou's")[[index]]
+    temp <- .get_tree_and_linked_mat(x, mat, index_name = index_name, ...)
     args <- list(...)
     args[["mat"]] <- temp[["mat"]]
     args[["tree"]] <- temp[["tree"]]
-    args[["index"]] <- "allen"
-    res <- do.call(.calc_tree_diversity, args)
-    return(res)
-}
-
-.estimate_rao <- function(x, mat, ...){
-    temp <- .get_tree_and_linked_mat(x, mat, index_name = "Rao's", ...)
-    args <- list(...)
-    args[["mat"]] <- temp[["mat"]]
-    args[["tree"]] <- temp[["tree"]]
-    args[["index"]] <- "rao"
+    args[["index"]] <- index
     res <- do.call(.calc_tree_diversity, args)
     return(res)
 }
@@ -179,7 +178,8 @@ NULL
     return(.faith_cpp(mat, tree))
 }
 
-.calc_tree_diversity <- function(mat, tree, index = c("allen", "rao"), ...){
+.calc_tree_diversity <- function(
+        mat, tree, index = c("allen", "rao", "phylo_pielou"), ...){
     index <- match.arg(index)
     n_tips <- tree[["tip.label"]] |> length()
     n_nodes <- tree[["Nnode"]]
@@ -210,6 +210,9 @@ NULL
 
     res <- n_samples |> numeric()
     names(res) <- colnames(mat)
+    # Phylogenetic Pielou: abundance-weighted branch length and branch length
+    # below the sample's most recent common ancestor
+    Tb <- PD <- res
 
     for( i in tree |> nrow() |> seq_len() ){
         child <- tree[i, "node"]
@@ -228,7 +231,19 @@ NULL
         } else if( index == "rao" ){
             # Rao: 2 * L_i * a_i * (1 - a_i)
             res[pos] <- res[pos] + 2 * L_i * a_i[pos] * (1 - a_i[pos])
+        } else if( index == "phylo_pielou" ){
+            # Branches carrying all of the abundance are above the sample's
+            # most recent common ancestor and are left out
+            b <- pos & a_i < 1 - sqrt(.Machine$double.eps)
+            res[b] <- res[b] - L_i * a_i[b] * log(a_i[b])
+            Tb[b] <- Tb[b] + L_i * a_i[b]
+            PD[b] <- PD[b] + L_i
         }
+    }
+    # Phylogenetic Pielou: (H / T) / log(PD / T), NA when T is 0
+    if( index == "phylo_pielou" ){
+        res <- (res / Tb) / log(PD / Tb)
+        res[!(Tb > 0) | !is.finite(res)] <- NA_real_
     }
 
     return(res)
@@ -308,7 +323,7 @@ NULL
 #' @importFrom SummarizedExperiment assay assays
 .get_diversity_values <- function(index, x, mat, ...){
     FUN <- switch(index,
-        allen = .estimate_allen,
+        allen = .estimate_tree_diversity,
         shannon = .calc_shannon,
         gini_simpson = .calc_gini_simpson,
         inverse_simpson = .calc_inverse_simpson,
@@ -316,9 +331,9 @@ NULL
         fisher = .calc_fisher,
         faith = .estimate_faith,
         log_modulo_skewness = .calc_log_modulo_skewness,
-        rao = .estimate_rao
+        rao = .estimate_tree_diversity
         )
-    res <- FUN(x = x, mat = mat, ...)
+    res <- FUN(x = x, mat = mat, index = index, ...)
     res <- unname(res)
     return(res)
 }

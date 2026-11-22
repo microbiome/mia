@@ -239,3 +239,4 @@ Changes in version 1.21.x
 + Vignette: overview of the functions grouped by use case, with examples (2026-11-21)
 + exportMothur: the OTU column of taxonomy.tsv is taken from the row names; with stringr < 1.6.0 the export failed (2026-11-22)
 + getAlpha/addAlpha: allen and rao placed the tip abundances by table row instead of node, which gave wrong values on most trees (2026-11-22)
++ addAlpha: phylo_pielou, a phylogenetic Pielou evenness from phylogenetic Hill numbers (#860) (2026-11-22)
