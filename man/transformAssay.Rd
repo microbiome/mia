@@ -83,13 +83,11 @@ transformation is applied sample (column) or feature (row) wise.
 be stored. An existing assay with the same name is overwritten with a
 warning. (Default: \code{method})}
 
-\item{pseudocount}{\code{Logical scalar} or \code{numeric scalar}.
-When \code{TRUE}, automatically adds half of the minimum positive
-value of \code{assay.type} (missing values ignored by default:
-\code{na.rm = TRUE}).
-When FALSE, does not add any pseudocount (pseudocount = 0).
-Alternatively, a user-specified numeric value can be added as pseudocount.
-(Default: \code{FALSE}).}
+\item{pseudocount}{\code{Numeric scalar}. A value added to the assay
+before the transformation. It cannot be added to an assay that contains
+only positive values. \code{FALSE} is the same as 0. \code{TRUE}, which
+adds half of the minimum positive value of \code{assay.type}, is
+deprecated; specify the value instead. (Default: \code{FALSE})}
 
 \item{verbose}{\code{Logical scalar}. Should messages and warnings be
 shown, e.g. the pseudocount that was applied? \code{FALSE} keeps them
@@ -212,10 +210,10 @@ tse <- transformAssay(tse, method = "relabundance")
 # The target of transformation can be specified with "assay.type"
 # Pseudocount can be added by specifying 'pseudocount'.
 
-# Perform CLR with half of the smallest positive value as pseudocount
+# Perform CLR with a pseudocount of 0.5, half of the smallest count
 tse <- transformAssay(
     tse, assay.type = "counts", method = "clr",
-    pseudocount = TRUE
+    pseudocount = 0.5
     )
 
 head(assay(tse, "clr"))

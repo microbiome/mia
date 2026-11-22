@@ -2,7 +2,7 @@ context("getAbundant")
 # Sample data setup
 data(GlobalPatterns, package = "mia")
 tse <- GlobalPatterns
-tse <- transformAssay(tse, method = "relabundance", pseudocount = TRUE)
+tse <- transformAssay(tse, method = "relabundance", pseudocount = 0.5)
 
 # Example tests
 test_that("getAbundant handles various inputs correctly", {
