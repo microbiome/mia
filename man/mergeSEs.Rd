@@ -37,8 +37,9 @@ object. Must be missing when \code{x} is a list.}
 
 \item{...}{optional arguments (not used).}
 
-\item{assay.type}{\code{Character scalar}. Specifies the name of assay
-used in calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character vector}. Specifies the names of the
+assays to merge. Assays not found in all the objects are dropped with a
+warning. (Default: \code{"counts"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
