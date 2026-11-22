@@ -238,3 +238,4 @@ Changes in version 1.21.x
 + getPERMANOVA/addPERMANOVA: method = "unifrac" uses the rowTree of a TreeSE; earlier it failed with "argument tree is missing"; unused factor levels are dropped from the covariates, as vegan::adonis2() can crash R with them, e.g. when samples are subsetted for pairwise tests, and a grouping variable with only one group gives an error instead of a warning (1.21.36, 2026-11-21)
 + Vignette: overview of the functions grouped by use case, with examples (2026-11-21)
 + exportMothur: the OTU column of taxonomy.tsv is taken from the row names; with stringr < 1.6.0 the export failed (2026-11-22)
++ getPERMANOVA: pairwise = TRUE runs pairwise PERMANOVA between the levels of the first variable, with p-values adjusted across pairs (2026-11-22)

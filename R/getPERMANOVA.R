@@ -39,11 +39,21 @@
 #' the results from the two methods can differ significantly due to dbRDA's
 #' reliance on linear assumptions.
 #'
+#' With \code{pairwise = TRUE}, PERMANOVA is run between each pair of groups of
+#' the first variable in \code{formula} (or the first \code{col.var}), with the
+#' other variables as covariates. Pairwise tests are post-hoc comparisons that
+#' follow a significant global test. Their p-values are adjusted across the
+#' pairs with \code{p.adj.method}.
+#'
 #' @return
 #' \code{getPERMANOVA} returns the PERMANOVA results or a list containing the
 #' PERMANOVA results and homogeneity test results if
-#' \code{test.homogeneity = TRUE}. \code{addPERMANOVA} adds these results to
-#' metadata of \code{x}.
+#' \code{test.homogeneity = TRUE}. With \code{pairwise = TRUE}, each result is
+#' a \code{data.frame} with one row per pair of groups: the groups
+#' (\code{group1}, \code{group2}), the number of samples (\code{n}), the
+#' statistics of the grouping variable and the adjusted p-value
+#' (\code{p.adj}). \code{addPERMANOVA} adds these results to metadata of
+#' \code{x}.
 #'
 #' @inheritParams runCCA
 #' @inheritParams addAlpha
@@ -56,6 +66,13 @@
 #'
 #' @param test.homogeneity \code{Logical scalar}. Should the homogeneity of
 #' group dispersions be evaluated? (Default: \code{TRUE})
+#'
+#' @param pairwise \code{Logical scalar}. Should PERMANOVA be run between each
+#' pair of groups of the first variable? (Default: \code{FALSE})
+#'
+#' @param p.adj.method \code{Character scalar}. Specifies adjustment method of
+#' p-values when \code{pairwise = TRUE}. Passed to \code{p.adjust} function.
+#' (Default: \code{"fdr"})
 #'
 #' @param ... additional arguments passed to \code{getDissimilarity} and
 #' \code{vegan::adonis2}.
@@ -116,6 +133,19 @@
 #'     formula = x ~ SampleType,
 #'     permutations = 99
 #' )
+#'
+#' # Compare each pair of geographical locations, with diet as a covariate.
+#' # The p-values are adjusted across the three pairs.
+#' data(peerj13075)
+#' tse <- transformAssay(peerj13075, method = "relabundance")
+#' res_pairwise <- getPERMANOVA(
+#'     tse,
+#'     assay.type = "relabundance",
+#'     formula = x ~ Geographical_location + Diet,
+#'     pairwise = TRUE,
+#'     permutations = 99
+#' )
+#' res_pairwise[["permanova"]]
 #'
 #' @seealso
 #' For more details on the actual implementation see
@@ -193,8 +223,10 @@ setMethod("getPERMANOVA", "SummarizedExperiment",
 
 #' @export
 #' @rdname getPERMANOVA
+#' @importFrom stats p.adjust.methods
 setMethod("getPERMANOVA", "ANY", function(
-        x, formula, data, method = "bray", test.homogeneity = TRUE, ...){
+        x, formula, data, method = "bray", test.homogeneity = TRUE,
+        pairwise = FALSE, p.adj.method = "fdr", ...){
     is_dist <- inherits(x, "dist")
     if( !(is.matrix(x) || is_dist) ){
         stop("'x' must be a matrix or a 'dist' object.", call. = FALSE)
@@ -215,6 +247,16 @@ setMethod("getPERMANOVA", "ANY", function(
     }
     if( !.is_a_bool(test.homogeneity) ){
         stop("'test.homogeneity' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(pairwise) ){
+        stop("'pairwise' must be TRUE or FALSE.", call. = FALSE)
+    }
+    p.adj.method <- match.arg(p.adj.method, p.adjust.methods)
+    # Run the analysis below for each pair of groups
+    if( pairwise ){
+        res <- .calculate_pairwise_permanova(
+            x, formula, data, method, test.homogeneity, p.adj.method, ...)
+        return(res)
     }
     # Calculate dissimilarities
     if( !is_dist ){
@@ -289,5 +331,74 @@ setMethod("addPERMANOVA", "SummarizedExperiment",
     # Calculate PERMANOVA
     res <- adonis2(
         formula = formula, data = data, by = by, na.action = na.action, ...)
+    return(res)
+}
+
+# This function runs getPERMANOVA() for each pair of groups in the first
+# variable of the formula and adjusts the p-values across the pairs.
+#' @importFrom stats as.dist
+#' @importFrom utils combn
+.calculate_pairwise_permanova <- function(
+        x, formula, data, method, test.homogeneity, p.adj.method, ...){
+    data <- data.frame(data, check.names = FALSE)
+    var <- all.vars(formula[[3]])[1L]
+    group <- data[[var]]
+    if( !(is.factor(group) || is.character(group) || is.logical(group)) ||
+            nlevels(factor(group)) < 2L ){
+        stop("With 'pairwise = TRUE', the first variable on the right-hand ",
+            "side of 'formula' must be categorical with at least two groups.",
+            call. = FALSE)
+    }
+    group <- factor(group)
+    # The grouping variable comes first so that its homogeneity result is the
+    # first row
+    data <- data[, c(var, setdiff(colnames(data), var)), drop = FALSE]
+    pairs <- combn(levels(group), 2L, simplify = FALSE)
+    res <- lapply(pairs, function(pair){
+        # Samples with a missing group are kept so that 'na.action' handles
+        # them as in the global test
+        keep <- is.na(group) | group %in% pair
+        x_sub <- if( is.matrix(x) ) x[, keep, drop = FALSE] else
+            as.dist(as.matrix(x)[keep, keep])
+        getPERMANOVA(
+            x_sub, formula = formula, data = data[keep, , drop = FALSE],
+            method = method, test.homogeneity = test.homogeneity, ...)
+    })
+    info <- data.frame(
+        group1 = vapply(pairs, "[", character(1L), 1L),
+        group2 = vapply(pairs, "[", character(1L), 2L),
+        n = vapply(pairs, function(pair) sum(group %in% pair), integer(1L)))
+    if( !test.homogeneity ){
+        res <- .combine_pairwise_tables(res, info, p.adj.method, var)
+        return(res)
+    }
+    homogeneity <- lapply(res, function(r) r[["homogeneity"]])
+    if( isTRUE(list(...)[["full"]]) ){
+        homogeneity <- lapply(homogeneity, function(h) h[["summary"]])
+    }
+    res <- list(
+        permanova = .combine_pairwise_tables(
+            lapply(res, function(r) r[["permanova"]]), info, p.adj.method, var),
+        homogeneity = .combine_pairwise_tables(
+            homogeneity, info, p.adj.method))
+    return(res)
+}
+
+# This function takes the row of the grouping variable from each pair's result
+# table (the first row for homogeneity results) and adds the pair information
+# and adjusted p-values.
+#' @importFrom stats p.adjust
+.combine_pairwise_tables <- function(tabs, info, p.adj.method, row = 1L){
+    if( is.character(row) &&
+            !all(vapply(tabs, function(t) row %in% rownames(t), logical(1L))) ){
+        stop("With 'pairwise = TRUE', the PERMANOVA table must have a row ",
+            "for '", row, "'. Use by = \"terms\" or by = \"margin\" ",
+            "without interactions of the grouping variable.", call. = FALSE)
+    }
+    tab <- do.call(rbind, lapply(tabs, function(t) as.data.frame(t)[row, ]))
+    rownames(tab) <- NULL
+    # The p-value column is "p adj" for TukeyHSD and "Pr(>F)" otherwise
+    p <- tab[[intersect(c("Pr(>F)", "p adj"), colnames(tab))]]
+    res <- cbind(info, tab, p.adj = p.adjust(p, method = p.adj.method))
     return(res)
 }
