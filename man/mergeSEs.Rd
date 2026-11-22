@@ -33,8 +33,9 @@ object. Must be missing when \code{x} is a list.}
 
 \item{...}{optional arguments (not used).}
 
-\item{assay.type}{\code{Character scalar}. Specifies the name of assay
-used in calculation. (Default: \code{"counts"})}
+\item{assay.type}{\code{Character vector}. Specifies the names of the
+assays to merge. Assays not found in all the objects are dropped with a
+warning. (Default: \code{"counts"})}
 
 \item{join}{\code{Character scalar}. A value for selecting the joining
 method. Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are

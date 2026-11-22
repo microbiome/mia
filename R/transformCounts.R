@@ -13,13 +13,11 @@
 #'   transformation is applied sample (column) or feature (row) wise.
 #'   (Default: \code{"samples"})
 #'
-#' @param pseudocount \code{Logical scalar} or \code{numeric scalar}.
-#'   When \code{TRUE}, automatically adds half of the minimum positive
-#'   value of \code{assay.type} (missing values ignored by default:
-#'   \code{na.rm = TRUE}).
-#'   When FALSE, does not add any pseudocount (pseudocount = 0).
-#'   Alternatively, a user-specified numeric value can be added as pseudocount.
-#'   (Default: \code{FALSE}).
+#' @param pseudocount \code{Numeric scalar}. A value added to the assay
+#'   before the transformation. It cannot be added to an assay that contains
+#'   only positive values. \code{FALSE} is the same as 0. \code{TRUE}, which
+#'   adds half of the minimum positive value of \code{assay.type}, is
+#'   deprecated; specify the value instead. (Default: \code{FALSE})
 #'
 #' @param name \code{Character scalar}. The name for the transformed assay to
 #' be stored. An existing assay with the same name is overwritten with a
@@ -201,10 +199,10 @@
 #' # The target of transformation can be specified with "assay.type"
 #' # Pseudocount can be added by specifying 'pseudocount'.
 #'
-#' # Perform CLR with half of the smallest positive value as pseudocount
+#' # Perform CLR with a pseudocount of 0.5, half of the smallest count
 #' tse <- transformAssay(
 #'     tse, assay.type = "counts", method = "clr",
-#'     pseudocount = TRUE
+#'     pseudocount = 0.5
 #'     )
 #'
 #' head(assay(tse, "clr"))
@@ -534,8 +532,10 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
             "`pseudocount` must be specified manually.", call. = FALSE)
     } else if ( any(mat == 0, na.rm = TRUE) ){
         stop("The assay contains zeroes and ", method,
-            " transformation is being applied without pseudocount.",
-            "`pseudocount` must be set to TRUE.", call. = FALSE)
+            " transformation is being applied without pseudocount. ",
+            "Specify 'pseudocount', e.g. pseudocount = ",
+            min(mat[mat > 0], na.rm = TRUE) / 2,
+            " (half of the smallest positive value).", call. = FALSE)
     }
     # Calculate log, log2, or log10 abundances
     if( method == "log2" ){
@@ -747,43 +747,34 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 ###############################.apply_pseudocount###############################
 # This function applies pseudocount to abundance table.
 .apply_pseudocount <- function(mat, pseudocount, na.rm = TRUE, ...){
-    if( .is_a_bool(pseudocount) ){
+    if( isTRUE(pseudocount) ){
         # If pseudocount TRUE and some NAs, a warning is issued
-        if ( pseudocount && any(is.na(mat)) ){
+        if ( any(is.na(mat)) ){
             warning("The assay contains missing values (NAs). These will be ",
                 "ignored in pseudocount calculation.", call. = FALSE)
         }
         # If pseudocount TRUE but some negative values, numerical pseudocount
         # needed
-        if ( pseudocount && any(mat < 0, na.rm = TRUE) ){
+        if ( any(mat < 0, na.rm = TRUE) ){
             stop("The assay contains negative values. ",
                 "'pseudocount' must be specified manually.", call. = FALSE)
         }
-        # If there are only positive, non-zero values, we do not add pseudocount
-        if( pseudocount && all(mat > 0, na.rm = TRUE) ){
-            pseudocount <- 0
-            message("The assay contains already only strictly positive ",
-                "values. It is not recommended to add pseudocount ",
-                "in such case. To force adding pseudocount you can ",
-                "provide a numeric value for the pseudocount argument.")
-        }
-        # If pseudocount TRUE, set it to half of non-zero minimum value
-        # else set it to zero.
-        # Get min value
-        value <- min(mat[mat > 0], na.rm = na.rm)
-        value <- value/2
-        pseudocount <- ifelse(pseudocount, value, 0)
-        # Report pseudocount if positive value
-        if ( pseudocount > 0 ){
-            message("A pseudocount of ", pseudocount, " was applied.")
-        }
+        # Half of the minimum positive value; none for strictly positive data
+        pseudocount <- if( all(mat > 0, na.rm = TRUE) ) 0 else
+            min(mat[mat > 0], na.rm = na.rm) / 2
+        warning("An automatic pseudocount (pseudocount = TRUE, or method = ",
+            "\"pseudocount\" without a value) is deprecated; specify the ",
+            "value. The pseudocount used was ", pseudocount, ", half of the ",
+            "smallest positive value (0 when all values are positive).",
+            call. = FALSE)
     }
-    # Give warning if pseudocount should not be added
-    # Case 1: only positive values
+    # FALSE is the same as 0
+    pseudocount <- as.numeric(pseudocount)
+    # A pseudocount is not added to strictly positive data
     if( pseudocount != 0 && all(mat > 0, na.rm = TRUE) ){
-        warning(
-            "The assay contains only positive values. ",
-            "Applying a pseudocount may be unnecessary.", call. = FALSE)
+        stop("The assay contains only positive values, so a pseudocount is ",
+            "not needed. To shift the values anyway, add the value to the ",
+            "assay before the transformation.", call. = FALSE)
     }
     # Case 2: some negative values
     if( pseudocount != 0 && any(mat < 0, na.rm = TRUE) ){

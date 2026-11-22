@@ -7,6 +7,10 @@
 #' when \code{x} is a \code{\link[SummarizedExperiment]{SummarizedExperiment}}
 #' object. Must be missing when \code{x} is a list.
 #'
+#' @param assay.type \code{Character vector}. Specifies the names of the
+#' assays to merge. Assays not found in all the objects are dropped with a
+#' warning. (Default: \code{"counts"})
+#'
 #' @param join \code{Character scalar}. A value for selecting the joining
 #' method. Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are
 #' disabled when more than two objects are being merged.

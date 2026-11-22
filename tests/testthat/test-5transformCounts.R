@@ -118,11 +118,14 @@ test_that("transformAssay equals vegan::decostand", {
 
 test_that("transformAssay pseudocount", {
     min_half <- min(.mat[.mat > 0]) / 2
-    # TRUE adds half of the minimum positive value
-    res <- transformAssay(.se, method = "pseudocount")
+    # TRUE adds half of the minimum positive value, with a deprecation
+    # warning that gives the value
+    expect_warning(res <- transformAssay(.se, method = "pseudocount"),
+        paste0("deprecated.*", min_half))
     expect_equal(assay(res, "pseudocount"), .mat + min_half,
         check.attributes = FALSE)
-    res <- transformAssay(.se, method = "relabundance", pseudocount = TRUE)
+    expect_warning(res <- transformAssay(
+        .se, method = "relabundance", pseudocount = TRUE), "deprecated")
     expect_equal(
         attr(assay(res, "relabundance"), "parameters")[["pseudocount"]],
         min_half)
@@ -146,20 +149,27 @@ test_that("transformAssay pseudocount", {
     # NAs are ignored when calculating the pseudocount
     assay(se, "na") <- .mat
     assay(se, "na")[1, 2] <- NA
-    expect_warning(res <- transformAssay(
+    w <- capture_warnings(res <- transformAssay(
         se, assay.type = "na", method = "pseudocount"))
+    expect_match(w, "missing values", all = FALSE)
+    expect_match(w, "deprecated", all = FALSE)
     expect_equal(
         attr(assay(res, "pseudocount"), "parameters")[["pseudocount"]],
         min_half)
     # Only positive values: no pseudocount added with TRUE
     assay(se, "pos") <- .mat + 1
-    expect_message(res <- transformAssay(
-        se, assay.type = "pos", method = "relabundance", pseudocount = TRUE))
+    expect_warning(res <- transformAssay(
+        se, assay.type = "pos", method = "relabundance", pseudocount = TRUE),
+        "deprecated")
     expect_equal(
         attr(assay(res, "relabundance"), "parameters")[["pseudocount"]], 0)
-    # ... but warning if added with numeric value
-    expect_warning(transformAssay(
-        se, assay.type = "pos", method = "relabundance", pseudocount = 1))
+    # ... and an error with a numeric value
+    expect_error(transformAssay(
+        se, assay.type = "pos", method = "relabundance", pseudocount = 1),
+        "only positive values")
+    # The error for zeroes suggests a pseudocount
+    expect_error(transformAssay(.se, method = "log10"),
+        paste0("pseudocount = ", min_half))
     # Warning if numeric pseudocount is added to negative values
     expect_warning(
         res <- transformAssay(
@@ -518,26 +528,17 @@ test_that("Multiplicative replacement of zeros", {
 test_that("transformAssay verbose = FALSE silences messages and warnings", {
     data(GlobalPatterns, package = "mia")
     tse <- GlobalPatterns[1:50, 1:5]
-    # Messages by default
-    expect_message(
-        transformAssay(tse, method = "clr", pseudocount = TRUE),
-        "A pseudocount of")
-    expect_no_message(
-        transformAssay(tse, method = "clr", pseudocount = TRUE,
-            verbose = FALSE))
     # Warnings
-    assay(tse, "counts2") <- assay(tse, "counts") + 1
     expect_warning(
-        transformAssay(tse, assay.type = "counts2", method = "log2",
-            pseudocount = 1),
-        "only positive values")
+        transformAssay(tse, method = "clr", pseudocount = TRUE),
+        "deprecated")
     expect_no_warning(
-        res <- transformAssay(tse, assay.type = "counts2", method = "log2",
-            pseudocount = 1, verbose = FALSE))
+        res <- transformAssay(tse, method = "clr", pseudocount = TRUE,
+            verbose = FALSE))
     # The result is the same
-    expect_equal(assay(res, "log2"),
-        suppressWarnings(assay(transformAssay(tse, assay.type = "counts2",
-            method = "log2", pseudocount = 1), "log2")))
+    expect_equal(assay(res, "clr"),
+        suppressWarnings(assay(transformAssay(tse, method = "clr",
+            pseudocount = TRUE), "clr")))
     # Also for altExps
     altExp(tse, "alt") <- tse
     expect_no_message(
