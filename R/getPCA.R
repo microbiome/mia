@@ -44,7 +44,7 @@
 #' tse <- GlobalPatterns
 #'
 #' # Calculate PCA from CLR-transformed abundances
-#' tse <- transformAssay(tse, method = "clr", pseudocount = TRUE)
+#' tse <- transformAssay(tse, method = "clr", pseudocount = 0.5)
 #' tse <- addPCA(tse, assay.type = "clr")
 #'
 #' # Use only the 500 most variable features

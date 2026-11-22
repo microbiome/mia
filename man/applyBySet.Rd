@@ -104,7 +104,7 @@ tse <- applyBySet(
     .group = "Order",
     FUN = transformAssay,
     method = "clr",
-    pseudocount = TRUE
+    pseudocount = 0.5
 )
 
 # View altExp names for newly transformed assays
