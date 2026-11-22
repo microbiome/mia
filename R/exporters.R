@@ -81,13 +81,13 @@
 #' names(rowData(tse))[1] <- "Genus"
 #'
 #' # Export raw TreeSE components in custom directory
-#' exportRaw(tse, "out")
+#' exportRaw(tse, file.path(tempdir(), "out"))
 #'
 #' # Export TreeSE components in near-ready QIIME2 format
-#' exportQIIME2(tse, "qiime2_dir")
+#' exportQIIME2(tse, file.path(tempdir(), "qiime2_dir"))
 #'
 #' # Export TreeSE components in near-ready mothur format
-#' exportMothur(tse, "mothur_dir")
+#' exportMothur(tse, file.path(tempdir(), "mothur_dir"))
 NULL
 
 #' @rdname export-methods
@@ -236,7 +236,7 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
     row_sums <- rowSums(sel_assay)
     # Add row sums to row data
     row_data <- data.frame(
-        names(row_data), row_sums, row_data, row.names = NULL
+        rownames(x), row_sums, row_data, row.names = NULL
     )
     # Name variables of row data according to Mothur format
     colnames(row_data) <- c("OTU", "Size", "Taxonomy")

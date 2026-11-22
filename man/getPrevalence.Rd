@@ -195,7 +195,7 @@ To subset the data to prevalent or rare features, add the prevalence to
 \code{rowData} with \code{addPrevalence} and subset the data with
 \code{\link[=subsetBy]{subsetBy}}. For example,
 \code{subsetBy(addPrevalence(x), rows = prevalence > 0.5)} keeps the
-features that are present in more than 50\\% of the samples, and
+features that are present in more than 50\% of the samples, and
 \code{rows = prevalence <= 0.5} keeps the rest. With
 \code{collapse = TRUE}, the removed features are merged into one feature.
 Note that the stored prevalence is not updated when the data is subsetted
