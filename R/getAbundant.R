@@ -80,7 +80,7 @@
 #' # Transform to relative abundances. Note that we add pseudocount. This is
 #' # because otherwise we cannot calculate CRT and PRT due to zeroes and
 #' # zero division in calculating abundance ratio.
-#' tse <- transformAssay(tse, method = "relabundance", pseudocount = TRUE)
+#' tse <- transformAssay(tse, method = "relabundance", pseudocount = 0.5)
 #'
 #' # Get abundant taxa
 #' abundant <- getAbundant(tse, assay.type = "relabundance")

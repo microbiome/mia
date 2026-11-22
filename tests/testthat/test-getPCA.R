@@ -6,7 +6,7 @@ test_that("getPCA and addPCA", {
         expect_equal(unname(abs(diag(cor(res, ref)))), rep(1, ncol(ref)))
         expect_equal(attr(res, "percentVar"), attr(ref, "percentVar"))
     }
-    tse <- transformAssay(GlobalPatterns, method = "clr", pseudocount = TRUE)
+    tse <- transformAssay(GlobalPatterns, method = "clr", pseudocount = 0.5)
     # All features are used by default
     res <- getPCA(tse, assay.type = "clr", ncomponents = 5)
     ref <- scater::calculatePCA(
