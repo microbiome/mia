@@ -204,7 +204,9 @@ NULL
     node_abund <- matrix(0, nrow = n_tips + n_nodes, ncol = n_samples)
     m <- match(tree[["label"]], rownames(rel))
     valid_tips <- !is.na(m)
-    node_abund[which(valid_tips), ] <- rel[m[valid_tips], , drop = FALSE]
+    # Rows of node_abund are node ids
+    node_abund[tree[["node"]][valid_tips], ] <-
+        rel[m[valid_tips], , drop = FALSE]
 
     res <- n_samples |> numeric()
     names(res) <- colnames(mat)
