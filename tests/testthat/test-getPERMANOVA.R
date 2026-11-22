@@ -350,3 +350,22 @@ test_that("pairwise PERMANOVA works with dis.name and addPERMANOVA", {
         name = "pairwise")
     expect_equal(metadata(tse)[["pairwise"]], ref)
 })
+
+test_that("pairwise PERMANOVA on UniFrac equals tests on subsets (#851)", {
+    tse <- tse[, tse$SampleType %in% c("Feces", "Skin", "Soil")]
+    res <- getPERMANOVA(tse, assay.type = "counts", method = "unifrac",
+        formula = x ~ SampleType, pairwise = TRUE, test.homogeneity = FALSE,
+        permutations = 99)
+    # UniFrac calculated once, then each pair tested on its samples
+    dis <- as.matrix(getDissimilarity(
+        tse, assay.type = "counts", method = "unifrac"))
+    ref <- vapply(seq_len(nrow(res)), function(i){
+        keep <- tse$SampleType %in% unlist(res[i, c("group1", "group2")])
+        r <- getPERMANOVA(as.dist(dis[keep, keep]), formula = x ~ SampleType,
+            data = colData(tse)[keep, ], test.homogeneity = FALSE,
+            permutations = 99)
+        unlist(r["SampleType", c("R2", "F")])
+    }, numeric(2L))
+    expect_equal(res$R2, ref["R2", ])
+    expect_equal(res$F, ref["F", ])
+})

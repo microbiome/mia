@@ -252,15 +252,16 @@ setMethod("getPERMANOVA", "ANY", function(
         stop("'pairwise' must be TRUE or FALSE.", call. = FALSE)
     }
     p.adj.method <- match.arg(p.adj.method, p.adjust.methods)
-    # Run the analysis below for each pair of groups
+    # Calculate dissimilarities
+    if( !is_dist ){
+        x <- getDissimilarity(x |> t(), method = method, ...)
+    }
+    # Run the analysis below for each pair of groups, using the dissimilarities
+    # of the global test
     if( pairwise ){
         res <- .calculate_pairwise_permanova(
             x, formula, data, method, test.homogeneity, p.adj.method, ...)
         return(res)
-    }
-    # Calculate dissimilarities
-    if( !is_dist ){
-        x <- getDissimilarity(x |> t(), method = method, ...)
     }
     # Calculate PERMANOVA
     res <- .calculate_permanova(x, formula = formula, data = data, ...)
@@ -340,6 +341,7 @@ setMethod("addPERMANOVA", "SummarizedExperiment",
 #' @importFrom utils combn
 .calculate_pairwise_permanova <- function(
         x, formula, data, method, test.homogeneity, p.adj.method, ...){
+    x <- as.matrix(x)
     data <- data.frame(data, check.names = FALSE)
     var <- all.vars(formula[[3]])[1L]
     group <- data[[var]]
@@ -358,10 +360,9 @@ setMethod("addPERMANOVA", "SummarizedExperiment",
         # Samples with a missing group are kept so that 'na.action' handles
         # them as in the global test
         keep <- is.na(group) | group %in% pair
-        x_sub <- if( is.matrix(x) ) x[, keep, drop = FALSE] else
-            as.dist(as.matrix(x)[keep, keep])
         getPERMANOVA(
-            x_sub, formula = formula, data = data[keep, , drop = FALSE],
+            as.dist(x[keep, keep]), formula = formula,
+            data = data[keep, , drop = FALSE],
             method = method, test.homogeneity = test.homogeneity, ...)
     })
     info <- data.frame(
