@@ -57,6 +57,14 @@ If \code{NULL}, the tree is retrieved from \code{x}.
 \item \code{node.labels}: \code{Character vector}. Linkages between
 \code{tree} and \code{x}. Used in PhILR transformation.
 (Default: \code{NULL}).
+\item \code{detection}: \code{NULL} or \code{Numeric vector}. For
+\code{"multiplicative_replacement"}, the detection limit of each sample
+as a proportion. If \code{NULL}, one read (the inverse of the sample
+total) for counts, and otherwise half the smallest positive proportion
+of the sample. (Default: \code{NULL})
+\item \code{fraction}: \code{Numeric scalar}. For
+\code{"multiplicative_replacement"}, the fraction of the detection limit
+that replaces zeros. (Default: \code{0.65})
 }}
 
 \item{method}{\code{Character scalar}. Specifies the transformation
@@ -171,6 +179,15 @@ Controlled by \code{offset} (default \code{0.5}; also
 
 \item 'pseudocount': Adds only pseudocount.
 
+\item 'multiplicative_replacement': Multiplicative replacement of zeros
+(Martín-Fernández et al. 2003). In each sample, every zero is replaced by
+\eqn{\delta}, \code{fraction} times the detection limit, and the non-zero
+proportions are multiplied by \eqn{1 - z \delta}, where \eqn{z} is the
+number of zeros, so that the sample still sums to one. Unlike a
+pseudocount, this keeps the ratios between non-zero parts, which
+log-ratio transformations such as 'clr' are built on. The result holds
+proportions; apply 'clr' to it.
+
 \item 'cutoff': In some ecological studies, only strictly positive values
 are taken into account. This method keeps only values greater than
 \code{threshold} and replaces all other values with \code{value}.
@@ -251,6 +268,8 @@ altExp(tse, "philr")
 }
 \references{
 \insertRef{Paulson2013}{mia}
+
+\insertRef{MartinFernandez2003}{mia}
 
 \insertRef{Medearis2026}{mia}
 }
