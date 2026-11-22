@@ -312,7 +312,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 # with specified method. By calling this generic function, we can apply same
 # methods for SE and altExps of TreeSE.
 .transform_assay <- function(
-        x, assay.type = "counts", assay_name = NULL,
+        x, assay.type = "counts",
         method = c(
             "alr", "binning", "chi.square", "clr", "css", "cutoff",
             "difference", "-",
@@ -326,11 +326,6 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         pseudocount = FALSE,
         ...){
     # Input check
-    if(!is.null(assay_name)){
-        .Deprecated(old="assay_name", new="assay.type", "Now assay_name is
-                deprecated. Use assay.type instead.")
-        assay.type <- assay_name
-    }
     # Check assay.type
     .check_assay_present(assay.type, x)
     # Check name
