@@ -280,4 +280,17 @@ test_that("Estimate Phylogenetic Alpha Diversity Indices (allen, rao)", {
         index = c("faith", "allen", "rao"), tree = rowTree(esophagus))
     expect_true(all(
         c("faith", "allen", "rao") %in% colnames(colData(tse_exp_tree))))
+
+    # Values on a non-star tree: Allen = -sum(L * a * log(a)) over branches,
+    # Rao = p' D p with cophenetic distances D
+    tree <- ape::read.tree(text = "((A:1,B:2):1,C:0.5);")
+    mat <- matrix(c(6, 3, 1), ncol = 1, dimnames = list(c("A", "B", "C"), "s"))
+    tse <- TreeSummarizedExperiment(
+        assays = list(counts = mat), rowTree = tree)
+    res <- getAlpha(tse, index = c("allen", "rao"))
+    a <- c(0.6, 0.3, 0.1, 0.9)
+    expect_equal(res[["allen"]], -sum(c(1, 2, 0.5, 1) * a * log(a)))
+    p <- mat[, 1] / sum(mat)
+    D <- ape::cophenetic.phylo(tree)[names(p), names(p)]
+    expect_equal(res[["rao"]], drop(p %*% D %*% p))
 })
