@@ -22,25 +22,25 @@
 #' (Default: \code{"bray"})
 #'
 #' @param ... Additional arguments. The following optional arguments are
-#'   supported:
-#'   \itemize{
-#'     \item \code{reference}: \code{NULL} or \code{Character scalar}. Specifies
-#'     the group in \code{col.var} that is used as controls. If \code{NULL}, the
-#'     first level of \code{factor(x[[col.var]])} is used. (Default:
-#'     \code{NULL})
-#'
-#'     \item \code{group}: \code{NULL} or \code{Character scalar}. Specifies a
-#'     variable from \code{colData(x)} (e.g., subject ID). Control samples that
-#'     share the same value with the current sample are excluded from its
-#'     comparison. (Default: \code{NULL})
-#'
-#'     \item \code{altexp}: \code{NULL} or \code{Character scalar}. If provided,
-#'     use this \code{altExp} assay container of \code{x} for the computation.
-#'     (Default: \code{NULL})
-#'
-#'     \item Further arguments are passed to
-#'     \code{\link[=getDissimilarity]{getDissimilarity}}.
-#'   }
+#' supported:
+#' \itemize{
+#'   \item \code{reference}: \code{NULL} or \code{Character scalar}. Specifies
+#'   the group in \code{col.var} that is used as controls. If \code{NULL}, the
+#'   first level of \code{factor(x[[col.var]])} is used. (Default:
+#'   \code{NULL})
+#'   \item \code{group}: \code{NULL} or \code{Character scalar}. Specifies a
+#'   variable from \code{colData(x)} (e.g., subject ID). Control samples that
+#'   share the same value with the current sample are excluded from its
+#'   comparison. (Default: \code{NULL})
+#'   \item \code{k}: \code{Integer scalar}. Number of nearest control
+#'   samples used by \code{cloud}. (Default: 5% of the control samples, at
+#'   least 1)
+#'   \item \code{altexp}: \code{NULL} or \code{Character scalar}. If provided,
+#'   use this \code{altExp} assay container of \code{x} for the computation.
+#'   (Default: \code{NULL})
+#'   \item Further arguments are passed to
+#'   \code{\link[=getDissimilarity]{getDissimilarity}}.
+#' }
 #'
 #' @details
 #' The following scores are available:
@@ -49,7 +49,34 @@
 #'   the control samples. The sample itself is excluded from the controls. With
 #'   Bray-Curtis dissimilarity, this is the dysbiosis score of Lloyd-Price et
 #'   al. (2019).
+#'
+#'   \item \code{centroid_distance}: Distance from the sample to the centroid
+#'   of the control samples minus its distance to the centroid of the other
+#'   samples (AlShawaqfeh et al. 2017). Positive values mean that the sample is
+#'   closer to the other samples than to the controls. Centroids are computed
+#'   from the dissimilarities, and each sample is included in the centroid of
+#'   its own group.
+#'
+#'   \item \code{shannon_jsd}: Mean difference in Shannon diversity between
+#'   the sample and the control samples, multiplied by its mean Jensen-Shannon
+#'   divergence to them (Santiago et al. 2019). The sample itself is excluded
+#'   from the controls. \code{method} is not used.
+#'
+#'   \item \code{reference_plane}: Euclidean distance, in the first three
+#'   principal coordinates of the dissimilarities, from the sample to a plane
+#'   fitted to the control samples and restricted to their range (Halfvarson
+#'   et al. 2017).
+#'
+#'   \item \code{cloud}: CLOUD statistic (Montassier et al. 2018): the mean
+#'   dissimilarity from the sample to its \code{k} nearest control samples,
+#'   divided by the same quantity averaged over the control samples (each
+#'   compared with the other controls). Values above 1 mean that the sample is
+#'   further from the controls than controls are from each other.
 #' }
+#'
+#' The \code{centroid_distance}, \code{shannon_jsd} and
+#' \code{reference_plane} scores are adapted from the dysbiosisR package
+#' (Shetty and de Steenhuijsen Piters).
 #'
 #' @return
 #' \code{getDysbiosis} returns a \code{DataFrame} with one row per sample.
@@ -57,7 +84,15 @@
 #' \code{colData(x)}.
 #'
 #' @references
+#' \insertRef{AlShawaqfeh2017}{mia}
+#'
+#' \insertRef{Halfvarson2017}{mia}
+#'
 #' \insertRef{Lloyd-Price2019}{mia}
+#'
+#' \insertRef{Montassier2018}{mia}
+#'
+#' \insertRef{Santiago2019}{mia}
 #'
 #' @seealso
 #' \code{\link[=getDissimilarity]{getDissimilarity}},
@@ -71,6 +106,12 @@
 #'
 #' tse <- addDysbiosis(tse, col.var = "patient_status", reference = "Control")
 #' colData(tse)[, c("patient_status", "median_distance")]
+#'
+#' # Other scores
+#' res <- getDysbiosis(
+#'     tse, col.var = "patient_status", reference = "Control",
+#'     index = c("centroid_distance", "reference_plane", "cloud"))
+#' head(res)
 #'
 NULL
 
@@ -100,7 +141,9 @@ setMethod("getDysbiosis", signature = c(x = "SummarizedExperiment"),
         # Support altExp hiddenly
         x <- .check_and_get_altExp(x, ...)
         .check_assay_present(assay.type, x)
-        supported <- c("median_distance")
+        supported <- c(
+            "median_distance", "centroid_distance", "shannon_jsd",
+            "reference_plane", "cloud")
         if( !(.is_non_empty_character(index) && all(index %in% supported)) ){
             stop("'index' must be one of the following: '",
                 paste0(supported, collapse = "', '"), "'", call. = FALSE)
@@ -124,7 +167,11 @@ setMethod("getDysbiosis", signature = c(x = "SummarizedExperiment"),
         res <- lapply(index, function(i){
             FUN <- switch(
                 i,
-                median_distance = .calc_median_distance_to_controls
+                median_distance = .calc_median_distance_to_controls,
+                centroid_distance = .calc_centroid_distance,
+                shannon_jsd = .calc_shannon_jsd,
+                reference_plane = .calc_reference_plane_distance,
+                cloud = .calc_cloud
             )
             FUN(
                 mat = mat,
@@ -215,4 +262,86 @@ setMethod("getDysbiosis", signature = c(x = "SummarizedExperiment"),
     res <- res |> unname()
 
     return(res)
+}
+
+# Distance to the control centroid minus distance to the centroid of the other
+# samples. The distance from sample i to the centroid of group G is
+# sqrt(mean_j d_ij^2 - sum_jk d_jk^2 / (2 |G|^2)), for j, k in G.
+.calc_centroid_distance <- function(
+        mat, groups, method, sample_groups = NULL, altexp = NULL, ...){
+    diss <- getDissimilarity(mat |> t(), method = method, ...) |> as.matrix()
+    d2 <- diss^2
+    is_control <- as.integer(groups) == 1L
+    to_centroid <- function(in_group){
+        within <- sum(d2[in_group, in_group]) / (2 * sum(in_group)^2)
+        sqrt(pmax(rowMeans(d2[, in_group, drop = FALSE]) - within, 0))
+    }
+    res <- to_centroid(is_control) - to_centroid(!is_control)
+    return(unname(res))
+}
+
+# Mean difference in Shannon diversity to the controls times the mean
+# Jensen-Shannon divergence to them; the sample itself is excluded.
+.calc_shannon_jsd <- function(
+        mat, groups, sample_groups = NULL, method = NULL, altexp = NULL, ...){
+    rel <- t(t(mat) / colSums(mat))
+    shannon <- apply(rel, 2, function(p){
+        p <- p[p > 0]
+        -sum(p * log(p))
+    })
+    jsd <- getDissimilarity(mat |> t(), method = "jsd") |> as.matrix()
+    is_control <- as.integer(groups) == 1L
+    res <- vapply(seq_len(ncol(mat)), function(i){
+        ref <- is_control
+        ref[i] <- FALSE
+        mean(shannon[i] - shannon[ref]) * mean(jsd[i, ref])
+    }, numeric(1))
+    return(res)
+}
+
+# Distance from each sample to a plane fitted to the controls in the first
+# three principal coordinates. The plane is restricted to the range of the
+# controls: the projection of the sample on the plane is clipped to that range
+# and moved back onto the plane before the distance is measured.
+#' @importFrom stats cmdscale lm coef
+.calc_reference_plane_distance <- function(
+        mat, groups, method, sample_groups = NULL, altexp = NULL, ...){
+    diss <- getDissimilarity(mat |> t(), method = method, ...)
+    pc <- cmdscale(diss, k = 3L)
+    is_control <- as.integer(groups) == 1L
+    ref <- pc[is_control, , drop = FALSE]
+    fit <- coef(lm(ref[, 3L] ~ ref[, 1L] + ref[, 2L]))
+    # Plane a*x + b*y - z + d = 0
+    normal <- c(fit[[2L]], fit[[3L]], -1)
+    d <- fit[[1L]]
+    ranges <- apply(ref, 2L, range)
+    res <- apply(pc, 1L, function(point){
+        proj <- point - (sum(normal * point) + d) / sum(normal^2) * normal
+        proj <- pmin(pmax(proj, ranges[1L, ]), ranges[2L, ])
+        proj[3L] <- d + normal[1L] * proj[1L] + normal[2L] * proj[2L]
+        sqrt(sum((point - proj)^2))
+    })
+    return(unname(res))
+}
+
+# CLOUD statistic: mean distance to the k nearest controls, divided by the
+# average of the same quantity over the controls. The sample itself is never
+# its own neighbour.
+.calc_cloud <- function(
+        mat, groups, method, k = NULL, sample_groups = NULL, altexp = NULL,
+        ...){
+    diss <- getDissimilarity(mat |> t(), method = method, ...) |> as.matrix()
+    diag(diss) <- NA_real_
+    is_control <- as.integer(groups) == 1L
+    if( is.null(k) ){
+        k <- max(1L, round(0.05 * sum(is_control)))
+    }
+    if( !(.is_an_integer(k) && k >= 1L && k < sum(is_control)) ){
+        stop("'k' must be a positive integer smaller than the number of ",
+            "control samples.", call. = FALSE)
+    }
+    to_controls <- diss[, is_control, drop = FALSE]
+    nearest <- apply(to_controls, 1L, function(d) mean(sort(d)[seq_len(k)]))
+    res <- nearest / mean(nearest[is_control])
+    return(unname(res))
 }
