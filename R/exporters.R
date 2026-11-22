@@ -236,7 +236,7 @@ setMethod("exportMothur", signature = c(x = "TreeSummarizedExperiment"),
     row_sums <- rowSums(sel_assay)
     # Add row sums to row data
     row_data <- data.frame(
-        names(row_data), row_sums, row_data, row.names = NULL
+        rownames(x), row_sums, row_data, row.names = NULL
     )
     # Name variables of row data according to Mothur format
     colnames(row_data) <- c("OTU", "Size", "Taxonomy")
