@@ -87,18 +87,19 @@ the communities of control samples.</p>
 supported:</p><ul><li><p><code>reference</code>: <code>NULL</code> or <code>Character scalar</code>. Specifies
 the group in <code>col.var</code> that is used as controls. If <code>NULL</code>, the
 first level of <code>factor(x[[col.var]])</code> is used. (Default:
-<code>NULL</code>)</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>\item \code{group}<span class="sc">:</span> \code{<span class="cn">NULL</span>} or \code{Character scalar}. Specifies a</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>variable from \code{<span class="fu">colData</span>(x)} (e.g., subject ID). Control samples that</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>share the same value with the current sample are excluded from its</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">comparison.</span> (Default<span class="sc">:</span> \code{<span class="cn">NULL</span>})</span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>\item \code{altexp}<span class="sc">:</span> \code{<span class="cn">NULL</span>} or \code{Character scalar}. If provided,</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>use this \code{altExp} assay container of \code{x} <span class="cf">for</span> the computation.</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>(Default<span class="sc">:</span> \code{<span class="cn">NULL</span>})</span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>\item Further arguments are passed to</span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>\code{\link[<span class="ot">=</span>getDissimilarity]{getDissimilarity}}.</span></code></pre><p></p></div></li>
+<code>NULL</code>)</p></li>
+<li><p><code>group</code>: <code>NULL</code> or <code>Character scalar</code>. Specifies a
+variable from <code>colData(x)</code> (e.g., subject ID). Control samples that
+share the same value with the current sample are excluded from its
+comparison. (Default: <code>NULL</code>)</p></li>
+<li><p><code>k</code>: <code>Integer scalar</code>. Number of nearest control
+samples used by <code>cloud</code>. (Default: 5% of the control samples, at
+least 1)</p></li>
+<li><p><code>altexp</code>: <code>NULL</code> or <code>Character scalar</code>. If provided,
+use this <code>altExp</code> assay container of <code>x</code> for the computation.
+(Default: <code>NULL</code>)</p></li>
+<li><p>Further arguments are passed to
+<code><a href="getDissimilarity.html">getDissimilarity</a></code>.</p></li>
 </ul></dd>
 
 
@@ -140,13 +141,55 @@ passed to <code><a href="getDissimilarity.html">getDissimilarity</a></code>.
 the control samples. The sample itself is excluded from the controls. With
 Bray-Curtis dissimilarity, this is the dysbiosis score of Lloyd-Price et
 al. (2019).</p></li>
-</ul></div>
+<li><p><code>centroid_distance</code>: Distance from the sample to the centroid
+of the control samples minus its distance to the centroid of the other
+samples (AlShawaqfeh et al. 2017). Positive values mean that the sample is
+closer to the other samples than to the controls. Centroids are computed
+from the dissimilarities, and each sample is included in the centroid of
+its own group.</p></li>
+<li><p><code>shannon_jsd</code>: Mean difference in Shannon diversity between
+the sample and the control samples, multiplied by its mean Jensen-Shannon
+divergence to them (Santiago et al. 2019). The sample itself is excluded
+from the controls. <code>method</code> is not used.</p></li>
+<li><p><code>reference_plane</code>: Euclidean distance, in the first three
+principal coordinates of the dissimilarities, from the sample to a plane
+fitted to the control samples and restricted to their range (Halfvarson
+et al. 2017).</p></li>
+<li><p><code>cloud</code>: CLOUD statistic (Montassier et al. 2018): the mean
+dissimilarity from the sample to its <code>k</code> nearest control samples,
+divided by the same quantity averaged over the control samples (each
+compared with the other controls). Values above 1 mean that the sample is
+further from the controls than controls are from each other.</p></li>
+</ul><p>The <code>centroid_distance</code>, <code>shannon_jsd</code> and
+<code>reference_plane</code> scores are adapted from the dysbiosisR package
+(Shetty and de Steenhuijsen Piters).</p>
+    </div>
     <div id="references">
     <h2>References</h2>
-    <p>Lloyd-Price J, Arze C, Ananthakrishnan AN, Schirmer M, Avila-Pacheco J, Poon TW, Andrews E, Ajami NJ, Bonham KS, Brislawn CJ, Casero D, Courtney H, Gonzalez A, Graeber TG, Hall AB, Lake K, Landers CJ, Mallick H, Plichta DR, Prasad M, Rahnavard G, Sauk J, Shungin D, Vázquez-Baeza Y, White RA, IBDMDB Investigators, Bishai J, Bullock K, Deik A, Dennis C, Kaplan JL, Khalili H, McIver LJ, Moran CJ, Nguyen L, Pierce KA, Schwager R, Sirota-Madi A, Stevens BW, Tan W, ten Hoeve JJ, Weingart G, Wilson RG, Yajnik V, Braun J, Denson LA, Jansson JK, Knight R, Kugathasan S, McGovern DPB, Petrosino JF, Stappenbeck TS, Winter HS, Clish CB, Franzosa EA, Vlamakis H, Xavier RJ, Huttenhower C (2019).
+    <p>AlShawaqfeh MK, Wajid B, Minamoto Y, Markel M, Lidbury JA, Steiner JM, Serpedin E, Suchodolski JS (2017).
+“A dysbiosis index to assess microbial changes in fecal samples of dogs with chronic inflammatory enteropathy.”
+<em>FEMS Microbiology Ecology</em>, <b>93</b>(11), fix136.
+<a href="https://doi.org/10.1093/femsec/fix136" class="external-link">doi:10.1093/femsec/fix136</a>
+.</p>
+<p>Halfvarson J, Brislawn CJ, Lamendella R, Vázquez-Baeza Y, Walters WA, Bramer LM, D'Amato M, Bonfiglio F, McDonald D, Gonzalez A, McClure EE, Dunklebarger MF, Knight R, Jansson JK (2017).
+“Dynamics of the human gut microbiome in inflammatory bowel disease.”
+<em>Nature Microbiology</em>, <b>2</b>(5), 17004.
+<a href="https://doi.org/10.1038/nmicrobiol.2017.4" class="external-link">doi:10.1038/nmicrobiol.2017.4</a>
+.</p>
+<p>Lloyd-Price J, Arze C, Ananthakrishnan AN, Schirmer M, Avila-Pacheco J, Poon TW, Andrews E, Ajami NJ, Bonham KS, Brislawn CJ, Casero D, Courtney H, Gonzalez A, Graeber TG, Hall AB, Lake K, Landers CJ, Mallick H, Plichta DR, Prasad M, Rahnavard G, Sauk J, Shungin D, Vázquez-Baeza Y, White RA, IBDMDB Investigators, Bishai J, Bullock K, Deik A, Dennis C, Kaplan JL, Khalili H, McIver LJ, Moran CJ, Nguyen L, Pierce KA, Schwager R, Sirota-Madi A, Stevens BW, Tan W, ten Hoeve JJ, Weingart G, Wilson RG, Yajnik V, Braun J, Denson LA, Jansson JK, Knight R, Kugathasan S, McGovern DPB, Petrosino JF, Stappenbeck TS, Winter HS, Clish CB, Franzosa EA, Vlamakis H, Xavier RJ, Huttenhower C (2019).
 “Multi-omics of the gut microbial ecosystem in inflammatory bowel diseases.”
 <em>Nature</em>, <b>569</b>(7758), 655–662.
 <a href="https://doi.org/10.1038/s41586-019-1237-9" class="external-link">doi:10.1038/s41586-019-1237-9</a>
+.</p>
+<p>Montassier E, Al-Ghalith GA, Hillmann B, Viskocil K, Kabage AJ, McKinlay CE, Sadowsky MJ, Khoruts A, Knights D (2018).
+“CLOUD: a non-parametric detection test for microbiome outliers.”
+<em>Microbiome</em>, <b>6</b>, 137.
+<a href="https://doi.org/10.1186/s40168-018-0514-4" class="external-link">doi:10.1186/s40168-018-0514-4</a>
+.</p>
+<p>Santiago M, Eysenbach L, Allegretti J, Aroniadis O, Brandt LJ, Fischer M, Grinspan A, Kelly C, Morrow C, Rodriguez M, Osman M, Kassam Z, Smith MB, Timberlake S (2019).
+“Microbiome predictors of dysbiosis and VRE decolonization in patients with recurrent C. difficile infections in a multi-center retrospective study.”
+<em>AIMS Microbiology</em>, <b>5</b>(1), 1–18.
+<a href="https://doi.org/10.3934/microbiol.2019.1.1" class="external-link">doi:10.3934/microbiol.2019.1.1</a>
 .</p>
     </div>
     <div id="see-also">
@@ -176,6 +219,21 @@ al. (2019).</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A37            ADHD        0.721312</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A38         Control        0.614832</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A39            ADHD        0.742831</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Other scores</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">getDysbiosis</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>, col.var <span class="op">=</span> <span class="st">"patient_status"</span>, reference <span class="op">=</span> <span class="st">"Control"</span>,</span></span>
+<span class="r-in"><span>    index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid_distance"</span>, <span class="st">"reference_plane"</span>, <span class="st">"cloud"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 6 rows and 3 columns</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      centroid_distance reference_plane     cloud</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              &lt;numeric&gt;       &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A110         0.1943507       0.2894502   1.84539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A111        -0.1511192       0.1120120   1.26796</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A12          0.2069464       0.5824895   2.63572</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A13         -0.0768137       0.0222043   1.26796</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A14         -0.0838556       0.0859448   1.06469</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A15          0.1120201       0.3821137   1.88400</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
