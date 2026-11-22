@@ -100,7 +100,8 @@
 #' calculated using relative abundances, the higher the value the higher the
 #' similarity is. When using relative abundances, overlap value 1 means that
 #' all the abundances of features are equal between two samples, and 0 means
-#' that samples have completely different relative abundances.
+#' that samples have completely different relative abundances. The
+#' dissimilarity returned for \code{method = "overlap"} is 1 - overlap.
 #'
 #' Unifrac is calculated with a C++ implementation of the Striped Unifrac
 #' algorithm (McDonald et al. 2018).
@@ -156,19 +157,22 @@
 #' # load dataset
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
+#' # Overlap and JSD are calculated from relative abundances
+#' tse <- transformAssay(tse, method = "relabundance")
 #'
 #' ### Overlap dissimilarity
 #'
-#' tse <- addDissimilarity(tse, method = "overlap", detection = 0.25)
+#' tse <- addDissimilarity(
+#'     tse, method = "overlap", assay.type = "relabundance", detection = 0.25)
 #' metadata(tse)[["overlap"]]
 #'
 #' ### JSD dissimilarity
 #'
-#' tse <- addDissimilarity(tse, method = "jsd")
+#' tse <- addDissimilarity(tse, method = "jsd", assay.type = "relabundance")
 #' metadata(tse)[["jsd"]]
 #'
 #' # Multi Dimensional Scaling applied to JSD dissimilarity matrix
-#' tse <- addMDS(tse, method = "overlap", assay.type = "counts")
+#' tse <- addMDS(tse, method = "jsd", assay.type = "relabundance")
 #' reducedDim(tse, "MDS") |> head()
 #'
 #' ### Unifrac dissimilarity

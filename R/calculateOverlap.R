@@ -26,8 +26,8 @@
     colnames(result) <- colnames(x)
     rownames(result) <- colnames(x)
         
-    # Convert into distances
-    result <- stats::as.dist(result)
+    # Overlap is a similarity; 1 - overlap is the dissimilarity
+    result <- stats::as.dist(1 - result)
     return(result)
 }
 
