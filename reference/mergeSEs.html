@@ -97,8 +97,9 @@ object. Must be missing when <code>x</code> is a list.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the name of assay
-used in calculation. (Default: <code>"counts"</code>)</p></dd>
+<dd><p><code>Character vector</code>. Specifies the names of the
+assays to merge. Assays not found in all the objects are dropped with a
+warning. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
