@@ -198,7 +198,8 @@ in its metadata.</p>
 calculated using relative abundances, the higher the value the higher the
 similarity is. When using relative abundances, overlap value 1 means that
 all the abundances of features are equal between two samples, and 0 means
-that samples have completely different relative abundances.</p>
+that samples have completely different relative abundances. The
+dissimilarity returned for <code>method = "overlap"</code> is 1 - overlap.</p>
 <p>Unifrac is calculated with a C++ implementation of the Striped Unifrac
 algorithm (McDonald et al. 2018).</p>
 <p>If rarefaction is enabled, <code><a href="https://vegandevs.github.io/vegan/reference/avgdist.html" class="external-link">vegan:avgdist()</a></code> is
@@ -264,37 +265,40 @@ In <em>Proceedings of the International Symposium on Information Theory (ISIT 20
 <span class="r-in"><span><span class="co"># load dataset</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
+<span class="r-in"><span><span class="co"># Overlap and JSD are calculated from relative abundances</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Overlap dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"overlap"</span>, detection <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDissimilarity</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>, method <span class="op">=</span> <span class="st">"overlap"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, detection <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"overlap"</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                CL3       CC1       SV1   M31Fcsw   M11Fcsw   M31Plmr   M11Plmr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1       985499.5                                                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1       692281.0  848128.0                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw   951745.0  975408.0  808197.0                                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw  1217896.5 1253551.5 1083470.0 1785249.5                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr   466124.0  626083.0  493475.0 1014235.5 1281625.5                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr   436360.5  499477.0  414307.0  848139.0 1122612.5  551528.5          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr   189694.0  291743.5  273429.0  616931.5  894038.5  441530.5  299140.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong  1174598.0 1229914.0 1097341.0 1706441.0 1946599.0 1340479.0 1184561.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong   159105.5  220015.5  144416.0  745652.5 1024052.5  380641.0  227037.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M 1166203.5 1307727.0 1192077.5 1599443.5 1982577.0 1183592.5 1138447.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M  754872.5  815047.5  658354.0 1137849.5 1467925.5  759783.0  719079.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm    891753.5  997242.0  692093.5 1182564.5 1469919.0  772221.0  675288.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm   1368073.5 1497090.5 1168803.5 1622182.5 1919925.5 1213249.0 1130264.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm   1036772.5 1187267.0  830315.5 1281239.0 1564216.5  879010.0  797615.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP2       360957.5  405369.5  272556.5  787535.5 1075807.5  436212.5  330404.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP3       824101.5  828367.0  661708.5 1237686.5 1534350.5  811049.0  838668.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP5       861958.0  865378.0  712705.0 1294562.5 1606345.0  895855.5  849872.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1    99313.5  143887.0  190577.5  541276.5  811452.0  284617.0  145628.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2   351572.0  459754.5  304333.0  757818.5 1049991.5  340828.0  313685.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3   327360.0  379139.0  223779.0  763371.5  997684.5  290772.5  218502.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS28      624664.5  648472.5  521238.0 1221536.0 1462594.5  697629.0  557145.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS29      769249.5  776365.5  671889.0 1347125.5 1552821.5  814524.5  699393.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even1     978147.5 1038226.0  796474.0 1332322.5 1586458.5  842413.5  678228.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even2     784025.5  941708.0  693164.0 1199305.0 1460535.0  729549.5  560118.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even3     751326.0  807375.5  809754.0 1246595.5 1467452.5  767190.0  598642.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1      1.0000000                                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      1.0000000 1.0000000                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw  1.0000000 1.0000000 1.0000000                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw  1.0000000 1.0000000 1.0000000 1.0000000                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm   1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm   1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm   1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2      1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3      1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5      1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28     1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29     1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            F21Plmr   M31Tong   M11Tong  LMEpi24M  SLEpi20M    AQC1cm    AQC4cm</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CC1                                                                           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SV1                                                                           </span>
@@ -303,24 +307,24 @@ In <em>Proceedings of the International Symposium on Information Theory (ISIT 20
 <span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr                                                                       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> M11Plmr                                                                       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> F21Plmr                                                                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong  1077004.5                                                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong   131018.0 1047508.0                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M 1017521.0 2024365.5 1101925.0                                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M  554381.0 1567813.0  642227.5 1651477.0                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm    547105.0 1520428.0  577228.5 1608273.5 1174190.0                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm    998910.0 2051930.5 1108218.0 2179140.0 1751904.0 1758771.0          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm    662458.0 1728503.5  784701.5 1864644.5 1426762.5 1429167.0 2026146.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP2       270038.0 1209387.5  293531.5 1238659.5  796451.5  812915.0 1400285.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP3       578321.5 1697735.5  715681.5 1683481.5 1179390.5 1270814.0 1790660.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP5       681794.0 1811876.0  838350.0 1770500.0 1259181.0 1334017.0 1854015.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1    87773.5  980573.5   65217.0 1011842.5  521681.5  494856.0  985763.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2   238362.0 1153742.0  225444.0 1129898.5  656716.5  715371.5 1229872.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3   153508.0 1043396.0  129250.0 1025518.0  570554.0  610521.0 1114243.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS28      410238.0 1424754.0  471252.5 1310570.0  916424.0  914313.0 1358702.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS29      571671.0 1547449.0  613823.0 1461118.5 1031225.0 1134535.5 1613484.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even1     509060.5 1578801.5  626756.5 1572468.5 1124671.0 1161962.5 1703981.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even2     429468.5 1448323.5  509204.0 1430593.5  977856.5  993697.5 1479496.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even3     463482.5 1500253.0  561539.0 1519288.0 1030249.0 1023662.5 1499581.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Tong  1.0000000                                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Tong  1.0000000 1.0000000                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LMEpi24M 1.0000000 1.0000000 1.0000000                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SLEpi20M 1.0000000 1.0000000 1.0000000 1.0000000                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm   1.0000000 1.0000000 1.0000000 1.0000000 1.0000000                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm   1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 0.5128986          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm   1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 0.5534892 0.5409748</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2      1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3      1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5      1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28     1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29     1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             AQC7cm       NP2       NP3       NP5   TRRsed1   TRRsed2   TRRsed3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CC1                                                                           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SV1                                                                           </span>
@@ -336,17 +340,17 @@ In <em>Proceedings of the International Symposium on Information Theory (ISIT 20
 <span class="r-out co"><span class="r-pr">#&gt;</span> AQC1cm                                                                        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> AQC4cm                                                                        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> AQC7cm                                                                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP2      1071726.5                                                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP3      1436127.5  961190.0                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NP5      1509321.5 1063725.0 1559049.5                                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1   662344.5  265898.0  714368.5  835773.0                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2   916395.5  431212.0  915340.0  998249.5  268039.5                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3   794425.5  322803.5  775024.0  784470.0  159239.5  381979.5          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS28     1024423.5  537932.5 1028058.5 1144928.5  288216.5  583381.5  577097.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS29     1271708.0  704238.5 1138939.0 1211490.5  435429.0  688699.5  679880.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even1    1364357.0  694364.5 1261159.0 1332217.0  616518.0  780421.0  730090.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    1146982.5  589007.5 1109287.0 1163733.5  490509.0  623804.5  563258.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    1170876.5  626299.0 1142307.5 1224271.5  546121.0  671455.5  614319.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP2      1.0000000                                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP3      1.0000000 1.0000000                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NP5      1.0000000 1.0000000 1.0000000                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed1  1.0000000 1.0000000 1.0000000 1.0000000                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3  1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS28     1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29     1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               TS28      TS29     Even1     Even2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CC1                                             </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SV1                                             </span>
@@ -369,14 +373,14 @@ In <em>Proceedings of the International Symposium on Information Theory (ISIT 20
 <span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed2                                         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> TRRsed3                                         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> TS28                                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS29     1071187.0                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even1    1057572.0 1185539.5                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even2     924017.0 1051850.5 1090891.0          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Even3     977024.0 1110777.5 1143819.0 1022623.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS29     1.0000000                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even1    1.0000000 1.0000000                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even2    1.0000000 1.0000000 1.0000000          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Even3    1.0000000 1.0000000 1.0000000 1.0000000</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### JSD dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"jsd"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addDissimilarity</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"jsd"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[[</span><span class="st">"jsd"</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  CL3         CC1         SV1     M31Fcsw     M11Fcsw</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CC1      0.254707967                                                </span>
@@ -510,15 +514,15 @@ In <em>Proceedings of the International Symposium on Information Theory (ISIT 20
 <span class="r-out co"><span class="r-pr">#&gt;</span> Even3    0.604483562 0.552374311 0.569527813 0.006627728 0.008132505</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Multi Dimensional Scaling applied to JSD dissimilarity matrix</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="addMDS.html">addMDS</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"overlap"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="addMDS.html">addMDS</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"jsd"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"MDS"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 [,1]       [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CL3     -59443.48966   30449.91</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CC1     -90318.88662  -39519.24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SV1      50022.89144  -38252.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw     67.34763  209366.60</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw 167716.35955 -569793.66</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr  27167.45045  104144.91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CL3     -0.07543867  0.029947406</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CC1     -0.10226722  0.028384908</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SV1     -0.07497804 -0.003985568</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Fcsw  0.30082876 -0.037964914</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M11Fcsw  0.28029436 -0.027294113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M31Plmr -0.14885684 -0.367934439</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Unifrac dissimilarity</span></span></span>
 <span class="r-in"><span></span></span>
@@ -802,6 +806,7 @@ In <em>Proceedings of the International Symposium on Information Theory (ISIT 20
 <span class="r-in"><span><span class="co"># Bray is usually applied to relative abundances so we have to apply</span></span></span>
 <span class="r-in"><span><span class="co"># transformation first</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The following values are already present in `assays` and will be overwritten: 'relabundance'. Consider using the 'name' argument to specify alternative names.</span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">getDissimilarity</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"bray"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 CL3        CC1        SV1    M31Fcsw    M11Fcsw    M31Plmr</span>
