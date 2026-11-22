@@ -222,8 +222,7 @@ or equal to <code>prt.th</code>.</p></li>
 <span class="r-in"><span><span class="co"># Transform to relative abundances. Note that we add pseudocount. This is</span></span></span>
 <span class="r-in"><span><span class="co"># because otherwise we cannot calculate CRT and PRT due to zeroes and</span></span></span>
 <span class="r-in"><span><span class="co"># zero division in calculating abundance ratio.</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span>, pseudocount <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> A pseudocount of 0.5 was applied.</span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span>, pseudocount <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get abundant taxa</span></span></span>
 <span class="r-in"><span><span class="va">abundant</span> <span class="op">&lt;-</span> <span class="fu">getAbundant</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
