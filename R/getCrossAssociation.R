@@ -24,10 +24,6 @@
 #' @param assay.type2  \code{Character scalar}. Specifies the name of the
 #' assay in experiment 2 to be transformed. (Default: \code{NULL})
 #'
-#' @param assay_name1 Deprecated. Use \code{assay.type1} instead.
-#'
-#' @param assay_name2 Deprecated. Use \code{assay.type2} instead.
-#'
 #' @param altexp1 \code{Character scalar} or \code{numeric scalar}. Specifies
 #' alternative experiment from the \code{altExp} of experiment 1. If NULL, then
 #' the experiment is itself and altExp option is disabled.
@@ -42,19 +38,13 @@
 #' \code{colData} of experiment 1. If col.var1 is used, assay.type1 is disabled.
 #' (Default: \code{NULL})
 #'
-#' @param colData_variable1 Deprecated. Use \code{col.var1} instead.
-#'
 #' @param col.var2 \code{Character scalar}. Specifies column(s) from colData
 #' of experiment 2. If col.var2 is used, assay.type2 is disabled.
 #' (Default: \code{NULL})
 #'
-#' @param colData_variable2 Deprecated. Use \code{col.var2} instead.
-#'
 #' @param by A\code{Character scalar}. Determines if association are calculated
 #' row-wise / for features ('rows') or column-wise / for samples ('cols').
 #' Must be \code{'rows'} or \code{'cols'}.
-#'
-#' @param MARGIN Deprecated. Use \code{by} instead.
 #'
 #' @param method \code{Character scalar}. Defines the association method
 #' ('kendall', 'pearson', or 'spearman' for continuous/numeric; 'categorical'
@@ -67,19 +57,13 @@
 #' p-values. Passed to \code{p.adjust} function.
 #' (Default: \code{"fdr"})
 #'
-#' @param p_adj_method Deprecated. Use \code{p.adj.method} instead.
-#'
 #' @param p.adj.threshold \code{Numeric scalar}. From \code{0 to 1}, specifies
 #' adjusted p-value threshold for filtering.
 #' (Default: \code{NULL})
 #'
-#' @param p_adj_threshold Deprecated. Use \code{p.dj.threshold} instead.
-#'
 #' @param cor.threshold \code{Numeric scalar}. From \code{0 to 1}, specifies
 #' correlation threshold for filtering.
 #' (Default: \code{NULL})
-#'
-#' @param cor_threshold Deprecated. Use \code{cor.threshold} instead.
 #'
 #' @param sort \code{Logical scalar}. Specifies whether to sort features or not
 #' in result matrices. Used method is hierarchical clustering.
@@ -90,9 +74,6 @@
 #' correlation between experiment itself is tested, i.e., when assays are
 #' identical. (Default: \code{FALSE})
 #'
-#' @param filter_self_correlations Deprecated. Use \code{filter.self.cor}
-#' instead.
-#'
 #' @param verbose \code{Logical scalar}. Specifies whether to get messages
 #' about progress of calculation. (Default: \code{FALSE})
 #'
@@ -100,13 +81,9 @@
 #' statistical significance of associations.
 #' (Default: \code{FALSE})
 #'
-#' @param test_significance Deprecated. Use \code{test.signif} instead.
-#'
 #' @param show.warnings \code{Logical scalar}. specifies whether to show
 #' warnings that might occur when correlations and p-values are calculated.
 #' (Default: \code{FALSE})
-#'
-#' @param show_warnings Deprecated. use \code{show.warnings} instead.
 #'
 #' @param paired \code{Logical scalar}. Specifies if samples are paired or not.
 #' \code{colnames} must match between twp experiments. \code{paired} is disabled
@@ -291,36 +268,28 @@ setMethod("getCrossAssociation", signature = c(x = "MultiAssayExperiment"),
         x,
         experiment1 = 1,
         experiment2 = 2,
-        assay.type1 = assay_name1, assay_name1 = NULL,
-        assay.type2 = assay_name2, assay_name2 = NULL,
+        assay.type1 = NULL,
+        assay.type2 = NULL,
         altexp1 = NULL,
         altexp2 = NULL,
-        col.var1 = colData_variable1,
-        colData_variable1 = NULL,
-        col.var2 = colData_variable2,
-        colData_variable2 = NULL,
-        by = MARGIN,
-        MARGIN = 1,
+        col.var1 = NULL,
+        col.var2 = NULL,
+        by = 1,
         method = "kendall",
         mode = "table",
-        p.adj.method = p_adj_method,
-        p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm",
+        p.adj.method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm",
             "hommel", "none"),
-        p.adj.threshold = p_adj_threshold,
-        p_adj_threshold = NULL,
-        cor.threshold = cor_threshold,
-        cor_threshold = NULL,
+        p.adj.threshold = NULL,
+        cor.threshold = NULL,
         sort = FALSE,
-        filter.self.cor = filter_self_correlations,
-        filter_self_correlations = FALSE,
+        filter.self.cor = FALSE,
         verbose = TRUE,
-        test.signif = test_significance,
-        test_significance = FALSE,
-        show.warnings = show_warnings,
-        show_warnings = TRUE,
+        test.signif = FALSE,
+        show.warnings = TRUE,
         paired = FALSE,
         ...){
         #
+        .check_defunct_args(...names(), .cross_association_defunct_args)
         .get_experiment_cross_association(
             x,
             experiment1 = experiment1,
@@ -354,6 +323,7 @@ setMethod("getCrossAssociation", signature = c(x = "MultiAssayExperiment"),
 setMethod("getCrossAssociation", signature = "SummarizedExperiment",
     function(x, experiment2 = x, ...){
         ############################## INPUT CHECK #############################
+        .check_defunct_args(...names(), .cross_association_defunct_args)
         # If y is  SE or TreeSE object
         if( is(experiment2, "SummarizedExperiment") ){}
         # If y is  character specifying name of altExp,
@@ -410,6 +380,12 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
         return(res)
     }
 )
+
+# Defunct argument names of getCrossAssociation()
+.cross_association_defunct_args <- c(
+    "assay_name1", "assay_name2", "colData_variable1", "colData_variable2",
+    "MARGIN", "p_adj_method", "p_adj_threshold", "cor_threshold",
+    "filter_self_correlations", "test_significance", "show_warnings")
 
 ############################## MAIN FUNCTIONALITY ##############################
 # This function includes all the main functionality.

@@ -9,15 +9,11 @@
 #' @param assay.type \code{Character scalar}. Specifies the name of assay 
 #'   used. (Default: \code{"counts"})
 #'   
-#' @param assay_name Deprecated. Use \code{assay.type} instead.
-#'   
 #' @param tree.name \code{NULL} or \code{Character scalar}. Specifies the name
 #'   of the tree to be included in the phyloseq object that is created. If
 #'   \code{NULL}, no tree is included. As phyloseq orders the features by the
 #'   tips of the tree, this keeps the feature order of \code{x}.
 #'   (Default: \code{"phylo"})
-#'   
-#' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
 #' @details 
 #' \code{convertToPhyloseq} creates a phyloseq object from a 
@@ -62,8 +58,9 @@ NULL
 #' @rdname convertFromPhyloseq
 #' @export
 setMethod("convertToPhyloseq", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = "counts", assay_name = NULL, ...){
+    function(x, assay.type = "counts", ...){
         # Input check
+        .check_defunct_args(...names(), c("assay_name", "tree_name"))
         .require_package("phyloseq")
         # Check that tse do not have zero rows
         if(!all(dim(x) > 0)){
@@ -71,11 +68,6 @@ setMethod("convertToPhyloseq", signature = c(x = "SummarizedExperiment"),
                 to a phyloseq object.", call. = FALSE)
         }
 
-        if (!is.null(assay_name)) {
-            .Deprecated(old="assay_name", new="assay.type",
-                "Now assay_name is deprecated. Use assay.type instead.")
-        }
-        
         # Check assay.type
         .check_assay_present(assay.type, x)
         
@@ -122,7 +114,7 @@ setMethod("convertToPhyloseq", signature = c(x = "SummarizedExperiment"),
 #' @rdname convertFromPhyloseq
 #' @export
 setMethod("convertToPhyloseq", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, tree.name = tree_name, tree_name = "phylo", ...){
+    function(x, tree.name = "phylo", ...){
         # If rowTrees exist, check tree.name. With tree.name = NULL, the tree
         # is not added, so phyloseq does not reorder the features by its tips.
         if( length(rowTreeNames(x)) > 0 && !is.null(tree.name) ){

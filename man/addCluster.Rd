@@ -17,10 +17,8 @@ addCluster(x, ...)
 \S4method{addCluster}{SummarizedExperiment}(
   x,
   BLUSPARAM,
-  assay.type = assay_name,
-  assay_name = NULL,
-  by = MARGIN,
-  MARGIN = "rows",
+  assay.type = NULL,
+  by = "rows",
   name = "clustering",
   clust.col = "cluster",
   full = FALSE,
@@ -30,39 +28,20 @@ addCluster(x, ...)
 \S4method{addCluster}{SingleCellExperiment}(
   x,
   BLUSPARAM,
-  assay.type = assay_name,
-  assay_name = NULL,
+  assay.type = NULL,
   dimred = NULL,
-  by = MARGIN,
-  MARGIN = "rows",
+  by = "rows",
   name = "clustering",
   clust.col = "cluster",
   full = FALSE,
   ...
 )
 
-\S4method{getCluster}{SummarizedExperiment}(
-  x,
-  BLUSPARAM,
-  assay.type = assay_name,
-  assay_name = NULL,
-  by = MARGIN,
-  MARGIN = "rows",
-  ...
-)
+\S4method{getCluster}{SummarizedExperiment}(x, BLUSPARAM, assay.type = NULL, by = "rows", ...)
 
-\S4method{getCluster}{SingleCellExperiment}(
-  x,
-  BLUSPARAM,
-  assay.type = assay_name,
-  assay_name = NULL,
-  dimred = NULL,
-  by = MARGIN,
-  MARGIN = "rows",
-  ...
-)
+\S4method{getCluster}{SingleCellExperiment}(x, BLUSPARAM, assay.type = NULL, dimred = NULL, by = "rows", ...)
 
-\S4method{getCluster}{ANY}(x, BLUSPARAM, by = MARGIN, MARGIN = "rows", full = FALSE, ...)
+\S4method{getCluster}{ANY}(x, BLUSPARAM, by = "rows", full = FALSE, ...)
 }
 \arguments{
 \item{x}{A
@@ -76,13 +55,9 @@ object.}
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation.}
 
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
 \item{by}{\code{Character scalar}. Determines if association is calculated
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}
-
-\item{MARGIN}{Deprecated. Use \code{by} instead.}
 
 \item{name}{\code{Character scalar}. The name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}

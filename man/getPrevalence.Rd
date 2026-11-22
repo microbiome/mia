@@ -25,12 +25,7 @@ getPrevalent(x, ...)
 
 getRare(x, ...)
 
-getPrevalentAbundance(
-  x,
-  assay.type = assay_name,
-  assay_name = "relabundance",
-  ...
-)
+getPrevalentAbundance(x, assay.type = "relabundance", ...)
 
 addPrevalentAbundance(x, ...)
 
@@ -41,71 +36,27 @@ addPrevalence(x, ...)
 \S4method{getPrevalence}{ANY}(
   x,
   detection = 0,
-  include.lowest = include_lowest,
-  include_lowest = FALSE,
+  include.lowest = FALSE,
   sort = FALSE,
   na.rm = TRUE,
   ...
 )
 
-\S4method{getPrevalence}{SummarizedExperiment}(
-  x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  rank = NULL,
-  ...
-)
+\S4method{getPrevalence}{SummarizedExperiment}(x, assay.type = "counts", rank = NULL, ...)
 
-\S4method{getPrevalent}{ANY}(
-  x,
-  prevalence = 50/100,
-  include.lowest = include_lowest,
-  include_lowest = FALSE,
-  ...
-)
+\S4method{getPrevalent}{ANY}(x, prevalence = 50/100, include.lowest = FALSE, ...)
 
-\S4method{getPrevalent}{SummarizedExperiment}(
-  x,
-  rank = NULL,
-  prevalence = 50/100,
-  include.lowest = include_lowest,
-  include_lowest = FALSE,
-  ...
-)
+\S4method{getPrevalent}{SummarizedExperiment}(x, rank = NULL, prevalence = 50/100, include.lowest = FALSE, ...)
 
-\S4method{getRare}{ANY}(
-  x,
-  prevalence = 50/100,
-  include.lowest = include_lowest,
-  include_lowest = FALSE,
-  ...
-)
+\S4method{getRare}{ANY}(x, prevalence = 50/100, include.lowest = FALSE, ...)
 
-\S4method{getRare}{SummarizedExperiment}(
-  x,
-  rank = NULL,
-  prevalence = 50/100,
-  include.lowest = include_lowest,
-  include_lowest = FALSE,
-  ...
-)
+\S4method{getRare}{SummarizedExperiment}(x, rank = NULL, prevalence = 50/100, include.lowest = FALSE, ...)
 
 \S4method{addPrevalentAbundance}{SummarizedExperiment}(x, name = "prevalent_abundance", ...)
 
-\S4method{getPrevalentAbundance}{ANY}(
-  x,
-  assay.type = assay_name,
-  assay_name = "relabundance",
-  ...
-)
+\S4method{getPrevalentAbundance}{ANY}(x, assay.type = "relabundance", ...)
 
-\S4method{getPrevalentAbundance}{SummarizedExperiment}(
-  x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  rank = NULL,
-  ...
-)
+\S4method{getPrevalentAbundance}{SummarizedExperiment}(x, assay.type = "counts", rank = NULL, ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
@@ -126,8 +77,6 @@ passed to \code{getPrevalence}
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
 \item{name}{\code{Character scalar}. Specifies name of column in
 \code{rowData} where the results will be stored.
 (Default: \code{"prevalence"})}
@@ -140,8 +89,6 @@ for a taxon to be considered present. (Default: \code{0})}
 
 \item{include.lowest}{\code{Logical scalar}. Should the lower boundary of the
 detection and prevalence cutoffs be included? (Default: \code{FALSE})}
-
-\item{include_lowest}{Deprecated. Use \code{include.lowest} instead.}
 
 \item{sort}{\code{Logical scalar}. Should the result be sorted by prevalence?
 (Default: \code{FALSE})}

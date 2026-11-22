@@ -22,16 +22,12 @@
 #' \code{add.col} is a \code{character} vector, it will be used to subset
 #' to given column names in \code{colData}. (Default: \code{NULL})
 #'
-#' @param add_col_data Deprecated. Use \code{add.col} instead.
-#'
 #' @param add.row \code{Logical scalar} or \code{Character vector}. To
 #' select information from the \code{rowData} to add to the molten assay data.
 #' If \code{add.row = NULL} no data will be added, if
 #' \code{add.row = TRUE} all data will be added and if
 #' \code{add.row} is a \code{character} vector, it will be used to subset
 #' to given column names in \code{rowData}. (Default: \code{NULL})
-#'
-#' @param add_row_data Deprecated. Use \code{add.row} instead.
 #'
 #' @param add.dimred \code{Logical scalar} or \code{Character vector}. To
 #' select information from the \code{reducedDim} to add to the molten assay
@@ -43,12 +39,8 @@
 #' @param row.name \code{Character scalar}. To use as the output's name
 #' for the feature identifier. (Default: \code{"FeatureID"})
 #'
-#' @param feature_name Deprecated. Use \code{row.name} instead.
-#'
 #' @param col.name \code{Character scalar}. To use as the output's name
 #' for the sample identifier. (Default: \code{"SampleID"})
-#'
-#' @param sample_name Deprecated. Use \code{col.name} instead.
 #'
 #' @param ... optional arguments:
 #' \itemize{
@@ -83,17 +75,16 @@ NULL
 setMethod("meltSE", signature = c(x = "SummarizedExperiment"),
     function(
         x,
-        assay.type = assay_name, assay_name = "counts",
-        add.row = add_row_data,
-        add_row_data = NULL,
-        add.col = add_col_data,
-        add_col_data = NULL,
-        row.name = feature_name,
-        feature_name = "FeatureID",
-        col.name = sample_name,
-        sample_name = "SampleID",
+        assay.type = "counts",
+        add.row = NULL,
+        add.col = NULL,
+        row.name = "FeatureID",
+        col.name = "SampleID",
         ...){
         # input check
+        .check_defunct_args(...names(), c(
+            "assay_name", "add_row_data", "add_col_data", "feature_name",
+            "sample_name"))
         .check_assay_present(assay.type, x)
         if( !.is_a_string(row.name) ){
             stop("'row.name' must be a single non-empty character value.",

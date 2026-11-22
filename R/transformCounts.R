@@ -242,13 +242,14 @@ NULL
 setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     function(
         x, method,
-        assay.type = "counts", assay_name = NULL,
+        assay.type = "counts",
         MARGIN = "samples",
         name = method,
         pseudocount = FALSE,
         verbose = TRUE,
         ...){
         #
+        .check_defunct_args(...names(), "assay_name")
         x <- .with_verbosity(.transform_assay(
             x = x, method = method, name = name, assay.type = assay.type,
             MARGIN = MARGIN, pseudocount =  pseudocount, ...), verbose)
@@ -260,6 +261,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     function(x, altexp = NULL, verbose = TRUE, ...){
+        .check_defunct_args(...names(), "assay_name")
         # Check altexp
         if( !(is.null(altexp) || all(altexp %in% altExpNames(x)) ||
                 (.is_integer(altexp) &&

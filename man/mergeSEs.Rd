@@ -12,15 +12,11 @@ mergeSEs(x, y, ...)
 \S4method{mergeSEs}{SimpleList,missing}(
   x,
   y,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
   join = "full",
-  missing.values = missing_values,
-  missing_values = NA,
-  collapse.cols = collapse_samples,
-  collapse_samples = FALSE,
-  collapse.rows = collapse_features,
-  collapse_features = TRUE,
+  missing.values = NA,
+  collapse.cols = FALSE,
+  collapse.rows = TRUE,
   ...
 )
 
@@ -40,8 +36,6 @@ object. Must be missing when \code{x} is a list.}
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
 \item{join}{\code{Character scalar}. A value for selecting the joining
 method. Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are
 disabled when more than two objects are being merged.
@@ -50,18 +44,12 @@ disabled when more than two objects are being merged.
 \item{missing.values}{\code{NA}, \code{0} or \code{Character scalar}.
 Specifies the notation of missing values. (By default: \code{NA})}
 
-\item{missing_values}{Deprecated. Use \code{missing.values} instead.}
-
 \item{collapse.cols}{\code{Logical scalar}. Determines whether to collapse
 identically named samples to one. (Default: \code{FALSE})}
-
-\item{collapse_samples}{Deprecated. Use \code{collapse.cols} instead.}
 
 \item{collapse.rows}{\code{Logical scalar}. Determines whether to collapse
 features that have identical names and taxonomy to one.
 (Default: \code{TRUE})}
-
-\item{collapse_features}{Deprecated. Use \code{collapse.rows} instead.}
 }
 \value{
 A single \code{SummarizedExperiment} object.

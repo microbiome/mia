@@ -34,12 +34,9 @@ runCCA(x, ...)
 \S4method{getCCA}{SummarizedExperiment}(
   x,
   formula = NULL,
-  col.var = variables,
-  variables = NULL,
+  col.var = NULL,
   test.signif = TRUE,
-  assay.type = assay_name,
-  assay_name = exprs_values,
-  exprs_values = "counts",
+  assay.type = "counts",
   ...
 )
 
@@ -54,12 +51,9 @@ runRDA(x, ...)
 \S4method{getRDA}{SummarizedExperiment}(
   x,
   formula = NULL,
-  col.var = variables,
-  variables = NULL,
+  col.var = NULL,
   test.signif = TRUE,
-  assay.type = assay_name,
-  assay_name = exprs_values,
-  exprs_values = NULL,
+  assay.type = NULL,
   dis.name = NULL,
   ...
 )
@@ -125,18 +119,12 @@ including covariates defined by \code{formula}.}
 \code{SummarizedExperiment},\code{col.var} can be used to specify variables
 from \code{colData}.}
 
-\item{variables}{Deprecated. Use \code{col.var} instead.}
-
 \item{test.signif}{\code{Logical scalar}. Should the PERMANOVA and analysis
 of multivariate homogeneity of group dispersions be performed.
 (Default: \code{TRUE})}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{NULL})}
-
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
-\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
 \item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an
 alternative experiment containing the input data.}

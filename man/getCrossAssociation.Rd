@@ -12,34 +12,23 @@ getCrossAssociation(x, ...)
   x,
   experiment1 = 1,
   experiment2 = 2,
-  assay.type1 = assay_name1,
-  assay_name1 = NULL,
-  assay.type2 = assay_name2,
-  assay_name2 = NULL,
+  assay.type1 = NULL,
+  assay.type2 = NULL,
   altexp1 = NULL,
   altexp2 = NULL,
-  col.var1 = colData_variable1,
-  colData_variable1 = NULL,
-  col.var2 = colData_variable2,
-  colData_variable2 = NULL,
-  by = MARGIN,
-  MARGIN = 1,
+  col.var1 = NULL,
+  col.var2 = NULL,
+  by = 1,
   method = "kendall",
   mode = "table",
-  p.adj.method = p_adj_method,
-  p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm", "hommel", "none"),
-  p.adj.threshold = p_adj_threshold,
-  p_adj_threshold = NULL,
-  cor.threshold = cor_threshold,
-  cor_threshold = NULL,
+  p.adj.method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm", "hommel", "none"),
+  p.adj.threshold = NULL,
+  cor.threshold = NULL,
   sort = FALSE,
-  filter.self.cor = filter_self_correlations,
-  filter_self_correlations = FALSE,
+  filter.self.cor = FALSE,
   verbose = TRUE,
-  test.signif = test_significance,
-  test_significance = FALSE,
-  show.warnings = show_warnings,
-  show_warnings = TRUE,
+  test.signif = FALSE,
+  show.warnings = TRUE,
   paired = FALSE,
   ...
 )
@@ -93,12 +82,8 @@ Selects the experiment 2 from\code{experiments(x)} of
 \item{assay.type1}{\code{Character scalar}. Specifies the name of the assay
 in experiment 1 to be transformed. (Default: \code{NULL})}
 
-\item{assay_name1}{Deprecated. Use \code{assay.type1} instead.}
-
 \item{assay.type2}{\code{Character scalar}. Specifies the name of the
 assay in experiment 2 to be transformed. (Default: \code{NULL})}
-
-\item{assay_name2}{Deprecated. Use \code{assay.type2} instead.}
 
 \item{altexp1}{\code{Character scalar} or \code{numeric scalar}. Specifies
 alternative experiment from the \code{altExp} of experiment 1. If NULL, then
@@ -114,19 +99,13 @@ the experiment is itself and altExp option is disabled.
 \code{colData} of experiment 1. If col.var1 is used, assay.type1 is disabled.
 (Default: \code{NULL})}
 
-\item{colData_variable1}{Deprecated. Use \code{col.var1} instead.}
-
 \item{col.var2}{\code{Character scalar}. Specifies column(s) from colData
 of experiment 2. If col.var2 is used, assay.type2 is disabled.
 (Default: \code{NULL})}
 
-\item{colData_variable2}{Deprecated. Use \code{col.var2} instead.}
-
 \item{by}{A\code{Character scalar}. Determines if association are calculated
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}
-
-\item{MARGIN}{Deprecated. Use \code{by} instead.}
 
 \item{method}{\code{Character scalar}. Defines the association method
 ('kendall', 'pearson', or 'spearman' for continuous/numeric; 'categorical'
@@ -139,19 +118,13 @@ Available formats are  'table' and 'matrix'.  (Default: \code{"table"})}
 p-values. Passed to \code{p.adjust} function.
 (Default: \code{"fdr"})}
 
-\item{p_adj_method}{Deprecated. Use \code{p.adj.method} instead.}
-
 \item{p.adj.threshold}{\code{Numeric scalar}. From \code{0 to 1}, specifies
 adjusted p-value threshold for filtering.
 (Default: \code{NULL})}
 
-\item{p_adj_threshold}{Deprecated. Use \code{p.dj.threshold} instead.}
-
 \item{cor.threshold}{\code{Numeric scalar}. From \code{0 to 1}, specifies
 correlation threshold for filtering.
 (Default: \code{NULL})}
-
-\item{cor_threshold}{Deprecated. Use \code{cor.threshold} instead.}
 
 \item{sort}{\code{Logical scalar}. Specifies whether to sort features or not
 in result matrices. Used method is hierarchical clustering.
@@ -162,9 +135,6 @@ filter out correlations between identical items. Applies only when
 correlation between experiment itself is tested, i.e., when assays are
 identical. (Default: \code{FALSE})}
 
-\item{filter_self_correlations}{Deprecated. Use \code{filter.self.cor}
-instead.}
-
 \item{verbose}{\code{Logical scalar}. Specifies whether to get messages
 about progress of calculation. (Default: \code{FALSE})}
 
@@ -172,13 +142,9 @@ about progress of calculation. (Default: \code{FALSE})}
 statistical significance of associations.
 (Default: \code{FALSE})}
 
-\item{test_significance}{Deprecated. Use \code{test.signif} instead.}
-
 \item{show.warnings}{\code{Logical scalar}. specifies whether to show
 warnings that might occur when correlations and p-values are calculated.
 (Default: \code{FALSE})}
-
-\item{show_warnings}{Deprecated. use \code{show.warnings} instead.}
 
 \item{paired}{\code{Logical scalar}. Specifies if samples are paired or not.
 \code{colnames} must match between twp experiments. \code{paired} is disabled

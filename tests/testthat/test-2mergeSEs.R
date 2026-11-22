@@ -72,8 +72,10 @@ test_that("mergeSEs gives same result for all input formats", {
     ref <- mergeSEs(se1, se2)
     expect_equal(mergeSEs(list(se1, se2)), ref)
     expect_equal(mergeSEs(SimpleList(se1, se2)), ref)
-    # Deprecated argument names
-    expect_equal(mergeSEs(se1, se2, assay_name = "counts"), ref)
+    # Defunct argument names
+    expect_error(
+        mergeSEs(se1, se2, assay_name = "counts"),
+        "'assay_name' is defunct. Use 'assay.type' instead.")
 })
 
 test_that("mergeSEs merges assays", {

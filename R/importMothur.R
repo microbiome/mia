@@ -7,21 +7,15 @@
 #'   path of the feature table to be imported. The File has to be in 
 #'   \code{shared file} format as defined in Mothur documentation.
 #' 
-#' @param sharedFile Deprecated. Use \code{assay.file} instead.
-#'
 #' @param row.file \code{Character scalar}. Defines the file path of
 #'   the taxonomy table to be imported. The File has to be in \code{taxonomy
 #'   file} or \code{constaxonomy file} format  as defined in Mothur
 #'   documentation. (Default: \code{NULL}).
 #' 
-#' @param taxonomyFile Deprecated. Use \code{row.file} instead.
-#'
 #' @param col.file \code{Character scalar}. Defines file path of
 #'   the sample metadata to be imported. The File has to be in \code{design
 #'   file} format as defined in Mothur documentation. (Default: \code{NULL}).
 #' 
-#' @param designFile Deprecated. Use \code{col.file} instead.
-#'
 #' @param tree.file \code{NULL} or \code{Character scalar}. Defines the file
 #'   path of a phylogenetic tree in Newick format. The tip labels of the tree
 #'   must match the OTU names, e.g., \code{Otu001}. (Default: \code{NULL})
@@ -71,13 +65,8 @@ NULL
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom S4Vectors make_zero_col_DFrame
 #' @export
-importMothur <- function(assay.file = sharedFile,
-                        sharedFile, 
-                        taxonomyFile = NULL,
-                        row.file = taxonomyFile,
-                        designFile = NULL,
-                        col.file = designFile,
-                        tree.file = NULL) {
+importMothur <- function(
+        assay.file, row.file = NULL, col.file = NULL, tree.file = NULL) {
 
     # input check
     if(!.is_non_empty_string(assay.file)){

@@ -9,10 +9,8 @@ rarefyAssay(x, ...)
 
 \S4method{rarefyAssay}{SummarizedExperiment}(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  sample = min_size,
-  min_size = min(colSums2(assay(x, assay.type))),
+  assay.type = "counts",
+  sample = min(colSums2(assay(x, assay.type))),
   replace = FALSE,
   name = "subsampled",
   ...
@@ -30,13 +28,9 @@ messages. (Default: \code{TRUE})
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
 \item{sample}{\code{Integer scalar}. Indicates the number of counts being
 simulated i.e. rarefying depth. This can equal to lowest number of total
 counts found in a sample or a user specified number.}
-
-\item{min_size}{Deprecated. Use \code{sample} instead.}
 
 \item{replace}{\code{Logical scalar}. Whether to åperform subsampling with
 replacement. Ths works similarly to \code{sample(..., replace = TRUE)}.

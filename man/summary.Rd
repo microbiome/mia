@@ -19,8 +19,7 @@ getTop(
   x,
   top = 5L,
   method = c("mean", "sum", "median", "sd", "cv", "prevalence"),
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
   na.rm = TRUE,
   ...
 )
@@ -29,17 +28,16 @@ getTop(
   x,
   top = 5L,
   method = c("mean", "sum", "median", "sd", "cv", "prevalence"),
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
   na.rm = TRUE,
   ...
 )
 
 \S4method{getUnique}{SummarizedExperiment}(x, rank = NULL, ...)
 
-\S4method{summarizeDominance}{SummarizedExperiment}(x, group = NULL, name = "dominant_taxa", ...)
+\S4method{summarizeDominance}{SummarizedExperiment}(x, group = NULL, name = "dominant_taxa", rank = NULL, ...)
 
-\S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
+\S4method{summary}{SummarizedExperiment}(object, assay.type = "counts")
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
@@ -69,8 +67,6 @@ of variation, so rare features should be filtered out first, e.g., with
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of the
 assay used in calculation. (Default: \code{"counts"})}
-
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{na.rm}{\code{Logical scalar}. Should NA values be omitted?
 (Default: \code{TRUE})}

@@ -8,8 +8,6 @@
 #' @param x
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.
 #'
-#' @param assay_name Deprecated. Use \code{assay.type} instead.
-#'
 #' @param detection \code{Numeric scalar}. Detection threshold for
 #' absence/presence. If \code{as_relative = FALSE},
 #' it sets the counts threshold for a taxon to be considered present.
@@ -18,8 +16,6 @@
 #'
 #' @param include.lowest \code{Logical scalar}. Should the lower boundary of the
 #'   detection and prevalence cutoffs be included? (Default: \code{FALSE})
-#'
-#' @param include_lowest Deprecated. Use \code{include.lowest} instead.
 #'
 #' @param sort \code{Logical scalar}. Should the result be sorted by prevalence?
 #'   (Default: \code{FALSE})
@@ -194,9 +190,10 @@ setMethod("addPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalence", signature = c(x = "ANY"), function(
-    x, detection = 0, include.lowest = include_lowest, include_lowest = FALSE,
-    sort = FALSE, na.rm = TRUE, ...){
+    x, detection = 0, include.lowest = FALSE, sort = FALSE, na.rm = TRUE,
+    ...){
         # input check
+        .check_defunct_args(...names(), c("assay_name", "include_lowest"))
         if (!.is_numeric_string(detection)) {
             stop("'detection' must be a single numeric value or coercible to ",
                 "one.", call. = FALSE)
@@ -242,8 +239,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts",
-            rank = NULL, ...){
+    function(x, assay.type = "counts", rank = NULL, ...){
         # check assay
         .check_assay_present(assay.type, x)
         x <- .merge_features(x, rank = rank, ...)
@@ -333,8 +329,7 @@ NULL
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalent", signature = c(x = "ANY"),
-    function(x, prevalence = 50/100, include.lowest = include_lowest,
-        include_lowest = FALSE, ...){
+    function(x, prevalence = 50/100, include.lowest = FALSE, ...){
             .get_prevalent_taxa(x, rank = NULL, prevalence = prevalence,
                 include.lowest = include.lowest, ...)
     }
@@ -343,8 +338,8 @@ setMethod("getPrevalent", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalent", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, prevalence = 50/100,
-        include.lowest = include_lowest, include_lowest = FALSE, ...){
+    function(x, rank = NULL, prevalence = 50/100, include.lowest = FALSE,
+        ...){
             .get_prevalent_taxa(x, rank = rank, prevalence = prevalence,
                 include.lowest = include.lowest, ...)
     }
@@ -388,8 +383,7 @@ NULL
 #' @rdname getPrevalence
 #' @export
 setMethod("getRare", signature = c(x = "ANY"),
-    function(x, prevalence = 50/100, include.lowest = include_lowest,
-        include_lowest = FALSE, ...){
+    function(x, prevalence = 50/100, include.lowest = FALSE, ...){
             .get_rare_taxa(x, rank = NULL, prevalence = prevalence,
                 include.lowest = include.lowest, ...)
     }
@@ -398,8 +392,8 @@ setMethod("getRare", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getRare", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, prevalence = 50/100,
-        include.lowest = include_lowest, include_lowest = FALSE, ...){
+    function(x, rank = NULL, prevalence = 50/100, include.lowest = FALSE,
+        ...){
             .get_rare_taxa(x, rank = rank, prevalence = prevalence,
                 include.lowest = include.lowest, ...)
     }
@@ -439,8 +433,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", rank = NULL,
-        ...){
+    function(x, assay.type = "counts", rank = NULL, ...){
         # check assay
         .check_assay_present(assay.type, x)
         # Agglomerate to the given rank, as in getPrevalent()

@@ -7,9 +7,7 @@
 #' rownames, or a single \code{character} value defining the file
 #' path of the sample metadata file. The file must be in \code{tsv} format
 #' (Default: \code{NULL}).
-#' 
-#' @param colData Deprecated. Use \code{col.data} instead.
-#' 
+#'
 #' @param ... additional arguments:
 #' \itemize{
 #'   \item \code{assay.type}:  \code{Character scalar}. Specifies the name of
@@ -65,8 +63,9 @@
 #' 
 NULL
 
-importHUMAnN <- function(file, col.data = colData, colData = NULL, ...){
+importHUMAnN <- function(file, col.data = NULL, ...){
     ################################ Input check ###############################
+    .check_defunct_args(...names(), "colData")
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
             call. = FALSE)

@@ -30,11 +30,10 @@ test_that("transformAssay input checks", {
     expect_error(
         transformAssay(se, method = "alr", reference = c(1, 2)),
         "'reference' must be a single value")
-    # Deprecated argument
-    expect_warning(res <- transformAssay(
-        as(se, "TreeSummarizedExperiment"), method = "pa",
-        assay_name = "counts"))
-    expect_true("pa" %in% assayNames(res))
+    # Defunct argument
+    expect_error(
+        transformAssay(se, method = "pa", assay_name = "counts"),
+        "'assay_name' is defunct. Use 'assay.type' instead.")
 })
 
 test_that("transformAssay adds assay and keeps the input intact", {

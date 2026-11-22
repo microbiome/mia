@@ -567,7 +567,7 @@ test_that("Import HUMAnN file", {
     expect_equal(tse, tse2)
     #
     cd <- colData(tse)
-    tse2 <- importHUMAnN(file_path, colData = cd)
+    tse2 <- importHUMAnN(file_path, col.data = cd)
     # colData should not change the result
     expect_equal(tse, tse2)
 })

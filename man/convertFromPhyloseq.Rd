@@ -12,9 +12,9 @@ convertToPhyloseq(x, ...)
 
 convertFromPhyloseq(x)
 
-\S4method{convertToPhyloseq}{SummarizedExperiment}(x, assay.type = "counts", assay_name = NULL, ...)
+\S4method{convertToPhyloseq}{SummarizedExperiment}(x, assay.type = "counts", ...)
 
-\S4method{convertToPhyloseq}{TreeSummarizedExperiment}(x, tree.name = tree_name, tree_name = "phylo", ...)
+\S4method{convertToPhyloseq}{TreeSummarizedExperiment}(x, tree.name = "phylo", ...)
 }
 \arguments{
 \item{x}{a
@@ -26,15 +26,11 @@ object}
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used. (Default: \code{"counts"})}
 
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
 \item{tree.name}{\code{NULL} or \code{Character scalar}. Specifies the name
 of the tree to be included in the phyloseq object that is created. If
 \code{NULL}, no tree is included. As phyloseq orders the features by the
 tips of the tree, this keeps the feature order of \code{x}.
 (Default: \code{"phylo"})}
-
-\item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 }
 \value{
 \code{convertFromPhyloseq} returns an object of class

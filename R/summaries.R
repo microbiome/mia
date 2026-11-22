@@ -126,9 +126,9 @@ setMethod("getTop", signature = c(x = "SummarizedExperiment"),
     function(
         x, top = 5L,
         method = c("mean", "sum", "median", "sd", "cv", "prevalence"),
-        assay.type = assay_name, assay_name = "counts",
-        na.rm = TRUE, ...){
+        assay.type = "counts", na.rm = TRUE, ...){
         # input check
+        .check_defunct_args(...names(), "assay_name")
         method <- match.arg(
             method, c("mean","sum","median","sd","cv","prevalence"))
         # Optionally agglomerate data
@@ -216,7 +216,7 @@ NULL
 #' @rdname summary
 #' @export
 setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
-    function(x, group = NULL, name = "dominant_taxa", ...){
+    function(x, group = NULL, name = "dominant_taxa", rank = NULL, ...){
         # Input check
         # group check
         if(!is.null(group)){
@@ -231,7 +231,7 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
                 call. = FALSE)
         }
         # Adds dominant taxa to colData
-        dominant_taxa <- getDominant(x, ...)
+        dominant_taxa <- getDominant(x, group = rank, ...)
         data <- colData(x)
         # If the length of dominant taxa is not equal to number of rows, then
         # add rows
@@ -342,7 +342,7 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
 #'
 #' @export
 setMethod("summary", signature = c(object = "SummarizedExperiment"),
-    function(object, assay.type = assay_name, assay_name = "counts"){
+    function(object, assay.type = "counts"){
         # Input check
         .check_assay_present(assay.type = assay.type, object)
         #

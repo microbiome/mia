@@ -12,15 +12,9 @@ rownames, or a single \code{character} value defining the file
 path of the sample metadata file. The file must be in \code{tsv} format
 (Default: \code{NULL}).}
 
-\item{colData}{Deprecated. use \code{col.data} instead.}
-
-\item{sample_meta}{Deprecated. Use \code{col.data} instead.}
-
 \item{tree.file}{\code{Character scalar}. Defines the file
 path of the phylogenetic tree.
 (Default: \code{NULL}).}
-
-\item{phy_tree}{Deprecated. Use \code{tree.file} instead.}
 
 \item{...}{additional arguments:
 \itemize{

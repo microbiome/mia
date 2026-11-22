@@ -15,8 +15,6 @@
 #' of the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}. (Default:
 #' \code{FALSE})
 #'
-#' @param keep_dist Deprecated. Use \code{keep.dist} instead.
-#'
 #' @param FUN \code{Function} or \code{Character scalar}. A value with a
 #' function name returning a \code{\link[stats:dist]{dist}} object. The
 #' default is \code{\link[=getDissimilarity]{getDissimilarity}}, as in
@@ -30,8 +28,6 @@
 #'   \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 #'   \code{\link[vegan:monoMDS]{vegan::monoMDS}}
 #'
-#' @param nmdsFUN Deprecated. Use \code{nmds.fun} instead.
-#'
 #' @param name \code{Character scalar}. A name for the column of the
 #' \code{colData} where results will be stored. (Default: \code{"NMDS"})
 #'
@@ -43,10 +39,6 @@
 #'
 #' @param ndimred \code{integer vector}. Specifies the dimensions to use if
 #'   dimred is specified.
-#'
-#' @param n_dimred Deprecated. Use \code{ndimred} instead.
-#'
-#' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #'
 #' @return For \code{getNMDS}, a matrix is returned containing the MDS
 #'   coordinates for each sample (row) and dimension (column).
@@ -135,13 +127,12 @@ NULL
 #' @importFrom stats cmdscale
 #' @importFrom vegan monoMDS
 .calculate_nmds <- function(
-        x, FUN = getDissimilarity,
-        nmds.fun = nmdsFUN,
-        nmdsFUN = c("isoMDS","monoMDS"),
-        ncomponents = 2, ntop = 500, subset.row = subset_row,
-        subset_row = NULL, scale = FALSE, transposed = FALSE,
-        keep.dist = keep_dist,
-        keep_dist = FALSE, ...){
+        x, FUN = getDissimilarity, nmds.fun = c("isoMDS","monoMDS"),
+        ncomponents = 2, ntop = 500, subset.row = NULL, scale = FALSE,
+        transposed = FALSE, keep.dist = FALSE, ...){
+    .check_defunct_args(...names(), c(
+        "keep_dist", "nmdsFUN", "subset_row", "n_dimred", "assay_name",
+        "exprs_values"))
     nmds.fun <- match.arg(nmds.fun)
     nmdsArgs <- .get_nmds_args(nmds.fun, ...)
     if(!transposed) {
@@ -173,8 +164,7 @@ setMethod("getNMDS", "ANY", .calculate_nmds)
 #' @importFrom SummarizedExperiment assay
 #' @export
 setMethod("getNMDS", "SummarizedExperiment",
-    function(x, ..., assay.type = assay_name, assay_name = exprs_values,
-        exprs_values = "counts", FUN = getDissimilarity) {
+    function(x, ..., assay.type = "counts", FUN = getDissimilarity) {
         .calculate_nmds(assay(x, assay.type), FUN = FUN, ...)
     }
 )
@@ -182,9 +172,8 @@ setMethod("getNMDS", "SummarizedExperiment",
 #' @rdname runNMDS
 #' @export
 setMethod("getNMDS", "SingleCellExperiment",
-    function(x, ..., assay.type = assay_name, assay_name = exprs_values,
-            exprs_values = "counts", dimred = NULL, ndimred = n_dimred,
-            n_dimred = NULL, FUN = getDissimilarity){
+    function(x, ..., assay.type = "counts", dimred = NULL, ndimred = NULL,
+            FUN = getDissimilarity){
         mat <- .get_mat_from_sce(
             x, exprs_values = assay.type, dimred = dimred, n_dimred = ndimred)
         getNMDS(mat, transposed = !is.null(dimred), FUN = FUN,...)

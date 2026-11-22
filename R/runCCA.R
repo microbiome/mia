@@ -27,8 +27,6 @@
 #' \code{SummarizedExperiment},\code{col.var} can be used to specify variables
 #' from \code{colData}.
 #'
-#' @param variables Deprecated. Use \code{col.var} instead.
-#'
 #' @param test.signif \code{Logical scalar}. Should the PERMANOVA and analysis
 #' of multivariate homogeneity of group dispersions be performed.
 #' (Default: \code{TRUE})
@@ -38,8 +36,6 @@
 #'
 #' @param name \code{Character scalar}. A name for the \code{reducedDim()}
 #' where results will be stored. (Default: \code{"CCA"})
-#'
-#' @param exprs_values Deprecated. Use \code{assay.type} instead.
 #'
 #' @param ... additional arguments passed to vegan::cca or vegan::dbrda and
 #' other internal functions.
@@ -240,10 +236,11 @@ setMethod("getCCA", "ANY", function(x, formula, data, ...){
 #' @rdname runCCA
 setMethod("getCCA", "SummarizedExperiment",
     function(
-        x, formula = NULL, col.var = variables, variables = NULL,
-        test.signif = TRUE, assay.type = assay_name, assay_name = exprs_values,
-        exprs_values = "counts", ...){
+        x, formula = NULL, col.var = NULL, test.signif = TRUE,
+        assay.type = "counts", ...){
         ############################# Input check ##############################
+        .check_defunct_args(
+            ...names(), c("variables", "assay_name", "exprs_values"))
         if( !(is.null(formula) || is(formula, "formula")) ){
             stop("'formula' must be formula or NULL.", call. = FALSE)
         }
@@ -354,10 +351,11 @@ setMethod("getRDA", "ANY", function(x, formula, data, ...){
 #' @rdname runCCA
 setMethod("getRDA", "SummarizedExperiment",
     function(
-        x, formula = NULL, col.var = variables, variables = NULL,
-        test.signif = TRUE, assay.type = assay_name, assay_name = exprs_values,
-        exprs_values = NULL, dis.name = NULL, ...){
+        x, formula = NULL, col.var = NULL, test.signif = TRUE,
+        assay.type = NULL, dis.name = NULL, ...){
         ############################# Input check ##############################
+        .check_defunct_args(
+            ...names(), c("variables", "assay_name", "exprs_values"))
         if( !(is.null(formula) || is(formula, "formula")) ){
             stop("'formula' must be formula or NULL.", call. = FALSE)
         }

@@ -28,7 +28,7 @@ was derived from the \pkg{DirichletMultinomial} package.
 }
 \seealso{
 \code{\link{mia-datasets}}
-\code{\link{calculateDMN}}
+\code{\link{calculateDMNgroup}}
 }
 \author{
 Turnbaugh, PJ et al.

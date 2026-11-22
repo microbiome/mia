@@ -9,38 +9,26 @@
 #' @param assay.file \code{Character scalar}. Defines the file
 #'   path of the feature table to be imported.
 #' 
-#' @param featureTableFile Deprecated. use \code{assay.file} instead.
-#'
 #' @param row.file \code{Character scalar} or \code{NULL}. Defines the file
 #'   path of the taxonomy table to be imported. (default:
 #'   \code{NULL}).
 #' 
-#' @param taxonomyTableFile Deprecated. use \code{row.file} instead.
-#'
 #' @param col.file \code{Character scalar} or \code{NULL}. Defines the file path
 #'   of the sample metadata to be imported. The file has to be in tsv format.
 #'   (Default: \code{NULL}).
 #' 
-#' @param sampleMetaFile Deprecated. Use \code{col.file} instead.
-#'
 #' @param as.refseq \code{Logical scalar} or \code{NULL}. Should the feature
 #'   names of the feature table be regarded as reference sequences? This setting
 #'   will be disregarded, if \code{refseq.file} is not \code{NULL}. If the
 #'   feature names do not contain valid DNA characters only, the reference
 #'   sequences will not be set.
 #' 
-#' @param featureNamesAsRefSeq Deprecated. Use \code{as.refseq} instead.
-#'
 #' @param refseq.file \code{Character scalar} or \code{NULL}. Defines the file
 #' path of the reference sequences for each feature. (Default: \code{NULL}).
 #' 
-#' @param refSeqFile Deprecated. Use \code{refseq.file} instead.
-#'
 #' @param tree.file \code{Character scalar}. Defines the file path of
 #'   the phylogenetic tree. (Default: \code{NULL}).
 #' 
-#' @param phyTreeFile Deprecated. Use \code{tree.file} instead.
-#'
 #' @param ... additional arguments:
 #' \itemize{
 #'   \item \code{temp.dir}: the temporary directory used for decompressing the
@@ -94,19 +82,12 @@
 #' tse
 
 #' @importFrom S4Vectors make_zero_col_DFrame SimpleList
-importQIIME2 <- function(assay.file = featureTableFile,
-                            featureTableFile,
-                            row.file = taxonomyTableFile,
-                            taxonomyTableFile = NULL,
-                            col.file = sampleMetaFile,
-                            sampleMetaFile = NULL,
-                            as.refseq = featureNamesAsRefSeq,
-                            featureNamesAsRefSeq = TRUE,
-                            refseq.file = refSeqFile,
-                            refSeqFile = NULL,
-                            tree.file = phyTreeFile,
-                            phyTreeFile = NULL,
-                            ...) {
+importQIIME2 <- function(
+        assay.file, row.file = NULL, col.file = NULL, as.refseq = TRUE,
+        refseq.file = NULL, tree.file = NULL, ...) {
+    .check_defunct_args(...names(), c(
+        "featureTableFile", "taxonomyTableFile", "sampleMetaFile",
+        "featureNamesAsRefSeq", "refSeqFile", "phyTreeFile"))
     .require_package("yaml")
     # input check
     if(!.is_non_empty_string(assay.file)){
@@ -189,8 +170,6 @@ importQIIME2 <- function(assay.file = featureTableFile,
 #' @param temp.dir character, a temporary directory in which the qza file will
 #' be decompressed to, default `tempdir()`.
 #' 
-#' @param temp Deprecated. Use \code{temp.dir} instead.
-#' 
 #' @return `matrix` object for feature table, `DataFrame` for taxonomic table,
 #'   [`ape::phylo`] object for phylogenetic tree,
 #'   [`Biostrings::DNAStringSet-class`] for representative sequences of taxa.
@@ -223,7 +202,8 @@ importQIIME2 <- function(assay.file = featureTableFile,
 #' @importFrom utils unzip
 #' @importFrom ape read.tree
 #' @importFrom Biostrings readDNAStringSet
-importQZA <- function(file, temp.dir = temp, temp = tempdir(), ...) {
+importQZA <- function(file, temp.dir = tempdir(), ...) {
+    .check_defunct_args(...names(), "temp")
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }

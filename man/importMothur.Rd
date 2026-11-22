@@ -4,31 +4,17 @@
 \alias{importMothur}
 \title{Import Mothur results as a \code{TreeSummarizedExperiment}}
 \usage{
-importMothur(
-  assay.file = sharedFile,
-  sharedFile,
-  taxonomyFile = NULL,
-  row.file = taxonomyFile,
-  designFile = NULL,
-  col.file = designFile,
-  tree.file = NULL
-)
+importMothur(assay.file, row.file = NULL, col.file = NULL, tree.file = NULL)
 }
 \arguments{
 \item{assay.file}{\code{Character scalar}. Defines the file
 path of the feature table to be imported. The File has to be in
 \code{shared file} format as defined in Mothur documentation.}
 
-\item{sharedFile}{Deprecated. Use \code{assay.file} instead.}
-
-\item{taxonomyFile}{Deprecated. Use \code{row.file} instead.}
-
 \item{row.file}{\code{Character scalar}. Defines the file path of
 the taxonomy table to be imported. The File has to be in \code{taxonomy
 file} or \code{constaxonomy file} format  as defined in Mothur
 documentation. (Default: \code{NULL}).}
-
-\item{designFile}{Deprecated. Use \code{col.file} instead.}
 
 \item{col.file}{\code{Character scalar}. Defines file path of
 the sample metadata to be imported. The File has to be in \code{design

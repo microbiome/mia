@@ -58,10 +58,6 @@
 #' \code{empty.fields} in specified \code{rank} will be excluded.
 #' (Default: \code{TRUE})
 #'
-#' @param agglomerateTree Deprecated. Use \code{update.tree} instead.
-#'
-#' @param agglomerate.tree Deprecated. Use \code{update.tree} instead.
-#'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
 #'   to \code{\link[=agglomerate-methods]{agglomerateByVariable}},
@@ -113,8 +109,6 @@
 #'   nested alternative experiments by default. (Default:
 #'   \code{TRUE})
 #'
-#' @param strip_altexp Deprecated. Use \code{altexp.rm} instead.
-#'
 #' @param by \code{Character scalar}. Determines if data is merged
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}.
@@ -129,16 +123,12 @@
 #' specify one or several names of numeric or logical variables from the
 #' \code{rowData(x)/colData(x)} by which to agglomerate rows or columns.
 #'
-#' @param f Deprecated. Use \code{group} instead.
-#'
 #' @param update.tree \code{Logical scalar}. Should
 #' \code{rowTree()} also be agglomerated? Each group is collapsed into the
 #' most recent common ancestor of its features. This requires that groups are
 #' monophyletic, i.e., each group forms its own subtree. Otherwise, the tree is
 #' removed with a warning. If \code{FALSE}, the tree is removed.
 #' (Default: \code{FALSE})
-#'
-#' @param mergeTree Deprecated. Use \code{update.tree} instead.
 #'
 #' @examples
 #'
@@ -267,9 +257,10 @@ NULL
 #' @export
 setMethod(
     "agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, rank = taxonomyRanks(x)[1], update.tree = agglomerateTree,
-        agglomerate.tree = agglomerateTree, agglomerateTree = FALSE, ...){
+    function(x, rank = taxonomyRanks(x)[1], update.tree = FALSE, ...){
         # Input check
+        .check_defunct_args(
+            ...names(), c("agglomerateTree", "agglomerate.tree"))
         if(!.is_a_bool(update.tree)){
             stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
         }
@@ -285,9 +276,10 @@ setMethod(
 #' @export
 setMethod(
     "agglomerateByRank", signature = c(x = "SingleCellExperiment"),
-    function(x, rank = taxonomyRanks(x)[1], altexp = NULL,
-        altexp.rm = strip_altexp, strip_altexp = TRUE, ...){
+    function(x, rank = taxonomyRanks(x)[1], altexp = NULL, altexp.rm = TRUE,
+        ...){
         # Input check
+        .check_defunct_args(...names(), "strip_altexp")
         if(!.is_a_bool(altexp.rm)){
             stop("'altexp.rm' must be TRUE or FALSE.", call. = FALSE)
         }
@@ -391,8 +383,8 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable",
     signature = c(x = "TreeSummarizedExperiment"),
-    function(x, by, group = f, f, update.tree = mergeTree, mergeTree = FALSE,
-        ...){
+    function(x, by, group, update.tree = FALSE, ...){
+        .check_defunct_args(...names(), c("f", "mergeTree"))
         # Check by
         by <- .check_MARGIN(by)
         # Get function based on by
@@ -407,7 +399,8 @@ setMethod("agglomerateByVariable",
 #' @aliases agglomerateByVariable
 #' @export
 setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
-    function(x, by, group = f, f, ...){
+    function(x, by, group, ...){
+        .check_defunct_args(...names(), "f")
         # Check by
         by <- .check_MARGIN(by)
         # Agglomerate the data

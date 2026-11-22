@@ -18,18 +18,6 @@ test_that("Deprecated prevalence functions give a deprecation warning", {
     expect_warning(
         agglomerateByPrevalence(tse, rank = "Phylum"),
         "'agglomerateByPrevalence' is deprecated")
-    expect_warning(
-        mergeFeaturesByPrevalence(tse, rank = "Phylum"),
-        "'mergeFeaturesByPrevalence' is deprecated")
-    expect_warning(
-        subsetByPrevalentTaxa(tse), "'subsetByPrevalentTaxa' is deprecated")
-    expect_warning(
-        subsetByPrevalentFeatures(tse),
-        "'subsetByPrevalentFeatures' is deprecated")
-    expect_warning(
-        subsetByRareTaxa(tse), "'subsetByRareTaxa' is deprecated")
-    expect_warning(
-        subsetByRareFeatures(tse), "'subsetByRareFeatures' is deprecated")
 })
 
 test_that("subsetByPrevalent and subsetByRare match subsetBy", {
@@ -65,17 +53,6 @@ test_that("subsetByPrevalent and subsetByRare match subsetBy", {
     rare <- .quiet_deprecated(subsetByRare(tse, prevalence = 0.3))
     expect_setequal(c(rownames(prevalent), rownames(rare)), rownames(tse))
     expect_length(intersect(rownames(prevalent), rownames(rare)), 0L)
-    # Aliases give the same result
-    expect_identical(
-        .quiet_deprecated(subsetByPrevalentTaxa(tse, prevalence = 0.3)),
-        prevalent)
-    expect_identical(
-        .quiet_deprecated(subsetByPrevalentFeatures(tse, prevalence = 0.3)),
-        prevalent)
-    expect_identical(
-        .quiet_deprecated(subsetByRareTaxa(tse, prevalence = 0.3)), rare)
-    expect_identical(
-        .quiet_deprecated(subsetByRareFeatures(tse, prevalence = 0.3)), rare)
     # rowData variables do not mask the condition
     tse_keep <- tse
     rowData(tse_keep)[["keep"]] <- TRUE
@@ -108,11 +85,6 @@ test_that("agglomerateByPrevalence matches subsetBy with collapse", {
         tse, rank = "Phylum", other.name = "Rest"))
     expect_identical(tail(rownames(res), 1L), "Rest")
     expect_identical(rowData(res)["Rest", "Phylum"], "Rest")
-    # mergeFeaturesByPrevalence gives the same result
-    expect_identical(
-        .quiet_deprecated(mergeFeaturesByPrevalence(
-            tse, rank = "Phylum", other.name = "Rest")),
-        res)
     # No "Other" row if all features are prevalent
     res <- .quiet_deprecated(agglomerateByPrevalence(
         tse, rank = "Kingdom", prevalence = 0))
@@ -138,4 +110,57 @@ test_that("Deprecated prevalence functions check input", {
     expect_error(
         .quiet_deprecated(agglomerateByPrevalence(tse, other.name = TRUE)),
         "'other.name' must be a single character value")
+})
+
+test_that("Defunct functions give an error naming the replacement", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns
+    defunct <- c(
+        cluster = "addCluster", getTopTaxa = "getTop",
+        loadFromBiom = "importBIOM", mergeRows = "agglomerateByVariable",
+        subsetByRareTaxa = "subsetBy", transformCounts = "transformAssay")
+    for( fun in names(defunct) ){
+        expect_error(
+            get(fun)(tse), paste0("'", fun, "' is defunct. Use '",
+                defunct[[fun]], "'"),
+            class = "defunctError")
+    }
+    expect_error(relabundance(tse) <- 1, class = "defunctError")
+})
+
+test_that("Defunct argument names give an error naming the new argument", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns
+    expect_error(
+        getPrevalence(tse, assay_name = "counts"),
+        "'assay_name' is defunct. Use 'assay.type' instead.")
+    expect_error(
+        getPrevalent(tse, include_lowest = TRUE),
+        "'include_lowest' is defunct. Use 'include.lowest' instead.")
+    expect_error(
+        getDominant(tse, rank = "Genus"),
+        "'rank' is defunct. Use 'group' instead.")
+    expect_error(
+        agglomerateByVariable(tse, by = "rows", f = "Phylum"),
+        "'f' is defunct. Use 'group' instead.")
+    # The new names give the same result as before
+    expect_equal(
+        getPrevalence(tse, assay.type = "counts"),
+        getPrevalence(assay(tse, "counts")))
+    expect_equal(
+        getDominant(tse, group = "Genus"),
+        getDominant(agglomerateByRank(tse, rank = "Genus")))
+    expect_equal(
+        agglomerateByVariable(tse, by = "rows", group = "Phylum"),
+        agglomerateByVariable(tse, by = "rows", rowData(tse)$Phylum))
+})
+
+test_that("calculateDMN is deprecated for matrices and defunct for SE", {
+    data(GlobalPatterns, package = "mia")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Phylum")
+    expect_error(calculateDMN(tse), "defunct")
+    mat <- t(assay(tse, "counts"))
+    expect_warning(res <- calculateDMN(mat, k = 1:2, seed = 1), "deprecated")
+    expect_length(res, 2L)
+    expect_s4_class(res[[1L]], "DMN")
 })

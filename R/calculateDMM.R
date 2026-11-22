@@ -11,25 +11,11 @@
 #' @param assay.type \code{Character scalar}. Specifies the name of the
 #'   assay used in calculation. (Default: \code{"counts"})
 #'
-#' @param exprs_values Deprecated. Use \code{assay.type} instead.
-#'
-#' @param assay_name Deprecated. Use \code{assay.type} instead.
-#'
 #' @param k \code{Numeric scalar}. The number of Dirichlet components to fit.
 #' See \code{\link[DirichletMultinomial:dmn]{dmn}}. (Default: \code{1})
 #'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether the calculation should be parallelized.
-#'
 #' @param transposed \code{Logical scalar}. Is \code{x} transposed with samples
 #' in rows? (Default: \code{FALSE})
-#'
-#' @param type \code{Character scalar}. The type of measure used for the
-#' goodness of fit. One of \sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.
-#'
-#' @param name \code{Character scalar}. The name to store the result in
-#' \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}
 #'
 #' @param variable \code{Character scalar}. A variable from \code{colData} to
 #' use as a grouping variable. Must be a character of factor.
@@ -40,12 +26,6 @@
 #' @param ... optional arguments not used.
 #'
 #' @return
-#' \code{calculateDMN} and \code{getDMN} return a list of \code{DMN} objects,
-#' one element for each value of k provided.
-#'
-#' \code{bestDMNFit} returns the index for the best fit and \code{getBestDMNFit}
-#' returns a single \code{DMN} object.
-#'
 #' \code{calculateDMNgroup} returns a
 #'   \code{\link[DirichletMultinomial:DMNGroup-class]{DMNGroup}} object
 #'
@@ -62,7 +42,7 @@
 #' @references
 #' \insertRef{Holmes2012}{mia}
 #'
-#' @name calculateDMN
+#' @name calculateDMNgroup
 #'
 #' @examples
 #' fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
@@ -107,7 +87,19 @@
 #' bestModel@mixture$Weight
 NULL
 
-#' @importFrom DirichletMultinomial dmn
+# Used by miaViz::plotDMNFit()
+.get_dmn_fit_FUN <- function(type){
+    type <- match.arg(type, c("laplace","AIC","BIC"))
+    fit_FUN <- switch(type,
+                        laplace = DirichletMultinomial::laplace,
+                        AIC = DirichletMultinomial::AIC,
+                        BIC = DirichletMultinomial::BIC)
+    fit_FUN
+}
+
+# Fits DMN models with k components to a samples x features matrix
+#' @importFrom BiocParallel SerialParam bplapply bpisup bpstart bpstop
+#'     getAutoBPPARAM setAutoBPPARAM
 #' @importFrom stats runif
 .calculate_DMN <- function(x, k = 1, BPPARAM = SerialParam(),
                             seed = runif(1, 0, .Machine$integer.max), ...){
@@ -134,116 +126,6 @@ NULL
     ans
 }
 
-#' @rdname calculateDMN
-#' @export
-setMethod("calculateDMN", signature = c(x = "ANY"), .calculate_DMN)
-
-#' @rdname calculateDMN
-#' @export
-setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = exprs_values,
-            exprs_values = "counts", transposed = FALSE, ...){
-        .Deprecated(old="calculateDMN", new="cluster",
-                    "Now calculateDMN is deprecated.
-                    Use cluster with DMMParam parameter instead.")
-        mat <- assay(x, assay.type)
-        if(!transposed){
-            mat <- t(mat)
-        }
-        calculateDMN(mat, ...)
-    }
-)
-
-#' @rdname calculateDMN
-#' @importFrom S4Vectors metadata<-
-#' @export
-runDMN <- function(x, name = "DMN", ...){
-    .Deprecated(old="runDMN", new="cluster",
-                "Now runDMN is deprecated.
-                Use cluster with DMMParam parameter instead.")
-    if(!is(x,"SummarizedExperiment")){
-        stop("'x' must be a SummarizedExperiment")
-    }
-    metadata(x)[[name]] <- calculateDMN(x, ...)
-    x
-}
-
-################################################################################
-# accessors
-
-#' @importFrom S4Vectors metadata
-.get_dmn <- function(x, name){
-    dmn <- metadata(x)[[name]]
-    if(is.null(dmn)){
-        stop("No data found for '",name,"'.", call. = FALSE)
-    }
-    all_dmn <- vapply(dmn, is, logical(1), "DMN")
-    if(!all(all_dmn)){
-        stop("'name' does not a list of DMN objects.", call. = FALSE)
-    }
-    dmn
-}
-
-.get_dmn_fit_FUN <- function(type){
-    type <- match.arg(type, c("laplace","AIC","BIC"))
-    fit_FUN <- switch(type,
-                        laplace = DirichletMultinomial::laplace,
-                        AIC = DirichletMultinomial::AIC,
-                        BIC = DirichletMultinomial::BIC)
-    fit_FUN
-}
-
-#' @rdname calculateDMN
-#' @importFrom DirichletMultinomial laplace AIC BIC
-#' @export
-setMethod("getDMN", signature = c(x = "SummarizedExperiment"),
-            function(x, name = "DMN"){
-                .Deprecated(old="getDMN", new="cluster",
-                            "Now getDMN is deprecated.
-                            Use cluster with DMMParam parameter
-                            and full parameter set as true instead.")
-                .get_dmn(x, name)
-            }
-)
-
-
-.get_best_dmn_fit <- function(dmn, fit_FUN){
-    fit <- vapply(dmn, fit_FUN, numeric(1))
-    which.min(fit)
-}
-
-#' @rdname calculateDMN
-#' @importFrom DirichletMultinomial laplace AIC BIC
-#' @export
-setMethod("bestDMNFit", signature = c(x = "SummarizedExperiment"),
-            function(x, name = "DMN", type = c("laplace","AIC","BIC")){
-                .Deprecated(old="bestDMNFit", new="cluster",
-                            "Now bestDMNFit is deprecated.
-                            Use cluster with DMMParam parameter
-                            and full parameter set as true instead.")
-                #
-                dmn <- getDMN(x, name)
-                fit_FUN <- .get_dmn_fit_FUN(type)
-                #
-                .get_best_dmn_fit(dmn, fit_FUN)
-            }
-)
-
-#' @rdname calculateDMN
-#' @importFrom DirichletMultinomial laplace AIC BIC
-#' @export
-setMethod("getBestDMNFit", signature = c(x = "SummarizedExperiment"),
-            function(x, name = "DMN", type = c("laplace","AIC","BIC")){
-                .Deprecated(old="getBestDMNFit", new="cluster",
-                            "Now getBestDMNFit is deprecated.
-                            Use cluster with DMMParam parameter
-                            and full parameter set as true instead.")
-                dmn <- getDMN(x, name)
-                fit_FUN <- .get_dmn_fit_FUN(type)
-                dmn[[.get_best_dmn_fit(dmn, fit_FUN)]]
-            }
-)
-
 ################################################################################
 # DMN group
 
@@ -262,16 +144,15 @@ setMethod("getBestDMNFit", signature = c(x = "SummarizedExperiment"),
     dmngroup(x, variable, k = k, seed = seed, ...)
 }
 
-#' @rdname calculateDMN
+#' @rdname calculateDMNgroup
 #' @export
 setMethod("calculateDMNgroup", signature = c(x = "ANY"), .calculate_DMNgroup)
 
-#' @rdname calculateDMN
+#' @rdname calculateDMNgroup
 #' @export
 setMethod("calculateDMNgroup", signature = c(x = "SummarizedExperiment"),
             function(x, variable,
-                    assay.type = assay_name, assay_name = exprs_values,
-                    exprs_values = "counts", transposed = FALSE, ...){
+                    assay.type = "counts", transposed = FALSE, ...){
                 mat <- assay(x, assay.type)
                 if(!transposed){
                     mat <- t(mat)
@@ -307,16 +188,15 @@ setMethod("calculateDMNgroup", signature = c(x = "SummarizedExperiment"),
     cvdmngroup(nrow(x), x, variable, k = k, seed = seed, ...)
 }
 
-#' @rdname calculateDMN
+#' @rdname calculateDMNgroup
 #' @export
 setMethod("performDMNgroupCV", signature = c(x = "ANY"), .perform_DMNgroup_cv)
 
-#' @rdname calculateDMN
+#' @rdname calculateDMNgroup
 #' @export
 setMethod("performDMNgroupCV", signature = c(x = "SummarizedExperiment"),
             function(x, variable,
-                    assay.type = assay_name, assay_name = exprs_values,
-                    exprs_values = "counts", transposed = FALSE, ...){
+                    assay.type = "counts", transposed = FALSE, ...){
                 mat <- assay(x, assay.type)
                 if(!transposed){
                     mat <- t(mat)

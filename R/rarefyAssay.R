@@ -30,8 +30,6 @@
 #'   simulated i.e. rarefying depth. This can equal to lowest number of total
 #'   counts found in a sample or a user specified number.
 #' 
-#' @param min_size Deprecated. Use \code{sample} instead. 
-#'   
 #' @param replace \code{Logical scalar}. Whether to åperform subsampling with
 #' replacement. Ths works similarly to \code{sample(..., replace = TRUE)}.
 #' (Default: \code{FALSE})
@@ -78,10 +76,11 @@ NULL
 #' @rdname rarefyAssay
 #' @export
 setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", 
-            sample = min_size, min_size = min(colSums2(assay(x, assay.type))),
-            replace = FALSE, name = "subsampled", ...){
+    function(x, assay.type = "counts",
+            sample = min(colSums2(assay(x, assay.type))), replace = FALSE,
+            name = "subsampled", ...){
         # Input check
+        .check_defunct_args(...names(), c("assay_name", "min_size"))
         # Check that assay name is correct and that assay is counts table.
         .check_assay_present(assay.type, x)
         if( any(assay(x, assay.type) %% 1 != 0 &

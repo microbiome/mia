@@ -16,8 +16,7 @@ addNotContaminantQC(x, name = "isNotContaminant", ...)
 
 \S4method{isContaminant}{SummarizedExperiment}(
   seqtab,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
   concentration = NULL,
   control = NULL,
   batch = NULL,
@@ -29,8 +28,7 @@ addNotContaminantQC(x, name = "isNotContaminant", ...)
 
 \S4method{isNotContaminant}{SummarizedExperiment}(
   seqtab,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
   control = NULL,
   threshold = 0.5,
   normalize = TRUE,
@@ -60,8 +58,6 @@ passed on to \code{isContaminant}/ \code{isNotContaminant}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
-
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{concentration}{\code{Character scalar} or \code{NULL}. Defining
 a column with numeric values from the \code{colData} to use as
