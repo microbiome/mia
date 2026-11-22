@@ -33,20 +33,18 @@ supported:
 the group in \code{col.var} that is used as controls. If \code{NULL}, the
 first level of \code{factor(x[[col.var]])} is used. (Default:
 \code{NULL})
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{\\item \code{group}: \code{NULL} or \code{Character scalar}. Specifies a
+\item \code{group}: \code{NULL} or \code{Character scalar}. Specifies a
 variable from \code{colData(x)} (e.g., subject ID). Control samples that
 share the same value with the current sample are excluded from its
 comparison. (Default: \code{NULL})
-
-\\item \code{altexp}: \code{NULL} or \code{Character scalar}. If provided,
+\item \code{k}: \code{Integer scalar}. Number of nearest control
+samples used by \code{cloud}. (Default: 5\% of the control samples, at
+least 1)
+\item \code{altexp}: \code{NULL} or \code{Character scalar}. If provided,
 use this \code{altExp} assay container of \code{x} for the computation.
 (Default: \code{NULL})
-
-\\item Further arguments are passed to
+\item Further arguments are passed to
 \code{\link[=getDissimilarity]{getDissimilarity}}.
-}\if{html}{\out{</div>}}
-
 }}
 
 \item{col.var}{\code{Character scalar}. Specifies a variable from
@@ -81,7 +79,34 @@ The following scores are available:
 the control samples. The sample itself is excluded from the controls. With
 Bray-Curtis dissimilarity, this is the dysbiosis score of Lloyd-Price et
 al. (2019).
+
+\item \code{centroid_distance}: Distance from the sample to the centroid
+of the control samples minus its distance to the centroid of the other
+samples (AlShawaqfeh et al. 2017). Positive values mean that the sample is
+closer to the other samples than to the controls. Centroids are computed
+from the dissimilarities, and each sample is included in the centroid of
+its own group.
+
+\item \code{shannon_jsd}: Mean difference in Shannon diversity between
+the sample and the control samples, multiplied by its mean Jensen-Shannon
+divergence to them (Santiago et al. 2019). The sample itself is excluded
+from the controls. \code{method} is not used.
+
+\item \code{reference_plane}: Euclidean distance, in the first three
+principal coordinates of the dissimilarities, from the sample to a plane
+fitted to the control samples and restricted to their range (Halfvarson
+et al. 2017).
+
+\item \code{cloud}: CLOUD statistic (Montassier et al. 2018): the mean
+dissimilarity from the sample to its \code{k} nearest control samples,
+divided by the same quantity averaged over the control samples (each
+compared with the other controls). Values above 1 mean that the sample is
+further from the controls than controls are from each other.
 }
+
+The \code{centroid_distance}, \code{shannon_jsd} and
+\code{reference_plane} scores are adapted from the dysbiosisR package
+(Shetty and de Steenhuijsen Piters).
 }
 \examples{
 data(Tengeler2020)
@@ -90,9 +115,23 @@ tse <- Tengeler2020
 tse <- addDysbiosis(tse, col.var = "patient_status", reference = "Control")
 colData(tse)[, c("patient_status", "median_distance")]
 
+# Other scores
+res <- getDysbiosis(
+    tse, col.var = "patient_status", reference = "Control",
+    index = c("centroid_distance", "reference_plane", "cloud"))
+head(res)
+
 }
 \references{
+\insertRef{AlShawaqfeh2017}{mia}
+
+\insertRef{Halfvarson2017}{mia}
+
 \insertRef{Lloyd-Price2019}{mia}
+
+\insertRef{Montassier2018}{mia}
+
+\insertRef{Santiago2019}{mia}
 }
 \seealso{
 \code{\link[=getDissimilarity]{getDissimilarity}},
