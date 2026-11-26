@@ -24,7 +24,16 @@ addPERMANOVA(x, ...)
   ...
 )
 
-\S4method{getPERMANOVA}{ANY}(x, formula, data, method = "bray", test.homogeneity = TRUE, ...)
+\S4method{getPERMANOVA}{ANY}(
+  x,
+  formula,
+  data,
+  method = "bray",
+  test.homogeneity = TRUE,
+  pairwise = FALSE,
+  p.adj.method = "fdr",
+  ...
+)
 
 \S4method{addPERMANOVA}{SummarizedExperiment}(x, name = "permanova", ...)
 }
@@ -82,14 +91,25 @@ PERMANOVA and group dispersion calculation. (Default: \code{"bray"})}
 \item{test.homogeneity}{\code{Logical scalar}. Should the homogeneity of
 group dispersions be evaluated? (Default: \code{TRUE})}
 
+\item{pairwise}{\code{Logical scalar}. Should PERMANOVA be run between each
+pair of groups of the first variable? (Default: \code{FALSE})}
+
+\item{p.adj.method}{\code{Character scalar}. Specifies adjustment method of
+p-values when \code{pairwise = TRUE}. Passed to \code{p.adjust} function.
+(Default: \code{"fdr"})}
+
 \item{name}{\code{Character scalar}. A name for the results that will be
 stored to metadata. (Default: \code{"permanova"})}
 }
 \value{
 \code{getPERMANOVA} returns the PERMANOVA results or a list containing the
 PERMANOVA results and homogeneity test results if
-\code{test.homogeneity = TRUE}. \code{addPERMANOVA} adds these results to
-metadata of \code{x}.
+\code{test.homogeneity = TRUE}. With \code{pairwise = TRUE}, each result is
+a \code{data.frame} with one row per pair of groups: the groups
+(\code{group1}, \code{group2}), the number of samples (\code{n}), the
+statistics of the grouping variable and the adjusted p-value
+(\code{p.adj}). \code{addPERMANOVA} adds these results to metadata of
+\code{x}.
 }
 \description{
 These functions perform PERMANOVA to assess the significance of group
@@ -125,6 +145,12 @@ visualization of the constrained ordination, which can reveal patterns and
 relationships. However, when the underlying data structure is non-linear,
 the results from the two methods can differ significantly due to dbRDA's
 reliance on linear assumptions.
+
+With \code{pairwise = TRUE}, PERMANOVA is run between each pair of groups of
+the first variable in \code{formula} (or the first \code{col.var}), with the
+other variables as covariates. Pairwise tests are post-hoc comparisons that
+follow a significant global test. Their p-values are adjusted across the
+pairs with \code{p.adj.method}.
 }
 \examples{
 
@@ -161,6 +187,19 @@ res_precalc <- getPERMANOVA(
     formula = x ~ SampleType,
     permutations = 99
 )
+
+# Compare each pair of geographical locations, with diet as a covariate.
+# The p-values are adjusted across the three pairs.
+data(peerj13075)
+tse <- transformAssay(peerj13075, method = "relabundance")
+res_pairwise <- getPERMANOVA(
+    tse,
+    assay.type = "relabundance",
+    formula = x ~ Geographical_location + Diet,
+    pairwise = TRUE,
+    permutations = 99
+)
+res_pairwise[["permanova"]]
 
 }
 \references{

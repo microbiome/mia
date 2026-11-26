@@ -286,3 +286,86 @@ test_that("getPERMANOVA drops unused factor levels", {
         permutations = 99, test.homogeneity = FALSE)
     expect_equal(res["SampleType", "Df"], 1)
 })
+
+test_that("getPERMANOVA pairwise = TRUE equals tests on subsets", {
+    tse <- tse[, tse$SampleType %in% c("Feces", "Skin", "Soil")]
+    set.seed(1)
+    res <- getPERMANOVA(tse, assay.type = "relabundance",
+        formula = x ~ SampleType, pairwise = TRUE, permutations = 99)
+    expect_named(res, c("permanova", "homogeneity"))
+    expect_equal(nrow(res$permanova), 3L)
+    expect_equal(nrow(res$homogeneity), 3L)
+    expect_equal(colnames(res$permanova), c("group1", "group2", "n", "Df",
+        "SumOfSqs", "R2", "F", "Pr(>F)", "p.adj"))
+    # The first pair is the same as PERMANOVA on its samples only
+    pair <- unlist(res$permanova[1L, c("group1", "group2")])
+    set.seed(1)
+    ref <- getPERMANOVA(tse[, tse$SampleType %in% pair],
+        assay.type = "relabundance", formula = x ~ SampleType,
+        permutations = 99)
+    expect_equal(res$permanova$n[1L], sum(tse$SampleType %in% pair))
+    expect_equal(unlist(res$permanova[1L, 4:8]),
+        unlist(ref$permanova["SampleType", ]), ignore_attr = TRUE)
+    expect_equal(unlist(res$homogeneity[1L, 4:11]),
+        unlist(ref$homogeneity[1L, ]), ignore_attr = TRUE)
+    # p-values are adjusted across the pairs
+    res <- getPERMANOVA(tse, assay.type = "relabundance",
+        formula = x ~ SampleType, pairwise = TRUE, p.adj.method = "holm",
+        test.homogeneity = FALSE, permutations = 99)
+    expect_s3_class(res, "data.frame")
+    expect_equal(res$p.adj, p.adjust(res[["Pr(>F)"]], method = "holm"))
+    # The grouping variable must be categorical
+    tse$num <- seq_len(ncol(tse))
+    expect_error(getPERMANOVA(tse, assay.type = "relabundance",
+        formula = x ~ num + SampleType, pairwise = TRUE),
+        "must be categorical")
+    # Without a row for the grouping variable, no other row is reported
+    tse$batch <- rep(c("a", "b"), length.out = ncol(tse))
+    expect_error(getPERMANOVA(tse, assay.type = "relabundance",
+        formula = x ~ SampleType * batch, pairwise = TRUE,
+        test.homogeneity = FALSE, permutations = 9),
+        "must have a row for 'SampleType'")
+    expect_error(getPERMANOVA(tse, assay.type = "relabundance",
+        formula = x ~ SampleType, pairwise = "TRUE"),
+        "'pairwise' must be TRUE or FALSE")
+})
+
+test_that("pairwise PERMANOVA works with dis.name and addPERMANOVA", {
+    tse <- tse[, tse$SampleType %in% c("Feces", "Skin", "Soil")]
+    tse <- addDissimilarity(tse, assay.type = "relabundance", method = "bray",
+        name = "bray")
+    # Subsets of a stored dissimilarity give the same result as dissimilarity
+    # calculated on each pair
+    set.seed(1)
+    res <- getPERMANOVA(tse, dis.name = "bray", formula = x ~ SampleType,
+        pairwise = TRUE, permutations = 99)
+    set.seed(1)
+    ref <- getPERMANOVA(tse, assay.type = "relabundance",
+        formula = x ~ SampleType, pairwise = TRUE, permutations = 99)
+    expect_equal(res, ref)
+    # Results are stored to metadata; col.var gives the grouping variable
+    set.seed(1)
+    tse <- addPERMANOVA(tse, assay.type = "relabundance",
+        col.var = "SampleType", pairwise = TRUE, permutations = 99,
+        name = "pairwise")
+    expect_equal(metadata(tse)[["pairwise"]], ref)
+})
+
+test_that("pairwise PERMANOVA on UniFrac equals tests on subsets (#851)", {
+    tse <- tse[, tse$SampleType %in% c("Feces", "Skin", "Soil")]
+    res <- getPERMANOVA(tse, assay.type = "counts", method = "unifrac",
+        formula = x ~ SampleType, pairwise = TRUE, test.homogeneity = FALSE,
+        permutations = 99)
+    # UniFrac calculated once, then each pair tested on its samples
+    dis <- as.matrix(getDissimilarity(
+        tse, assay.type = "counts", method = "unifrac"))
+    ref <- vapply(seq_len(nrow(res)), function(i){
+        keep <- tse$SampleType %in% unlist(res[i, c("group1", "group2")])
+        r <- getPERMANOVA(as.dist(dis[keep, keep]), formula = x ~ SampleType,
+            data = colData(tse)[keep, ], test.homogeneity = FALSE,
+            permutations = 99)
+        unlist(r["SampleType", c("R2", "F")])
+    }, numeric(2L))
+    expect_equal(res$R2, ref["R2", ])
+    expect_equal(res$F, ref["F", ])
+})
