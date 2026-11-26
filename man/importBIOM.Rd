@@ -14,12 +14,9 @@ importBIOM(file, col.data = NULL, tree.file = NULL, ...)
 
 convertFromBIOM(
   x,
-  prefix.rm = removeTaxaPrefixes,
-  removeTaxaPrefixes = FALSE,
-  rank.from.prefix = rankFromPrefix,
-  rankFromPrefix = FALSE,
-  artifact.rm = remove.artifacts,
-  remove.artifacts = FALSE,
+  prefix.rm = FALSE,
+  rank.from.prefix = FALSE,
+  artifact.rm = FALSE,
   ...
 )
 
@@ -54,19 +51,13 @@ taxonomic prefixes be removed? The prefixes is removed only from detected
 taxa columns meaning that \code{rank.from.prefix} should be enabled in the
 most cases. (Default: \code{FALSE})}
 
-\item{removeTaxaPrefixes}{Deprecated. Use \code{prefix.rm} instead.}
-
 \item{rank.from.prefix}{\code{Logical scalar}. If file does not have
 taxonomic ranks on feature table, should they be scraped from prefixes?
 (Default: \code{FALSE})}
 
-\item{rankFromPrefix}{Deprecated.Use \code{rank.from.prefix} instead.}
-
 \item{artifact.rm}{\code{Logical scalar}. If file have
 some taxonomic character naming artifacts, should they be removed.
 (default (Default: \code{FALSE})}
-
-\item{remove.artifacts}{Deprecated. Use \code{artifact.rm} instead.}
 }
 \value{
 \code{convertFromBIOM} returns an object of class

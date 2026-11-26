@@ -259,13 +259,14 @@ NULL
 setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     function(
         x, method,
-        assay.type = "counts", assay_name = NULL,
+        assay.type = "counts",
         MARGIN = "samples",
         name = method,
         pseudocount = FALSE,
         verbose = TRUE,
         ...){
         #
+        .check_defunct_args(...names(), "assay_name")
         x <- .with_verbosity(.transform_assay(
             x = x, method = method, name = name, assay.type = assay.type,
             MARGIN = MARGIN, pseudocount =  pseudocount, ...), verbose)
@@ -277,6 +278,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
     function(x, altexp = NULL, verbose = TRUE, ...){
+        .check_defunct_args(...names(), "assay_name")
         # Check altexp
         if( !(is.null(altexp) || all(altexp %in% altExpNames(x)) ||
                 (.is_integer(altexp) &&
@@ -308,7 +310,7 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
 # with specified method. By calling this generic function, we can apply same
 # methods for SE and altExps of TreeSE.
 .transform_assay <- function(
-        x, assay.type = "counts", assay_name = NULL,
+        x, assay.type = "counts",
         method = c(
             "alr", "binning", "chi.square", "clr", "css", "cutoff",
             "difference", "-",
@@ -322,11 +324,6 @@ setMethod("transformAssay", signature = c(x = "SingleCellExperiment"),
         pseudocount = FALSE,
         ...){
     # Input check
-    if(!is.null(assay_name)){
-        .Deprecated(old="assay_name", new="assay.type", "Now assay_name is
-                deprecated. Use assay.type instead.")
-        assay.type <- assay_name
-    }
     # Check assay.type
     .check_assay_present(assay.type, x)
     # Check name

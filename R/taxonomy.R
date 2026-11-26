@@ -34,19 +34,13 @@
 #' @param with.rank \code{Logical scalar}. Should the level be add as a
 #'   suffix? For example: "Phylum:Crenarchaeota". (Default: \code{FALSE})
 #'
-#' @param with_rank Deprecated. Use \code{with.rank} instead.
-#'
 #' @param make.unique \code{Logical scalar}. Should the labels be made
 #'   unique, if there are any duplicates? A message lists the changed
 #'   labels, e.g. \code{"o -> o_1"}. (Default: \code{TRUE})
 #'
-#' @param make_unique Deprecated. Use \code{make.unique} instead.
-#'
 #' @param resolve.loops \code{Logical scalar}. Should \code{resolveLoops}
 #'   be applied to the taxonomic data? Please note that has only an effect,
 #'   if the data is unique. (Default: \code{TRUE})
-#'
-#' @param resolve_loops Deprecated. Use \code{resolve.loops} instead.
 #'
 #' @param taxa \code{Character vector}. Used for subsetting the
 #'   taxonomic information. If no information is found,\code{NULL} is returned
@@ -66,8 +60,6 @@
 #' @param use.grepl \code{Logical}. Should pattern matching via
 #'   \code{grepl} be used? Otherwise literal matching is used.
 #'   (Default: \code{FALSE})
-#'
-#' @param use_grepl Deprecated. Use \code{use.grepl} instead.
 #'
 #' @param ... additional arguments
 #' \itemize{
@@ -303,10 +295,10 @@ getTaxonomyRanks <- function() {
 #' @export
 setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     function(x, empty.fields = c(NA, "", " ", "\t", "-", "_"),
-            with.rank = with_rank,
-            with_rank = FALSE, make.unique = make_unique, make_unique = TRUE,
-            resolve.loops = resolve_loops, resolve_loops = FALSE, ...){
+            with.rank = FALSE, make.unique = TRUE, resolve.loops = FALSE, ...){
         # input check
+        .check_defunct_args(
+            ...names(), c("with_rank", "make_unique", "resolve_loops"))
         if(nrow(x) == 0L){
             stop("No data available in `x` ('x' has nrow(x) == 0L.)",
                 call. = FALSE)
@@ -651,8 +643,7 @@ setMethod("addHierarchyTree", signature = c(x = "SummarizedExperiment"),
 #' @importFrom BiocGenerics %in%
 #' @export
 setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
-    function(x, taxa = NULL, from = NULL, to = NULL, use.grepl = use_grepl,
-            use_grepl = FALSE){
+    function(x, taxa = NULL, from = NULL, to = NULL, use.grepl = FALSE){
         # input check
         if(!checkTaxonomy(x)){
             stop("Non compatible taxonomic information found. ",

@@ -15,22 +15,15 @@ splitOn(x, ...)
 
 unsplitOn(x, ...)
 
-\S4method{splitOn}{SummarizedExperiment}(x, group = f, f = NULL, ...)
+\S4method{splitOn}{SummarizedExperiment}(x, group = NULL, ...)
 
-\S4method{splitOn}{SingleCellExperiment}(x, group = f, f = NULL, ...)
+\S4method{splitOn}{SingleCellExperiment}(x, group = NULL, ...)
 
 \S4method{unsplitOn}{list}(x, ...)
 
 \S4method{unsplitOn}{SimpleList}(x, ...)
 
-\S4method{unsplitOn}{SingleCellExperiment}(
-  x,
-  altexp = altExpNames,
-  altExpNames = names(altExps(x)),
-  keep.dimred = keep_reducedDims,
-  keep_reducedDims = FALSE,
-  ...
-)
+\S4method{unsplitOn}{SingleCellExperiment}(x, altexp = names(altExps(x)), keep.dimred = FALSE, ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
@@ -54,19 +47,13 @@ merged. If \code{length(levels(group)) == nrow(x)/ncol(x)}, \code{x} will be
 returned unchanged. If \code{group} matches with both dimensions,
 \code{by} must be specified. (Default: \code{NULL})}
 
-\item{f}{Deprecated. Use \code{group} instead.}
-
 \item{altexp}{\code{Character vector}. Specify the alternative experiments
 to be unsplit. (Default: \code{names(altExps(x))})}
-
-\item{altExpNames}{Deprecated. Use \code{altexp} instead.}
 
 \item{keep.dimred}{\code{Logical scalar}. Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
 (Default: \code{FALSE})}
-
-\item{keep_reducedDims}{Deprecated. Use \code{keep.dimred} instead.}
 }
 \value{
 For \code{splitOn}: \code{SummarizedExperiment} objects in a

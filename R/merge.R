@@ -85,6 +85,7 @@
 # This function merges assays and row/colData.
 #' @importFrom S4Vectors SimpleList
 #' @importFrom BiocParallel bpmapply SerialParam
+#' @importFrom SummarizedExperiment assays<-
 .merge_rows_or_cols <- function(
         x, f, by, archetype = 1L, average = FALSE, BPPARAM = SerialParam(),
         check.assays = TRUE, na.rm = FALSE, ...){

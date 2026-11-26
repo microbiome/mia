@@ -32,21 +32,13 @@ agglomerateByRanks(x, ...)
 
 unsplitByRanks(x, ...)
 
-\S4method{agglomerateByRank}{TreeSummarizedExperiment}(
-  x,
-  rank = taxonomyRanks(x)[1],
-  update.tree = agglomerateTree,
-  agglomerate.tree = agglomerateTree,
-  agglomerateTree = FALSE,
-  ...
-)
+\S4method{agglomerateByRank}{TreeSummarizedExperiment}(x, rank = taxonomyRanks(x)[1], update.tree = FALSE, ...)
 
 \S4method{agglomerateByRank}{SingleCellExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
   altexp = NULL,
-  altexp.rm = strip_altexp,
-  strip_altexp = TRUE,
+  altexp.rm = TRUE,
   ...
 )
 
@@ -58,17 +50,9 @@ unsplitByRanks(x, ...)
   ...
 )
 
-\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(
-  x,
-  by,
-  group = f,
-  f,
-  update.tree = mergeTree,
-  mergeTree = FALSE,
-  ...
-)
+\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(x, by, group, update.tree = FALSE, ...)
 
-\S4method{agglomerateByVariable}{SummarizedExperiment}(x, by, group = f, f, ...)
+\S4method{agglomerateByVariable}{SummarizedExperiment}(x, by, group, ...)
 
 \S4method{agglomerateBySet}{SummarizedExperiment}(x, by, group, na.rm = FALSE)
 
@@ -98,21 +82,9 @@ unsplitByRanks(x, ...)
 
 splitByRanks(x, ...)
 
-\S4method{unsplitByRanks}{SingleCellExperiment}(
-  x,
-  ranks = taxonomyRanks(x),
-  keep.dimred = keep_reducedDims,
-  keep_reducedDims = FALSE,
-  ...
-)
+\S4method{unsplitByRanks}{SingleCellExperiment}(x, ranks = taxonomyRanks(x), keep.dimred = FALSE, ...)
 
-\S4method{unsplitByRanks}{TreeSummarizedExperiment}(
-  x,
-  ranks = taxonomyRanks(x),
-  keep.dimred = keep_reducedDims,
-  keep_reducedDims = FALSE,
-  ...
-)
+\S4method{unsplitByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), keep.dimred = FALSE, ...)
 }
 \arguments{
 \item{x}{\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
@@ -131,10 +103,6 @@ monophyletic, i.e., each group forms its own subtree. Otherwise, the tree is
 removed with a warning. If \code{FALSE}, the tree is removed.
 (Default: \code{FALSE})}
 
-\item{agglomerate.tree}{Deprecated. Use \code{update.tree} instead.}
-
-\item{agglomerateTree}{Deprecated. Use \code{update.tree} instead.}
-
 \item{altexp}{\code{Character scalar} or \code{integer scalar}.
 Specifies an alternative experiment containing the input data.}
 
@@ -142,8 +110,6 @@ Specifies an alternative experiment containing the input data.}
 experiments be removed prior to agglomeration? This prevents too many
 nested alternative experiments by default. (Default:
 \code{TRUE})}
-
-\item{strip_altexp}{Deprecated. Use \code{altexp.rm} instead.}
 
 \item{empty.rm}{\code{Logical scalar}. Defines whether rows including
 \code{empty.fields} in specified \code{rank} will be excluded.
@@ -167,10 +133,6 @@ be returned unchanged. For \code{agglomerateBySet}, \code{group} should
 specify one or several names of numeric or logical variables from the
 \code{rowData(x)/colData(x)} by which to agglomerate rows or columns.}
 
-\item{f}{Deprecated. Use \code{group} instead.}
-
-\item{mergeTree}{Deprecated. Use \code{update.tree} instead.}
-
 \item{na.rm}{\code{Logical scalar}. Should NA values be omitted?
 (Default: \code{TRUE})}
 
@@ -186,8 +148,6 @@ values of \code{taxonomyRanks()} function.}
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
 (Default: \code{FALSE})}
-
-\item{keep_reducedDims}{Deprecated. Use \code{keep.dimred} instead.}
 }
 \value{
 \code{agglomerateByRank} returns a taxonomically-agglomerated,

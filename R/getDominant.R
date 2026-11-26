@@ -18,8 +18,6 @@
 #' @param group \code{Character scalar}. Defines a group. Must be one of the
 #' columns from \code{rowData(x)}. (Default: \code{NULL})
 #'
-#' @param rank Deprecated. Use \code{group} instead.
-#'
 #' @param n \code{Numeric scalar}. The number of features that are the most
 #' frequent
 #' dominant features. Default is NULL, which defaults that each sample is
@@ -36,7 +34,7 @@
 #' list that includes all dominant taxa for each sample into colData.
 #'
 #' @param ... Additional arguments passed on to \code{agglomerateByRank()} when
-#' \code{rank} is specified.
+#' \code{group} is specified.
 #'
 #' @details
 #' \code{addDominant} extracts the most abundant taxa in a
@@ -78,9 +76,10 @@ NULL
 #' @importFrom IRanges relist
 #' @export
 setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", group = rank,
-            rank = NULL, other.name = "Other", n = NULL, complete = TRUE, ...){
+    function(x, assay.type = "counts", group = NULL, other.name = "Other",
+            n = NULL, complete = TRUE, ...){
         # Input check
+        .check_defunct_args(...names(), c("assay_name", "rank"))
         # Check assay.type
         .check_assay_present(assay.type, x)
         # group check

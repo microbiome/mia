@@ -926,3 +926,45 @@
     }
     suppressWarnings(suppressMessages(expr))
 }
+
+################################################################################
+
+# Defunct argument names and their replacements. The functions that accepted
+# them take '...', where an old name would otherwise be silently ignored.
+.defunct_args <- c(
+    add_col_data = "add.col", add_row_data = "add.row",
+    agglomerate.tree = "update.tree", agglomerateTree = "update.tree",
+    altExpNames = "altexp", assay_name = "assay.type",
+    assay_name1 = "assay.type1", assay_name2 = "assay.type2",
+    colData = "col.data", colData_variable1 = "col.var1",
+    colData_variable2 = "col.var2", collapse_features = "collapse.rows",
+    collapse_samples = "collapse.cols", cor_threshold = "cor.threshold",
+    exprs_values = "assay.type", f = "group", feature_name = "row.name",
+    featureNamesAsRefSeq = "as.refseq", featureTableFile = "assay.file",
+    filter_self_correlations = "filter.self.cor",
+    include_lowest = "include.lowest", keep_dist = "keep.dist",
+    keep_reducedDims = "keep.dimred", make_unique = "make.unique",
+    MARGIN = "by", mergeTree = "update.tree", min_size = "sample",
+    missing_values = "missing.values", n_dimred = "ndimred",
+    nmdsFUN = "nmds.fun", p_adj_method = "p.adj.method",
+    p_adj_threshold = "p.adj.threshold", phy_tree = "tree.file",
+    phyTreeFile = "tree.file", rank = "group",
+    rankFromPrefix = "rank.from.prefix", refSeqFile = "refseq.file",
+    remove.artifacts = "artifact.rm", removeTaxaPrefixes = "prefix.rm",
+    resolve_loops = "resolve.loops", sample_meta = "col.data",
+    sample_name = "col.name", sampleMetaFile = "col.file",
+    show_warnings = "show.warnings", strip_altexp = "altexp.rm",
+    subset_row = "subset.row", taxonomyTableFile = "row.file",
+    temp = "temp.dir", test_significance = "test.signif",
+    tree_name = "tree.name", variables = "col.var", with_rank = "with.rank")
+
+# Gives an error if 'args', the names of '...', include any of the defunct
+# argument names in 'old'.
+.check_defunct_args <- function(args, old){
+    old <- old[old %in% args]
+    if( length(old) > 0L ){
+        stop(paste0(
+            "'", old, "' is defunct. Use '", .defunct_args[old], "' instead.",
+            collapse = "\n"), call. = FALSE)
+    }
+}

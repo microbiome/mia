@@ -95,7 +95,7 @@ NULL
 setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
     function(
         seqtab,
-        assay.type = assay_name, assay_name = "counts",
+        assay.type = "counts",
         concentration = NULL,
         control = NULL,
         batch = NULL,
@@ -104,6 +104,7 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
         detailed = TRUE,
         ...){
         # input check
+        .check_defunct_args(...names(), "assay_name")
         .check_assay_present(assay.type, seqtab)
         if(!is.numeric(threshold) || length(threshold) != 1L){
             stop("'threshold' must be single numeric value.", call. = FALSE)
@@ -144,13 +145,14 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
 setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
     function(
         seqtab,
-        assay.type = assay_name, assay_name = "counts",
+        assay.type = "counts",
         control = NULL,
         threshold = 0.5,
         normalize = TRUE,
         detailed = TRUE,
         ...){
         # input check
+        .check_defunct_args(...names(), "assay_name")
         .check_assay_present(assay.type, seqtab)
         if(!is.numeric(threshold) || length(threshold) != 1L){
             stop("'threshold' must be single numeric value.", call. = FALSE)

@@ -9,10 +9,8 @@
 \usage{
 getDominant(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  group = rank,
-  rank = NULL,
+  assay.type = "counts",
+  group = NULL,
   other.name = "Other",
   n = NULL,
   complete = TRUE,
@@ -23,10 +21,8 @@ addDominant(x, name = "dominant_taxa", other.name = "Other", n = NULL, ...)
 
 \S4method{getDominant}{SummarizedExperiment}(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  group = rank,
-  rank = NULL,
+  assay.type = "counts",
+  group = NULL,
   other.name = "Other",
   n = NULL,
   complete = TRUE,
@@ -48,12 +44,8 @@ addDominant(x, name = "dominant_taxa", other.name = "Other", n = NULL, ...)
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
 \item{group}{\code{Character scalar}. Defines a group. Must be one of the
 columns from \code{rowData(x)}. (Default: \code{NULL})}
-
-\item{rank}{Deprecated. Use \code{group} instead.}
 
 \item{other.name}{\code{Character scalar}. A name for features that are not
 included in n the most frequent dominant features in the data.
@@ -75,7 +67,7 @@ dominant taxon assigned for each sample into colData. complete = TRUE adds a
 list that includes all dominant taxa for each sample into colData.}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
-\code{rank} is specified.}
+\code{group} is specified.}
 
 \item{name}{\code{Character scalar}. A name for the column of the
 \code{colData} where results will be stored.

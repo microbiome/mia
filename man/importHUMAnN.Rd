@@ -12,8 +12,6 @@ rownames, or a single \code{character} value defining the file
 path of the sample metadata file. The file must be in \code{tsv} format
 (Default: \code{NULL}).}
 
-\item{colData}{Deprecated. Use \code{col.data} instead.}
-
 \item{...}{additional arguments:
 \itemize{
 \item \code{assay.type}:  \code{Character scalar}. Specifies the name of

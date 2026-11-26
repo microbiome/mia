@@ -12,7 +12,6 @@ transformAssay(x, ...)
   x,
   method,
   assay.type = "counts",
-  assay_name = NULL,
   MARGIN = "samples",
   name = method,
   pseudocount = FALSE,
@@ -72,8 +71,6 @@ method.}
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
-
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{MARGIN}{\code{Character scalar}. Determines whether the
 transformation is applied sample (column) or feature (row) wise.

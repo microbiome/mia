@@ -15,37 +15,24 @@ getNMDS(x, ...)
 \S4method{getNMDS}{ANY}(
   x,
   FUN = getDissimilarity,
-  nmds.fun = nmdsFUN,
-  nmdsFUN = c("isoMDS", "monoMDS"),
+  nmds.fun = c("isoMDS", "monoMDS"),
   ncomponents = 2,
   ntop = 500,
-  subset.row = subset_row,
-  subset_row = NULL,
+  subset.row = NULL,
   scale = FALSE,
   transposed = FALSE,
-  keep.dist = keep_dist,
-  keep_dist = FALSE,
+  keep.dist = FALSE,
   ...
 )
 
-\S4method{getNMDS}{SummarizedExperiment}(
-  x,
-  ...,
-  assay.type = assay_name,
-  assay_name = exprs_values,
-  exprs_values = "counts",
-  FUN = getDissimilarity
-)
+\S4method{getNMDS}{SummarizedExperiment}(x, ..., assay.type = "counts", FUN = getDissimilarity)
 
 \S4method{getNMDS}{SingleCellExperiment}(
   x,
   ...,
-  assay.type = assay_name,
-  assay_name = exprs_values,
-  exprs_values = "counts",
+  assay.type = "counts",
   dimred = NULL,
-  ndimred = n_dimred,
-  n_dimred = NULL,
+  ndimred = NULL,
   FUN = getDissimilarity
 )
 
@@ -74,8 +61,6 @@ implementation, either \dQuote{isoMDS} for
 \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 \code{\link[vegan:monoMDS]{vegan::monoMDS}}}
 
-\item{nmdsFUN}{Deprecated. Use \code{nmds.fun} instead.}
-
 \item{ncomponents}{\code{Numeric scalar}. Indicates the number of DPCoA
 dimensions to obtain. (Default: \code{2})}
 
@@ -88,8 +73,6 @@ to use for dimensionality reduction. This can be a character vector of row
 names, an integer vector of row indices or a logical vector.
 (Default: \code{NULL})}
 
-\item{subset_row}{Deprecated. Use \code{subset.row} instead.}
-
 \item{scale}{\code{Logical scalar}. Should the expression values be
 standardized? (Default: \code{FALSE})}
 
@@ -101,22 +84,14 @@ object calculated by \code{FUN} should be stored as \sQuote{dist} attribute
 of the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}. (Default:
 \code{FALSE})}
 
-\item{keep_dist}{Deprecated. Use \code{keep.dist} instead.}
-
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
-
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
-\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
 \item{dimred}{\code{Character scalar} or \code{integer scalar}. Specifies
 the existing dimensionality reduction results to use.}
 
 \item{ndimred}{\code{integer vector}. Specifies the dimensions to use if
 dimred is specified.}
-
-\item{n_dimred}{Deprecated. Use \code{ndimred} instead.}
 
 \item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an
 alternative experiment containing the input data. (Default: \code{NULL})}

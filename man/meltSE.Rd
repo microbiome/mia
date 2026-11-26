@@ -12,16 +12,11 @@ meltSE(x, ...)
 
 \S4method{meltSE}{SummarizedExperiment}(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  add.row = add_row_data,
-  add_row_data = NULL,
-  add.col = add_col_data,
-  add_col_data = NULL,
-  row.name = feature_name,
-  feature_name = "FeatureID",
-  col.name = sample_name,
-  sample_name = "SampleID",
+  assay.type = "counts",
+  add.row = NULL,
+  add.col = NULL,
+  row.name = "FeatureID",
+  col.name = "SampleID",
   ...
 )
 
@@ -41,16 +36,12 @@ If they are not, sample names are modified. (Default: \code{TRUE})
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
 \item{add.row}{\code{Logical scalar} or \code{Character vector}. To
 select information from the \code{rowData} to add to the molten assay data.
 If \code{add.row = NULL} no data will be added, if
 \code{add.row = TRUE} all data will be added and if
 \code{add.row} is a \code{character} vector, it will be used to subset
 to given column names in \code{rowData}. (Default: \code{NULL})}
-
-\item{add_row_data}{Deprecated. Use \code{add.row} instead.}
 
 \item{add.col}{\code{Logical scalar}. \code{NULL}, or
 \code{character vector}. Used to select information from the \code{colData}
@@ -59,17 +50,11 @@ be added, if \code{add.col = TRUE} all data will be added and if
 \code{add.col} is a \code{character} vector, it will be used to subset
 to given column names in \code{colData}. (Default: \code{NULL})}
 
-\item{add_col_data}{Deprecated. Use \code{add.col} instead.}
-
 \item{row.name}{\code{Character scalar}. To use as the output's name
 for the feature identifier. (Default: \code{"FeatureID"})}
 
-\item{feature_name}{Deprecated. Use \code{row.name} instead.}
-
 \item{col.name}{\code{Character scalar}. To use as the output's name
 for the sample identifier. (Default: \code{"SampleID"})}
-
-\item{sample_name}{Deprecated. Use \code{col.name} instead.}
 
 \item{add.dimred}{\code{Logical scalar} or \code{Character vector}. To
 select information from the \code{reducedDim} to add to the molten assay

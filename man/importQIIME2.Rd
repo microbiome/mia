@@ -6,40 +6,28 @@
 \title{Import QIIME2 results to \code{TreeSummarizedExperiment}}
 \usage{
 importQIIME2(
-  assay.file = featureTableFile,
-  featureTableFile,
-  row.file = taxonomyTableFile,
-  taxonomyTableFile = NULL,
-  col.file = sampleMetaFile,
-  sampleMetaFile = NULL,
-  as.refseq = featureNamesAsRefSeq,
-  featureNamesAsRefSeq = TRUE,
-  refseq.file = refSeqFile,
-  refSeqFile = NULL,
-  tree.file = phyTreeFile,
-  phyTreeFile = NULL,
+  assay.file,
+  row.file = NULL,
+  col.file = NULL,
+  as.refseq = TRUE,
+  refseq.file = NULL,
+  tree.file = NULL,
   ...
 )
 
-importQZA(file, temp.dir = temp, temp = tempdir(), ...)
+importQZA(file, temp.dir = tempdir(), ...)
 }
 \arguments{
 \item{assay.file}{\code{Character scalar}. Defines the file
 path of the feature table to be imported.}
 
-\item{featureTableFile}{Deprecated. use \code{assay.file} instead.}
-
 \item{row.file}{\code{Character scalar} or \code{NULL}. Defines the file
 path of the taxonomy table to be imported. (default:
 \code{NULL}).}
 
-\item{taxonomyTableFile}{Deprecated. use \code{row.file} instead.}
-
 \item{col.file}{\code{Character scalar} or \code{NULL}. Defines the file path
 of the sample metadata to be imported. The file has to be in tsv format.
 (Default: \code{NULL}).}
-
-\item{sampleMetaFile}{Deprecated. Use \code{col.file} instead.}
 
 \item{as.refseq}{\code{Logical scalar} or \code{NULL}. Should the feature
 names of the feature table be regarded as reference sequences? This setting
@@ -47,17 +35,11 @@ will be disregarded, if \code{refseq.file} is not \code{NULL}. If the
 feature names do not contain valid DNA characters only, the reference
 sequences will not be set.}
 
-\item{featureNamesAsRefSeq}{Deprecated. Use \code{as.refseq} instead.}
-
 \item{refseq.file}{\code{Character scalar} or \code{NULL}. Defines the file
 path of the reference sequences for each feature. (Default: \code{NULL}).}
 
-\item{refSeqFile}{Deprecated. Use \code{refseq.file} instead.}
-
 \item{tree.file}{\code{Character scalar}. Defines the file path of
 the phylogenetic tree. (Default: \code{NULL}).}
-
-\item{phyTreeFile}{Deprecated. Use \code{tree.file} instead.}
 
 \item{...}{additional arguments:
 \itemize{
@@ -76,8 +58,6 @@ right now.}
 
 \item{temp.dir}{character, a temporary directory in which the qza file will
 be decompressed to, default \code{tempdir()}.}
-
-\item{temp}{Deprecated. Use \code{temp.dir} instead.}
 }
 \value{
 A

@@ -18,15 +18,15 @@
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}.
 #'
-#' @param MARGIN Deprecated. Use \code{by} instead.
-#'
 #' @param clust.col \code{Character scalar}. Indicates the name of the
 #'   \code{rowData} (or \code{colData}) where the data will be stored.
 #'   (Default: \code{"clusters"})
 #'
 #' @param ... Additional parameters to use altExps for example
 #' @inheritParams bluster::clusterRows
-#' @inheritParams runDMN
+#' @param name \code{Character scalar}. The name to store the result in
+#'   \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}
+#'
 #' @inheritParams transformAssay
 #'
 #'
@@ -86,9 +86,8 @@ NULL
 #' @export
 setMethod("addCluster", signature = c(x = "SummarizedExperiment"),
     function(
-            x, BLUSPARAM, assay.type = assay_name,
-            assay_name = NULL, by = MARGIN, MARGIN = "rows",
-            name = "clustering", clust.col = "cluster", full = FALSE, ...){
+            x, BLUSPARAM, assay.type = NULL, by = "rows", name = "clustering",
+            clust.col = "cluster", full = FALSE, ...){
         by <- .check_MARGIN(by)
         if( !.is_a_string(name) ){
             stop("'name' must be a non-empty single character value.",
@@ -126,8 +125,7 @@ setMethod("addCluster", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("addCluster", signature = c(x = "SingleCellExperiment"),
     function(
-            x, BLUSPARAM, assay.type = assay_name,
-            assay_name = NULL, dimred = NULL, by = MARGIN, MARGIN = "rows",
+            x, BLUSPARAM, assay.type = NULL, dimred = NULL, by = "rows",
             name = "clustering", clust.col = "cluster", full = FALSE, ...){
         by <- .check_MARGIN(by)
         if( !.is_a_string(name) ){
@@ -170,8 +168,7 @@ setMethod("addCluster", signature = c(x = "SingleCellExperiment"),
 #' @export
 setMethod("getCluster", signature = c(x = "SummarizedExperiment"),
     function(
-            x, BLUSPARAM, assay.type = assay_name,
-            assay_name = NULL, by = MARGIN, MARGIN = "rows", ...){
+            x, BLUSPARAM, assay.type = NULL, by = "rows", ...){
         # Checking parameters
         by <- .check_MARGIN(by)
         x <- .check_and_get_altExp(x, ...)
@@ -190,9 +187,7 @@ setMethod("getCluster", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("getCluster", signature = c(x = "SingleCellExperiment"),
     function(
-            x, BLUSPARAM, assay.type = assay_name,
-            assay_name = NULL, dimred = NULL, by = MARGIN, MARGIN = "rows",
-            ...){
+            x, BLUSPARAM, assay.type = NULL, dimred = NULL, by = "rows", ...){
         # Checking parameters
         by <- .check_MARGIN(by)
         x <- .check_and_get_altExp(x, ...)
@@ -228,7 +223,8 @@ setMethod("getCluster", signature = c(x = "SingleCellExperiment"),
 #' @export
 #' @importFrom bluster clusterRows
 setMethod("getCluster", signature = c(x = "ANY"),
-    function(x, BLUSPARAM, by = MARGIN, MARGIN = "rows", full = FALSE, ...){
+    function(x, BLUSPARAM, by = "rows", full = FALSE, ...){
+        .check_defunct_args(...names(), c("assay_name", "MARGIN"))
         .require_package("bluster")
         if( !is.matrix(x) ){
             stop("'x' must be a matrix.", call. = FALSE)

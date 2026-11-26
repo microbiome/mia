@@ -12,12 +12,8 @@
 #' returned unchanged. If \code{group} matches with both dimensions,
 #' \code{by} must be specified. (Default: \code{NULL})
 #'
-#' @param f Deprecated. Use \code{group} instead.
-#'
 #' @param altexp \code{Character vector}. Specify the alternative experiments
 #'   to be unsplit. (Default: \code{names(altExps(x))})
-#'
-#' @param altExpNames Deprecated. Use \code{altexp} instead.
 #'
 #' @param ... Arguments passed to \code{agglomerateByVariable} function for
 #'   \code{SummarizedExperiment} objects and other functions.
@@ -239,7 +235,8 @@ NULL
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "SummarizedExperiment"),
-    function(x, group = f, f = NULL,  ...){
+    function(x, group = NULL, ...){
+        .check_defunct_args(...names(), "f")
         # Get arguments
         args <- .norm_args_for_split_by(x, group = group, ...)
         # Split data
@@ -250,7 +247,8 @@ setMethod("splitOn", signature = c(x = "SummarizedExperiment"),
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
-    function(x, group = f, f = NULL, ...){
+    function(x, group = NULL, ...){
+        .check_defunct_args(...names(), "f")
         # Get arguments
         args <- .norm_args_for_split_by(x, group = group, ...)
         # Should alternative experiment be removed? --> yes
@@ -408,10 +406,9 @@ setMethod("unsplitOn", signature = c(x = "SimpleList"),
 #' @importFrom SingleCellExperiment altExpNames altExp altExps reducedDims<-
 #' @export
 setMethod("unsplitOn", signature = c(x = "SingleCellExperiment"),
-    function(x, altexp = altExpNames, altExpNames = names(altExps(x)),
-            keep.dimred = keep_reducedDims,
-            keep_reducedDims = FALSE, ...){
+    function(x, altexp = names(altExps(x)), keep.dimred = FALSE, ...){
         # input check
+        .check_defunct_args(...names(), c("altExpNames", "keep_reducedDims"))
         if(!.is_a_bool(keep.dimred)){
             stop("'keep.dimred' must be TRUE or FALSE.", call. = FALSE)
         }

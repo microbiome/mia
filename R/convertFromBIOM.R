@@ -13,19 +13,13 @@
 #' taxa columns meaning that \code{rank.from.prefix} should be enabled in the
 #' most cases. (Default: \code{FALSE})
 #'
-#' @param removeTaxaPrefixes Deprecated. Use \code{prefix.rm} instead.
-#'
 #' @param rank.from.prefix \code{Logical scalar}. If file does not have
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
 #' (Default: \code{FALSE})
 #'
-#' @param rankFromPrefix Deprecated.Use \code{rank.from.prefix} instead.
-#'
 #' @param artifact.rm \code{Logical scalar}. If file have
 #' some taxonomic character naming artifacts, should they be removed.
 #' (default (Default: \code{FALSE})
-#'
-#' @param remove.artifacts Deprecated. Use \code{artifact.rm} instead.
 #'
 #' @details
 #' \code{convertFromBIOM} coerces a \code{\link[biomformat:biom-class]{biom}}
@@ -156,11 +150,11 @@ importBIOM <- function(file, col.data = NULL, tree.file = NULL, ...) {
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
 #' @importFrom dplyr %>% bind_rows
 convertFromBIOM <- function(
-        x, prefix.rm = removeTaxaPrefixes,
-        removeTaxaPrefixes = FALSE, rank.from.prefix = rankFromPrefix,
-        rankFromPrefix = FALSE,
-        artifact.rm = remove.artifacts, remove.artifacts = FALSE, ...){
+        x, prefix.rm = FALSE, rank.from.prefix = FALSE, artifact.rm = FALSE,
+        ...){
     # input check
+    .check_defunct_args(...names(), c(
+        "removeTaxaPrefixes", "rankFromPrefix", "remove.artifacts"))
     .require_package("biomformat")
     if(!is(x,"biom")){
         stop("'x' must be a 'biom' object", call. = FALSE)

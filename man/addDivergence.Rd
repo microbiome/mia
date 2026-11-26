@@ -11,8 +11,7 @@ addDivergence(x, name = "divergence", ...)
 
 getDivergence(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
   reference = "median",
   method = "bray",
   ...
@@ -22,8 +21,7 @@ getDivergence(
 
 \S4method{getDivergence}{SummarizedExperiment}(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
   reference = "median",
   method = "bray",
   FUN = getDissimilarity,
@@ -47,8 +45,6 @@ disabled with \code{NULL}. (Default: \code{NULL})
 
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
-
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{reference}{\code{Character scalar}. A column name from
 \code{colData(x)} or either \code{"mean"} or \code{"median"}. If column name

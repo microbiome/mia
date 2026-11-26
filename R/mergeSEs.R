@@ -19,18 +19,12 @@
 #' @param missing.values \code{NA}, \code{0} or \code{Character scalar}.
 #' Specifies the notation of missing values. (By default: \code{NA})
 #'
-#' @param missing_values Deprecated. Use \code{missing.values} instead.
-#'
 #' @param collapse.cols \code{Logical scalar}. Determines whether to collapse
 #' identically named samples to one. (Default: \code{FALSE})
-#'
-#' @param collapse_samples Deprecated. Use \code{collapse.cols} instead.
 #'
 #' @param collapse.rows \code{Logical scalar}. Determines whether to collapse
 #' features that have identical names and taxonomy to one.
 #' (Default: \code{TRUE})
-#'
-#' @param collapse_features Deprecated. Use \code{collapse.rows} instead.
 #'
 #' @param ... optional arguments (not used).
 #'
@@ -149,11 +143,12 @@ NULL
 #' @rdname mergeSEs
 #' @export
 setMethod("mergeSEs", signature = c(x = "SimpleList", y = "missing"),
-    function(x, y, assay.type = assay_name, assay_name = "counts",
-            join = "full", missing.values = missing_values, missing_values = NA,
-            collapse.cols = collapse_samples, collapse_samples = FALSE,
-            collapse.rows = collapse_features, collapse_features = TRUE, ...){
+    function(x, y, assay.type = "counts", join = "full", missing.values = NA,
+            collapse.cols = FALSE, collapse.rows = TRUE, ...){
         ################## Input check ##################
+        .check_defunct_args(...names(), c(
+            "assay_name", "missing_values", "collapse_samples",
+            "collapse_features"))
         x <- x |> as.list() |> unname()
         if( !all(vapply(x, is, logical(1L), "SummarizedExperiment")) ){
             stop("Input includes an object that is not ",

@@ -28,8 +28,6 @@
 #' names, an integer vector of row indices or a logical vector.
 #' (Default: \code{NULL})
 #'
-#' @param subset_row Deprecated. Use \code{subset.row} instead.
-#'
 #' @param scale \code{Logical scalar}. Should the expression values be
 #' standardized? (Default: \code{FALSE})
 #'
@@ -39,13 +37,9 @@
 #' @param altexp \code{Character scalar} or \code{integer scalar}. Specifies an
 #'   alternative experiment containing the input data. (Default: \code{NULL})
 #'
-#' @param exprs_values Deprecated. Use \code{assay.type} instead.
-#'
 #' @param tree.name \code{Character scalar}. Specifies the name of the
 #'   tree to be included in the phyloseq object that is created,
 #'   (Default: \code{"phylo"})
-#'
-#' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
 #' @param ... Currently not used.
 #'
@@ -84,10 +78,11 @@
 NULL
 
 .calculate_dpcoa <- function(
-        x, y, ncomponents = 2, ntop = NULL,
-        subset.row = subset_row, subset_row = NULL, scale = FALSE,
+        x, y, ncomponents = 2, ntop = NULL, subset.row = NULL, scale = FALSE,
         transposed = FALSE, ...)
 {
+    .check_defunct_args(
+        ...names(), c("subset_row", "assay_name", "exprs_values", "tree_name"))
     .require_package("ade4")
     # input check
     # Check ncomponents
@@ -146,8 +141,7 @@ setMethod("getDPCoA", c("ANY","ANY"), .calculate_dpcoa)
 #' @importFrom ape cophenetic.phylo
 #' @rdname runDPCoA
 setMethod("getDPCoA", signature = c("TreeSummarizedExperiment","missing"),
-    function(x, ..., assay.type = assay_name, assay_name = exprs_values,
-        exprs_values = "counts", tree.name = tree_name, tree_name = "phylo")
+    function(x, ..., assay.type = "counts", tree.name = "phylo")
     {
         .require_package("ade4")
         # Check assay.type

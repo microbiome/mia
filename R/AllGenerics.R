@@ -36,8 +36,7 @@ setGeneric(
 #' @export
 setGeneric("getDivergence", signature = c("x"),
     function(
-        x, assay.type = assay_name, assay_name = "counts", reference = "median",
-        method = "bray", ...)
+        x, assay.type = "counts", reference = "median", method = "bray", ...)
     standardGeneric("getDivergence"))
 
 #' @rdname addDysbiosis
@@ -85,11 +84,6 @@ setGeneric("agglomerateByVariable", signature = "x", function(x, ...)
 #' @export
 setGeneric("agglomerateBySet", signature = "x", function(x, ...)
     standardGeneric("agglomerateBySet"))
-
-#' @rdname calculateDMN
-#' @export
-setGeneric("calculateDMN", signature = c("x"), function(x, ...)
-    standardGeneric("calculateDMN"))
 
 #' @rdname addCluster
 #' @export
@@ -160,9 +154,8 @@ setGeneric("getCrossAssociation", signature = c("x"), function(x, ...)
 #' @rdname getDominant
 #' @export
 setGeneric("getDominant",signature = c("x"),
-    function(x, assay.type = assay_name, assay_name = "counts",
-        group = rank, rank = NULL, other.name = "Other", n = NULL,
-        complete = TRUE, ...)
+    function(x, assay.type = "counts", group = NULL, other.name = "Other",
+        n = NULL, complete = TRUE, ...)
     standardGeneric("getDominant"))
 
 #' @rdname getDominant
@@ -195,7 +188,7 @@ setGeneric("getRare", signature = "x", function(x, ...)
 #' @rdname getPrevalence
 #' @export
 setGeneric("getPrevalentAbundance", signature = "x",
-    function(x, assay.type = assay_name, assay_name = "relabundance", ...)
+    function(x, assay.type = "relabundance", ...)
     standardGeneric("getPrevalentAbundance"))
 
 #' @rdname getPrevalence
@@ -295,7 +288,7 @@ setGeneric("getTop", signature = "x",
     function(
         x, top= 5L,
         method = c("mean", "sum", "median", "sd", "cv", "prevalence"),
-        assay.type = assay_name, assay_name = "counts", na.rm = TRUE, ...)
+        assay.type = "counts", na.rm = TRUE, ...)
     standardGeneric("getTop"))
 
 #' @rdname taxonomy-methods
@@ -341,32 +334,15 @@ setGeneric("addHierarchyTree", signature = "x", function(x, ...)
 setGeneric("transformAssay", signature = c("x"), function(x,  ...)
     standardGeneric("transformAssay"))
 
-#' @rdname calculateDMN
-#' @export
-setGeneric("getDMN", signature = "x", function(x, name = "DMN", ...)
-    standardGeneric("getDMN"))
-
-#' @rdname calculateDMN
-#' @export
-setGeneric("bestDMNFit", signature = "x",
-    function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
-    standardGeneric("bestDMNFit"))
-
-#' @rdname calculateDMN
+#' @rdname calculateDMNgroup
 #' @export
 setGeneric("calculateDMNgroup", signature = c("x"), function(x, ...)
     standardGeneric("calculateDMNgroup"))
 
-#' @rdname calculateDMN
+#' @rdname calculateDMNgroup
 #' @export
 setGeneric("performDMNgroupCV", signature = c("x"), function(x, ...)
     standardGeneric("performDMNgroupCV"))
-
-#' @rdname calculateDMN
-#' @export
-setGeneric("getBestDMNFit", signature = "x",
-    function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
-    standardGeneric("getBestDMNFit"))
 
 NULL
 setGeneric(".estimate_dominance", signature = c("x"),

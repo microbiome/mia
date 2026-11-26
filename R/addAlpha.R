@@ -3,7 +3,9 @@
 #' These functions estimates alpha diversity indices optionally using
 #' rarefaction.
 #'
-#' @inheritParams calculateDMN
+#' @param BPPARAM A
+#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
+#'   object specifying whether the calculation should be parallelized.
 #'
 #' @param x a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object.
 #'

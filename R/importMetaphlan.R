@@ -8,15 +8,9 @@
 #'   path of the sample metadata file. The file must be in \code{tsv} format
 #'   (Default: \code{NULL}).
 #'
-#' @param colData Deprecated. use \code{col.data} instead.
-#'
-#' @param sample_meta Deprecated. Use \code{col.data} instead.
-#'
 #' @param tree.file \code{Character scalar}. Defines the file
 #'   path of the phylogenetic tree.
 #'   (Default: \code{NULL}).
-#'
-#' @param phy_tree Deprecated. Use \code{tree.file} instead.
 #'
 #' @param ... additional arguments:
 #' \itemize{
@@ -83,11 +77,11 @@
 #'
 NULL
 
-importMetaPhlAn <- function(
-        file, col.data = colData, colData = sample_meta,
-        sample_meta = NULL, tree.file = phy_tree, phy_tree = NULL, ...){
+importMetaPhlAn <- function(file, col.data = NULL, tree.file = NULL, ...){
 
     ################################ Input check ###############################
+    .check_defunct_args(
+        ...names(), c("colData", "sample_meta", "phy_tree", "assay_name"))
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
             call. = FALSE)

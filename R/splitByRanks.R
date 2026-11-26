@@ -18,8 +18,6 @@
 #'   breaks the link between the data used to calculate the reduced dims.
 #'   (Default: \code{FALSE})
 #' 
-#' @param keep_reducedDims Deprecated. Use \code{keep.dimred} instead.
-#'   
 #' @param as.list \code{Logical scalar}. Should the list of 
 #'   \code{SummarizedExperiment} objects be returned by the function 
 #'   \code{agglomerateByRanks} as a SimpleList or stored in altExps?
@@ -201,9 +199,9 @@ splitByRanks <- function(x, ...){
 #' @rdname agglomerate-methods
 #' @export
 setMethod("unsplitByRanks", signature = c(x = "SingleCellExperiment"),
-    function(x, ranks = taxonomyRanks(x), keep.dimred = keep_reducedDims, 
-            keep_reducedDims = FALSE, ...){
+    function(x, ranks = taxonomyRanks(x), keep.dimred = FALSE, ...){
         # input check
+        .check_defunct_args(...names(), "keep_reducedDims")
         if(!.is_a_bool(keep.dimred)){
             stop("'keep.dimred' must be TRUE or FALSE.", call. = FALSE)
         }
@@ -216,8 +214,7 @@ setMethod("unsplitByRanks", signature = c(x = "SingleCellExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, ranks = taxonomyRanks(x), keep.dimred = keep_reducedDims, 
-            keep_reducedDims = FALSE, ...){
+    function(x, ranks = taxonomyRanks(x), keep.dimred = FALSE, ...){
         callNextMethod()
     }
 )

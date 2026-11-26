@@ -6,8 +6,6 @@
 #'
 #' @param x a \code{\link[SummarizedExperiment]{SummarizedExperiment}} object.
 #'
-#' @param assay_name Deprecated. Use \code{assay.type} instead.
-#'
 #' @param reference \code{Character scalar}. A column name from
 #' \code{colData(x)} or either \code{"mean"} or \code{"median"}. If column name
 #' is specified, the column must include reference samples for each sample.
@@ -103,9 +101,10 @@ setMethod("addDivergence", signature = c(x="SummarizedExperiment"),
 #' @export
 setMethod("getDivergence", signature = c(x="SummarizedExperiment"),
     function(
-        x, assay.type = assay_name, assay_name = "counts",
-        reference = "median", method = "bray", FUN = getDissimilarity, ...){
+        x, assay.type = "counts", reference = "median", method = "bray",
+        FUN = getDissimilarity, ...){
         ################### Input check ###############
+        .check_defunct_args(...names(), "assay_name")
         # Get altExp if user has specified
         x <- .check_and_get_altExp(x, ...)
         # Check assay.type

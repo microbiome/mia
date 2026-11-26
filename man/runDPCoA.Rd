@@ -16,22 +16,13 @@ getDPCoA(x, y, ...)
   y,
   ncomponents = 2,
   ntop = NULL,
-  subset.row = subset_row,
-  subset_row = NULL,
+  subset.row = NULL,
   scale = FALSE,
   transposed = FALSE,
   ...
 )
 
-\S4method{getDPCoA}{TreeSummarizedExperiment,missing}(
-  x,
-  ...,
-  assay.type = assay_name,
-  assay_name = exprs_values,
-  exprs_values = "counts",
-  tree.name = tree_name,
-  tree_name = "phylo"
-)
+\S4method{getDPCoA}{TreeSummarizedExperiment,missing}(x, ..., assay.type = "counts", tree.name = "phylo")
 
 calculateDPCoA(x, ...)
 
@@ -59,8 +50,6 @@ to use for dimensionality reduction. This can be a character vector of row
 names, an integer vector of row indices or a logical vector.
 (Default: \code{NULL})}
 
-\item{subset_row}{Deprecated. Use \code{subset.row} instead.}
-
 \item{scale}{\code{Logical scalar}. Should the expression values be
 standardized? (Default: \code{FALSE})}
 
@@ -70,15 +59,9 @@ cells in rows. (Default: \code{FALSE})}
 \item{assay.type}{\code{Character scalar}. Specifies the name of assay
 used in calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
-
-\item{exprs_values}{Deprecated. Use \code{assay.type} instead.}
-
 \item{tree.name}{\code{Character scalar}. Specifies the name of the
 tree to be included in the phyloseq object that is created,
 (Default: \code{"phylo"})}
-
-\item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
 \item{altexp}{\code{Character scalar} or \code{integer scalar}. Specifies an
 alternative experiment containing the input data. (Default: \code{NULL})}

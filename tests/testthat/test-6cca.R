@@ -39,7 +39,7 @@ test_that("CCA", {
     expect_true(is.null(attributes(mat)$significance))
     # Check that significance calculations are correct
     set.seed(46)
-    sce <- addCCA(sce, variables = "Manure", full = TRUE)
+    sce <- addCCA(sce, col.var = "Manure", full = TRUE)
     actual <- reducedDim(sce,"CCA")
     res <- attributes(actual)$significance
     # Create a function that calculates significances
@@ -106,10 +106,10 @@ test_that("CCA", {
     GlobalPatterns <- addAlpha(GlobalPatterns, index = "shannon")
     expect_error(getRDA(
         GlobalPatterns, assay.type = "counts",
-        variables = c("Primer", "test")))
+        col.var = c("Primer", "test")))
     res1 <- getRDA(
         GlobalPatterns, assay.type = "counts",
-        variables = c("shannon", "SampleType"))
+        col.var = c("shannon", "SampleType"))
     res1 <- attr(res1, "obj")$CCA
     res2 <- getRDA(
         GlobalPatterns, assay.type = "counts",
@@ -120,12 +120,12 @@ test_that("CCA", {
     data("enterotype", package = "mia")
     variable_names <- c("ClinicalStatus", "Gender", "Age")
     res <- addRDA(
-        enterotype, assay.type = "counts", variables = variable_names,
+        enterotype, assay.type = "counts", col.var = variable_names,
         na.action = na.exclude)
     expect_equal(colnames(res), colnames(enterotype))
     # Expect warning since samples are removed because na.omit was used.
     res <- addRDA(
-        enterotype, assay.type = "counts", variables = variable_names,
+        enterotype, assay.type = "counts", col.var = variable_names,
         na.action = na.omit) |> expect_warning()
     enterotype <- enterotype[, complete.cases(colData(enterotype)[, variable_names])]
     expect_equal(colnames(res), colnames(enterotype))
