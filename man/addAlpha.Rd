@@ -33,14 +33,16 @@ depth i.e. the number of counts drawn from each sample.
 (Default: \code{min(colSums2(assay(x, assay.type)))})
 
 \item \code{tree.name}: \code{Character scalar}. Specifies which rowTree
-will be used. (Phylogenetic indices: Allen, Faith, Rao).
+will be used. (Phylogenetic indices: Allen, Faith, Rao, phylogenetic
+Pielou).
 (Default: \code{"phylo"})
 
 \item \code{node.label}: \code{Character vector} or \code{NULL} Specifies
 the links between rows and node labels of phylogeny tree specified
 by \code{tree.name}. If a certain row is not linked with the tree, missing
 instance should be noted as NA. When \code{NULL}, all the rownames should
-be found from the tree. (Phylogenetic indices: Allen, Faith, Rao).
+be found from the tree. (Phylogenetic indices: Allen, Faith, Rao,
+phylogenetic Pielou).
 (Default: \code{NULL})
 
 \item \code{only.tips}: (Faith's index). \code{Logical scalar}. Specifies
@@ -298,6 +300,14 @@ Shannon-Weaver/Wiener/Weiner
 evenness; H/ln(S). The Shannon-Weaver is the preferred term; see
 Spellerberg and Fedor (2003).
 \item 'evar': Smith and Wilson’s Evar index (Smith & Wilson 1996).
+\item 'phylo_pielou': Phylogenetic Pielou's evenness, the ratio of the
+logarithms of the phylogenetic Hill numbers of order 1 and 0 (Chao et al.
+2010): (H/T)/ln(PD/T), where H is Allen's phylogenetic entropy, and PD
+and T are the total and the abundance-weighted branch length below the
+most recent common ancestor of the sample's features. Branches above it
+and absent features do not affect the value. On a star tree with
+equal branch lengths it equals 'pielou'. It is NA when the sample has
+only one lineage. Using this index requires a tree.
 \item 'bulla': Bulla’s index (O) (Bulla 1994).
 }
 
@@ -438,6 +448,8 @@ res |> head()
 \insertRef{Cassol2025}{mia}
 
 \insertRef{Chao1984}{mia}
+
+\insertRef{Chao2010}{mia}
 
 \insertRef{Chao2016}{mia}
 

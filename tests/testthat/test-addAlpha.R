@@ -294,3 +294,44 @@ test_that("Estimate Phylogenetic Alpha Diversity Indices (allen, rao)", {
     D <- ape::cophenetic.phylo(tree)[names(p), names(p)]
     expect_equal(res[["rao"]], drop(p %*% D %*% p))
 })
+
+test_that("Phylogenetic Pielou's evenness", {
+    .tse <- function(newick, counts){
+        counts <- as.matrix(counts)
+        TreeSummarizedExperiment(
+            assays = list(counts = counts),
+            rowTree = ape::read.tree(text = newick))
+    }
+    counts <- data.frame(
+        s1 = c(A = 6, B = 3, C = 1), s2 = c(5, 0, 0), s3 = c(0, 0, 0),
+        s4 = c(2, 2, 2))
+    # On a star tree with equal branch lengths, it equals Pielou's evenness
+    tse <- .tse("(A:1,B:1,C:1);", counts[, c("s1", "s4")])
+    res <- getAlpha(tse, index = c("phylo_pielou", "pielou"))
+    expect_equal(res[["phylo_pielou"]], res[["pielou"]])
+    # Value on a non-star tree: (H / T) / log(PD / T)
+    tse <- .tse("((A:1,B:2):1,C:0.5);", counts)
+    res <- getAlpha(tse, index = "phylo_pielou_evenness")[[1]]
+    a <- c(0.6, 0.3, 0.1, 0.9)
+    L <- c(1, 2, 0.5, 1)
+    H <- -sum(L * a * log(a))
+    Tb <- sum(L * a)
+    expect_equal(res[1], (H / Tb) / log(sum(L) / Tb))
+    # One lineage or an empty sample gives NA
+    expect_true(all(is.na(res[2:3])))
+    expect_true(res[4] > 0 && res[4] < 1)
+    # Unchanged when branch lengths are scaled, or when an absent feature is
+    # added outside the sample's lineages
+    scaled <- .tse("((A:7,B:14):7,C:3.5);", counts)
+    expect_equal(getAlpha(scaled, index = "phylo_pielou")[[1]], res)
+    outgroup <- .tse(
+        "(((A:1,B:2):1,C:0.5):3,D:2);", rbind(counts, D = 0))
+    expect_equal(getAlpha(outgroup, index = "phylo_pielou")[[1]], res)
+    # A tree with zero branch lengths gives NA
+    flat <- .tse("((A:0,B:0):0,C:0);", counts)
+    expect_true(all(is.na(getAlpha(flat, index = "phylo_pielou")[[1]])))
+    # Values are within [0, 1] on real data
+    data(GlobalPatterns, package = "mia")
+    res <- getAlpha(GlobalPatterns, index = "phylo_pielou")[[1]]
+    expect_true(all(res >= 0 & res <= 1))
+})
