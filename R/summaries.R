@@ -139,8 +139,11 @@ setMethod("getTop", signature = c(x = "SummarizedExperiment"),
         .check_assay_present(assay.type, x)
         #
         if(method == "prevalence"){
-            taxs <- getPrevalence(
-                assay(x, assay.type), sort = TRUE, include.lowest = TRUE, ...)
+            args <- list(...)
+            args[["x"]] <- assay(x, assay.type)
+            args[["sort"]] <- TRUE
+            args[["na.rm"]] <- na.rm
+            taxs <- do.call(getPrevalence, args)
             # If there are taxa with prevalence of 0, remove them
             taxs <- taxs[ taxs > 0 ]
         } else {
