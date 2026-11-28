@@ -22,6 +22,7 @@ getTop(
   assay.type = assay_name,
   assay_name = "counts",
   na.rm = TRUE,
+  sort = FALSE,
   ...
 )
 
@@ -32,6 +33,7 @@ getTop(
   assay.type = assay_name,
   assay_name = "counts",
   na.rm = TRUE,
+  sort = FALSE,
   ...
 )
 
@@ -74,6 +76,10 @@ assay used in calculation. (Default: \code{"counts"})}
 
 \item{na.rm}{\code{Logical scalar}. Should NA values be omitted?
 (Default: \code{TRUE})}
+
+\item{sort}{\code{Logical scalar}. Specify whether to sort taxa in
+alphabetical order or not. Enabled in functions \code{getUnique}, and
+\code{getTop}. (Default: \code{FALSE})}
 
 \item{rank}{\code{Character scalar}. Defines a taxonomic rank. Must be a
 value of the output of \code{taxonomyRanks()}. (Default: \code{NULl})}

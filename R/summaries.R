@@ -18,13 +18,12 @@
 #' \code{\link[=subsetBy]{subsetBy()}}.
 #' (Default: \code{"mean"})
 #'
+#' @param sort \code{Logical scalar}. Specify whether to sort taxa in
+#' alphabetical order or not. Enabled in functions \code{getUnique}, and
+#' \code{getTop}. (Default: \code{FALSE})
+#'
 #' @param ... Additional arguments passed, e.g., to getPrevalence:
 #'    \itemize{
-#'        \item \code{sort}: \code{Logical scalar}. Specify
-#'        whether to sort taxa in alphabetical order or not. Enabled in
-#'        functions
-#'        \code{getUnique}, and \code{getTop}.
-#'        (Default: \code{FALSE})
 #'        \item \code{na.rm}: \code{Logical scalar}. Specify
 #'        whether to remove missing values or not. Enabled in functions
 #'        \code{getUnique}, and \code{getTop}.
@@ -127,7 +126,7 @@ setMethod("getTop", signature = c(x = "SummarizedExperiment"),
         x, top = 5L,
         method = c("mean", "sum", "median", "sd", "cv", "prevalence"),
         assay.type = assay_name, assay_name = "counts",
-        na.rm = TRUE, ...){
+        na.rm = TRUE, sort = FALSE, ...){
         # input check
         method <- match.arg(
             method, c("mean","sum","median","sd","cv","prevalence"))
@@ -139,11 +138,8 @@ setMethod("getTop", signature = c(x = "SummarizedExperiment"),
         .check_assay_present(assay.type, x)
         #
         if(method == "prevalence"){
-            args <- list(...)
-            args[["x"]] <- assay(x, assay.type)
-            args[["sort"]] <- TRUE
-            args[["na.rm"]] <- na.rm
-            taxs <- do.call(getPrevalence, args)
+            taxs <- getPrevalence(
+                assay(x, assay.type), sort = TRUE, na.rm = na.rm, ...)
             # If there are taxa with prevalence of 0, remove them
             taxs <- taxs[ taxs > 0 ]
         } else {
@@ -160,7 +156,7 @@ setMethod("getTop", signature = c(x = "SummarizedExperiment"),
         }
         names <- head(names(taxs), n = top)
         # Remove NAs and sort if specified
-        names <- .remove_NAs_and_sort(names, ... )
+        names <- .remove_NAs_and_sort(names, sort = sort, ... )
         return(names)
     }
 )
