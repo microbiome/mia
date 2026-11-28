@@ -89,7 +89,7 @@ Must be \code{'rows'} or \code{'cols'}.}
 
 \item{clust.col}{\code{Character scalar}. Indicates the name of the
 \code{rowData} (or \code{colData}) where the data will be stored.
-(Default: \code{"clusters"})}
+(Default: \code{"cluster"})}
 
 \item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
 
