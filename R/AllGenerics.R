@@ -295,7 +295,8 @@ setGeneric("getTop", signature = "x",
     function(
         x, top= 5L,
         method = c("mean", "sum", "median", "sd", "cv", "prevalence"),
-        assay.type = assay_name, assay_name = "counts", na.rm = TRUE, ...)
+        assay.type = assay_name, assay_name = "counts", na.rm = TRUE,
+        sort = FALSE, ...)
     standardGeneric("getTop"))
 
 #' @rdname taxonomy-methods

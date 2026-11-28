@@ -241,3 +241,6 @@ Changes in version 1.21.x
 + getDissimilarity: method = "overlap" returns the dissimilarity 1 - overlap; it returned the overlap similarity, so identical samples had the largest dissimilarity (#787) (2026-11-22)
 + getAlpha/addAlpha: allen and rao placed the tip abundances by table row instead of node, which gave wrong values on most trees (2026-11-22)
 + transformAssay: pseudocount = TRUE (and method = "pseudocount" without a value) is deprecated; the warning gives the value used. A numeric pseudocount on an assay with only positive values is an error instead of a warning, and the error for zeroes suggests a pseudocount (#813) (2026-11-22)
+
+Changes in version 1.23.x
++ getTop: method = "prevalence" uses include.lowest = FALSE, the getPrevalence() default, so existing code can return different features. With the default detection = 0, every feature had prevalence 1 and the returned features were not the most prevalent ones; include.lowest = TRUE restores the previous counting. Passing sort or include.lowest no longer gives a duplicate-argument error (1.23.2, 2026-11-27)

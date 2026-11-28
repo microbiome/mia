@@ -85,4 +85,30 @@ test_that("summaries", {
         getTop(tse, method = "cv", top = 5),
         names(sort(cvs, decreasing = TRUE))[seq_len(5)]
     )
+
+    # getTop with prevalence uses include.lowest = FALSE by default, matching
+    # getPrevalence(), excludes all-zero features, and accepts include.lowest
+    # and sort arguments.
+    tse_prev <- GlobalPatterns[seq_len(20), ]
+    assay(tse_prev, "counts")[20, ] <- 0
+    top_prev <- getTop(tse_prev, method = "prevalence", top = 5)
+    expected_prev <- names(head(getPrevalence(tse_prev, sort = TRUE), 5))
+    expect_identical(top_prev, expected_prev)
+    expect_false(rownames(tse_prev)[20] %in% top_prev)
+    expect_identical(
+        getTop(tse_prev, method = "prevalence", top = 5, sort = TRUE),
+        sort(expected_prev)
+    )
+    expect_identical(
+        getTop(
+            tse_prev, method = "prevalence", top = 5, detection = 1,
+            include.lowest = TRUE
+        ),
+        names(head(
+            getPrevalence(
+                tse_prev, detection = 1, include.lowest = TRUE, sort = TRUE
+            ),
+            5
+        ))
+    )
 })

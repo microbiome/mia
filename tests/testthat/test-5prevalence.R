@@ -38,7 +38,7 @@ test_that("getPrevalence", {
     # Sorting should put the top values first
     pr <- getPrevalence(GlobalPatterns, sort=TRUE, detection = 0.1/100)
     expect_equal(as.vector(which.max(pr)), 1)
-    pr <- names(head(getPrevalence(GlobalPatterns, sort=TRUE,  include.lowest = TRUE), 5L))
+    pr <- names(head(getPrevalence(GlobalPatterns, sort=TRUE), 5L))
     actual <- getTop(GlobalPatterns,
                          method="prevalence",
                          top=5,
